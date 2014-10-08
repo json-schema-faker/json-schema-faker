@@ -13,7 +13,7 @@ module.exports = function(grunt) {
     },
     watch: {
       all: {
-        files: ['lib/**/*.js', 'spec/**/*.coffee'],
+        files: ['lib/**/*.js', 'spec/*.coffee', 'spec/fixtures/*.*'],
         tasks: ['eslint', 'jasmine_node']
       }
     }
