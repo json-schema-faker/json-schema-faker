@@ -1,3 +1,5 @@
+require('./helpers')
+
 jsf = require('../lib')
 
 person = require('./fixtures/person-schema.json')

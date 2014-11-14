@@ -1,3 +1,5 @@
+require('./helpers')
+
 jsf = require('../lib')
 
 describe 'JSON-Schema primitives', ->
