@@ -3,4 +3,6 @@
 *.log
 .DS_Store
 Gruntfile.js
+/package
+/coverage
 /node_modules
