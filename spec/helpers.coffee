@@ -6,6 +6,8 @@ jasmine.Matchers::toHaveType = (expected) ->
   if test isnt expected
     throw "Expected #{JSON.stringify @actual} to have #{expected} type"
 
+  true
+
 jasmine.Matchers::toHaveSchema = (expected) ->
   api = tv4.freshApi()
 
@@ -17,3 +19,5 @@ jasmine.Matchers::toHaveSchema = (expected) ->
   throw 'Missing ' + result.missing.join(', ') if result.missing.length
 
   throw result.error if result.error
+
+  result.valid

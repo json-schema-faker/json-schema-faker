@@ -10,7 +10,7 @@
   "license": "MIT",
   "devDependencies": {
     "grunt": "^0.4.5",
-    "grunt-parts": "^0.2.2",
+    "grunt-parts": "^0.3.0",
     "tv4": "^1.1.4"
   },
   "dependencies": {
