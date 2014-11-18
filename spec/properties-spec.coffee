@@ -1,18 +1,15 @@
 jsf = require('../lib')
 
+suite = [
+  ['should generate plain-old objects', [require('./fixtures/person-schema.json')]]
+  ['should handle allOf, anyOf, oneOf', ['allOf', 'anyOf', 'oneOf'].map (v) -> require("./fixtures/#{v}-schema.json")]
+  ['should skip some "required" properties', [require('./fixtures/requires-schema.json')]]
+]
+
+validate = (label, schemas) ->
+  it label, ->
+    for schema in schemas
+      expect(jsf schema).toHaveSchema schema
+
 describe 'JSON-Schema properties', ->
-  it 'should generate plain-old objects', ->
-    person = require('./fixtures/person-schema.json')
-
-    expect(jsf(person)).toHaveSchema person
-
-  it 'should handle allOf, anyOf, oneOf', ->
-    ['allOf', 'anyOf', 'oneOf'].forEach (test) ->
-      mixin = require("./fixtures/#{test}-schema.json")
-
-      expect(jsf(mixin)).toHaveSchema mixin
-
-  it 'should skip some "required" properties', ->
-    schema = require('./fixtures/requires-schema.json')
-
-    expect(jsf(schema)).toHaveSchema schema
+  validate(label, schemas) for test in suite when [label, schemas] = test
