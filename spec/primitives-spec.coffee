@@ -21,3 +21,6 @@ describe 'JSON-Schema primitives', ->
 
   it 'should generate string-values', ->
     expect(jsf(type: 'string')).toHaveType 'string'
+
+  it 'should generate any-values', ->
+    expect(jsf(type: 'any')).toHaveAnyType()

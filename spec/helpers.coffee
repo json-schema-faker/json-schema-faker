@@ -1,9 +1,18 @@
 tv4 = require('tv4')
 
-jasmine.Matchers::toHaveType = (expected) ->
-  test = Object::toString.call(@actual).match(/object (\w+)/)[1].toLowerCase()
+type = (value) ->
+  Object::toString.call(value).match(/object (\w+)/)[1].toLowerCase()
 
-  if test isnt expected
+jasmine.Matchers::toHaveAnyType = ->
+  test = type(@actual)
+
+  if ['array', 'boolean', 'null', 'number', 'object', 'string'].indexOf(test) is -1
+    throw "Unexpected type '#{test}' to be any?"
+
+  true
+
+jasmine.Matchers::toHaveType = (expected) ->
+  if type(@actual) isnt expected
     throw "Expected #{JSON.stringify @actual} to have #{expected} type"
 
   true
