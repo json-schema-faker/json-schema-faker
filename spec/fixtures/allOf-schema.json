@@ -1,0 +1,10 @@
+{
+  "allOf": [
+    {
+      "type": "string"
+    },
+    {
+      "minLength": 1
+    }
+  ]
+}

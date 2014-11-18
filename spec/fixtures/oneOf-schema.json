@@ -1,0 +1,10 @@
+{
+  "oneOf": [
+    {
+      "type": "boolean"
+    },
+    {
+      "type": "number"
+    }
+  ]
+}
