@@ -1,0 +1,9 @@
+{
+  "type": "object",
+  "properties": {
+    "intEnum": {
+      "type": "number",
+      "enum": [-123, 456]
+    }
+  }
+}

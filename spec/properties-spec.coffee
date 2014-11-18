@@ -5,6 +5,7 @@ suite = [
   ['should handle allOf, anyOf, oneOf', ['allOf', 'anyOf', 'oneOf'].map (v) -> require("./fixtures/#{v}-schema.json")]
   ['should skip some required properties', [require('./fixtures/requires-schema.json')]]
   ['should handle enum, minLength, maxLength', [require('./fixtures/strings-schema.json')]]
+  ['should handle enum, multipleOf, minimum, exclusiveMinimum, maximum, exclusiveMaximum', [require('./fixtures/numbers-schema.json')]]
 ]
 
 validate = (label, schemas) ->
