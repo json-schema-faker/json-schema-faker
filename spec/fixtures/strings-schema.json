@@ -1,7 +1,11 @@
 {
   "type": "object",
   "properties": {
-    "strTest": {
+    "strEnum": {
+      "type": "string",
+      "enum": ["fun", "not fun"]
+    },
+    "strLength": {
       "type": "string",
       "minLength": 3,
       "maxLength": 5
