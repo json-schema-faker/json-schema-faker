@@ -1,0 +1,10 @@
+{
+  "type": "object",
+  "properties": {
+    "strTest": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 5
+    }
+  }
+}
