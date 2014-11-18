@@ -1,7 +1,11 @@
 {
   "allOf": [
     {
-      "type": "string"
+      "type": "string",
+      "anyOf": [
+        { "enum": ["so wow", "much fun"] },
+        { "enum": ["so much very fun, wow"] }
+      ]
     },
     {
       "minLength": 1
