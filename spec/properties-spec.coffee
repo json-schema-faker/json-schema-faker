@@ -4,6 +4,7 @@ suite = [
   ['should generate plain-old objects', [require('./fixtures/person-schema.json')]]
   ['should handle allOf, anyOf, oneOf', ['allOf', 'anyOf', 'oneOf'].map (v) -> require("./fixtures/#{v}-schema.json")]
   ['should skip some "required" properties', [require('./fixtures/requires-schema.json')]]
+  ['should handle "enum" values', [require('./fixtures/enum-schema.json')]]
 ]
 
 validate = (label, schemas) ->
