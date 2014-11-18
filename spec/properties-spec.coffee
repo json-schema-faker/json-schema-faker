@@ -11,3 +11,8 @@ describe 'JSON-Schema properties', ->
       mixin = require("./fixtures/#{test}-schema.json")
 
       expect(jsf(mixin)).toHaveSchema mixin
+
+  it 'should skip some "required" properties', ->
+    schema = require('./fixtures/requires-schema.json')
+
+    expect(jsf(schema)).toHaveSchema schema
