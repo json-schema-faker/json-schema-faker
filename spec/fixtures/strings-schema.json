@@ -10,5 +10,6 @@
       "minLength": 3,
       "maxLength": 5
     }
-  }
+  },
+  "required": ["strEnum", "strLength"]
 }
