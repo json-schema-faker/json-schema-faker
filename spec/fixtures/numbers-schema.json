@@ -4,6 +4,23 @@
     "intEnum": {
       "type": "number",
       "enum": [-123, 456]
+    },
+    "intLength": {
+      "type": "number",
+      "minimum": 3,
+      "maximum": 5
+    },
+    "intMultiple": {
+      "type": "number",
+      "multipleOf": 7
+    },
+    "intExclusive": {
+      "type": "number",
+      "minimum": 10,
+      "exclusiveMinimum": true,
+      "maximum": 12,
+      "exclusiveMaximum": true
     }
-  }
+  },
+  "required": ["intEnum", "intLength", "intMultiple", "intExclusive"]
 }
