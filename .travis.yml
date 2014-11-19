@@ -1,7 +1,10 @@
 language: node_js
+branches:
+  only:
+    - master
 node_js:
   - 0.10
 before_script:
-  - npm install -g grunt-cli
+  - 'npm install -g grunt-cli coveralls'
 script:
-  - grunt eslint jasmine_node
+  - 'grunt test:parts && cat reports/coverage/lcov.info | coveralls'
