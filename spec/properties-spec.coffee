@@ -6,6 +6,7 @@ suite = [
   ['should skip some required properties', [require('./fixtures/requires-schema.json')]]
   ['should handle enum, minLength, maxLength', [require('./fixtures/strings-schema.json')]]
   ['should handle enum, multipleOf, minimum, exclusiveMinimum, maximum, exclusiveMaximum', [require('./fixtures/numbers-schema.json')]]
+  ['should handle minItems, maxItems, uniqueItems', [require('./fixtures/arrays-schema.json')]]
 ]
 
 validate = (label, schemas) ->

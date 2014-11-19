@@ -1,0 +1,21 @@
+{
+  "type": "array",
+  "items": {
+    "type": "object",
+    "properties": {
+      "label": {
+        "type": "string"
+      },
+      "excerpt": {
+        "type": "string"
+      },
+      "permalink": {
+        "type": "string"
+      }
+    },
+    "required": ["label", "excerpt"]
+  },
+  "minItems": 2,
+  "maxItems": 3,
+  "uniqueItems": true
+}
