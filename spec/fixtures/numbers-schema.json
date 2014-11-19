@@ -18,7 +18,7 @@
       "type": "number",
       "minimum": 10,
       "exclusiveMinimum": true,
-      "maximum": 12,
+      "maximum": 13,
       "exclusiveMaximum": true
     }
   },
