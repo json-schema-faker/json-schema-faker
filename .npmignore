@@ -1,8 +1,10 @@
 .*
 *~
 *.log
+*.tgz
 .DS_Store
 Gruntfile.js
+/spec
 /package
 /reports
 /node_modules
