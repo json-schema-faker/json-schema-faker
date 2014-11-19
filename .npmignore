@@ -4,5 +4,5 @@
 .DS_Store
 Gruntfile.js
 /package
-/coverage
+/reports
 /node_modules

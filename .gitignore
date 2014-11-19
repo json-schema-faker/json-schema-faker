@@ -2,5 +2,5 @@
 *.log
 .DS_Store
 /package
-/coverage
+/reports
 /node_modules
