@@ -13,12 +13,12 @@ describe 'JSON-Schema references', ->
         stringValues:
           type: 'array'
           items:
-            $ref: 'localSchema'
+            $ref: 'http://fake.com/localSchema'
           minItems: 3
       required: ['stringValues']
 
     refs = [
-      { id: 'localSchema', type: 'string' }
+      { id: 'http://fake.com/localSchema', type: 'string' }
     ]
 
     expect(jsf(schema, refs)).toHaveSchema schema, refs
