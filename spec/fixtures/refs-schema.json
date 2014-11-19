@@ -1,0 +1,31 @@
+{
+  "definitions": {
+    "number": {
+      "type": "number"
+    },
+    "positive": {
+      "minimum": 0,
+      "maximum": 100
+    }
+  },
+  "type": "object",
+  "properties": {
+    "weakNumber": {
+      "$ref": "#/definitions/number"
+    },
+    "multipleOf5": {
+      "allOf": [
+        {
+          "$ref": "#/definitions/positive"
+        },
+        {
+          "$ref": "#/definitions/number"
+        },
+        {
+          "multipleOf": 5
+        }
+      ]
+    }
+  },
+  "required": ["weakNumber", "multipleOf5"]
+}

@@ -17,11 +17,13 @@ jasmine.Matchers::toHaveType = (expected) ->
 
   true
 
-jasmine.Matchers::toHaveSchema = (expected) ->
+jasmine.Matchers::toHaveSchema = (expected, refs) ->
   api = tv4.freshApi()
 
   api.cyclicCheck = false;
   api.banUnknown = false;
+
+  api.addSchema(schema.id, schema) for schema in refs if refs
 
   result = api.validateResult(@actual, expected, api.cyclicCheck, api.banUnknown)
 
