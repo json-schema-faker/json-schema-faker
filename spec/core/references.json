@@ -1,0 +1,64 @@
+[
+  {
+    "description": "schema references",
+    "tests": [
+      {
+        "description": "should handle internal $refs",
+        "schema":  {
+          "definitions": {
+            "number": {
+              "type": "number"
+            },
+            "positive": {
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "type": "object",
+          "properties": {
+            "weakNumber": {
+              "$ref": "#/definitions/number"
+            },
+            "multipleOf5": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/positive"
+                },
+                {
+                  "$ref": "#/definitions/number"
+                },
+                {
+                  "multipleOf": 5
+                }
+              ]
+            }
+          },
+          "required": ["weakNumber", "multipleOf5"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle provided $refs only",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "stringValues": {
+              "type": "array",
+              "items": {
+                "$ref": "a://str"
+              }
+            }
+          },
+          "required": ["stringValues"]
+        },
+        "refs": [
+          {
+            "id": "a://str",
+            "type": "string"
+          }
+        ],
+        "valid": true
+      }
+    ]
+  }
+]
