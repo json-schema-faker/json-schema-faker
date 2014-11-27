@@ -1,0 +1,20 @@
+[
+  {
+    "description": "generated object values",
+    "tests": [
+      {
+        "description": "should skip some non-required properties",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "one": { "type": "string" },
+            "two": { "type": "string" },
+            "three": { "type": "string" }
+          },
+          "required": ["one", "three"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]
