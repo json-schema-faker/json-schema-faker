@@ -57,13 +57,6 @@
         },
         "type": "string",
         "valid": true
-      },
-      {
-        "description": "should generate any-value",
-        "schema": {
-          "type": "any"
-        },
-        "type": "any"
       }
     ]
   }

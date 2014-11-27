@@ -29,10 +29,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             throw e unless test.throws
 
           if test.type
-            if test.type is 'any'
-              expect(sample).toHaveAnyType()
-            else
-              expect(sample).toHaveType test.type
+            expect(sample).toHaveType test.type
 
           if test.valid
             expect(sample).toHaveSchema schema, refs
