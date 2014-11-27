@@ -1,0 +1,24 @@
+[
+  {
+    "description": "generated string values",
+    "tests": [
+      {
+        "description": "should handle minLength",
+        "schema": {
+          "type": "string",
+          "minLength": 10
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle maxLength",
+        "schema": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 30
+        },
+        "valid": true
+      }
+    ]
+  }
+]
