@@ -14,6 +14,17 @@
           "required": ["one", "three"]
         },
         "valid": true
+      },
+      {
+        "description": "should handle patternProperties",
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+            "a\\w{4,12}": { "type": "string" },
+            "xy-[a-f\\d]{4}-n[pqrz]": { "type": "string" }
+          }
+        },
+        "valid": true
       }
     ]
   }
