@@ -1,0 +1,57 @@
+[
+  {
+    "description": "generated number values",
+    "tests": [
+      {
+        "description": "should handle minimum",
+        "schema": {
+          "type": "number",
+          "minimum": 10
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle maximum",
+        "schema": {
+          "type": "number",
+          "minimum": 20,
+          "maximum": 30
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle multipleOf",
+        "schema": {
+          "type": "number",
+          "minimum": 40,
+          "maximum": 50,
+          "multipleOf": 6
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle exclusiveMinimum",
+        "schema": {
+          "type": "number",
+          "minimum": 60,
+          "maximum": 70,
+          "multipleOf": 7,
+          "exclusiveMinimum": true
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle exclusiveMaximum",
+        "schema": {
+          "type": "number",
+          "minimum": 80,
+          "maximum": 90,
+          "multipleOf": 8,
+          "exclusiveMinimum": true,
+          "exclusiveMaximum": true
+        },
+        "valid": true
+      }
+    ]
+  }
+]
