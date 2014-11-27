@@ -25,6 +25,33 @@
           }
         },
         "valid": true
+      },
+      {
+        "description": "should handle minProperties",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "x": { "type": "string" },
+            "y": { "type": "string" }
+          },
+          "required": ["x", "y"],
+          "minProperties": 2
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle maxProperties",
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+            "a+": { "type": "string" },
+            "b+": { "type": "string" },
+            "c+": { "type": "string" }
+          },
+          "minProperties": 1,
+          "maxProperties": 2
+        },
+        "valid": true
       }
     ]
   }
