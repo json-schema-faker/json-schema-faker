@@ -26,6 +26,40 @@
           "pattern": "\\w+@\\w+\\.\\w+"
         },
         "valid": true
+      },
+      {
+        "description": "should handle format (core)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "b": {
+              "type": "string",
+              "format": "email"
+            },
+            "c": {
+              "type": "string",
+              "format": "hostname"
+            },
+            "d": {
+              "type": "string",
+              "format": "ipv4"
+            },
+            "e": {
+              "type": "string",
+              "format": "ipv6"
+            },
+            "f": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": ["a", "b", "c", "d", "e", "f"]
+        },
+        "valid": true
       }
     ]
   }
