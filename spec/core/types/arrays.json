@@ -1,0 +1,65 @@
+[
+  {
+    "description": "generated array values",
+    "schemas": [
+      {
+        "allOf": [
+          {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": ["value"]
+            }
+          },
+          {
+            "$ref": "some://rules"
+          }
+        ]
+      }
+    ],
+    "tests": [
+      {
+        "description": "should handle maxItems",
+        "schema": "schemas.0",
+        "refs": [
+          {
+            "id": "some://rules",
+            "maxItems": 3
+          }
+        ],
+        "valid": true
+      },
+      {
+        "description": "should handle minItems",
+        "schema": "schemas.0",
+        "refs": [
+          {
+            "id": "some://rules",
+            "maxItems": 3,
+            "minItems": 2
+          }
+        ],
+        "valid": true
+      },
+      {
+        "description": "should handle uniqueItems",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["a", "b", "c", "d", "e"]
+          },
+          "uniqueItems": true,
+          "maxItems": 3,
+          "minItems": 2
+        },
+        "valid": true
+      }
+    ]
+  }
+]
