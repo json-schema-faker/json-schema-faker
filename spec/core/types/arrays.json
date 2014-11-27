@@ -59,6 +59,24 @@
           "minItems": 2
         },
         "valid": true
+      },
+      {
+        "description": "should handle fixed arrays",
+        "schema": {
+          "type": "array",
+          "items": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "valid": true
       }
     ]
   }
