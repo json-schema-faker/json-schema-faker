@@ -18,6 +18,14 @@
           "maxLength": 30
         },
         "valid": true
+      },
+      {
+        "description": "should handle pattern",
+        "schema": {
+          "type": "string",
+          "pattern": "\\w+@\\w+\\.\\w+"
+        },
+        "valid": true
       }
     ]
   }

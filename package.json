@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "deref": "^0.2.5",
-    "faker": "^2.0.1"
+    "faker": "^2.0.1",
+    "randexp": "^0.4.0"
   }
 }
