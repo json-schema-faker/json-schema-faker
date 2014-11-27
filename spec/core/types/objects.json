@@ -52,6 +52,14 @@
           "maxProperties": 2
         },
         "valid": true
+      },
+      {
+        "description": "should handle additionalProperties",
+        "schema": {
+          "type": "object",
+          "additionalProperties": { "type": "string" }
+        },
+        "valid": true
       }
     ]
   }
