@@ -32,4 +32,9 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             expect(sample).toHaveType test.type
 
           if test.valid
-            expect(sample).toHaveSchema schema, refs
+            try
+              expect(sample).toHaveSchema schema, refs
+            catch e
+              console.log JSON.stringify(schema, null, 2)
+              console.log JSON.stringify(sample, null, 2)
+              throw e
