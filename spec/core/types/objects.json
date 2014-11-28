@@ -57,6 +57,8 @@
         "description": "should handle additionalProperties",
         "schema": {
           "type": "object",
+          "minProperties": 20,
+          "maxProperties": 30,
           "additionalProperties": { "type": "string" }
         },
         "valid": true
