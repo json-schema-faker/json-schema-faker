@@ -49,7 +49,7 @@ Supported keywords
 
 - **$ref** &mdash; Resolve internal references only, and/or external if provided.
 - **required** &mdash; All required properties are guaranteed, if not can be omitted.
-- **pattern**
+- **pattern** &mdash; Generate samples based on RegExp values.
 - **format** &mdash; Core formats only: date-time, email, hostname, ipv4, ipv6 and uri.
 - **enum** &mdash; Returns any of these enumerated values.
 - **minLength/maxLength** &mdash; Applies length constraints to string values.
@@ -67,10 +67,41 @@ Supported keywords
 - **additionalProperties** &mdash; Partially supported (?)
 - **dependencies** &mdash; Not supported yet (?)
 
+Using references
+----------------
+
+Inline references are fully supported (json-pointers) but external can't be resolved by `json-schema-faker`.
+
+In order to achieve that you can use [refaker](https://github.com/gextech/refaker) and then use the resolved schemas:
+
+```javascript
+var schema = {
+  type: 'object',
+  properties: {
+    someValue: {
+      $ref: 'otherSchema'
+    }
+  }
+};
+
+var refs = [
+  {
+    id: 'otherSchema',
+    type: 'string'
+  }
+];
+
+var sample = jsf(schema, refs);
+
+console.log(sample.someValue);
+// output: voluptatem
+```
+
+
 Faking values
 -------------
 
-In order to get human-friendly samples you can use the **faker** property on each subschema:
+Generated human-friendly samples by using **faker** property on each subschema:
 
 ```json
 {
@@ -100,3 +131,8 @@ Actually, I've found some projects or services:
 - https://github.com/murgatroid99/json-schema-random-instance
 
 But are incomplete or has limited support for some keywords, so I decided to code this library.
+
+Issues
+------
+
+Any contribution is well received.
