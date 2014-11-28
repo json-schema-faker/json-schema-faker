@@ -60,6 +60,24 @@
           "required": ["a", "b", "c", "d", "e", "f"]
         },
         "valid": true
+      },
+      {
+        "description": "should handle format (faker)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "faker": "name.findName"
+            },
+            "email": {
+              "type": "string",
+              "faker": "internet.email"
+            }
+          },
+          "required": ["name", "email"]
+        },
+        "valid": true
       }
     ]
   }
