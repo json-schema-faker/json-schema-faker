@@ -66,6 +66,7 @@ Supported keywords
 - **patternProperties** &mdash; RegExp-based object properties.
 - **additionalProperties** &mdash; Partially supported (?)
 - **dependencies** &mdash; Not supported yet (?)
+- **not** &mdash; Not supported yet (?)
 
 Using references
 ----------------
