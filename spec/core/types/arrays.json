@@ -86,8 +86,7 @@
           "maxItems": 30,
           "additionalItems": { "type": ["string", "boolean"] }
         },
-        "valid": true,
-        "debug": 1
+        "valid": true
       }
     ]
   }
