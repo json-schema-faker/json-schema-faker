@@ -102,7 +102,7 @@ console.log(sample.someValue);
 Faking values
 -------------
 
-Generated human-friendly samples by using **faker** property on each subschema:
+Generate human-friendly samples by using **faker** property on each subschema:
 
 ```json
 {
