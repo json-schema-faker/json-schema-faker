@@ -1,0 +1,15 @@
+[
+  {
+    "description": "using formats",
+    "tests": [
+      {
+        "description": "should support core only",
+        "schema": {
+          "type": "string",
+          "format": "not_exists"
+        },
+        "throws": true
+      }
+    ]
+  }
+]
