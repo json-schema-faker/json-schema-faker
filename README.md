@@ -3,6 +3,8 @@ Fake your schemas!
 
 [![Build Status](https://travis-ci.org/pateketrueke/json-schema-faker.png?branch=master)](https://travis-ci.org/pateketrueke/json-schema-faker) [![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)  [![Coverage Status](https://coveralls.io/repos/pateketrueke/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/pateketrueke/json-schema-faker?branch=master)
 
+`json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only (?)
+
 ```javascript
 var jsf = require('json-schema-faker');
 
@@ -98,11 +100,12 @@ console.log(sample.someValue);
 // output: voluptatem
 ```
 
-
 Faking values
 -------------
 
-Generate human-friendly samples by using **faker** property on each subschema:
+`json-schema-faker` supports [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) sample generators.
+
+Use the **faker** or **chance** property on each subschema for this:
 
 ```json
 {
@@ -117,7 +120,31 @@ The above schema will invoke:
 require('faker').internet.email();
 ```
 
-Not that **faker** property has higher precedence than **format**.
+Another example is passing arguments to the generator:
+
+```json
+{
+  "type": "string",
+  "chance": {
+    "email": {
+      "domain": "fake.com"
+    }
+  }
+}
+```
+
+And will invoke:
+
+```javascript
+var Chance = require('chance'),
+  chance = new Chance();
+
+chance.email({ "domain": "fake.com" });
+```
+
+If you pass an array, they will be used as raw arguments.
+
+Note that both generators has higher precedence than **format**.
 
 Great, Why?
 -----------
@@ -125,13 +152,14 @@ Great, Why?
 Actually, I've found some projects or services:
 
 - http://www.json-generator.com/
+- https://github.com/unindented/fake-json
 - https://github.com/jonahkagan/schematic-ipsum
 - https://www.npmjs.org/package/json-schema-mock
 - https://github.com/thaume/json-schema-processor
 - https://github.com/andreineculau/json-schema-random
 - https://github.com/murgatroid99/json-schema-random-instance
 
-But are incomplete or has limited support for some keywords, so I decided to code this library.
+Many of they are incomplete (?), so I decided to code this library.
 
 Issues
 ------
