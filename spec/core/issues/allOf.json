@@ -1,0 +1,54 @@
+[
+  {
+    "description": "sub-schema mixins",
+    "schemas": [
+      {
+        "type": "object",
+        "definitions": {
+          "inner": {
+            "aString": {
+              "allOf": [
+                { "type": "string" },
+                { "$ref": "#/definitions/rules" }
+              ]
+            }
+          },
+          "rules": {
+            "allOf": [
+              { "$ref": "#/definitions/twoChars" },
+              { "$ref": "#/definitions/asEmail" }
+            ]
+          },
+          "twoChars": {
+            "minLength": 10
+          },
+          "asEmail": {
+            "faker": "internet.email"
+          }
+        },
+        "properties": {
+          "anArray": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "allOf": [
+                  { "$ref": "#/definitions/inner" }
+                ]
+              },
+              "required": ["aString"]
+            }
+          }
+        },
+        "required": ["anArray"]
+      }
+    ],
+    "tests": [
+      {
+        "description": "should combine recursively",
+        "schema": "schemas.0",
+        "valid": true
+      }
+    ]
+  }
+]
