@@ -103,9 +103,9 @@ console.log(sample.someValue);
 Faking values
 -------------
 
-`json-schema-faker` supports [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) sample generators.
+`json-schema-faker` has built-in generators for core-formats, [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
 
-Use the **faker** or **chance** property on each subschema for this:
+You can use **faker** or **chance** properties but they are optional:
 
 ```json
 {
