@@ -9,6 +9,14 @@
           "format": "not_exists"
         },
         "throws": true
+      },
+      {
+        "description": "should support custom formats",
+        "schema": {
+          "type": "string",
+          "format": "semver"
+        },
+        "valid": true
       }
     ]
   }

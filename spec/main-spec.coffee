@@ -2,6 +2,8 @@ fs = require('fs')
 glob = require('glob')
 jsfaker = require('../lib')
 
+require('./formats').register(jsfaker)
+
 pick = (obj, key) ->
   parts = key.split('.')
   obj = obj[parts.shift()] while parts.length

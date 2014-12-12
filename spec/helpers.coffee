@@ -3,6 +3,10 @@ clone = require('clone')
 ZSchema = require('z-schema')
 JaySchema = require('jayschema')
 
+formatValidators = require('./formats').validate
+
+[tv4, ZSchema].map formatValidators
+
 jasmine.Matchers::toHaveType = (expected) ->
   if Object::toString.call(@actual).match(/object (\w+)/)[1].toLowerCase() isnt expected
     throw "Expected #{JSON.stringify @actual} to have #{expected} type"
@@ -16,7 +20,6 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
     ignoreUnresolvableReferences: false
 
   validator.setRemoteReference(schema.id, clone(schema)) for schema in refs if refs
-
   valid = validator.validate @actual, clone(expected)
 
   if errors = validator.getLastErrors() or not valid
@@ -41,6 +44,9 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
   throw result.error if result.error
 
   jay = new JaySchema
+
+  formatValidators jay
+
   jay.register(clone(schema), schema.id) for schema in refs if refs
 
   result = jay.validate @actual, clone(expected)
