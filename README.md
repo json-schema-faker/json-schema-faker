@@ -146,6 +146,43 @@ If you pass an array, they will be used as raw arguments.
 
 Note that both generators has higher precedence than **format**.
 
+Custom formats
+--------------
+
+Additionally, you can add custom generators for those:
+
+```javascript
+jsf.formats('semver', function(gen, schema) {
+  return gen.randexp('^\\d\\.\\d\\.\\d{1,2}$');
+});
+```
+
+Now that format can be generated:
+
+```json
+{
+  "type": "string",
+  "format": "semver"
+}
+```
+
+Usage:
+
+- **formats()** &mdash; Return all registered formats (custom only)
+- **formats(obj)** &mdash; Register formats by key/value &rarr; name/callback
+- **formats(name)** &mdash; Returns that format generator (undefined if not exists)
+- **formats(name, callback)** &mdash; Register a custom format by name/callback
+
+Callback:
+
+- **gen** (object) &mdash; Built in generators
+  - **faker** (object) &mdash; Faker.js instance
+  - **chance** (object) &mdash; Chance.js instance
+  - **randexp** (function) &mdash; Randexp generator
+- **schema** (object) &mdash; The schema for input
+
+Note that custom generators has lower precedence than core ones.
+
 Great, Why?
 -----------
 
