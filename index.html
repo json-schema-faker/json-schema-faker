@@ -1,1 +1,23 @@
-<h1>It works!</h1>
+<html>
+  <head>
+    <title>Fake your JSON-Schemas!</title>
+    <style>
+    button, textarea {
+      font-size: 1.1em;
+      display: block;
+      width: 100%;
+    }
+
+    button {
+      font-size: 1.3em;
+      padding: .5em;
+    }
+    </style>
+  </head>
+  <body>
+    <textarea id="input_schema" cols="100" rows="20"></textarea>
+    <textarea id="output_sample" cols="100" rows="20"></textarea>
+    <button id="generate_sample">Generate sample</button>
+    <script src="bundle.js"></script>
+  </body>
+</html>
