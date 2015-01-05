@@ -14,6 +14,19 @@
           "required": ["type"]
         },
         "valid": true
+      },
+      {
+        "description": "should allow enum-keyword",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "enum": {
+              "type": "boolean"
+            }
+          },
+          "required": ["enum"]
+        },
+        "valid": true
       }
     ]
   }
