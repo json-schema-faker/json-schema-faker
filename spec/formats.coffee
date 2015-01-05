@@ -4,7 +4,7 @@ module.exports =
   register: (jsf) ->
     jsf.formats
       semver: (gen, schema) ->
-        gen.randexp '\\d\\.\\d\\.\\d{1,2}'
+        gen.randexp '\\d\\.\\d\\.[1-9]\\d?'
 
   validate: (v) ->
     registry = v.addFormat or v.registerFormat
