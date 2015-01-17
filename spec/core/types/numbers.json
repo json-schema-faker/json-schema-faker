@@ -51,6 +51,31 @@
           "exclusiveMaximum": true
         },
         "valid": true
+      },
+      {
+        "description": "should validate numeric minimum",
+        "schema": {
+          "type": "number",
+          "minimum": []
+        },
+        "throws": "value .+? is not-a-number"
+      },
+      {
+        "description": "should validate numeric maximum",
+        "schema": {
+          "type": "number",
+          "maximum": []
+        },
+        "throws": "value .+? is not-a-number"
+      },
+      {
+        "description": "should validate between ranges",
+        "schema": {
+          "type": "number",
+          "minimum": 100,
+          "maximum": 50
+        },
+        "throws": "invalid range between: 100, 50"
       }
     ]
   }

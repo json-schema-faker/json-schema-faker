@@ -87,6 +87,17 @@
           "additionalItems": { "type": ["string", "boolean"] }
         },
         "valid": true
+      },
+      {
+        "description": "should validate items using all options",
+        "schema": {
+          "type": "array",
+          "minItems": 20,
+          "maxItems": 30,
+          "uniqueItems": true,
+          "additionalItems": false
+        },
+        "throws": "missing items for .+? in \\/"
       }
     ]
   }

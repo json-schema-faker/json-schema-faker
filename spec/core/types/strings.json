@@ -101,6 +101,22 @@
           "required": ["userId", "emailAddr"]
         },
         "valid": true
+      },
+      {
+        "description": "should validate core formats",
+        "schema": {
+          "type": "string",
+          "format": "unknown"
+        },
+        "throws": "unknown generator for .+?"
+      },
+      {
+        "description": "should validate custom formats",
+        "schema": {
+          "type": "string",
+          "faker": "not.exists"
+        },
+        "throws": "unknown faker-generator for .+?"
       }
     ]
   }

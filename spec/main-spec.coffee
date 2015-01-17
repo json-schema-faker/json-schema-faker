@@ -25,13 +25,19 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             else
               ref
 
+          error = ''
+
           sample = try
             jsfaker(schema, refs)
           catch e
+            error = e.message
             throw e unless test.throws
 
           if test.type
             expect(sample).toHaveType test.type
+
+          if typeof test.throws is 'string'
+            expect(error).toMatch new RegExp('^' + test.throws + '$', 'i')
 
           if test.valid
             try

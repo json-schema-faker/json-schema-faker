@@ -62,6 +62,16 @@
           "additionalProperties": { "type": "string" }
         },
         "valid": true
+      },
+      {
+        "description": "should validate properties using all options",
+        "schema": {
+          "type": "object",
+          "minProperties": 20,
+          "maxProperties": 30,
+          "additionalProperties": false
+        },
+        "throws": "missing properties for .+? in \\/"
       }
     ]
   }
