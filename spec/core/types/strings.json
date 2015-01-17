@@ -105,18 +105,28 @@
       {
         "description": "should validate core formats",
         "schema": {
-          "type": "string",
-          "format": "unknown"
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "string",
+              "format": "unknown"
+            }
+          }
         },
-        "throws": "unknown generator for .+?"
+        "throws": "unknown generator for .+? in \\/properties\\/test"
       },
       {
         "description": "should validate custom formats",
         "schema": {
-          "type": "string",
-          "faker": "not.exists"
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "string",
+              "faker": "not.exists"
+            }
+          }
         },
-        "throws": "unknown faker-generator for .+?"
+        "throws": "unknown faker-generator for .+? in \\/properties\\/test"
       }
     ]
   }
