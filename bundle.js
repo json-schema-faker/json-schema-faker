@@ -1,4 +1,4 @@
-(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({"/Users/pate/Library/NodeJS/json-schema-faker/bower_components/jquery/dist/jquery.js":[function(require,module,exports){
+(function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.3
  * http://jquery.com/
@@ -9205,7 +9205,7 @@ return jQuery;
 
 }));
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/main.js":[function(require,module,exports){
+},{}],2:[function(require,module,exports){
 var $ = require('./bower_components/jquery/dist/jquery.js');
 
 var jsf = require('json-schema-faker');
@@ -9220,530 +9220,7 @@ generate.on('click', function() {
   output.val(JSON.stringify(jsf(schema), null, 2));
 })
 
-},{"./bower_components/jquery/dist/jquery.js":"/Users/pate/Library/NodeJS/json-schema-faker/bower_components/jquery/dist/jquery.js","json-schema-faker":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/index.js":[function(require,module,exports){
-'use strict';
-
-var traverse = require('./util/traverse'),
-    formats = require('./util/formats');
-
-var deref = require('deref');
-
-function generate(schema, refs) {
-  var $ = deref();
-
-  if (Array.isArray(refs)) {
-    return traverse($(schema, refs, true));
-  } else {
-    $.refs = refs || {};
-  }
-
-  return traverse($(schema, true));
-}
-
-generate.formats = formats;
-
-module.exports = generate;
-
-},{"./util/formats":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/formats.js","./util/traverse":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/traverse.js","deref":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/array.js":[function(require,module,exports){
-'use strict';
-
-var random = require('../util/random'),
-    traverse = require('../util/traverse'),
-    hasProps = require('../util/has-props');
-
-function unique(set, value, sample) {
-  var tmp = [],
-      seen = [];
-
-  function walk(obj) {
-    var json = JSON.stringify(obj);
-
-    if (seen.indexOf(json) === -1) {
-      seen.push(json);
-      tmp.push(obj);
-    }
-  }
-
-  set.forEach(walk);
-
-  // TODO: find a better solution?
-  var limit = 100;
-
-  while (tmp.length !== set.length) {
-    walk(traverse(value.items || sample));
-
-    if (!limit--) {
-      break;
-    }
-  }
-
-  return tmp;
-}
-
-module.exports = function(value) {
-  var items = [];
-
-  if (!(value.items || value.additionalItems)) {
-    if (hasProps(value, 'minItems', 'maxItems', 'uniqueItems')) {
-      throw new Error('Missing items for array "' + JSON.stringify(value) + '"');
-    }
-
-    return items;
-  }
-
-  if (Array.isArray(value.items)) {
-    return Array.prototype.concat.apply(items, value.items.map(traverse));
-  }
-
-  var length = random(value.minItems, value.maxItems, 1, 5),
-      sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
-
-  for (var current = items.length; current < length; current += 1) {
-    items.push(traverse(value.items || sample));
-  }
-
-  if (value.uniqueItems) {
-    return unique(items, value, sample);
-  }
-
-  return items;
-};
-
-},{"../util/has-props":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/has-props.js","../util/random":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/random.js","../util/traverse":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/traverse.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/boolean.js":[function(require,module,exports){
-'use strict';
-
-module.exports = function() {
-  return Math.random() > 0.5;
-};
-
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/integer.js":[function(require,module,exports){
-'use strict';
-
-var number = require('./number');
-
-module.exports = function(value) {
-  return Math.floor(number(value));
-};
-
-},{"./number":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/number.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/null.js":[function(require,module,exports){
-'use strict';
-
-module.exports = function() {
-  return null;
-};
-
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/number.js":[function(require,module,exports){
-'use strict';
-
-var MIN_INTEGER = -100000000,
-    MAX_INTEGER = 100000000;
-
-var random = require('../util/random');
-
-module.exports = function(value) {
-  var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
-      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
-
-  if (value.exclusiveMinimum && value.minimum) {
-    min += 1;
-  }
-
-  if (value.exclusiveMaximum && value.maximum) {
-    max -= 1;
-  }
-
-  if (value.multipleOf) {
-    var base = random(Math.floor(min / value.multipleOf), Math.floor(max / value.multipleOf)) * value.multipleOf;
-
-    while (base < min) {
-      base += value.multipleOf;
-    }
-
-    return base;
-  }
-
-  return random(min, max);
-};
-
-},{"../util/random":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/random.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/object.js":[function(require,module,exports){
-'use strict';
-
-var faker = require('faker'),
-    Randexp = require('randexp');
-
-var random = require('../util/random'),
-    traverse = require('../util/traverse'),
-    hasProps = require('../util/has-props');
-
-module.exports = function(value) {
-  var props = {};
-
-  if (!(value.properties || value.patternProperties || value.additionalProperties)) {
-    if (hasProps(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
-      throw new Error('Missing properties for object "' + JSON.stringify(value) + '"');
-    }
-
-    return props;
-  }
-
-  var reqs = value.required || [],
-      base = value.properties ? Object.keys(value.properties) : [];
-
-  reqs.forEach(function(key, index) {
-    if (value.properties && value.properties[key]) {
-      props[key] = value.properties[key];
-    }
-
-    base.splice(index, 1);
-  });
-
-  if (value.patternProperties) {
-    base = Array.prototype.concat.apply(base, Object.keys(value.patternProperties));
-  }
-
-  var length = random(value.minProperties, value.maxProperties, 1, 5);
-
-  random.shuffle(base).slice(0, length).forEach(function(key) {
-    if (value.properties && value.properties[key]) {
-      props[key] = value.properties[key];
-    } else {
-      props[Randexp.randexp(key)] = value.patternProperties[key];
-    }
-  });
-
-  if (value.minProperties || value.maxProperties || value.additionalProperties) {
-    var current = Object.keys(props).length;
-
-    if (current < length) {
-      var sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
-
-      faker.lorem.words(length - current).forEach(function(key) {
-        props[key + Randexp.randexp('\\w{1,10}')] = sample;
-      });
-    }
-  }
-
-  return traverse(props);
-};
-
-},{"../util/has-props":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/has-props.js","../util/random":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/random.js","../util/traverse":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/traverse.js","faker":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","randexp":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/lib/randexp.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/string.js":[function(require,module,exports){
-'use strict';
-
-var faker = require('faker'),
-    Chance = require('chance'),
-    Randexp = require('randexp');
-
-var chance = new Chance(),
-    randexp = Randexp.randexp;
-
-var random = require('../util/random'),
-    formats = require('../util/formats');
-
-var regexps = {
-  email: '[a-zA-Z\\d][a-zA-Z\\d.-]{1,13}[a-zA-Z\\d]@{hostname}',
-  hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
-  ipv6: '[abcdef\\d]{4}(:[abcdef\\d]{4}){7}',
-  uri: '[a-zA-Z\\d_][\\w\\\/\\d_-]{1,40}'
-};
-
-function get(obj, key) {
-  var parts = key.split('.');
-
-  while (parts.length) {
-    var prop = parts.shift();
-
-    if (!obj[prop]) {
-      break;
-    }
-
-    obj = obj[prop];
-  }
-
-  return obj;
-}
-
-function generate(value) {
-  if (value.use) {
-    var args = [],
-        path = value.key;
-
-    if (typeof path === 'object') {
-      path = Object.keys(path)[0];
-
-      if (Array.isArray(value.key[path])) {
-        args = value.key[path];
-      } else {
-        args.push(value.key[path]);
-      }
-    }
-
-    var gen = get(value.gen, path);
-
-    if (typeof gen !== 'function') {
-      throw new Error('Unknown ' + value.use + '-generator for ' + JSON.stringify(value.key));
-    }
-
-    return gen.apply(value.gen, args);
-  }
-
-  switch (value.format) {
-    case 'date-time':
-      return new Date(random(0, 100000000000000)).toISOString();
-
-    case 'email':
-    case 'hostname':
-    case 'ipv6':
-    case 'uri':
-      return randexp(regexps[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
-        return randexp(regexps[key]);
-      });
-
-    case 'ipv4':
-      return [0, 0, 0, 0].map(function() {
-        return random(0, 255);
-      }).join('.');
-
-    default:
-      var callback = formats(value.format);
-
-      if (typeof callback !== 'function') {
-        throw new Error('Unknown generator for ' + JSON.stringify(value.format));
-      }
-
-      var generators = {
-        faker: faker,
-        chance: chance,
-        randexp: randexp
-      };
-
-      return callback(generators, value);
-  }
-}
-
-module.exports = function(value) {
-  if (value.faker || value.chance) {
-    return generate({
-      use: value.faker ? 'faker' : 'chance',
-      gen: value.faker ? faker : chance,
-      key: value.faker || value.chance
-    });
-  }
-
-  if (value.format) {
-    return generate(value);
-  }
-
-  if (value.pattern) {
-    return randexp(value.pattern);
-  }
-
-  if (value.minLength || value.maxLength) {
-    var min = Math.max(0, value.minLength || 0),
-        max = random(min, value.maxLength);
-
-    return randexp('.{' + min + ',' + max + '}');
-  }
-
-  return faker.lorem.words(random(1, 5)).join(' ');
-};
-
-},{"../util/formats":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/formats.js","../util/random":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/random.js","chance":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/chance/chance.js","faker":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","randexp":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/lib/randexp.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/combine.js":[function(require,module,exports){
-'use strict';
-
-function combine(target) {
-  var props = Array.prototype.slice.call(arguments, 1);
-
-  props.forEach(function(obj) {
-    for (var key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        target[key] = obj[key];
-      }
-    }
-  });
-}
-
-module.exports = combine;
-
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/formats.js":[function(require,module,exports){
-'use strict';
-
-var registry = {};
-
-module.exports = function(name, callback) {
-  if (callback) {
-    registry[name] = callback;
-  } else if (typeof name === 'object') {
-    for (var method in name) {
-      registry[method] = name[method];
-    }
-  } else {
-    return registry[name];
-  }
-
-  return registry;
-};
-
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/has-props.js":[function(require,module,exports){
-'use strict';
-
-module.exports = function(obj) {
-  return Array.prototype.slice.call(arguments, 1).filter(function(key) {
-    return typeof obj[key] !== 'undefined';
-  }).length > 0;
-};
-
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/primitives.js":[function(require,module,exports){
-'use strict';
-
-module.exports = {
-  array: require('../types/array'),
-  boolean: require('../types/boolean'),
-  integer: require('../types/integer'),
-  number: require('../types/number'),
-  null: require('../types/null'),
-  object: require('../types/object'),
-  string: require('../types/string')
-};
-
-},{"../types/array":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/array.js","../types/boolean":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/boolean.js","../types/integer":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/integer.js","../types/null":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/null.js","../types/number":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/number.js","../types/object":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/object.js","../types/string":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/types/string.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/random.js":[function(require,module,exports){
-'use strict';
-
-var faker = require('faker');
-
-var random = module.exports = function(min, max, defMin, defMax) {
-  defMin = typeof defMin === 'undefined' ? random.MIN_NUMBER : defMin;
-  defMax = typeof defMax === 'undefined' ? random.MAX_NUMBER : defMax;
-
-  min = typeof min === 'undefined' ? defMin : min;
-  max = typeof max === 'undefined' ? defMax : max;
-
-  if (min !== +min) {
-    throw new RangeError('Value ' + JSON.stringify(min) + ' is not-a-number');
-  }
-
-  if (max !== +max) {
-    throw new RangeError('Value ' + JSON.stringify(min) + ' is not-a-number');
-  }
-
-  if (max < min) {
-    throw new RangeError('Invalid range between: ' + min + ', ' + max);
-  }
-
-  return faker.random.number({
-    min: min,
-    max: Math.max(max, min + 1)
-  });
-};
-
-random.shuffle = function(obj) {
-  var copy = obj.slice(),
-      length = obj.length;
-
-  for (; length > 0;) {
-    var key = Math.floor(Math.random() * length),
-        tmp = copy[--length];
-
-    copy[length] = copy[key];
-    copy[key] = tmp;
-  }
-
-  return copy;
-};
-
-random.pick = function(obj) {
-  return obj[Math.floor(Math.random() * obj.length)];
-};
-
-random.MIN_NUMBER = -100;
-random.MAX_NUMBER = 100;
-
-},{"faker":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/traverse.js":[function(require,module,exports){
-'use strict';
-
-var random = require('./random'),
-    combine = require('./combine');
-
-function reduce(obj) {
-  var mix = obj.allOf || obj.anyOf || obj.oneOf;
-
-  if (!(mix && mix.length)) {
-    for (var key in obj) {
-      var value = obj[key];
-
-      if (typeof value === 'object' && !(key === 'enum' || key === 'required')) {
-        reduce(value);
-      }
-    }
-
-    return;
-  }
-
-  if ((obj.oneOf || obj.anyOf) && mix.length) {
-    mix = [random.pick(mix)];
-  }
-
-  delete obj.allOf;
-  delete obj.anyOf;
-  delete obj.oneOf;
-
-  var fixed = {};
-
-  mix.forEach(function(value) {
-    combine(fixed, value);
-  });
-
-  combine(obj, fixed);
-
-  while (obj.allOf || obj.anyOf || obj.oneOf) {
-    reduce(obj);
-  }
-}
-
-function traverse(obj) {
-  var primitives = require('./primitives');
-
-  var copy = {};
-
-  if (Array.isArray(obj)) {
-    copy = [];
-  }
-
-  reduce(obj);
-
-  if (obj.enum) {
-    return random.pick(obj.enum);
-  }
-
-  if (obj.type) {
-    var type = obj.type;
-
-    if (Array.isArray(type)) {
-      type = random.pick(type);
-    }
-
-    if (!primitives[type]) {
-      throw new Error('Unknown primitive "' + type + '"');
-    }
-
-    return primitives[type](obj);
-  }
-
-  for (var key in obj) {
-    var value = obj[key];
-
-    if (typeof value === 'object') {
-      copy[key] = traverse(value);
-    } else {
-      copy[key] = value;
-    }
-  }
-
-  return copy;
-}
-
-module.exports = traverse;
-
-},{"./combine":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/combine.js","./primitives":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/primitives.js","./random":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/lib/util/random.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/chance/chance.js":[function(require,module,exports){
+},{"./bower_components/jquery/dist/jquery.js":1,"json-schema-faker":54}],3:[function(require,module,exports){
 //  Chance.js 0.6.4
 //  http://chancejs.com
 //  (c) 2013 Victor Quinn
@@ -11590,7 +11067,7 @@ module.exports = traverse;
     }
 })();
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/index.js":[function(require,module,exports){
+},{}],4:[function(require,module,exports){
 'use strict';
 
 var $ = require('./util/uri-helpers');
@@ -11651,7 +11128,7 @@ var instance = module.exports = function() {
 
 instance.util = $;
 
-},{"./util/find-reference":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/find-reference.js","./util/normalize-schema":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/normalize-schema.js","./util/resolve-schema":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/resolve-schema.js","./util/uri-helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/uri-helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/clone-obj.js":[function(require,module,exports){
+},{"./util/find-reference":6,"./util/normalize-schema":7,"./util/resolve-schema":8,"./util/uri-helpers":9}],5:[function(require,module,exports){
 'use strict';
 
 var clone = module.exports = function(obj) {
@@ -11678,7 +11155,7 @@ var clone = module.exports = function(obj) {
   return target;
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/find-reference.js":[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -11728,7 +11205,7 @@ var find = module.exports = function(id, refs) {
   return target;
 };
 
-},{"./uri-helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/uri-helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/normalize-schema.js":[function(require,module,exports){
+},{"./uri-helpers":9}],7:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -11778,7 +11255,7 @@ module.exports = function(fakeroot, schema, push) {
   return copy;
 };
 
-},{"./clone-obj":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/clone-obj.js","./uri-helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/uri-helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/resolve-schema.js":[function(require,module,exports){
+},{"./clone-obj":5,"./uri-helpers":9}],8:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -11830,7 +11307,7 @@ module.exports = function(obj, refs, expand) {
   return clone(obj, refs, false, expand);
 };
 
-},{"./find-reference":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/find-reference.js","./uri-helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/uri-helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/deref/lib/util/uri-helpers.js":[function(require,module,exports){
+},{"./find-reference":6,"./uri-helpers":9}],9:[function(require,module,exports){
 'use strict';
 
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
@@ -11929,7 +11406,7 @@ module.exports = {
   getDocumentURI: getDocumentURI
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js":[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 /*
 
    this index.js file is used for including the faker library as a CommonJS module, instead of a bundle
@@ -12003,7 +11480,7 @@ Object.keys(_definitions).forEach(function(d){
     });
   });
 });
-},{"./lib/address":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/address.js","./lib/company":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/company.js","./lib/date":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/date.js","./lib/finance":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/finance.js","./lib/hacker":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/hacker.js","./lib/helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/helpers.js","./lib/image":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/image.js","./lib/internet":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/internet.js","./lib/locales":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales.js","./lib/lorem":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/lorem.js","./lib/name":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/name.js","./lib/phone_number":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/phone_number.js","./lib/random":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/random.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/address.js":[function(require,module,exports){
+},{"./lib/address":11,"./lib/company":12,"./lib/date":13,"./lib/finance":14,"./lib/hacker":15,"./lib/helpers":16,"./lib/image":17,"./lib/internet":18,"./lib/locales":19,"./lib/lorem":47,"./lib/name":48,"./lib/phone_number":49,"./lib/random":50}],11:[function(require,module,exports){
 var Helpers = require('./helpers');
 var faker = require('../index');
 
@@ -12112,7 +11589,7 @@ var address = {
 
 module.exports = address;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","./helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/company.js":[function(require,module,exports){
+},{"../index":10,"./helpers":16}],12:[function(require,module,exports){
 var faker = require('../index');
 
 var company = {
@@ -12176,7 +11653,7 @@ var company = {
 
 module.exports = company;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/date.js":[function(require,module,exports){
+},{"../index":10}],13:[function(require,module,exports){
 var faker = require("../index");
 
 var date = {
@@ -12234,7 +11711,7 @@ var date = {
 };
 module.exports = date;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/finance.js":[function(require,module,exports){
+},{"../index":10}],14:[function(require,module,exports){
 var Helpers = require('./helpers'),
     faker = require('../index');
 
@@ -12322,7 +11799,7 @@ var finance = {
 };
 
 module.exports = finance;
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","./helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/hacker.js":[function(require,module,exports){
+},{"../index":10,"./helpers":16}],15:[function(require,module,exports){
 var faker = require('../index');
 
 var hacker = {
@@ -12376,7 +11853,7 @@ var hacker = {
 
 module.exports = hacker;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/helpers.js":[function(require,module,exports){
+},{"../index":10}],16:[function(require,module,exports){
 var faker = require('../index');
 
 // backword-compatibility
@@ -12555,7 +12032,7 @@ String.prototype.capitalize = function () { //v1.0
 */
 
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/image.js":[function(require,module,exports){
+},{"../index":10}],17:[function(require,module,exports){
 var faker = require('../index');
 
 var image = {
@@ -12619,7 +12096,7 @@ var image = {
 
 module.exports = image;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/internet.js":[function(require,module,exports){
+},{"../index":10}],18:[function(require,module,exports){
 var faker = require('../index'),
     password_generator = require('../vendor/password-generator.js'),
     random_ua = require('../vendor/user-agent');
@@ -12713,7 +12190,7 @@ var internet = {
 
 module.exports = internet;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","../vendor/password-generator.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/vendor/password-generator.js","../vendor/user-agent":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/vendor/user-agent.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales.js":[function(require,module,exports){
+},{"../index":10,"../vendor/password-generator.js":52,"../vendor/user-agent":53}],19:[function(require,module,exports){
 var faker = require('../index');
 exports['de'] = require('./locales/de.js');
 exports['de_AT'] = require('./locales/de_AT.js');
@@ -12742,7 +12219,7 @@ exports['sk'] = require('./locales/sk.js');
 exports['sv'] = require('./locales/sv.js');
 exports['vi'] = require('./locales/vi.js');
 exports['zh_CN'] = require('./locales/zh_CN.js');
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","./locales/de.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/de.js","./locales/de_AT.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/de_AT.js","./locales/de_CH.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/de_CH.js","./locales/en.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en.js","./locales/en_AU.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_AU.js","./locales/en_BORK.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_BORK.js","./locales/en_CA.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_CA.js","./locales/en_GB.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_GB.js","./locales/en_IND.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_IND.js","./locales/en_US.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_US.js","./locales/en_au_ocker.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_au_ocker.js","./locales/es.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/es.js","./locales/fa.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/fa.js","./locales/fr.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/fr.js","./locales/it.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/it.js","./locales/ja.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/ja.js","./locales/ko.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/ko.js","./locales/nb_NO.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/nb_NO.js","./locales/nep.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/nep.js","./locales/nl.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/nl.js","./locales/pl.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/pl.js","./locales/pt_BR.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/pt_BR.js","./locales/ru.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/ru.js","./locales/sk.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/sk.js","./locales/sv.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/sv.js","./locales/vi.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/vi.js","./locales/zh_CN.js":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/zh_CN.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/de.js":[function(require,module,exports){
+},{"../index":10,"./locales/de.js":20,"./locales/de_AT.js":21,"./locales/de_CH.js":22,"./locales/en.js":23,"./locales/en_AU.js":24,"./locales/en_BORK.js":25,"./locales/en_CA.js":26,"./locales/en_GB.js":27,"./locales/en_IND.js":28,"./locales/en_US.js":29,"./locales/en_au_ocker.js":30,"./locales/es.js":31,"./locales/fa.js":32,"./locales/fr.js":33,"./locales/it.js":34,"./locales/ja.js":35,"./locales/ko.js":36,"./locales/nb_NO.js":37,"./locales/nep.js":38,"./locales/nl.js":39,"./locales/pl.js":40,"./locales/pt_BR.js":41,"./locales/ru.js":42,"./locales/sk.js":43,"./locales/sv.js":44,"./locales/vi.js":45,"./locales/zh_CN.js":46}],20:[function(require,module,exports){
 var de = {};
 module["exports"] = de;
 de.title = "German";
@@ -17283,7 +16760,7 @@ de.cell_phone = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/de_AT.js":[function(require,module,exports){
+},{}],21:[function(require,module,exports){
 var de_AT = {};
 module["exports"] = de_AT;
 de_AT.title = "German (Austria)";
@@ -20829,7 +20306,7 @@ de_AT.cell_phone = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/de_CH.js":[function(require,module,exports){
+},{}],22:[function(require,module,exports){
 var de_CH = {};
 module["exports"] = de_CH;
 de_CH.title = "German (Switzerland)";
@@ -20905,7 +20382,7 @@ de_CH.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en.js":[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var en = {};
 module["exports"] = en;
 en.title = "English";
@@ -29606,7 +29083,7 @@ en.finance.currency = {
     "symbol": ""
   }
 };
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_AU.js":[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 var en_AU = {};
 module["exports"] = en_AU;
 en_AU.title = "Australia (English)";
@@ -30209,7 +29686,7 @@ en_AU.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_BORK.js":[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 var en_BORK = {};
 module["exports"] = en_BORK;
 en_BORK.title = "Bork (English)";
@@ -30321,7 +29798,7 @@ en_BORK.lorem = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_CA.js":[function(require,module,exports){
+},{}],26:[function(require,module,exports){
 var en_CA = {};
 module["exports"] = en_CA;
 en_CA.title = "Canada (English)";
@@ -30401,7 +29878,7 @@ en_CA.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_GB.js":[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 var en_GB = {};
 module["exports"] = en_GB;
 en_GB.title = "Great Britain (English)";
@@ -30531,7 +30008,7 @@ en_GB.cell_phone = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_IND.js":[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 var en_IND = {};
 module["exports"] = en_IND;
 en_IND.title = "India (English)";
@@ -31513,7 +30990,7 @@ en_IND.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_US.js":[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 var en_US = {};
 module["exports"] = en_US;
 en_US.title = "United States (English)";
@@ -32162,7 +31639,7 @@ en_US.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/en_au_ocker.js":[function(require,module,exports){
+},{}],30:[function(require,module,exports){
 var en_au_ocker = {};
 module["exports"] = en_au_ocker;
 en_au_ocker.title = "Australia Ocker (English)";
@@ -32450,7 +31927,7 @@ en_au_ocker.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/es.js":[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 var es = {};
 module["exports"] = es;
 es.title = "Spanish";
@@ -34385,7 +33862,7 @@ es.cell_phone = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/fa.js":[function(require,module,exports){
+},{}],32:[function(require,module,exports){
 var fa = {};
 module["exports"] = fa;
 fa.title = "Farsi";
@@ -35267,7 +34744,7 @@ fa.name = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/fr.js":[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 var fr = {};
 module["exports"] = fr;
 fr.title = "French";
@@ -37416,7 +36893,7 @@ fr.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/it.js":[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 var it = {};
 module["exports"] = it;
 it.title = "Italian";
@@ -38811,7 +38288,7 @@ it.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/ja.js":[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 var ja = {};
 module["exports"] = ja;
 ja.title = "Japanese";
@@ -39009,7 +38486,7 @@ ja.name = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/ko.js":[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 var ko = {};
 module["exports"] = ko;
 ko.title = "Korean";
@@ -39358,7 +38835,7 @@ ko.name = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/nb_NO.js":[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 var nb_NO = {};
 module["exports"] = nb_NO;
 nb_NO.title = "Norwegian";
@@ -39908,7 +39385,7 @@ nb_NO.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/nep.js":[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 var nep = {};
 module["exports"] = nep;
 nep.title = "Nepalese";
@@ -40124,7 +39601,7 @@ nep.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/nl.js":[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 var nl = {};
 module["exports"] = nl;
 nl.title = "Dutch";
@@ -41746,7 +41223,7 @@ nl.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/pl.js":[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 var pl = {};
 module["exports"] = pl;
 pl.title = "Polish";
@@ -45828,7 +45305,7 @@ pl.cell_phone = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/pt_BR.js":[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 var pt_BR = {};
 module["exports"] = pt_BR;
 pt_BR.title = "Portuguese (Brazil)";
@@ -46592,7 +46069,7 @@ pt_BR.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/ru.js":[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 var ru = {};
 module["exports"] = ru;
 ru.title = "Russian";
@@ -47959,7 +47436,7 @@ ru.company = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/sk.js":[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 var sk = {};
 module["exports"] = sk;
 sk.title = "Slovakian";
@@ -52436,7 +51913,7 @@ sk.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/sv.js":[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 var sv = {};
 module["exports"] = sv;
 sv.title = "Swedish";
@@ -53079,7 +52556,7 @@ sv.team = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/vi.js":[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 var vi = {};
 module["exports"] = vi;
 vi.title = "Vietnamese";
@@ -53499,7 +52976,7 @@ vi.lorem = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/locales/zh_CN.js":[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 var zh_CN = {};
 module["exports"] = zh_CN;
 zh_CN.title = "Chinese";
@@ -53904,7 +53381,7 @@ zh_CN.phone_number = {
   ]
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/lorem.js":[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 var faker = require('../index');
 var Helpers = require('./helpers');
 
@@ -53950,7 +53427,7 @@ var lorem = {
 
 module.exports = lorem;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","./helpers":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/helpers.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/name.js":[function(require,module,exports){
+},{"../index":10,"./helpers":16}],48:[function(require,module,exports){
 var faker = require('../index');
 
 var _name = {
@@ -54009,7 +53486,7 @@ var _name = {
 
 module.exports = _name;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/phone_number.js":[function(require,module,exports){
+},{"../index":10}],49:[function(require,module,exports){
 var faker = require('../index');
 
 var phone = {
@@ -54032,7 +53509,7 @@ var phone = {
 
 module.exports = phone;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/lib/random.js":[function(require,module,exports){
+},{"../index":10}],50:[function(require,module,exports){
 var mersenne = require('../vendor/mersenne');
 var faker = require('../index');
 
@@ -54072,7 +53549,7 @@ var random = {
 
     },
 
-    // takes an array and returns the array randomly sorted
+    // takes an array and returns a random element of the array
     array_element: function (array) {
         array = array || ["a", "b", "c"];
         var r = faker.random.number({ max: array.length - 1 });
@@ -54086,12 +53563,22 @@ var random = {
         var key = faker.random.array_element(array);
 
         return field === "key" ? key : object[key];
+    },
+
+    uuid : function () {
+        var RFC4122_TEMPLATE = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx';
+        var replacePlaceholders = function (placeholder) {
+            var random = Math.random()*16|0;
+            var value = placeholder == 'x' ? random : (random &0x3 | 0x8);
+            return value.toString(16);
+        };
+        return RFC4122_TEMPLATE.replace(/[xy]/g, replacePlaceholders);
     }
 };
 
 module.exports = random;
 
-},{"../index":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/index.js","../vendor/mersenne":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/vendor/mersenne.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/vendor/mersenne.js":[function(require,module,exports){
+},{"../index":10,"../vendor/mersenne":51}],51:[function(require,module,exports){
 // this program is a JavaScript version of Mersenne Twister, with concealment and encapsulation in class,
 // an almost straight conversion from the original program, mt19937ar.c,
 // translated by y. okada on July 17, 2006.
@@ -54380,7 +53867,7 @@ exports.seed_array = function(A) {
 }
 
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/vendor/password-generator.js":[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 /*
  * password-generator
  * Copyright(c) 2011-2013 Bermi Ferrer <bermi@bermilabs.com>
@@ -54446,7 +53933,7 @@ exports.seed_array = function(A) {
 
   // Establish the root object, `window` in the browser, or `global` on the server.
 }(this));
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/faker/vendor/user-agent.js":[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 /*
 
 Copyright (c) 2012-2014 Jeffrey Mealo
@@ -54657,7 +54144,561 @@ exports.generate = function generate() {
     return browser[random[0]](random[1]);
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/lib/randexp.js":[function(require,module,exports){
+},{}],54:[function(require,module,exports){
+'use strict';
+
+var traverse = require('./util/traverse'),
+    formats = require('./util/formats');
+
+var deref = require('deref');
+
+function generate(schema, refs) {
+  var $ = deref();
+
+  try {
+    if (Array.isArray(refs)) {
+      return traverse($(schema, refs, true));
+    } else {
+      $.refs = refs || {};
+    }
+
+    return traverse($(schema, true));
+  } catch (e) {
+    if (e.path) {
+      throw new Error(e.message + ' in ' + '/' + e.path.join('/'));
+    } else {
+      throw e;
+    }
+  }
+}
+
+generate.formats = formats;
+
+module.exports = generate;
+
+},{"./util/formats":64,"./util/traverse":68,"deref":4}],55:[function(require,module,exports){
+'use strict';
+
+var random = require('../util/random'),
+    traverse = require('../util/traverse'),
+    hasProps = require('../util/has-props');
+
+var ParseError = require('../util/error');
+
+function unique(path, items, value, sample) {
+  var tmp = [],
+      seen = [];
+
+  function walk(obj) {
+    var json = JSON.stringify(obj);
+
+    if (seen.indexOf(json) === -1) {
+      seen.push(json);
+      tmp.push(obj);
+    }
+  }
+
+  items.forEach(walk);
+
+  // TODO: find a better solution?
+  var limit = 100;
+
+  while (tmp.length !== items.length) {
+    walk(traverse(value.items || sample, path));
+
+    if (!limit--) {
+      break;
+    }
+  }
+
+  return tmp;
+}
+
+module.exports = function(value, path) {
+  var items = [];
+
+  if (!(value.items || value.additionalItems)) {
+    if (hasProps(value, 'minItems', 'maxItems', 'uniqueItems')) {
+      throw new ParseError('missing items for ' + JSON.stringify(value), path);
+    }
+
+    return items;
+  }
+
+  if (Array.isArray(value.items)) {
+    return Array.prototype.concat.apply(items, value.items.map(function(item, key) {
+      return traverse(item, path.concat(['items', key]));
+    }));
+  }
+
+  var length = random(value.minItems, value.maxItems, 1, 5),
+      sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+
+  for (var current = items.length; current < length; current += 1) {
+    items.push(traverse(value.items || sample, path.concat(['items', current])));
+  }
+
+  if (value.uniqueItems) {
+    return unique(path.concat(['items']), items, value, sample);
+  }
+
+  return items;
+};
+
+},{"../util/error":63,"../util/has-props":65,"../util/random":67,"../util/traverse":68}],56:[function(require,module,exports){
+'use strict';
+
+module.exports = function() {
+  return Math.random() > 0.5;
+};
+
+},{}],57:[function(require,module,exports){
+'use strict';
+
+var number = require('./number');
+
+module.exports = function(value) {
+  return Math.floor(number(value));
+};
+
+},{"./number":59}],58:[function(require,module,exports){
+'use strict';
+
+module.exports = function() {
+  return null;
+};
+
+},{}],59:[function(require,module,exports){
+'use strict';
+
+var MIN_INTEGER = -100000000,
+    MAX_INTEGER = 100000000;
+
+var random = require('../util/random');
+
+module.exports = function(value) {
+  var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
+      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
+
+  if (value.exclusiveMinimum && value.minimum) {
+    min += 1;
+  }
+
+  if (value.exclusiveMaximum && value.maximum) {
+    max -= 1;
+  }
+
+  if (value.multipleOf) {
+    var base = random(Math.floor(min / value.multipleOf), Math.floor(max / value.multipleOf)) * value.multipleOf;
+
+    while (base < min) {
+      base += value.multipleOf;
+    }
+
+    return base;
+  }
+
+  return random(min, max);
+};
+
+},{"../util/random":67}],60:[function(require,module,exports){
+'use strict';
+
+var faker = require('faker'),
+    Randexp = require('randexp');
+
+var random = require('../util/random'),
+    traverse = require('../util/traverse'),
+    hasProps = require('../util/has-props');
+
+var ParseError = require('../util/error');
+
+module.exports = function(value, path) {
+  var props = {};
+
+  if (!(value.properties || value.patternProperties || value.additionalProperties)) {
+    if (hasProps(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
+      throw new ParseError('missing properties for ' + JSON.stringify(value), path);
+    }
+
+    return props;
+  }
+
+  var reqs = value.required || [],
+      base = value.properties ? Object.keys(value.properties) : [];
+
+  reqs.forEach(function(key, index) {
+    if (value.properties && value.properties[key]) {
+      props[key] = value.properties[key];
+    }
+
+    base.splice(index, 1);
+  });
+
+  if (value.patternProperties) {
+    base = Array.prototype.concat.apply(base, Object.keys(value.patternProperties));
+  }
+
+  var length = random(value.minProperties, value.maxProperties, 1, 5);
+
+  random.shuffle(base).slice(0, length).forEach(function(key) {
+    if (value.properties && value.properties[key]) {
+      props[key] = value.properties[key];
+    } else {
+      props[Randexp.randexp(key)] = value.patternProperties[key];
+    }
+  });
+
+  if (value.minProperties || value.maxProperties || value.additionalProperties) {
+    var current = Object.keys(props).length;
+
+    if (current < length) {
+      var sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
+
+      faker.lorem.words(length - current).forEach(function(key) {
+        props[key + Randexp.randexp('\\w{1,10}')] = sample;
+      });
+    }
+  }
+
+  return traverse(props, path.concat(['properties']));
+};
+
+},{"../util/error":63,"../util/has-props":65,"../util/random":67,"../util/traverse":68,"faker":10,"randexp":69}],61:[function(require,module,exports){
+'use strict';
+
+var faker = require('faker'),
+    Chance = require('chance'),
+    Randexp = require('randexp');
+
+var chance = new Chance(),
+    randexp = Randexp.randexp;
+
+var random = require('../util/random'),
+    formats = require('../util/formats');
+
+var regexps = {
+  email: '[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}',
+  hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
+  ipv6: '[abcdef\\d]{4}(:[abcdef\\d]{4}){7}',
+  uri: '[a-zA-Z\\d_][\\w\\\/\\d_-]{1,40}'
+};
+
+function get(obj, key) {
+  var parts = key.split('.');
+
+  while (parts.length) {
+    var prop = parts.shift();
+
+    if (!obj[prop]) {
+      break;
+    }
+
+    obj = obj[prop];
+  }
+
+  return obj;
+}
+
+function generate(value) {
+  if (value.use) {
+    var args = [],
+        path = value.key;
+
+    if (typeof path === 'object') {
+      path = Object.keys(path)[0];
+
+      if (Array.isArray(value.key[path])) {
+        args = value.key[path];
+      } else {
+        args.push(value.key[path]);
+      }
+    }
+
+    var gen = get(value.gen, path);
+
+    if (typeof gen !== 'function') {
+      throw new Error('unknown ' + value.use + '-generator for ' + JSON.stringify(value.key));
+    }
+
+    return gen.apply(value.gen, args);
+  }
+
+  switch (value.format) {
+    case 'date-time':
+      return new Date(random(0, 100000000000000)).toISOString();
+
+    case 'email':
+    case 'hostname':
+    case 'ipv6':
+    case 'uri':
+      return randexp(regexps[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
+        return randexp(regexps[key]);
+      });
+
+    case 'ipv4':
+      return [0, 0, 0, 0].map(function() {
+        return random(0, 255);
+      }).join('.');
+
+    default:
+      var callback = formats(value.format);
+
+      if (typeof callback !== 'function') {
+        throw new Error('unknown generator for ' + JSON.stringify(value.format));
+      }
+
+      var generators = {
+        faker: faker,
+        chance: chance,
+        randexp: randexp
+      };
+
+      return callback(generators, value);
+  }
+}
+
+module.exports = function(value) {
+  if (value.faker || value.chance) {
+    return generate({
+      use: value.faker ? 'faker' : 'chance',
+      gen: value.faker ? faker : chance,
+      key: value.faker || value.chance
+    });
+  }
+
+  if (value.format) {
+    return generate(value);
+  }
+
+  if (value.pattern) {
+    return randexp(value.pattern);
+  }
+
+  if (value.minLength || value.maxLength) {
+    var min = Math.max(0, value.minLength || 0),
+        max = random(min, value.maxLength);
+
+    return randexp('.{' + min + ',' + max + '}');
+  }
+
+  return faker.lorem.words(random(1, 5)).join(' ');
+};
+
+},{"../util/formats":64,"../util/random":67,"chance":3,"faker":10,"randexp":69}],62:[function(require,module,exports){
+'use strict';
+
+function combine(target) {
+  var props = Array.prototype.slice.call(arguments, 1);
+
+  props.forEach(function(obj) {
+    for (var key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        target[key] = obj[key];
+      }
+    }
+  });
+}
+
+module.exports = combine;
+
+},{}],63:[function(require,module,exports){
+'use strict';
+
+function ParseError(message, path) {
+  this.message = message;
+  this.path = path;
+  this.name = 'ParseError';
+}
+
+ParseError.prototype = Error.prototype;
+
+module.exports = ParseError;
+
+},{}],64:[function(require,module,exports){
+'use strict';
+
+var registry = {};
+
+module.exports = function(name, callback) {
+  if (callback) {
+    registry[name] = callback;
+  } else if (typeof name === 'object') {
+    for (var method in name) {
+      registry[method] = name[method];
+    }
+  } else {
+    return registry[name];
+  }
+
+  return registry;
+};
+
+},{}],65:[function(require,module,exports){
+'use strict';
+
+module.exports = function(obj) {
+  return Array.prototype.slice.call(arguments, 1).filter(function(key) {
+    return typeof obj[key] !== 'undefined';
+  }).length > 0;
+};
+
+},{}],66:[function(require,module,exports){
+'use strict';
+
+module.exports = {
+  array: require('../types/array'),
+  boolean: require('../types/boolean'),
+  integer: require('../types/integer'),
+  number: require('../types/number'),
+  null: require('../types/null'),
+  object: require('../types/object'),
+  string: require('../types/string')
+};
+
+},{"../types/array":55,"../types/boolean":56,"../types/integer":57,"../types/null":58,"../types/number":59,"../types/object":60,"../types/string":61}],67:[function(require,module,exports){
+'use strict';
+
+var faker = require('faker');
+
+var random = module.exports = function(min, max, defMin, defMax) {
+  defMin = typeof defMin === 'undefined' ? random.MIN_NUMBER : defMin;
+  defMax = typeof defMax === 'undefined' ? random.MAX_NUMBER : defMax;
+
+  min = typeof min === 'undefined' ? defMin : min;
+  max = typeof max === 'undefined' ? defMax : max;
+
+  if (min !== +min) {
+    throw new RangeError('value ' + JSON.stringify(min) + ' is not-a-number');
+  }
+
+  if (max !== +max) {
+    throw new RangeError('value ' + JSON.stringify(min) + ' is not-a-number');
+  }
+
+  if (max < min) {
+    throw new RangeError('invalid range between: ' + min + ', ' + max);
+  }
+
+  return faker.random.number({
+    min: min,
+    max: Math.max(max, min + 1)
+  });
+};
+
+random.shuffle = function(obj) {
+  var copy = obj.slice(),
+      length = obj.length;
+
+  for (; length > 0;) {
+    var key = Math.floor(Math.random() * length),
+        tmp = copy[--length];
+
+    copy[length] = copy[key];
+    copy[key] = tmp;
+  }
+
+  return copy;
+};
+
+random.pick = function(obj) {
+  return obj[Math.floor(Math.random() * obj.length)];
+};
+
+random.MIN_NUMBER = -100;
+random.MAX_NUMBER = 100;
+
+},{"faker":10}],68:[function(require,module,exports){
+'use strict';
+
+var random = require('./random'),
+    combine = require('./combine');
+
+var ParseError = require('./error');
+
+function reduce(obj) {
+  var mix = obj.allOf || obj.anyOf || obj.oneOf;
+
+  if (!(mix && mix.length)) {
+    for (var key in obj) {
+      var value = obj[key];
+
+      if (typeof value === 'object' && !(key === 'enum' || key === 'required')) {
+        reduce(value);
+      }
+    }
+
+    return;
+  }
+
+  if ((obj.oneOf || obj.anyOf) && mix.length) {
+    mix = [random.pick(mix)];
+  }
+
+  delete obj.allOf;
+  delete obj.anyOf;
+  delete obj.oneOf;
+
+  var fixed = {};
+
+  mix.forEach(function(value) {
+    combine(fixed, value);
+  });
+
+  combine(obj, fixed);
+
+  while (obj.allOf || obj.anyOf || obj.oneOf) {
+    reduce(obj);
+  }
+}
+
+function traverse(obj, path) {
+  var primitives = require('./primitives');
+
+  var copy = {};
+
+  if (Array.isArray(obj)) {
+    copy = [];
+  }
+
+  path = path || [];
+
+  reduce(obj);
+
+  if (obj.enum) {
+    return random.pick(obj.enum);
+  }
+
+  if (obj.type) {
+    var type = obj.type;
+
+    if (Array.isArray(type)) {
+      type = random.pick(type);
+    }
+
+    if (!primitives[type]) {
+      throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+    }
+
+    return primitives[type](obj, path);
+  }
+
+  for (var key in obj) {
+    var value = obj[key];
+
+    if (typeof value === 'object') {
+      copy[key] = traverse(value, path.concat([key]));
+    } else {
+      copy[key] = value;
+    }
+  }
+
+  return copy;
+}
+
+module.exports = traverse;
+
+},{"./combine":62,"./error":63,"./primitives":66,"./random":67}],69:[function(require,module,exports){
 var ret = require('ret');
 var DRange = require('discontinuous-range');
 var types = ret.types;
@@ -54904,7 +54945,7 @@ function gen(token, groups) {
 
 
 
-},{"discontinuous-range":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/discontinuous-range/index.js","ret":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/index.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/discontinuous-range/index.js":[function(require,module,exports){
+},{"discontinuous-range":70,"ret":71}],70:[function(require,module,exports){
 //protected helper class
 function _SubRange(low, high) {
     this.low = low;
@@ -55050,7 +55091,7 @@ DiscontinuousRange.prototype.clone = function () {
 
 module.exports = DiscontinuousRange;
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/index.js":[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var util      = require('./util');
 var types     = require('./types');
 var sets      = require('./sets');
@@ -55330,7 +55371,7 @@ module.exports = function(regexpStr) {
 
 module.exports.types = types;
 
-},{"./positions":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/positions.js","./sets":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/sets.js","./types":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/types.js","./util":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/util.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/positions.js":[function(require,module,exports){
+},{"./positions":72,"./sets":73,"./types":74,"./util":75}],72:[function(require,module,exports){
 var types = require('./types');
 
 exports.wordBoundary = function() {
@@ -55349,7 +55390,7 @@ exports.end = function() {
   return { type: types.POSITION, value: '$' };
 };
 
-},{"./types":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/types.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/sets.js":[function(require,module,exports){
+},{"./types":74}],73:[function(require,module,exports){
 var types = require('./types');
 
 var INTS = function() {
@@ -55433,7 +55474,7 @@ exports.anyChar = function() {
   return { type: types.SET, set: NOTANYCHAR(), not: true };
 };
 
-},{"./types":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/types.js"}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/types.js":[function(require,module,exports){
+},{"./types":74}],74:[function(require,module,exports){
 module.exports = {
     ROOT       : 0
   , GROUP      : 1
@@ -55445,7 +55486,7 @@ module.exports = {
   , CHAR       : 7
 };
 
-},{}],"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/util.js":[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 var types = require('./types');
 var sets  = require('./sets');
 
@@ -55553,4 +55594,4 @@ exports.error = function(regexp, msg) {
   throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
 };
 
-},{"./sets":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/sets.js","./types":"/Users/pate/Library/NodeJS/json-schema-faker/node_modules/json-schema-faker/node_modules/randexp/node_modules/ret/lib/types.js"}]},{},["/Users/pate/Library/NodeJS/json-schema-faker/main.js"]);
+},{"./sets":73,"./types":74}]},{},[2]);

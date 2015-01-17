@@ -1,15 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.1.2",
-  "homepage": "https://github.com/pateketrueke/json-schema-faker",
-  "license": "MIT",
-  "ignore": [
-    "**/.*",
-    "node_modules",
-    "bower_components",
-    "test",
-    "tests"
-  ],
+  "version": "0.1.4",
   "devDependencies": {
     "jquery": "~2.1.3"
   }

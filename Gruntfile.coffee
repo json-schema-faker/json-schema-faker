@@ -7,8 +7,6 @@ module.exports = (grunt) ->
 
     browserify:
       dist:
-        options:
-          watch: on
         files:
           'bundle.js': ['main.js']
 
