@@ -9,7 +9,17 @@ pick = (obj, key) ->
   obj = obj[parts.shift()] while parts.length
   obj
 
+argv = process.argv.slice(2)
+spec = argv.indexOf('--spec')
+spec = unless spec is -1
+  argv[spec + 1]
+else
+  null
+
 glob.sync("#{__dirname}/**/*.json").forEach (file) ->
+  if spec isnt null
+    return if file.indexOf(spec) is -1
+
   JSON.parse(fs.readFileSync(file)).forEach (suite) ->
     describe "#{suite.description} (#{file.replace(__dirname + '/', '')})", ->
       suite.tests.forEach (test) ->

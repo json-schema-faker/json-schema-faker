@@ -1,0 +1,33 @@
+[
+  {
+    "description": "reserved words",
+    "tests": [
+      {
+        "description": "should allow type-keyword",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "string"
+            }
+          },
+          "required": ["type"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should allow enum-keyword",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "enum": {
+              "type": "boolean"
+            }
+          },
+          "required": ["enum"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]
