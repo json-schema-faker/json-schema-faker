@@ -8,7 +8,7 @@
           "type": "object",
           "properties": {
             "test": {
-              "type": {}
+              "type": "unknown"
             }
           },
           "required": ["test"]
