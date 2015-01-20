@@ -1,0 +1,15 @@
+[
+  {
+    "description": "chance issues",
+    "tests": [
+      {
+        "description": "should allow url-format (0.7.1+)",
+        "schema": {
+          "type": "string",
+          "chance": "url"
+        },
+        "valid": true
+      }
+    ]
+  }
+]
