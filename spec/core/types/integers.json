@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated number values",
+    "description": "generated integer values",
     "tests": [
       {
         "description": "should handle minimum",
@@ -8,6 +8,8 @@
           "type": "integer",
           "minimum": 10
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
@@ -17,6 +19,8 @@
           "minimum": 20,
           "maximum": 30
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
@@ -27,6 +31,8 @@
           "maximum": 50,
           "multipleOf": 6
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
@@ -38,6 +44,8 @@
           "multipleOf": 7,
           "exclusiveMinimum": true
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
@@ -50,6 +58,8 @@
           "exclusiveMinimum": true,
           "exclusiveMaximum": true
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {

@@ -44,6 +44,9 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             error = e.message
             throw e unless test.throws
 
+          if test.hasNot
+            expect(sample.toString()).not.toContain test.hasNot
+
           if test.type
             expect(sample).toHaveType test.type
 
