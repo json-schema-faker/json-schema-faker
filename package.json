@@ -23,8 +23,8 @@
     "z-schema": "^3.3.1"
   },
   "dependencies": {
-    "chance": "^0.7.1",
-    "deref": "^0.2.7",
+    "chance": "^0.7.4",
+    "deref": "^0.2.8",
     "faker": "^2.1.2",
     "randexp": "^0.4.0"
   }
