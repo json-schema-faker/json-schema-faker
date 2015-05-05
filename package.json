@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "JSON-Schema + Faker",
   "main": "lib/index.js",
   "author": {
@@ -16,15 +16,15 @@
     "clone": "^0.1.19",
     "glob": "^4.3.5",
     "grunt": "^0.4.5",
-    "grunt-parts": "^0.3.0",
+    "grunt-parts": "^0.3.1",
     "jayschema": "^0.3.1",
     "semver": "^4.2.0",
-    "tv4": "^1.1.5",
+    "tv4": "^1.1.9",
     "z-schema": "^3.3.1"
   },
   "dependencies": {
-    "chance": "^0.6.4",
-    "deref": "^0.2.6",
+    "chance": "^0.7.4",
+    "deref": "^0.2.8",
     "faker": "^2.1.2",
     "randexp": "^0.4.0"
   }

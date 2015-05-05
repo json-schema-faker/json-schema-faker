@@ -5,7 +5,7 @@
       {
         "description": "should handle array of types",
         "schema": {
-          "type": ["string", "number"]
+          "type": ["string", "integer"]
         },
         "valid": true
       },
@@ -35,7 +35,7 @@
         "schema": {
           "anyOf": [
             {
-              "type": "number"
+              "type": "integer"
             },
             {
               "type": "array"

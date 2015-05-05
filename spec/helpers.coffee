@@ -47,7 +47,7 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
 
   formatValidators jay
 
-  jay.register(clone(schema), schema.id) for schema in refs if refs
+  jay.register(clone(schema)) for schema in refs if refs
 
   result = jay.validate @actual, clone(expected)
 

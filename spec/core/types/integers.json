@@ -1,55 +1,65 @@
 [
   {
-    "description": "generated number values",
+    "description": "generated integer values",
     "tests": [
       {
         "description": "should handle minimum",
         "schema": {
-          "type": "number",
+          "type": "integer",
           "minimum": 10
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
         "description": "should handle maximum",
         "schema": {
-          "type": "number",
+          "type": "integer",
           "minimum": 20,
           "maximum": 30
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
         "description": "should handle multipleOf",
         "schema": {
-          "type": "number",
+          "type": "integer",
           "minimum": 40,
           "maximum": 50,
           "multipleOf": 6
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
         "description": "should handle exclusiveMinimum",
         "schema": {
-          "type": "number",
+          "type": "integer",
           "minimum": 60,
           "maximum": 70,
           "multipleOf": 7,
           "exclusiveMinimum": true
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
         "description": "should handle exclusiveMaximum",
         "schema": {
-          "type": "number",
+          "type": "integer",
           "minimum": 80,
           "maximum": 90,
           "multipleOf": 8,
           "exclusiveMinimum": true,
           "exclusiveMaximum": true
         },
+        "hasNot": ".",
+        "type": "number",
         "valid": true
       },
       {
@@ -58,7 +68,7 @@
           "type": "object",
           "properties": {
             "test": {
-              "type": "number",
+              "type": "integer",
               "minimum": []
             }
           }
@@ -71,7 +81,7 @@
           "type": "object",
           "properties": {
             "test": {
-              "type": "number",
+              "type": "integer",
               "maximum": []
             }
           }
@@ -84,7 +94,7 @@
           "type": "object",
           "properties": {
             "test": {
-              "type": "number",
+              "type": "integer",
               "minimum": 100,
               "maximum": 50
             }

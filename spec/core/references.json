@@ -4,10 +4,11 @@
     "tests": [
       {
         "description": "should handle internal $refs",
-        "schema":  {
+        "schema": {
+          "id": "#",
           "definitions": {
-            "number": {
-              "type": "number"
+            "integer": {
+              "type": "integer"
             },
             "positive": {
               "minimum": 0,
@@ -17,7 +18,7 @@
           "type": "object",
           "properties": {
             "weakNumber": {
-              "$ref": "#/definitions/number"
+              "$ref": "#/definitions/integer"
             },
             "multipleOf5": {
               "allOf": [
@@ -25,7 +26,7 @@
                   "$ref": "#/definitions/positive"
                 },
                 {
-                  "$ref": "#/definitions/number"
+                  "$ref": "#/definitions/integer"
                 },
                 {
                   "multipleOf": 5
