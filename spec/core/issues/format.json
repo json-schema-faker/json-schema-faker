@@ -24,7 +24,7 @@
           "type": "object",
           "properties": {
             "chanceNumber": {
-              "type": "number",
+              "type": "integer",
               "chance": "natural"
             },
             "fakerNumber": {
