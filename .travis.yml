@@ -7,4 +7,4 @@ node_js:
 before_script:
   - 'npm install -g grunt-cli coveralls'
 script:
-  - 'grunt test:parts && cat reports/coverage/lcov.info | coveralls'
+  - 'grunt test:parts && cat generated/lcov.info | coveralls'
