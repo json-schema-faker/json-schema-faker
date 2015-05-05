@@ -17,6 +17,23 @@
           "format": "semver"
         },
         "valid": true
+      },
+      {
+        "description": "should support faker/chance on numeric types",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "chanceNumber": {
+              "type": "number",
+              "chance": "natural"
+            },
+            "fakerNumber": {
+              "type": "integer",
+              "faker": "random.number"
+            }
+          }
+        },
+        "valid": true
       }
     ]
   }
