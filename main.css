@@ -1,15 +1,21 @@
-body{
+body {
     padding-top: 70px
 }
 
+.github-ribbon img {
+    position: absolute;
+    top: 0;
+    right: 0;
+    border: 0;
+    padding-top: 50px;
+}
+
 .row-centered {
-    text-align:center;
+    text-align: center;
 }
 
 textarea.json {
     font: smaller monospace;
-/*    font-family: monospace;
-    font-size: smaller;*/
     height: 280px;
     resize: none;
 }
