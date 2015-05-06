@@ -1,7 +1,8 @@
 {
   "name": "json-schema-faker",
-  "version": "0.1.4",
-  "devDependencies": {
-    "jquery": "~2.1.3"
+  "version": "0.1.6",
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "bootstrap": "~3.3.4"
   }
 }

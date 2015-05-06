@@ -1,4 +1,5 @@
 module.exports = (grunt) ->
+  require('load-grunt-tasks') grunt
   grunt.initConfig
     watch:
       main:
@@ -20,8 +21,23 @@ module.exports = (grunt) ->
         files:
           'bundle.js': ['main.js']
 
-  grunt.loadNpmTasks 'grunt-bower-task'
-  grunt.loadNpmTasks 'grunt-browserify'
-  grunt.loadNpmTasks 'grunt-contrib-watch'
+    uglify:
+      dist:
+        files:
+          'vendor.js': [
+            'bower_components/jquery/dist/jquery.js',
+            'bower_components/bootstrap/dist/js/bootstrap.js'
+          ]
 
-  grunt.registerTask 'default', ['bower', 'browserify']
+    cssmin:
+      dist:
+        files:
+          'bundle.css': [
+            'main.css'
+          ]
+          'vendor.css': [
+            'bower_components/bootstrap/dist/css/bootstrap.css',
+            'bower_components/bootstrap/dist/css/bootstrap-theme.css'
+          ]
+
+  grunt.registerTask 'default', ['bower', 'browserify', 'uglify', 'cssmin']

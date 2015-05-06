@@ -1,0 +1,22 @@
+{
+    "type": "object",
+    "properties": {
+        "userId": {
+            "type": "string",
+            "chance": "guid"
+        },
+        "emailAddr": {
+            "type": "string",
+            "chance": {
+                "email": {
+                    "domain": "fake.com"
+                }
+            },
+            "pattern": ".+@fake.com"
+        }
+    },
+    "required": [
+        "userId",
+        "emailAddr"
+    ]
+}
