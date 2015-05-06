@@ -1,12 +1,74 @@
 <html>
   <head>
     <title>Fake your JSON-Schemas!</title>
+    <link href="vendor.css" rel="stylesheet">
     <link href="bundle.css" rel="stylesheet">
     <script src="bundle.js"></script>
+
+    <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
   </head>
   <body>
-    <textarea id="input_schema" cols="100" rows="20"></textarea>
-    <textarea id="output_sample" cols="100" rows="20"></textarea>
-    <button id="generate_sample">Generate sample</button>
+    <!-- Fixed navbar -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+      <div class="container">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">json-schema-faker</a>
+        </div>
+        <div id="navbar" class="navbar-collapse collapse">
+          <ul class="nav navbar-nav">
+            <li><a href="https://github.com/pateketrueke/json-schema-faker/">GitHub</a></li>
+            <li><a href="https://travis-ci.org/pateketrueke/json-schema-faker">CI</a></li>
+            <li><a href="https://github.com/pateketrueke/json-schema-faker/issues/new">Contribution</a></li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="https://github.com/marak/Faker.js/">faker.js</a></li>
+            <li><a href="http://chancejs.com/">chance.js</a></li>
+            <li><a href="http://fent.github.io/randexp.js/">randexp.js</a></li>
+          </ul>
+        </div><!--/.nav-collapse -->
+      </div>
+    </nav>
+    <div class="container-fluid">        
+        <div class="row">
+            <div class="col-xs-12">
+                <p><strong>JSON Schema Faker</strong> combines <a href="http://json-schema.org/">JSON Schema</a> standard with fake data generators, allowing users to generate fake data that conform to the schema.</p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-xs-12 col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        JSON Schema
+                    </div>
+                    <div class="panel-body">
+                        <textarea class="form-control json" id="input_schema"></textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="col-xs-12 col-md-6">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        Sample object
+                    </div>
+                    <div class="panel-body">
+                        <textarea class="form-control json" id="output_sample"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row row-centered">
+            <a class="btn btn-lg btn-primary" id="generate_sample" role="button">Generate sample</a>
+        </div>
+    </div> <!-- /container -->
   </body>
 </html>

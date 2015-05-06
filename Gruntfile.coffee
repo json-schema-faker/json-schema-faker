@@ -24,6 +24,7 @@ module.exports = (grunt) ->
       dist:
         files:
           'bundle.css': ['main.css']
+          'vendor.css': ['bower_components/bootstrap/dist/css/bootstrap.css', 'bower_components/bootstrap/dist/css/bootstrap-theme.css']
 
   grunt.loadNpmTasks 'grunt-bower-task'
   grunt.loadNpmTasks 'grunt-browserify'

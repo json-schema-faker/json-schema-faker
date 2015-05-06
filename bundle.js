@@ -9215,15 +9215,16 @@ var $ = require('./bower_components/jquery/dist/jquery.js');
 
 var jsf = require('json-schema-faker');
 
-var input = $('#input_schema'),
-    output = $('#output_sample'),
-    generate = $('#generate_sample');
+$(document).ready(function () {
+    var input = $('#input_schema'),
+        output = $('#output_sample'),
+        generate = $('#generate_sample');
 
-generate.on('click', function() {
-  var schema = JSON.parse(input.val());
-
-  output.val(JSON.stringify(jsf(schema), null, 2));
-})
+    generate.on('click', function () {
+        var schema = JSON.parse(input.val());
+        output.val(JSON.stringify(jsf(schema), null, 2));
+    });
+});
 
 },{"./bower_components/jquery/dist/jquery.js":1,"json-schema-faker":7}],3:[function(require,module,exports){
 /*!

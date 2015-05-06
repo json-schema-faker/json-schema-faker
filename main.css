@@ -1,10 +1,15 @@
-button, textarea {
-    font-size: 1.1em;
-    display: block;
-    width: 100%;
+body{
+    padding-top: 70px
 }
 
-button {
-    font-size: 1.3em;
-    padding: .5em;
+.row-centered {
+    text-align:center;
+}
+
+textarea.json {
+    font: smaller monospace;
+/*    font-family: monospace;
+    font-size: smaller;*/
+    height: 280px;
+    resize: none;
 }
