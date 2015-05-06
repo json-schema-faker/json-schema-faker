@@ -20,8 +20,14 @@ module.exports = (grunt) ->
         files:
           'bundle.js': ['main.js']
 
+    cssmin:
+      dist:
+        files:
+          'bundle.css': ['main.css']
+
   grunt.loadNpmTasks 'grunt-bower-task'
   grunt.loadNpmTasks 'grunt-browserify'
+  grunt.loadNpmTasks 'grunt-contrib-cssmin'
   grunt.loadNpmTasks 'grunt-contrib-watch'
 
-  grunt.registerTask 'default', ['bower', 'browserify']
+  grunt.registerTask 'default', ['bower', 'browserify', 'cssmin']
