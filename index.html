@@ -4,6 +4,7 @@
         <link rel="shortcut icon" type="image/icon" href="favicon.ico" />
         <link href="vendor.css" rel="stylesheet">
         <link href="bundle.css" rel="stylesheet">
+        <script src="vendor.js"></script>
         <script src="bundle.js"></script>
 
         <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -27,9 +28,24 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav">
-                        <li><a href="https://github.com/pateketrueke/json-schema-faker/">GitHub</a></li>
-                        <li><a href="https://travis-ci.org/pateketrueke/json-schema-faker">CI</a></li>
-                        <li><a href="https://github.com/pateketrueke/json-schema-faker/issues/new">Contribution</a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Samples <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li class="dropdown-header">faker.js</li>
+                                <li><a href="#1">faker example</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">chance.js</li>
+                                <li><a href="#2">cahnce example</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Community <span class="caret"></span></a>
+                            <ul class="dropdown-menu" role="menu">
+                                <li><a href="https://github.com/pateketrueke/json-schema-faker/">GitHub</a></li>
+                                <li><a href="https://travis-ci.org/pateketrueke/json-schema-faker">CI</a></li>
+                                <li><a href="https://github.com/pateketrueke/json-schema-faker/issues/new">Contribution</a></li>
+                            </ul>
+                        </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
                         <li><a href="https://github.com/marak/Faker.js/">faker.js</a></li>
@@ -39,6 +55,7 @@
                 </div><!--/.nav-collapse -->
             </div>
         </nav>
+
         <div class="container-fluid">
             <div class="row">
                 <div class="col-xs-12">
@@ -71,6 +88,7 @@
                 <a class="btn btn-lg btn-primary" id="generate_sample" role="button">Generate sample</a>
             </div>
         </div> <!-- /container -->
+
         <a class="github-ribbon" href="https://github.com/pateketrueke/json-schema-faker">
             <img src="https://camo.githubusercontent.com/a6677b08c955af8400f44c6298f40e7d19cc5b2d/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677261795f3664366436642e706e67" alt="Fork me on GitHub" data-canonical-src="https://s3.amazonaws.com/github/ribbons/forkme_right_gray_6d6d6d.png">
         </a>

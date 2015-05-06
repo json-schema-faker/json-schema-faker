@@ -21,10 +21,23 @@ module.exports = (grunt) ->
         files:
           'bundle.js': ['main.js']
 
+    uglify:
+      dist:
+        files:
+          'vendor.js': [
+            'bower_components/jquery/dist/jquery.js',
+            'bower_components/bootstrap/dist/js/bootstrap.js'
+          ]
+
     cssmin:
       dist:
         files:
-          'bundle.css': ['main.css']
-          'vendor.css': ['bower_components/bootstrap/dist/css/bootstrap.css', 'bower_components/bootstrap/dist/css/bootstrap-theme.css']
+          'bundle.css': [
+            'main.css'
+          ]
+          'vendor.css': [
+            'bower_components/bootstrap/dist/css/bootstrap.css',
+            'bower_components/bootstrap/dist/css/bootstrap-theme.css'
+          ]
 
-  grunt.registerTask 'default', ['bower', 'browserify', 'cssmin']
+  grunt.registerTask 'default', ['bower', 'browserify', 'uglify', 'cssmin']

@@ -1,5 +1,3 @@
-var $ = require('./bower_components/jquery/dist/jquery.js');
-
 var jsf = require('json-schema-faker');
 
 $(document).ready(function () {
