@@ -1,4 +1,5 @@
 module.exports = (grunt) ->
+  require('load-grunt-tasks') grunt
   grunt.initConfig
     watch:
       main:
@@ -25,10 +26,5 @@ module.exports = (grunt) ->
         files:
           'bundle.css': ['main.css']
           'vendor.css': ['bower_components/bootstrap/dist/css/bootstrap.css', 'bower_components/bootstrap/dist/css/bootstrap-theme.css']
-
-  grunt.loadNpmTasks 'grunt-bower-task'
-  grunt.loadNpmTasks 'grunt-browserify'
-  grunt.loadNpmTasks 'grunt-contrib-cssmin'
-  grunt.loadNpmTasks 'grunt-contrib-watch'
 
   grunt.registerTask 'default', ['bower', 'browserify', 'cssmin']
