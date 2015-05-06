@@ -2,6 +2,8 @@
 
 ## Development
 
+Use github pages on your private account (e.g. [this one](http://tkoomzaaskz.github.io/json-schema-faker/)) to see how the app is going to look like.
+
 This project is automated using [grunt](gruntjs.com). Run:
 
     grunt
