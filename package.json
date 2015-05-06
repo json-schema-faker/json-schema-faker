@@ -1,12 +1,17 @@
 {
   "name": "json-schema-faker",
-  "version": "0.1.6",
+  "version": "0.1.8",
   "description": "JSON-Schema + Faker",
   "main": "lib/index.js",
   "author": {
     "name": "Alvaro Cabrera",
     "email": "pateketrueke@gmail.com"
   },
+  "contributors": [{
+    "name": "Tomasz Ducin",
+    "email": "tomasz.ducin@gmail.com",
+    "url": "http://ducin.it"
+  }],
   "repository": {
     "type": "git",
     "url": "https://github.com/pateketrueke/json-schema-faker"
@@ -23,7 +28,7 @@
     "z-schema": "^3.3.1"
   },
   "dependencies": {
-    "chance": "^0.7.4",
+    "chance": "^0.7.5",
     "deref": "^0.2.8",
     "faker": "^2.1.2",
     "randexp": "^0.4.0"

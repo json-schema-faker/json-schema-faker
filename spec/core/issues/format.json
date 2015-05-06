@@ -16,7 +16,8 @@
           "type": "string",
           "format": "semver"
         },
-        "valid": true
+        "valid": true,
+        "require": "core/formats/semver"
       },
       {
         "description": "should support faker/chance on numeric types",

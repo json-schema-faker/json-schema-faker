@@ -3,8 +3,6 @@ glob = require('glob')
 deref = require('deref')
 jsfaker = require('../lib')
 
-require('./formats').register(jsfaker)
-
 pick = (obj, key) ->
   parts = key.split('.')
   obj = obj[parts.shift()] while parts.length
@@ -39,6 +37,9 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
           error = ''
 
           sample = try
+            if test.require
+              wrapper = require('./' + test.require)
+              wrapper.register(jsfaker)
             jsfaker(schema, refs)
           catch e
             error = e.message
@@ -60,6 +61,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
               refs = [schema] if schema.id
               expect(sample).toHaveSchema schema, refs
             catch e
-              console.log JSON.stringify(schema, null, 2)
-              console.log JSON.stringify(sample, null, 2)
+              console.log suite.description
+              console.log 'schema', JSON.stringify(schema, null, 2)
+              console.log 'sample', JSON.stringify(sample, null, 2)
               throw e

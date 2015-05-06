@@ -3,7 +3,9 @@ Fake your schemas!
 
 [![Build Status](https://travis-ci.org/pateketrueke/json-schema-faker.png?branch=master)](https://travis-ci.org/pateketrueke/json-schema-faker) [![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)  [![Coverage Status](https://coveralls.io/repos/pateketrueke/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/pateketrueke/json-schema-faker?branch=master)
 
-`json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only (?)
+[![npm version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
+
+`json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only.
 
 ```javascript
 var jsf = require('json-schema-faker');
