@@ -32,10 +32,15 @@
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Samples <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
                                 <li class="dropdown-header">faker.js</li>
-                                <li><a href="#1">faker example</a></li>
+                                <li><a href="#" id="example_faker">faker example</a></li>
                                 <li class="divider"></li>
                                 <li class="dropdown-header">chance.js</li>
-                                <li><a href="#2">cahnce example</a></li>
+                                <li><a href="#" id="example_chance">chance example</a></li>
+                                <li class="divider"></li>
+                                <li class="dropdown-header">other</li>
+                                <li><a href="#" id="example_boolean">boolean</a></li>
+                                <li><a href="#" id="example_integer">integer</a></li>
+                                <li><a href="#" id="example_array">array</a></li>
                             </ul>
                         </li>
                         <li class="dropdown">
@@ -69,7 +74,7 @@
                             JSON Schema
                         </div>
                         <div class="panel-body">
-                            <textarea class="form-control json" id="input_schema"></textarea>
+                            <textarea class="form-control json" id="input"></textarea>
                         </div>
                     </div>
                 </div>
@@ -79,13 +84,13 @@
                             Sample object
                         </div>
                         <div class="panel-body">
-                            <textarea class="form-control json" id="output_sample"></textarea>
+                            <textarea class="form-control json" id="output"></textarea>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row row-centered">
-                <a class="btn btn-lg btn-primary" id="generate_sample" role="button">Generate sample</a>
+                <a class="btn btn-lg btn-primary" id="run" role="button">Generate sample</a>
             </div>
         </div> <!-- /container -->
 

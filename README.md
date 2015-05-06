@@ -18,6 +18,12 @@ They will be used to build dist files (each `grunt` run overrides them):
 * [bundle.css](bundle.css)
 * [bundle.js](bundle.js)
 
+Adding new example JSON schema includes adding them to:
+
+* [schema](schema) directory - to store the definition
+* [main.js](main.js) - to handle it in the app & browserify
+* [index.html](index.html) - display it
+
 ## Contribution
 
 Feel free to add issues and PRs. Make sure you prefix its title with `[online-demo]`.
