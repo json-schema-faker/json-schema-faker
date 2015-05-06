@@ -1,9 +1,18 @@
-Fake your schemas!
-==================
+# Fake your schemas!
 
-[![Build Status](https://travis-ci.org/pateketrueke/json-schema-faker.png?branch=master)](https://travis-ci.org/pateketrueke/json-schema-faker) [![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)  [![Coverage Status](https://coveralls.io/repos/pateketrueke/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/pateketrueke/json-schema-faker?branch=master)
+[![Build Status](https://travis-ci.org/pateketrueke/json-schema-faker.png?branch=master)](https://travis-ci.org/pateketrueke/json-schema-faker)
+[![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)
+[![Coverage Status](https://coveralls.io/repos/pateketrueke/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/pateketrueke/json-schema-faker?branch=master)
 
-`json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only (?)
+Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system. Note that `json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only.
+
+## Install
+
+Install `json-schema-faker` with npm:
+
+    npm install json-schema-faker --save-dev
+
+## Example usage
 
 ```javascript
 var jsf = require('json-schema-faker');
@@ -46,8 +55,7 @@ console.log(sample.user.name);
 // output: John Doe
 ```
 
-Supported keywords
-------------------
+## Supported keywords
 
 - **$ref** &mdash; Resolve internal references only, and/or external if provided.
 - **required** &mdash; All required properties are guaranteed, if not can be omitted.
@@ -70,8 +78,7 @@ Supported keywords
 - **dependencies** &mdash; Not supported yet (?)
 - **not** &mdash; Not supported yet (?)
 
-Using references
-----------------
+## Using references
 
 Inline references are fully supported (json-pointers) but external can't be resolved by `json-schema-faker`.
 
@@ -100,8 +107,7 @@ console.log(sample.someValue);
 // output: voluptatem
 ```
 
-Faking values
--------------
+## Faking values
 
 `json-schema-faker` has built-in generators for core-formats, [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
 
@@ -146,8 +152,16 @@ If you pass an array, they will be used as raw arguments.
 
 Note that both generators has higher precedence than **format**.
 
-Custom formats
---------------
+You can also use standard JSON Schema keywords, e.g. `pattern`:
+
+```json
+{
+  "type": "string",
+  "pattern": "yes|no|maybe|i don't know"
+}
+```
+
+## Custom formats
 
 Additionally, you can add custom generators for those:
 
@@ -183,8 +197,7 @@ Callback:
 
 Note that custom generators has lower precedence than core ones.
 
-Great, Why?
------------
+## Great, Why?
 
 Actually, I've found some projects or services:
 
@@ -198,7 +211,6 @@ Actually, I've found some projects or services:
 
 Many of they are incomplete (?), so I decided to code this library.
 
-Issues
-------
+## Issues
 
-Any contribution is well received.
+Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
