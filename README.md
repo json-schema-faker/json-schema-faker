@@ -6,6 +6,10 @@
 
 Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system. Note that `json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only.
 
+## Online demo
+
+See [online demo](http://json-schema-faker.js.org/).
+
 ## Install
 
 Install `json-schema-faker` with npm:
