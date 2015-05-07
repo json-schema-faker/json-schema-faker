@@ -1,6 +1,5 @@
 fs = require('fs')
 glob = require('glob')
-deref = require('deref')
 jsfaker = require('../lib')
 
 require('./formats').register(jsfaker)
@@ -54,10 +53,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             expect(error).toMatch new RegExp('^' + test.throws + '$', 'i')
 
           if test.valid
-            schema = deref.util.normalizeSchema(schema)
-
             try
-              refs = [schema] if schema.id
               expect(sample).toHaveSchema schema, refs
             catch e
               console.log JSON.stringify(schema, null, 2)

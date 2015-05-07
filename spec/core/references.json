@@ -5,7 +5,6 @@
       {
         "description": "should handle internal $refs",
         "schema": {
-          "id": "#",
           "definitions": {
             "integer": {
               "type": "integer"

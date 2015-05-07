@@ -3,7 +3,6 @@
     "description": "sub-schema mixins",
     "schemas": [
       {
-        "id": "#",
         "type": "object",
         "definitions": {
           "inner": {
