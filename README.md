@@ -1,8 +1,10 @@
 # json-schema-faker online demo
 
+See [online demo](http://json-schema-faker.js.org/). The `gh-pages` (current) branch hosts this app.
+
 ## Development
 
-Use github pages on your private account (e.g. [this one](http://tkoomzaaskz.github.io/json-schema-faker/)) to see how the app is going to look like.
+Use [github pages](https://pages.github.com/) of your private github account (e.g. [this one](http://tkoomzaaskz.github.io/json-schema-faker/)) to see how the app is going to look like on production.
 
 This project is automated using [grunt](gruntjs.com). Run:
 
