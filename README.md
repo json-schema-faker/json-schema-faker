@@ -201,6 +201,11 @@ Callback:
 
 Note that custom generators has lower precedence than core ones.
 
+## Automation: grunt plugin
+
+Use [grunt-jsonschema-faker](https://github.com/tkoomzaaskz/grunt-jsonschema-faker)
+to automate running `json-schema-faker` against your JSON schemas.
+
 ## Great, Why?
 
 Actually, I've found some projects or services:
