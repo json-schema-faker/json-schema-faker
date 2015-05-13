@@ -32,5 +32,11 @@
     "deref": "^0.3.0",
     "faker": "^2.1.2",
     "randexp": "^0.4.0"
-  }
+  },
+  "keywords": [
+    "json",
+    "jsonschema",
+    "fake",
+    "mocks"
+  ]
 }
