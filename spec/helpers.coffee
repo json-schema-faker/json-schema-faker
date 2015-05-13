@@ -3,7 +3,7 @@ clone = require('clone')
 ZSchema = require('z-schema')
 JaySchema = require('jayschema')
 
-formatValidators = require('./formats').validate
+formatValidators = require('./validator').validate
 
 [tv4, ZSchema].map formatValidators
 
