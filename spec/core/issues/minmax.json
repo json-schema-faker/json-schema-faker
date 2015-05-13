@@ -1,0 +1,18 @@
+[
+  {
+    "description": "min/max constraints",
+    "tests": [
+      {
+        "description": "should allow minItems > 5",
+        "schema": {
+          "type": "array",
+          "minItems": 10,
+          "items": {
+            "type": "string"
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]
