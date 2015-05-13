@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated extended faker",
+    "description": "faker extension",
     "tests": [
       {
         "description": "should handle faker.custom.statement",
@@ -11,7 +11,7 @@
           }
         },
         "valid": true,
-        "require": "core/customize/faker-extend"
+        "require": "core/extend/faker-extend"
       }
     ]
   }

@@ -2,7 +2,7 @@ language: node_js
 branches:
   only:
     - master
-    - extending-dependencies
+    - jsf-extend
 node_js:
   - 0.10
 before_script:
