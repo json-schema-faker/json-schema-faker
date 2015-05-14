@@ -202,6 +202,35 @@ Callback:
 
 Note that custom generators has lower precedence than core ones.
 
+## Extending dependencies
+
+You may extend [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/):
+
+```javascript
+var jsf = require('json-schema-faker');
+
+jsf.extend('faker', function(faker){
+  faker.locale = "de"; // or any other language
+  faker.custom = {
+    statement: function(length) {
+      return faker.name.firstName() + " has " + faker.finance.amount() + " on " + faker.finance.account(length) + ".";
+    }
+  };
+  return faker;
+});
+
+var schema = {
+  "type": "string",
+  "faker": {
+    "custom.statement": [19]
+  }
+}
+
+var sample = jsf(schema);
+```
+
+The first parameter of `extend` function is the generator name (`faker` or `chance`). The second one is the function that accepts the dependency library; the function alters the library and **returns it**.
+
 ## Automation: grunt plugin
 
 Use [grunt-jsonschema-faker](https://github.com/tkoomzaaskz/grunt-jsonschema-faker)
