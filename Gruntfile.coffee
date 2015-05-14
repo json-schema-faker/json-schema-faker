@@ -1,6 +1,8 @@
 module.exports = (grunt) ->
   require('load-grunt-tasks') grunt
   grunt.initConfig
+    pkg: grunt.file.readJSON('package.json')
+
     watch:
       main:
         files: ['main.js']
@@ -19,7 +21,9 @@ module.exports = (grunt) ->
           browserifyOptions:
             fullPaths: off
         files:
-          'bundle.js': ['main.js']
+          'bundle.js': [
+            'src/main.js'
+          ]
 
     uglify:
       dist:
@@ -33,11 +37,39 @@ module.exports = (grunt) ->
       dist:
         files:
           'bundle.css': [
-            'main.css'
+            'src/main.css'
           ]
           'vendor.css': [
             'bower_components/bootstrap/dist/css/bootstrap.css',
             'bower_components/bootstrap/dist/css/bootstrap-theme.css'
           ]
 
-  grunt.registerTask 'default', ['bower', 'browserify', 'uglify', 'cssmin']
+    template: {
+      index: {
+        options: {
+          data: {
+            version: '<%= pkg.devDependencies["json-schema-faker"] %>'
+          }
+        },
+        files: {
+          'index.html': 'src/index.tpl'
+        }
+      }
+    }
+
+    'http-server': {
+      demo: {
+        root: '.',
+        host: '0.0.0.0',
+        port: '9000'
+      }
+    }
+
+  grunt.registerTask 'default', [
+    'bower'
+    'browserify'
+    'uglify'
+    'cssmin'
+    'template'
+    'http-server'
+  ]

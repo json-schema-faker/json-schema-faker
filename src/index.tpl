@@ -74,7 +74,7 @@
             <div class="row">
                 <div class="col-xs-12">
                     <p><strong>JSON Schema Faker</strong> combines <a href="http://json-schema.org/">JSON Schema</a> standard with fake data generators, allowing users to generate fake data that conform to the schema.</p>
-                    <p>This application is built using <a href="https://www.npmjs.com/package/json-schema-faker">json-schema-faker npm module</a> <strong>version 0.1.9</strong> built with <a href="http://browserify.org/">browserify</a>.</p>
+                    <p>This application is built using <a href="https://www.npmjs.com/package/json-schema-faker">json-schema-faker npm module</a> <strong>version <%- version %></strong> built with <a href="http://browserify.org/">browserify</a>.</p>
                 </div>
             </div>
             <div class="row">

@@ -1,0 +1,7 @@
+{
+  "type": "array",
+  "minItems": 15,
+  "items": {
+    "enum": ["red", "green", "blue", "yellow"]
+  }
+}

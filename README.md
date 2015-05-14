@@ -12,21 +12,22 @@ This project is automated using [grunt](gruntjs.com). Run:
 
 to build the application. While working on the app, modify following **source** files:
 
-* [index.html](index.html)
-* [main.css](main.css)
-* [main.js](main.js)
+* [src/index.tpl](src/index.tpl)
+* [src/main.css](src/main.css)
+* [src/main.js](src/main.js)
 
 They will be used to build dist files (each `grunt` run overrides them):
 
 * [vendor.css](vendor.css)
 * [bundle.css](bundle.css)
+* [vendor.js](vendor.js)
 * [bundle.js](bundle.js)
 
 Adding new example JSON schema includes adding them to:
 
 * [schema](schema) directory - to store the definition
-* [main.js](main.js) - to handle it in the app & browserify
-* [index.html](index.html) - display it
+* [src/main.js](src/main.js) - to handle it in the app & browserify
+* [src/index.tpl](src/index.tpl) - display it
 
 ## Contribution
 

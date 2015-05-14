@@ -1,0 +1,46 @@
+{
+    "type": "object",
+    "properties": {
+        "user": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "$ref": "#/definitions/positiveInt"
+                },
+                "name": {
+                    "type": "string",
+                    "faker": "name.findName"
+                },
+                "birthday": {
+                    "type": "string",
+                    "chance": {
+                        "birthday" : {
+                            "string": true
+                        }
+                    }
+                },
+                "email": {
+                    "type": "string",
+                    "format": "email",
+                    "faker": "internet.email"
+                }
+            },
+            "required": [
+                "id",
+                "name",
+                "birthday",
+                "email"
+            ]
+        }
+    },
+    "required": [
+        "user"
+    ],
+    "definitions": {
+        "positiveInt": {
+            "type": "integer",
+            "minimum": 0,
+            "minimumExclusive": true
+        }
+    }
+}
