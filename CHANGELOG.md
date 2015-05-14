@@ -1,3 +1,8 @@
+v0.1.9:
+  date: 2015-05-14
+  changes:
+    - `customize` replaced with `extend`
+    - docs improved
 v0.1.8:
   date: 2015-05-13
   changes:
