@@ -111,7 +111,8 @@
               "type": "string",
               "format": "unknown"
             }
-          }
+          },
+          "required": ["test"]
         },
         "throws": "unknown generator for .+? in \\/properties\\/test"
       },
@@ -124,7 +125,8 @@
               "type": "string",
               "faker": "not.exists"
             }
-          }
+          },
+          "required": ["test"]
         },
         "throws": "unknown faker-generator for .+? in \\/properties\\/test"
       }
