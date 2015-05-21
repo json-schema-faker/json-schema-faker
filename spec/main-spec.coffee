@@ -22,6 +22,10 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
     describe "#{suite.description} (#{file.replace(__dirname + '/', '')})", ->
       suite.tests.forEach (test) ->
         it test.description, ->
+          if test.require
+            wrapper = require('./' + test.require)
+            wrapper.register(jsfaker)
+
           schema = if typeof test.schema is 'string'
             pick(suite, test.schema)
           else
@@ -33,15 +37,12 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             else
               ref
 
-          error = ''
+          error = null
 
           sample = try
-            if test.require
-              wrapper = require('./' + test.require)
-              wrapper.register(jsfaker)
             jsfaker(schema, refs)
           catch e
-            error = e.message
+            error = String(e)
             throw e unless test.throws
 
           if test.hasNot
@@ -51,13 +52,25 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             expect(sample).toHaveType test.type
 
           if typeof test.throws is 'string'
-            expect(error).toMatch new RegExp('^' + test.throws + '$', 'i')
+            if typeof error isnt 'string'
+              throw """
+                THIS SHOULD NOT HAPPEN --- #{error}
+
+                #{JSON.stringify(schema, null, 2)}
+
+                #{JSON.stringify(sample, null, 2)}
+              """
+
+            expect(error).toMatch new RegExp(test.throws, 'i')
 
           if test.valid
             try
               expect(sample).toHaveSchema schema, refs
             catch e
-              console.log suite.description
-              console.log 'schema', JSON.stringify(schema, null, 2)
-              console.log 'sample', JSON.stringify(sample, null, 2)
-              throw e
+              throw """
+                #{suite.description} (#{e})
+
+                #{JSON.stringify(schema, null, 2)}
+
+                #{JSON.stringify(sample, null, 2)}
+              """
