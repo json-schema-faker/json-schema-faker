@@ -61,46 +61,6 @@
         "hasNot": ".",
         "type": "number",
         "valid": true
-      },
-      {
-        "description": "should validate numeric minimum",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "test": {
-              "type": "integer",
-              "minimum": []
-            }
-          }
-        },
-        "throws": "value .+? is not-a-number in \\/properties\\/test"
-      },
-      {
-        "description": "should validate numeric maximum",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "test": {
-              "type": "integer",
-              "maximum": []
-            }
-          }
-        },
-        "throws": "value .+? is not-a-number in \\/properties\\/test"
-      },
-      {
-        "description": "should validate between ranges",
-        "schema": {
-          "type": "object",
-          "properties": {
-            "test": {
-              "type": "integer",
-              "minimum": 100,
-              "maximum": 50
-            }
-          }
-        },
-        "throws": "invalid range between: 100, 50 in \\/properties\\/test"
       }
     ]
   }
