@@ -1,3 +1,7 @@
+v0.1.10:
+  date: 2015-05-21
+  changes:
+    - missing attributes bug-fix
 v0.1.9:
   date: 2015-05-14
   changes:
