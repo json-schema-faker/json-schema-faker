@@ -249,12 +249,13 @@ Actually, I've found some projects or services:
 - https://github.com/thaume/json-schema-processor
 - https://github.com/andreineculau/json-schema-random
 - https://github.com/murgatroid99/json-schema-random-instance
+- https://github.com/tomarad/JSON-Schema-Instantiator
 
 Many of they are incomplete (?), so I decided to code this library.
 
 ## Contribution
 
 * Alvaro Cabrera
-* Tomasz Ducin
+* [Tomasz Ducin](https://twitter.com/tomasz_ducin)
 
 Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
