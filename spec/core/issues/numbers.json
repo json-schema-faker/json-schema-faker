@@ -1,0 +1,34 @@
+[
+  {
+    "description": "using numbers",
+    "tests": [
+      {
+        "description": "should generate negative values",
+        "schema": {
+          "type": "integer",
+          "minimum": -10,
+          "maximum": -5
+        },
+        "valid": true
+      },
+      {
+        "description": "currently fails if maximum is zero",
+        "schema": {
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 0
+        },
+        "throws": true
+      },
+      {
+        "description": "but works if maximum is one",
+        "schema": {
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 1
+        },
+        "valid": true
+      }
+    ]
+  }
+]
