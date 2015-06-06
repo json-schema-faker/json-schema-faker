@@ -235,7 +235,7 @@ The first parameter of `extend` function is the generator name (`faker` or `chan
 
 ## Automation: grunt plugin
 
-Use [grunt-jsonschema-faker](https://github.com/tkoomzaaskz/grunt-jsonschema-faker)
+Use [grunt-jsonschema-faker](https://github.com/ducin/grunt-jsonschema-faker)
 to automate running `json-schema-faker` against your JSON schemas.
 
 ## Great, Why?
