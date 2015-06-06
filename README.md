@@ -255,7 +255,7 @@ Many of they are incomplete (?), so I decided to code this library.
 
 ## Contribution
 
-* Alvaro Cabrera
+* [Alvaro Cabrera](https://twitter.com/pateketrueke)
 * [Tomasz Ducin](https://twitter.com/tomasz_ducin)
 
 Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
