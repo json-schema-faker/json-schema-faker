@@ -236,11 +236,12 @@ The first parameter of `extend` function is the generator name (`faker` or `chan
 ## Inferred Types
 
 JSON Schema does not require you to provide the `type` property for your JSON Schema documents and document fragments.
-But since json-schema-faker uses the `type` property to create the proper fake data, we attempt to infer the type
-whenever it is not provided.  We do this based on the JSON Schema validation properties you use.  *(Now this means that
-if you do not use any of the JSON Schema validation properties, json-schema-faker will not be able to infer the type for
-you and you will need to **explicitly** set your `type` manually.)*  Below is the list of JSON Schema validation
-properties and the inferred type based on the property:
+
+But since `jsf` uses the `type` property to create the proper fake data, we attempt to infer the type whenever it is not provided. We do this based on the JSON Schema validation properties you use.
+
+> Now this means that if you do not use any of the JSON Schema validation properties, json-schema-faker will not be able to infer the type for you and you will need to **explicitly** set your `type` manually.)
+
+Below is the list of JSON Schema validation properties and the inferred type based on the property:
 
 **array**
 
@@ -298,5 +299,6 @@ Many of they are incomplete (?), so I decided to code this library.
 
 * [Alvaro Cabrera](https://twitter.com/pateketrueke)
 * [Tomasz Ducin](https://twitter.com/tomasz_ducin)
+* [Jeremy Whitlock](https://twitter.com/whitlockjc)
 
 Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
