@@ -61,6 +61,13 @@
         "hasNot": ".",
         "type": "number",
         "valid": true
+      },
+      {
+        "description": "should handle inferred type (when possible)",
+        "schema": {
+          "maximum": 5
+        },
+        "type": "number"
       }
     ]
   }

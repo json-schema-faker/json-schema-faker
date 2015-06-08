@@ -72,6 +72,15 @@
           "additionalProperties": false
         },
         "throws": "missing properties for .+? in \\/"
+      },
+      {
+        "description": "should handle inferred type (when possible)",
+        "schema": {
+          "properties": {
+            "name": { "type": "string" }
+          }
+        },
+        "type": "object"
       }
     ]
   }
