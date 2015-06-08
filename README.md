@@ -233,6 +233,47 @@ var sample = jsf(schema);
 
 The first parameter of `extend` function is the generator name (`faker` or `chance`). The second one is the function that accepts the dependency library; the function alters the library and **returns it**.
 
+## Inferred Types
+
+JSON Schema does not require you to provide the `type` property for your JSON Schema documents and document fragments.
+But since json-schema-faker uses the `type` property to create the proper fake data, we attempt to infer the type
+whenever it is not provided.  We do this based on the JSON Schema validation properties you use.  *(Now this means that
+if you do not use any of the JSON Schema validation properties, json-schema-faker will not be able to infer the type for
+you and you will need to **explicitly** set your `type` manually.)*  Below is the list of JSON Schema validation
+properties and the inferred type based on the property:
+
+**array**
+
+* `additionalProperties`
+* `items`
+* `maxItems`
+* `minItems`
+* `uniqueItems`
+
+**integer** *(Number uses the same properties so if you need `number`, set your `type` explicitly)*
+
+* `exclusiveMaximum`
+* `exclusiveMinimum`
+* `maximum`
+* `minimum`
+* `multipleOf`
+
+**object**
+
+* `additionalItems`
+* `dependencies`
+* `maxProperties`
+* `minProperties`
+* `patternProperties`
+* `properties`
+* `required`
+
+**string**
+
+* `maxLength`
+* `minLength`
+* `pattern`
+
 ## Automation: grunt plugin
 
 Use [grunt-jsonschema-faker](https://github.com/ducin/grunt-jsonschema-faker)
