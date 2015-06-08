@@ -129,6 +129,13 @@
           "required": ["test"]
         },
         "throws": "unknown faker-generator for .+? in \\/properties\\/test"
+      },
+      {
+        "description": "should handle inferred type (when possible)",
+        "schema": {
+          "maxLength": 5
+        },
+        "type": "string"
       }
     ]
   }

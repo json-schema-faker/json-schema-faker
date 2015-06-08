@@ -98,6 +98,15 @@
           "additionalItems": false
         },
         "throws": "missing items for .+? in \\/"
+      },
+      {
+        "description": "should handle inferred type (when possible)",
+        "schema": {
+          "items": {
+            "type": "string"
+          }
+        },
+        "type": "array"
       }
     ]
   }
