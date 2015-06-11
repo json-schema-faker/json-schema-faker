@@ -12,13 +12,13 @@
         "valid": true
       },
       {
-        "description": "currently fails if maximum is zero",
+        "description": "should work if maximum is zero",
         "schema": {
           "type": "integer",
           "minimum": -100,
           "maximum": 0
         },
-        "throws": true
+        "valid": true
       },
       {
         "description": "but works if maximum is one",
