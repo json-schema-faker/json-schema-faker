@@ -32,7 +32,7 @@
   "dependencies": {
     "chance": "^0.7.5",
     "deref": "^0.3.0",
-    "faker": "^2.1.4",
+    "faker": "^2.1.5",
     "randexp": "^0.4.0"
   },
   "keywords": [
