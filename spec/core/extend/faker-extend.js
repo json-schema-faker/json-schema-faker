@@ -14,7 +14,7 @@ module.exports = {
 
         return faker;
     },
-    register: function(jsfaker) {
-        return jsfaker.extend('faker', this.extend);
+    register: function(jsf) {
+        return jsf.extend('faker', this.extend);
     }
 };
