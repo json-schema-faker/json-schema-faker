@@ -30,7 +30,7 @@
     "z-schema": "^3.9.5"
   },
   "dependencies": {
-    "chance": "^0.7.5",
+    "chance": "^0.7.6",
     "deref": "^0.3.0",
     "faker": "^2.1.5",
     "randexp": "^0.4.0"
