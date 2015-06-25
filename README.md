@@ -206,7 +206,7 @@ Note that custom generators has lower precedence than core ones.
 
 ## Extending dependencies
 
-You may extend [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/):
+You may extend [Faker.js](http://marak.com/faker.js/):
 
 ```javascript
 var jsf = require('json-schema-faker');
@@ -226,6 +226,33 @@ var schema = {
   "faker": {
     "custom.statement": [19]
   }
+}
+
+var sample = jsf(schema);
+```
+
+... and [Chance.js](http://chancejs.com/), using built-in [chance.mixin](http://chancejs.com/#mixin) function:
+
+```javascript
+var jsf = require('json-schema-faker');
+
+jsf.extend('chance', function(chance){
+  chance.mixin({
+    'user': function() {
+      return {
+        first: chance.first(),
+        last: chance.last(),
+        email: chance.email()
+      };
+    }
+  });
+
+  return chance;
+});
+
+var schema = {
+  "type": "string",
+  "chance": "user"
 }
 
 var sample = jsf(schema);
