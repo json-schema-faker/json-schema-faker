@@ -51,7 +51,7 @@ var schema = {
     positiveInt: {
       type: 'integer',
       minimum: 0,
-      minimumExclusive: true
+      exclusiveMinimum: true
     }
   }
 };
