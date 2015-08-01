@@ -259,7 +259,18 @@ var schema = {
 var sample = jsf(schema);
 ```
 
-... and [Chance.js](http://chancejs.com/), using built-in [chance.mixin](http://chancejs.com/#mixin) function:
+or if you want to use [faker's *individual localization packages*](https://github.com/Marak/faker.js#individual-localization-packages), simply do the following:
+
+```js
+jsf.extend('faker', function() {
+  // just ignore the passed faker instance
+  var faker = require('faker/locale/de');
+  // do other stuff
+  return faker;
+});
+```
+
+You can also extend [Chance.js](http://chancejs.com/), using built-in [chance.mixin](http://chancejs.com/#mixin) function:
 
 ```javascript
 var jsf = require('json-schema-faker');
