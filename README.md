@@ -9,6 +9,24 @@
 
 Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system. Note that `json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only.
 
+# Table of contents
+
+- [JSON-schema-faker](#fake-your-schemas)
+- [Online demo](#online-demo)
+- [Install](#install)
+- [Overview](#overview)
+- [Example usage](#example-usage)
+- [Supported keywords](#supported-keywords)
+- [Using references](#using-references)
+- [Faking values](#faking-values)
+- [Custom formats](#custom-formats)
+- [Extending dependencies](#extending-dependencies)
+- [Inferred Types](#inferred-types)
+- [Automation](#automation)
+  - [Grunt plugin](#grunt-plugin)
+- [Motivation](#motivation)
+- [Contribution](#contribution)
+
 ## Online demo
 
 See [online demo](http://json-schema-faker.js.org/).
@@ -18,6 +36,16 @@ See [online demo](http://json-schema-faker.js.org/).
 Install `json-schema-faker` with npm:
 
     npm install json-schema-faker --save-dev
+
+## Overview
+
+JSON-schema-faker (or `jsf` for short) combines two things:
+
+ * The [JSON-schema specification](http://json-schema.org/), that defines what is the allowed content of a JSON document
+ * Fake data generators, that are used to generate basic or complex data, conforming to the schema. Following libraries come bundled with jsf:
+   * [faker.js](https://github.com/Marak/faker.js)
+   * [chance.js](https://github.com/victorquinn/chancejs)
+   * [randexp](https://github.com/fent/randexp.js)
 
 ## Example usage
 
@@ -302,12 +330,14 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 * `minLength`
 * `pattern`
 
-## Automation: grunt plugin
+## Automation
+
+### Grunt plugin
 
 Use [grunt-jsonschema-faker](https://github.com/ducin/grunt-jsonschema-faker)
 to automate running `json-schema-faker` against your JSON schemas.
 
-## Great, Why?
+## Motivation
 
 Actually, I've found some projects or services:
 
