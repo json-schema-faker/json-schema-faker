@@ -24,6 +24,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 - [Inferred Types](#inferred-types)
 - [Automation](#automation)
   - [Grunt plugin](#grunt-plugin)
+- [Resources](#resources)
 - [Motivation](#motivation)
 - [Contribution](#contribution)
 
@@ -347,6 +348,10 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 Use [grunt-jsonschema-faker](https://github.com/ducin/grunt-jsonschema-faker)
 to automate running `json-schema-faker` against your JSON schemas.
+
+## Resources
+
+* [JSON, JSON Schema & JSON-schema-faker](https://www.youtube.com/watch?v=TkqiUG3j_Xw) - WarsawJS meetup presentation recording, a step-by-step guide to JSON-related tools, including `jsf`
 
 ## Motivation
 
