@@ -11,22 +11,25 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 
 # Table of contents
 
-- [JSON-schema-faker](#fake-your-schemas)
-- [Online demo](#online-demo)
-- [Install](#install)
-- [Overview](#overview)
-- [Example usage](#example-usage)
-- [Supported keywords](#supported-keywords)
-- [Using references](#using-references)
-- [Faking values](#faking-values)
-- [Custom formats](#custom-formats)
-- [Extending dependencies](#extending-dependencies)
-- [Inferred Types](#inferred-types)
-- [Automation](#automation)
-  - [Grunt plugin](#grunt-plugin)
-- [Resources](#resources)
-- [Motivation](#motivation)
-- [Contribution](#contribution)
+- Basics
+  - [JSON-schema-faker](#fake-your-schemas)
+  - [Online demo](#online-demo)
+  - [Install](#install)
+  - [Overview](#overview)
+  - [Example usage](#example-usage)
+- Advanced
+  - [Supported keywords](#supported-keywords)
+  - [Using references](#using-references)
+  - [Faking values](#faking-values)
+  - [Custom formats](#custom-formats)
+  - [Extending dependencies](#extending-dependencies)
+  - [Inferred Types](#inferred-types)
+  - [Automation](#automation)
+    - [Grunt plugin](#grunt-plugin)
+- Misc
+  - [Resources](#resources)
+  - [Motivation](#motivation)
+  - [Contribution](#contribution)
 
 ## Online demo
 
