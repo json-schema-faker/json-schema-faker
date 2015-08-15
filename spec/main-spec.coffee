@@ -20,7 +20,9 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
   if spec isnt null
     return if file.indexOf(spec) is -1
 
-  JSON.parse(fs.readFileSync(file)).forEach (suite) ->
+  suite = JSON.parse(fs.readFileSync(file))
+
+  (if Array.isArray(suite) then suite else [suite]).forEach (suite) ->
     describe "#{suite.description} (#{file.replace(__dirname + '/', '')})", ->
       suite.tests.forEach (test) ->
         it test.description, ->
@@ -55,7 +57,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
           if typeof test.throws is 'string'
             if typeof error isnt 'string'
-              throw """
+              throw new Error """
                 THIS SHOULD NOT HAPPEN --- #{error}
 
                 #{JSON.stringify(schema, null, 2)}
@@ -69,7 +71,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             try
               expect(sample).toHaveSchema schema, refs
             catch e
-              throw """
+              throw new Error """
                 #{suite.description} (#{e})
 
                 #{JSON.stringify(schema, null, 2)}
