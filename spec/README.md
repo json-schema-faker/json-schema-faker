@@ -32,3 +32,4 @@ The follow properties are used for setup the test and execute assertions:
 - `hasNot` used for primitives, it will perform a `not.toContain()` test
 - `type` used for primitives, it will perform a `toHaveType()` test
 - `valid` will test the generated json against the original schema
+- `equal` will test equality for the given schema and the generated one
