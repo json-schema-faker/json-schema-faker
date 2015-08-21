@@ -107,6 +107,51 @@
           }
         },
         "type": "array"
+      },
+      {
+        "description": "should handle property name matching inferrable object properties (Issue 62)",
+        "schema": {
+          "id": "matches",
+          "type": "object",
+          "required": ["items"],
+          "properties": {
+            "items": {
+              "items": {
+                "type": "string"
+              },
+              "minItems": 1,
+              "maxItems": 10
+            }
+          }
+        },
+        "type": "object"
+      },
+      {
+        "description": "should handle nested property name matching inferrable object properties (Issue 62)",
+        "schema": {
+          "id": "matches",
+          "type": "object",
+          "required": ["items"],
+          "properties": {
+            "items": {
+              "items": {
+                "required": ["items"],
+                "properties": {
+                  "items": {
+                    "items": {
+                      "type": "string"
+                    },
+                    "minItems": 1,
+                    "maxItems": 10
+                  }
+                }
+              },
+              "minItems": 1,
+              "maxItems": 10
+            }
+          }
+        },
+        "type": "object"
       }
     ]
   }
