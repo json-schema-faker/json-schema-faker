@@ -315,7 +315,7 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 **array**
 
-* `additionalProperties`
+* `additionalItems`
 * `items`
 * `maxItems`
 * `minItems`
@@ -331,7 +331,7 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 **object**
 
-* `additionalItems`
+* `additionalProperties`
 * `dependencies`
 * `maxProperties`
 * `minProperties`
