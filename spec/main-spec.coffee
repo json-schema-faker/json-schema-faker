@@ -78,3 +78,6 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
                 #{JSON.stringify(sample, null, 2)}
               """
+
+          if test.equal
+            expect(sample).toEqual test.equal
