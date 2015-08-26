@@ -1,4 +1,6 @@
-# Fake your schemas!
+![JSON Schema Faker logo](logo.png)
+
+*proudly presenting the artwork by [Ajay Karat](http://www.devilsgarage.com/)*
 
 [![Build Status](https://travis-ci.org/pateketrueke/json-schema-faker.png?branch=master)](https://travis-ci.org/pateketrueke/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)
