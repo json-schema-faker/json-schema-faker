@@ -2,12 +2,12 @@
 
 *proudly presenting the artwork by [Ajay Karat](http://www.devilsgarage.com/)*
 
-[![Build Status](https://travis-ci.org/pateketrueke/json-schema-faker.png?branch=master)](https://travis-ci.org/pateketrueke/json-schema-faker)
+[![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.png?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)
-[![Coverage Status](https://coveralls.io/repos/pateketrueke/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/pateketrueke/json-schema-faker?branch=master)
+[![Coverage Status](https://coveralls.io/repos/json-schema-faker/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/json-schema-faker/json-schema-faker?branch=master)
 
-[![Dependency Status](https://david-dm.org/pateketrueke/json-schema-faker/status.svg)](https://david-dm.org/pateketrueke/json-schema-faker)
-[![devDependency Status](https://david-dm.org/pateketrueke/json-schema-faker/dev-status.svg)](https://david-dm.org/pateketrueke/json-schema-faker#info=devDependencies)
+[![Dependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker)
+[![devDependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/dev-status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker#info=devDependencies)
 
 Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system. Note that `json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only.
 
