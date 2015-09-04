@@ -1,4 +1,4 @@
-![JSON Schema Faker logo](logo.png)
+![JSON Schema Faker logo](logo/JSF_logo.png)
 
 *proudly presenting the artwork by [Ajay Karat](http://www.devilsgarage.com/)*
 
