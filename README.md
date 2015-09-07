@@ -1,7 +1,5 @@
 ![JSON Schema Faker logo](logo/JSF_logo.png)
 
-*proudly presenting the artwork by [Ajay Karat](http://www.devilsgarage.com/)*
-
 [![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.png?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.png)](http://badge.fury.io/js/json-schema-faker)
 [![Coverage Status](https://coveralls.io/repos/json-schema-faker/json-schema-faker/badge.png?branch=master)](https://coveralls.io/r/json-schema-faker/json-schema-faker?branch=master)
@@ -378,5 +376,6 @@ Many of they are incomplete (?), so I decided to code this library.
 * [Alvaro Cabrera](https://twitter.com/pateketrueke)
 * [Tomasz Ducin](https://twitter.com/tomasz_ducin)
 * [Jeremy Whitlock](https://twitter.com/whitlockjc)
+* artwork by [Ajay Karat](http://www.devilsgarage.com/)
 
 Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
