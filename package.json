@@ -30,10 +30,10 @@
     "z-schema": "^3.12.2"
   },
   "dependencies": {
-    "chance": "^0.7.6",
+    "chance": "^0.7.7",
     "deepmerge": "^0.2.10",
     "deref": "^0.3.0",
-    "faker": "^3.0.0",
+    "faker": "^3.0.1",
     "randexp": "^0.4.0",
     "underscore": "^1.8.3",
     "underscore-deep-extend": "0.0.5"
