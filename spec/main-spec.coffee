@@ -23,8 +23,12 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
   suite = JSON.parse(fs.readFileSync(file))
 
   (if Array.isArray(suite) then suite else [suite]).forEach (suite) ->
+    return if suite.xdescription
+
     describe "#{suite.description} (#{file.replace(__dirname + '/', '')})", ->
       suite.tests.forEach (test) ->
+        return if test.xdescription
+
         it test.description, ->
           if test.require
             wrapper = require('./' + test.require)
@@ -48,6 +52,10 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
           catch e
             error = String(e)
             throw e unless test.throws
+
+          if test.dump
+            console.log JSON.stringify(sample, null, 2)
+            return
 
           if test.hasNot
             expect(sample.toString()).not.toContain test.hasNot

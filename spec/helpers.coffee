@@ -8,18 +8,25 @@ formatValidators = require('./validator').validate
 [tv4, ZSchema].map formatValidators
 
 jasmine.Matchers::toHaveType = (expected) ->
-  if Object::toString.call(@actual).match(/object (\w+)/)[1].toLowerCase() isnt expected
-    throw "Expected #{JSON.stringify @actual} to have #{expected} type"
+  test = Object::toString.call(@actual).match(/object (\w+)/)
+
+  if test[1].toLowerCase() isnt expected
+    throw new Error """
+      Expected #{JSON.stringify @actual} to have #{expected} type
+    """
 
   true
 
 jasmine.Matchers::toHaveSchema = (expected, refs) ->
-  # TODO: try other validators
+  fixed = {}
+
+  if refs
+    fixed[s.id.split('#')[0]] = clone(s) for s in refs
 
   validator = new ZSchema
     ignoreUnresolvableReferences: false
 
-  validator.setRemoteReference(schema.id, clone(schema)) for schema in refs if refs
+  validator.setRemoteReference(k, v) for k, v of fixed
   valid = validator.validate @actual, clone(expected)
 
   if errors = validator.getLastErrors() or not valid
@@ -32,14 +39,15 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
 
   api = tv4.freshApi()
 
-  api.cyclicCheck = false;
-  api.banUnknown = false;
+  api.cyclicCheck = false
+  api.banUnknown = false
 
-  api.addSchema(schema.id, clone(schema)) for schema in refs if refs
+  api.addSchema(k, v) for k, v of refs
 
-  result = api.validateResult(@actual, clone(expected), api.cyclicCheck, api.banUnknown)
+  result = api.validateResult(@actual, clone(expected))
 
-  throw 'Missing ' + result.missing.join(', ') if result.missing.length
+  if result.missing.length
+    throw new Error 'Missing ' + result.missing.join(', ')
 
   throw result.error if result.error
 
@@ -47,10 +55,12 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
 
   formatValidators jay
 
-  jay.register(clone(schema)) for schema in refs if refs
+  jay.register(s) for s of refs
 
   result = jay.validate @actual, clone(expected)
 
-  throw result.map((e) -> e.desc or e.message).join('\n') or "Invalid schema #{JSON.stringify @actual}" if result.length
+  if result.length
+    throw result.map((e) -> e.desc or e.message).join('\n') or
+      "Invalid schema #{JSON.stringify @actual}"
 
   true
