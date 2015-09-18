@@ -82,9 +82,9 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
               throw new Error """
                 #{suite.description} (#{e})
 
-                #{JSON.stringify(schema, null, 2)}
-
                 #{JSON.stringify(sample, null, 2)}
+
+                #{JSON.stringify(schema, null, 2)}
               """
 
           if test.equal
