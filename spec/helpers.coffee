@@ -39,12 +39,13 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
 
   api = tv4.freshApi()
 
-  api.cyclicCheck = false
   api.banUnknown = false
+  api.cyclicCheck = false
 
-  api.addSchema(k, v) for k, v of refs
+  api.addSchema(id, json) for id, json of fixed
 
-  result = api.validateResult(@actual, clone(expected))
+  result = api.validateResult @actual,
+    clone(expected), api.cyclicCheck, api.banUnknown
 
   if result.missing.length
     throw new Error 'Missing ' + result.missing.join(', ')
@@ -55,12 +56,11 @@ jasmine.Matchers::toHaveSchema = (expected, refs) ->
 
   formatValidators jay
 
-  jay.register(s) for s of refs
+  jay.register(clone(json)) for id, json of fixed
 
   result = jay.validate @actual, clone(expected)
 
-  if result.length
-    throw result.map((e) -> e.desc or e.message).join('\n') or
-      "Invalid schema #{JSON.stringify @actual}"
+  throw result.map((e) -> e.desc or e.message).join('\n') or
+    "Invalid schema #{JSON.stringify @actual}" if result.length
 
   true
