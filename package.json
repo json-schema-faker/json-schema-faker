@@ -31,7 +31,6 @@
   },
   "dependencies": {
     "chance": "^0.8.0",
-    "deep-extend": "^0.4.0",
     "deref": "^0.6.2",
     "faker": "^3.0.1",
     "randexp": "^0.4.1"
