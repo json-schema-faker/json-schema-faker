@@ -31,9 +31,9 @@
   },
   "dependencies": {
     "chance": "^0.8.0",
-    "deref": "^0.6.0",
+    "deref": "^0.6.1",
     "faker": "^3.0.1",
-    "randexp": "^0.4.0"
+    "randexp": "^0.4.1"
   },
   "keywords": [
     "json",
