@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "JSON-Schema + Faker",
   "main": "lib/index.js",
   "author": {
