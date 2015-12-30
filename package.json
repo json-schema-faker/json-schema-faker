@@ -21,9 +21,9 @@
   "license": "MIT",
   "dependencies": {
     "chance": "^0.8.0",
-    "deref": "^0.6.2",
+    "deref": "^0.6.3",
     "faker": "^3.0.1",
-    "randexp": "^0.4.1"
+    "randexp": "^0.4.2"
   },
   "devDependencies": {
     "clone": "^1.0.2",
