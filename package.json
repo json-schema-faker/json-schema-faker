@@ -16,9 +16,15 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/pateketrueke/json-schema-faker"
+    "url": "https://github.com/json-schema-faker/json-schema-faker"
   },
   "license": "MIT",
+  "dependencies": {
+    "chance": "^0.8.0",
+    "deref": "^0.6.2",
+    "faker": "^3.0.1",
+    "randexp": "^0.4.1"
+  },
   "devDependencies": {
     "clone": "^1.0.2",
     "glob": "^5.0.6",
@@ -28,12 +34,6 @@
     "semver": "^5.0.3",
     "tv4": "^1.2.3",
     "z-schema": "^3.12.2"
-  },
-  "dependencies": {
-    "chance": "^0.8.0",
-    "deref": "^0.6.2",
-    "faker": "^3.0.1",
-    "randexp": "^0.4.1"
   },
   "keywords": [
     "json",
