@@ -349,7 +349,7 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 ### Grunt plugin
 
-Use [grunt-jsonschema-faker](https://github.com/ducin/grunt-jsonschema-faker)
+Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
 to automate running `json-schema-faker` against your JSON schemas.
 
 ## Resources
