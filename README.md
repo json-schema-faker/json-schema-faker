@@ -19,6 +19,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Install](#install)
   - [Overview](#overview)
   - [Example usage](#example-usage)
+    - [Gist demos](#gist-demos)
 - Advanced
   - [Supported keywords](#supported-keywords)
   - [Using references](#using-references)
@@ -96,6 +97,13 @@ console.log(sample.user.name);
 // output: John Doe
 ```
 
+### Gist demos
+
+Clone these gists and execute them locally (each gist has its own readme with instructions):
+
+ * [jsf console](https://gist.github.com/ducin/9f2364ccde2e9248fbcd) - minimal example of jsf working directly under command line
+ * [jsf grunt](https://gist.github.com/ducin/87e0b55bddd1801d3d99) - example of jsf working under grunt.js
+
 ## Supported keywords
 
 - **$ref** &mdash; Resolve internal references only, and/or external if provided.
@@ -123,7 +131,7 @@ console.log(sample.user.name);
 
 Inline references are fully supported (json-pointers) but external can't be resolved by `json-schema-faker`.
 
-In order to achieve that you can use [refaker](https://github.com/gextech/refaker) and then use the resolved schemas:
+In order to achieve that you can use [refaker](https://github.com/json-schema-faker/refaker) and then use the resolved schemas:
 
 ```javascript
 var schema = {
@@ -360,7 +368,7 @@ to automate running `json-schema-faker` against your JSON schemas.
 
 ## Motivation
 
-Actually, I've found some projects or services:
+There were some existing projects or services trying to achieve similar goals as `jsf`:
 
 - http://www.json-generator.com/
 - https://github.com/unindented/fake-json
@@ -371,7 +379,7 @@ Actually, I've found some projects or services:
 - https://github.com/murgatroid99/json-schema-random-instance
 - https://github.com/tomarad/JSON-Schema-Instantiator
 
-Many of they are incomplete (?), so I decided to code this library.
+but they were either incomplete, outdated, broken or non-standard. That's why `jsf` was created.
 
 ## Contribution
 
