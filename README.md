@@ -360,7 +360,7 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 ## Bundling
 
-JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using []browserify](http://browserify.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
+JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using [browserify](http://browserify.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
 
 However, you may want to bundle a smaller package of `jsf`, because:
 * you want to reduce the bundle file size
