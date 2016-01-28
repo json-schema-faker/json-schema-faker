@@ -1,3 +1,52 @@
+v0.2.6:
+  date: 2015-12-30
+  changes:
+    - dependency update
+v0.2.5:
+  date: 2015-11-26
+  changes:
+    - mixins should be arrays
+v0.2.4:
+  date: 2015-11-25
+  changes:
+    - Call reduce() on each resolved reference
+v0.2.3:
+  date: 2015-11-25
+  changes:
+    - references fixes
+    - minor fixes
+v0.2.2:
+  date: 2015-10-09
+  changes:
+    - linting
+    - dereferencing update
+v0.2.1:
+  date: 2015-09-12
+  changes:
+    - docs update
+    - logo added
+    - underscores allowed
+    - straight approach to sub-schema containers
+    - inferred types update
+v0.2.0:
+  date: 2015-07-15
+  changes:
+    - docs update
+v0.1.13:
+  date: 2015-06-25
+  changes:
+    - extending chance.js
+v0.1.12:
+  date: 2015-06-11
+  changes:
+    - max issues solved
+v0.1.11:
+  date: 2015-06-08
+  changes:
+    - docs update
+    - test specs
+    - contributing guidelines
+    - inferred types
 v0.1.10:
   date: 2015-05-21
   changes:

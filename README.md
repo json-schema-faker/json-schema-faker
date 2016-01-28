@@ -7,7 +7,7 @@
 [![Dependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker)
 [![devDependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/dev-status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker#info=devDependencies)
 
-Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system. Note that `json-schema-faker` supports (currently) the JSON-Schema specification **draft-04** only.
+Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system.
 
 ***Want to support `jsf`?*** We are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
 
@@ -27,6 +27,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Custom formats](#custom-formats)
   - [Extending dependencies](#extending-dependencies)
   - [Inferred Types](#inferred-types)
+  - [Bundling](#bundling)
   - [Automation](#automation)
     - [Grunt plugin](#grunt-plugin)
 - Misc
@@ -46,7 +47,7 @@ Install `json-schema-faker` with npm:
 
 ## Overview
 
-JSON-schema-faker (or `jsf` for short) combines two things:
+JSON-Schema-faker (or `jsf` for short) combines two things:
 
  * The [JSON-schema specification](http://json-schema.org/), that defines what is the allowed content of a JSON document
  * Fake data generators, that are used to generate basic or complex data, conforming to the schema. Following libraries come bundled with jsf:
@@ -106,6 +107,8 @@ Clone these gists and execute them locally (each gist has its own readme with in
 
 ## Supported keywords
 
+Note that `jsf` supports (currently) the JSON-Schema specification **draft-04** only. Below is the list of supported keywords:
+
 - **$ref** &mdash; Resolve internal references only, and/or external if provided.
 - **required** &mdash; All required properties are guaranteed, if not can be omitted.
 - **pattern** &mdash; Generate samples based on RegExp values.
@@ -129,7 +132,7 @@ Clone these gists and execute them locally (each gist has its own readme with in
 
 ## Using references
 
-Inline references are fully supported (json-pointers) but external can't be resolved by `json-schema-faker`.
+Inline references are fully supported (json-pointers) but external can't be resolved by `jsf`.
 
 In order to achieve that you can use [refaker](https://github.com/json-schema-faker/refaker) and then use the resolved schemas:
 
@@ -158,7 +161,7 @@ console.log(sample.someValue);
 
 ## Faking values
 
-`json-schema-faker` has built-in generators for core-formats, [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
+`jsf` has built-in generators for core-formats, [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
 
 You can use **faker** or **chance** properties but they are optional:
 
@@ -319,7 +322,7 @@ JSON Schema does not require you to provide the `type` property for your JSON Sc
 
 But since `jsf` uses the `type` property to create the proper fake data, we attempt to infer the type whenever it is not provided. We do this based on the JSON Schema validation properties you use.
 
-> Now this means that if you do not use any of the JSON Schema validation properties, json-schema-faker will not be able to infer the type for you and you will need to **explicitly** set your `type` manually.)
+> Now this means that if you do not use any of the JSON Schema validation properties, jsf will not be able to infer the type for you and you will need to **explicitly** set your `type` manually.)
 
 Below is the list of JSON Schema validation properties and the inferred type based on the property:
 
@@ -354,6 +357,17 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 * `maxLength`
 * `minLength`
 * `pattern`
+
+## Bundling
+
+JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using []browserify](http://browserify.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
+
+However, you may want to bundle a smaller package of `jsf`, because:
+* you want to reduce the bundle file size
+* you don't need all languages from faker.js
+* you wish to use chance.js only and get rid of other dependencies
+* or for any other reason...
+In that case you may bundle the distribution yourself manually. It's easily achievable: just modify the [`lib/util/container.js`](lib/util/container.js) file and either remove o rmodify the `require` calls (they're directly used by browserify to include dependencies). Automation of this feature is expected in near future.
 
 ## Automation
 
