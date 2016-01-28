@@ -1,3 +1,7 @@
+v0.2.7:
+  date: 2016-01-28
+  changes:
+    - distribution files added (browserify)
 v0.2.6:
   date: 2015-12-30
   changes:

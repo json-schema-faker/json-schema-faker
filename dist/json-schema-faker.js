@@ -5,58 +5,716 @@
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-01-28 16:38:57.586Z
+ * Date: 2016-01-28 16:45:13.460Z
  */
 
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-"use strict";function isKey(e){return"enum"===e||"required"===e||"definitions"===e}function generate(e,r,t){var a=deref();try{var n=100;return traverse(a(e,r,t),[],function i(e){if(!n)return delete e.$ref,delete e.oneOf,delete e.anyOf,delete e.allOf,e;if("string"==typeof e.$ref){var r=e.$ref;delete e.$ref,n--,merge(e,a.util.findByRef(r,a.refs))}if(Array.isArray(e.allOf)){var t=e.allOf;delete e.allOf,t.forEach(function(r){merge(e,i(r))})}if(Array.isArray(e.oneOf||e.anyOf)){var f=e.oneOf||e.anyOf;delete e.anyOf,delete e.oneOf,merge(e,random.pick(f))}for(var o in e)!Array.isArray(e[o])&&"object"!=typeof e[o]||isKey(o)||(e[o]=i(e[o]));return e})}catch(f){throw f.path?new Error(f.message+" in /"+f.path.join("/")):f}}var container=require("./util/container"),traverse=require("./util/traverse"),formats=require("./util/formats"),random=require("./util/random"),merge=require("./util/merge"),deref=require("deref");generate.formats=formats,generate.extend=container.set,module.exports=generate;
+'use strict';
+
+var container = require('./util/container'),
+    traverse = require('./util/traverse'),
+    formats = require('./util/formats'),
+    random = require('./util/random'),
+    merge = require('./util/merge');
+
+var deref = require('deref');
+
+function isKey(prop) {
+  return prop === 'enum' || prop === 'required' || prop === 'definitions';
+}
+
+function generate(schema, refs, ex) {
+  var $ = deref();
+
+  try {
+    var max = 100;
+
+    return traverse($(schema, refs, ex), [], function reduce(sub) {
+      if (!max) {
+        delete sub.$ref;
+        delete sub.oneOf;
+        delete sub.anyOf;
+        delete sub.allOf;
+        return sub;
+      }
+
+      if (typeof sub.$ref === 'string') {
+        var id = sub.$ref;
+
+        delete sub.$ref;
+
+        max--;
+
+        merge(sub, $.util.findByRef(id, $.refs));
+      }
+
+      if (Array.isArray(sub.allOf)) {
+        var schemas = sub.allOf;
+
+        delete sub.allOf;
+
+        // this is the only case where all sub-schemas
+        // must be resolved before any merge
+        schemas.forEach(function(s) {
+          merge(sub, reduce(s));
+        });
+      }
+
+      if (Array.isArray(sub.oneOf || sub.anyOf)) {
+        var mix = sub.oneOf || sub.anyOf;
+
+        delete sub.anyOf;
+        delete sub.oneOf;
+
+        merge(sub, random.pick(mix));
+      }
+
+      for (var prop in sub) {
+        if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
+          sub[prop] = reduce(sub[prop]);
+        }
+      }
+
+      return sub;
+    });
+  } catch (e) {
+    if (e.path) {
+      throw new Error(e.message + ' in ' + '/' + e.path.join('/'));
+    } else {
+      throw e;
+    }
+  }
+}
+
+generate.formats = formats;
+generate.extend = container.set;
+
+module.exports = generate;
+
 },{"./util/container":9,"./util/formats":11,"./util/merge":14,"./util/random":16,"./util/traverse":17,"deref":19}],2:[function(require,module,exports){
-"use strict";function unique(r,e,t,i,s){function a(r){var e=JSON.stringify(r);-1===o.indexOf(e)&&(o.push(e),n.push(r))}var n=[],o=[];e.forEach(a);for(var u=100;n.length!==e.length&&(a(traverse(t.items||i,r,s)),u--););return n}var random=require("../util/random"),traverse=require("../util/traverse"),hasProps=require("../util/has-props"),ParseError=require("../util/error");module.exports=function(r,e,t){var i=[];if(!r.items&&!r.additionalItems){if(hasProps(r,"minItems","maxItems","uniqueItems"))throw new ParseError("missing items for "+JSON.stringify(r),e);return i}if(Array.isArray(r.items))return Array.prototype.concat.apply(i,r.items.map(function(r,i){return traverse(r,e.concat(["items",i]),t)}));for(var s=random(r.minItems,r.maxItems,1,5),a="object"==typeof r.additionalItems?r.additionalItems:{},n=i.length;s>n;n+=1)i.push(traverse(r.items||a,e.concat(["items",n]),t));return r.uniqueItems?unique(e.concat(["items"]),i,r,a,t):i};
+'use strict';
+
+var random = require('../util/random'),
+    traverse = require('../util/traverse'),
+    hasProps = require('../util/has-props');
+
+var ParseError = require('../util/error');
+
+function unique(path, items, value, sample, resolve) {
+  var tmp = [],
+      seen = [];
+
+  function walk(obj) {
+    var json = JSON.stringify(obj);
+
+    if (seen.indexOf(json) === -1) {
+      seen.push(json);
+      tmp.push(obj);
+    }
+  }
+
+  items.forEach(walk);
+
+  // TODO: find a better solution?
+  var limit = 100;
+
+  while (tmp.length !== items.length) {
+    walk(traverse(value.items || sample, path, resolve));
+
+    if (!limit--) {
+      break;
+    }
+  }
+
+  return tmp;
+}
+
+module.exports = function(value, path, resolve) {
+  var items = [];
+
+  if (!(value.items || value.additionalItems)) {
+    if (hasProps(value, 'minItems', 'maxItems', 'uniqueItems')) {
+      throw new ParseError('missing items for ' + JSON.stringify(value), path);
+    }
+
+    return items;
+  }
+
+  if (Array.isArray(value.items)) {
+    return Array.prototype.concat.apply(items, value.items.map(function(item, key) {
+      return traverse(item, path.concat(['items', key]), resolve);
+    }));
+  }
+
+  var length = random(value.minItems, value.maxItems, 1, 5),
+      sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+
+  for (var current = items.length; current < length; current += 1) {
+    items.push(traverse(value.items || sample, path.concat(['items', current]), resolve));
+  }
+
+  if (value.uniqueItems) {
+    return unique(path.concat(['items']), items, value, sample, resolve);
+  }
+
+  return items;
+};
 
 },{"../util/error":10,"../util/has-props":12,"../util/random":16,"../util/traverse":17}],3:[function(require,module,exports){
-"use strict";module.exports=function(){return Math.random()>.5};
+'use strict';
+
+module.exports = function() {
+  return Math.random() > 0.5;
+};
 
 },{}],4:[function(require,module,exports){
-"use strict";var number=require("./number");module.exports=function(r){r.hasPrecision=!1;var e=number(r);return e>0?Math.floor(e):Math.ceil(e)};
+'use strict';
+
+var number = require('./number');
+
+// The `integer` type is just a wrapper for the `number` type. The `number` type
+// returns floating point numbers, and `integer` type truncates the fraction
+// part, leaving the result as an integer.
+//
+module.exports = function(value) {
+  value.hasPrecision = false;
+  var generated = number(value);
+  // whether the generated number is positive or negative, need to use either
+  // floor (positive) or ceil (negative) function to get rid of the fraction
+  return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
+};
 
 },{"./number":6}],5:[function(require,module,exports){
-"use strict";module.exports=function(){return null};
+'use strict';
+
+module.exports = function() {
+  return null;
+};
 
 },{}],6:[function(require,module,exports){
-"use strict";var MIN_INTEGER=-1e8,MAX_INTEGER=1e8,string=require("./string"),random=require("../util/random");module.exports=function(m){if(m.faker||m.chance)return string(m);var i="undefined"==typeof m.minimum?MIN_INTEGER:m.minimum,e="undefined"==typeof m.maximum?MAX_INTEGER:m.maximum;if(m.exclusiveMinimum&&m.minimum&&(i+=1),m.exclusiveMaximum&&m.maximum&&(e-=1),m.multipleOf){for(var r=random(Math.floor(i/m.multipleOf),Math.floor(e/m.multipleOf))*m.multipleOf;i>r;)r+=m.multipleOf;return r}return m.hasPrecision?random(!1,i,e):random(Math.random()>.5,i,e)};
+'use strict';
+
+var MIN_INTEGER = -100000000,
+    MAX_INTEGER = 100000000;
+
+var string = require('./string'),
+    random = require('../util/random');
+
+module.exports = function(value) {
+  if (value.faker || value.chance) {
+    return string(value);
+  }
+
+  var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
+      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
+
+  if (value.exclusiveMinimum && value.minimum) {
+    min += 1;
+  }
+
+  if (value.exclusiveMaximum && value.maximum) {
+    max -= 1;
+  }
+
+  if (value.multipleOf) {
+    var base = random(Math.floor(min / value.multipleOf), Math.floor(max / value.multipleOf)) * value.multipleOf;
+
+    while (base < min) {
+      base += value.multipleOf;
+    }
+
+    return base;
+  }
+
+  if (value.hasPrecision) {
+    return random(false, min, max);
+  }
+
+  return random(Math.random() > 0.5, min, max);
+};
 
 },{"../util/random":16,"./string":8}],7:[function(require,module,exports){
-"use strict";var container=require("../util/container"),random=require("../util/random"),traverse=require("../util/traverse"),hasProps=require("../util/has-props"),faker=container.get("faker"),RandExp=container.get("randexp"),randexp=RandExp.randexp,ParseError=require("../util/error");module.exports=function(r,e,t){var i={};if(!(r.properties||r.patternProperties||r.additionalProperties)){if(hasProps(r,"minProperties","maxProperties","dependencies","required"))throw new ParseError("missing properties for "+JSON.stringify(r),e);return i}var o=r.required||[],p=r.properties?Object.keys(r.properties):[];o.forEach(function(e){r.properties&&r.properties[e]&&(i[e]=r.properties[e])});var a=p.filter(function(r){return-1===o.indexOf(r)});r.patternProperties&&(a=Array.prototype.concat.apply(a,Object.keys(r.patternProperties)));var n=random(r.minProperties,r.maxProperties,0,a.length);random.shuffle(a).slice(0,n).forEach(function(e){r.properties&&r.properties[e]?i[e]=r.properties[e]:i[randexp(e)]=r.patternProperties[e]});var s=Object.keys(i).length,d="object"==typeof r.additionalProperties?r.additionalProperties:{};return n>s&&faker.lorem.words(n-s).forEach(function(r){i[r+randexp("\\w{1,10}")]=d}),traverse(i,e.concat(["properties"]),t)};
+'use strict';
+
+var container = require('../util/container'),
+    random = require('../util/random'),
+    traverse = require('../util/traverse'),
+    hasProps = require('../util/has-props');
+
+var faker = container.get('faker'),
+    RandExp = container.get('randexp'),
+    randexp = RandExp.randexp;
+
+var ParseError = require('../util/error');
+
+module.exports = function(value, path, resolve) {
+  var props = {};
+
+  if (!(value.properties || value.patternProperties || value.additionalProperties)) {
+    if (hasProps(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
+      throw new ParseError('missing properties for ' + JSON.stringify(value), path);
+    }
+
+    return props;
+  }
+
+  var reqProps = value.required || [],
+      allProps = value.properties ? Object.keys(value.properties) : [];
+
+  reqProps.forEach(function(key) {
+    if (value.properties && value.properties[key]) {
+      props[key] = value.properties[key];
+    }
+  });
+
+  var optProps = allProps.filter(function(prop) {
+    return reqProps.indexOf(prop) === -1;
+  });
+
+  if (value.patternProperties) {
+    optProps = Array.prototype.concat.apply(optProps, Object.keys(value.patternProperties));
+  }
+
+  var length = random(value.minProperties, value.maxProperties, 0, optProps.length);
+
+  random.shuffle(optProps).slice(0, length).forEach(function(key) {
+    if (value.properties && value.properties[key]) {
+      props[key] = value.properties[key];
+    } else {
+      props[randexp(key)] = value.patternProperties[key];
+    }
+  });
+
+  var current = Object.keys(props).length,
+      sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
+
+  if (current < length) {
+    faker.lorem.words(length - current).forEach(function(key) {
+      props[key + randexp('\\w{1,10}')] = sample;
+    });
+  }
+
+  return traverse(props, path.concat(['properties']), resolve);
+};
 
 },{"../util/container":9,"../util/error":10,"../util/has-props":12,"../util/random":16,"../util/traverse":17}],8:[function(require,module,exports){
-"use strict";function get(e,r){for(var a=r.split(".");a.length;){var n=a.shift();if(!e[n])break;e=e[n]}return e}function generate(e){if(e.use){var r=[],a=e.key;"object"==typeof a&&(a=Object.keys(a)[0],Array.isArray(e.key[a])?r=e.key[a]:r.push(e.key[a]));var n=get(e.gen,a);if("function"!=typeof n)throw new Error("unknown "+e.use+"-generator for "+JSON.stringify(e.key));return n.apply(e.gen,r)}switch(e.format){case"date-time":return new Date(random(0,1e14)).toISOString();case"email":case"hostname":case"ipv6":case"uri":return randexp(regexps[e.format]).replace(/\{(\w+)\}/,function(e,r){return randexp(regexps[r])});case"ipv4":return[0,0,0,0].map(function(){return random(0,255)}).join(".");default:var t=formats(e.format);if("function"!=typeof t)throw new Error("unknown generator for "+JSON.stringify(e.format));var o={faker:faker,chance:chance,randexp:randexp};return t(o,e)}}var container=require("../util/container"),faker=container.get("faker"),chance=container.get("chance"),RandExp=container.get("randexp"),randexp=RandExp.randexp,random=require("../util/random"),formats=require("../util/formats"),regexps={email:"[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}",hostname:"[a-zA-Z]{1,33}\\.[a-z]{2,4}",ipv6:"[abcdef\\d]{4}(:[abcdef\\d]{4}){7}",uri:"[a-zA-Z][a-zA-Z0-9+-.]*"};module.exports=function(e){if(e.faker||e.chance)return generate({use:e.faker?"faker":"chance",gen:e.faker?faker:chance,key:e.faker||e.chance});if(e.format)return generate(e);if(e.pattern)return randexp(e.pattern);if(e.minLength||e.maxLength){var r=Math.max(0,e.minLength||0),a=random(r,e.maxLength);return randexp(".{"+r+","+a+"}")}return faker.lorem.words(random(1,5)).join(" ")};
+'use strict';
+
+var container = require('../util/container');
+
+var faker = container.get('faker'),
+    chance = container.get('chance'),
+    RandExp = container.get('randexp'),
+    randexp = RandExp.randexp;
+
+var random = require('../util/random'),
+    formats = require('../util/formats');
+
+var regexps = {
+  email: '[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}',
+  hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
+  ipv6: '[abcdef\\d]{4}(:[abcdef\\d]{4}){7}',
+  uri: '[a-zA-Z][a-zA-Z0-9+-.]*'
+};
+
+function get(obj, key) {
+  var parts = key.split('.');
+
+  while (parts.length) {
+    var prop = parts.shift();
+
+    if (!obj[prop]) {
+      break;
+    }
+
+    obj = obj[prop];
+  }
+
+  return obj;
+}
+
+function generate(value) {
+  if (value.use) {
+    var args = [],
+        path = value.key;
+
+    if (typeof path === 'object') {
+      path = Object.keys(path)[0];
+
+      if (Array.isArray(value.key[path])) {
+        args = value.key[path];
+      } else {
+        args.push(value.key[path]);
+      }
+    }
+
+    var gen = get(value.gen, path);
+
+    if (typeof gen !== 'function') {
+      throw new Error('unknown ' + value.use + '-generator for ' + JSON.stringify(value.key));
+    }
+
+    return gen.apply(value.gen, args);
+  }
+
+  switch (value.format) {
+    case 'date-time':
+      return new Date(random(0, 100000000000000)).toISOString();
+
+    case 'email':
+    case 'hostname':
+    case 'ipv6':
+    case 'uri':
+      return randexp(regexps[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
+        return randexp(regexps[key]);
+      });
+
+    case 'ipv4':
+      return [0, 0, 0, 0].map(function() {
+        return random(0, 255);
+      }).join('.');
+
+    default:
+      var callback = formats(value.format);
+
+      if (typeof callback !== 'function') {
+        throw new Error('unknown generator for ' + JSON.stringify(value.format));
+      }
+
+      var generators = {
+        faker: faker,
+        chance: chance,
+        randexp: randexp
+      };
+
+      return callback(generators, value);
+  }
+}
+
+module.exports = function(value) {
+  if (value.faker || value.chance) {
+    return generate({
+      use: value.faker ? 'faker' : 'chance',
+      gen: value.faker ? faker : chance,
+      key: value.faker || value.chance
+    });
+  }
+
+  if (value.format) {
+    return generate(value);
+  }
+
+  if (value.pattern) {
+    return randexp(value.pattern);
+  }
+
+  if (value.minLength || value.maxLength) {
+    var min = Math.max(0, value.minLength || 0),
+        max = random(min, value.maxLength);
+
+    return randexp('.{' + min + ',' + max + '}');
+  }
+
+  return faker.lorem.words(random(1, 5)).join(' ');
+};
 
 },{"../util/container":9,"../util/formats":11,"../util/random":16}],9:[function(require,module,exports){
-"use strict";var Chance=require("chance"),container={faker:require("faker"),chance:new Chance,randexp:require("randexp")};module.exports={set:function(e,n){if("undefined"==typeof container[e])throw new ReferenceError('"'+e+"\" dependency doesn't exist.");container[e]=n(container[e])},get:function(e){return container[e]}};
+'use strict';
+
+// static requires - handle both initial dependency load (deps will be available
+// among other modules) as well as they will be included by browserify AST
+var Chance = require('chance');
+
+var container = {
+  faker: require('faker'),
+  chance: new Chance(),
+  randexp: require('randexp')
+};
+
+module.exports = {
+  set: function(name, callback) {
+    if (typeof container[name] === 'undefined') {
+      throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
+    }
+
+    container[name] = callback(container[name]);
+  },
+  get: function(name) {
+    return container[name];
+  }
+};
 
 },{"chance":18,"faker":25,"randexp":946}],10:[function(require,module,exports){
-"use strict";function ParseError(r,e){this.message=r,this.path=e,this.name="ParseError"}ParseError.prototype=Error.prototype,module.exports=ParseError;
+'use strict';
+
+function ParseError(message, path) {
+  this.message = message;
+  this.path = path;
+  this.name = 'ParseError';
+}
+
+ParseError.prototype = Error.prototype;
+
+module.exports = ParseError;
 
 },{}],11:[function(require,module,exports){
-"use strict";var registry={};module.exports=function(r,e){if(e)registry[r]=e;else if("object"==typeof r)for(var t in r)registry[t]=r[t];else if(r)return registry[r];return registry};
+'use strict';
+
+var registry = {};
+
+module.exports = function(name, callback) {
+  if (callback) {
+    registry[name] = callback;
+  } else if (typeof name === 'object') {
+    for (var method in name) {
+      registry[method] = name[method];
+    }
+  } else if (name) {
+    return registry[name];
+  }
+
+  return registry;
+};
 
 },{}],12:[function(require,module,exports){
-"use strict";module.exports=function(e){return Array.prototype.slice.call(arguments,1).filter(function(t){return"undefined"!=typeof e[t]}).length>0};
+'use strict';
+
+module.exports = function(obj) {
+  return Array.prototype.slice.call(arguments, 1).filter(function(key) {
+    return typeof obj[key] !== 'undefined';
+  }).length > 0;
+};
 
 },{}],13:[function(require,module,exports){
-"use strict";function mayHaveType(e,r,i){return Object.keys(e).filter(function(e){return i.indexOf(e)>-1&&-1===subschemaProperties.indexOf(r[r.length-1])?!0:void 0}).length>0}var inferredProperties={array:["additionalItems","items","maxItems","minItems","uniqueItems"],integer:["exclusiveMaximum","exclusiveMinimum","maximum","minimum","multipleOf"],object:["additionalProperties","dependencies","maxProperties","minProperties","patternProperties","properties","required"],string:["maxLength","menlength","pattern"]},subschemaProperties=["additionalItems","items","additionalProperties","dependencies","patternProperties","properties"];inferredProperties.number=inferredProperties.integer,module.exports=function(e,r){for(var i in inferredProperties)if(mayHaveType(e,r,inferredProperties[i]))return i};
+'use strict';
+
+var inferredProperties = {
+  array: [
+    'additionalItems',
+    'items',
+    'maxItems',
+    'minItems',
+    'uniqueItems'
+  ],
+  integer: [
+    'exclusiveMaximum',
+    'exclusiveMinimum',
+    'maximum',
+    'minimum',
+    'multipleOf'
+  ],
+  object: [
+    'additionalProperties',
+    'dependencies',
+    'maxProperties',
+    'minProperties',
+    'patternProperties',
+    'properties',
+    'required'
+  ],
+  string: [
+    'maxLength',
+    'menlength',
+    'pattern'
+  ]
+};
+
+var subschemaProperties = [
+  'additionalItems', 'items', 'additionalProperties', 'dependencies', 'patternProperties', 'properties'
+];
+
+inferredProperties.number = inferredProperties.integer;
+
+function mayHaveType(obj, path, props) {
+  return Object.keys(obj).filter(function(prop) {
+    // Do not attempt to infer properties named as subschema containers.  The reason for this is
+    // that any property name within those containers that matches one of the properties used for inferring missing type
+    // values causes the container itself to get processed which leads to invalid output.  (Issue 62)
+    if (props.indexOf(prop) > -1 && subschemaProperties.indexOf(path[path.length - 1]) === -1) {
+      return true;
+    }
+  }).length > 0;
+}
+
+module.exports = function(obj, path) {
+  for (var type in inferredProperties) {
+    if (mayHaveType(obj, path, inferredProperties[type])) {
+      return type;
+    }
+  }
+};
 
 },{}],14:[function(require,module,exports){
-"use strict";function clone(r){var e=[];return r.forEach(function(r,o){"object"==typeof r&&null!==r?e[o]=Array.isArray(r)?clone(r):merge({},r):e[o]=r}),e}var merge;merge=module.exports=function(r,e){for(var o in e)"object"!=typeof e[o]||null===e[o]?r[o]=e[o]:Array.isArray(e[o])?r[o]=(r[o]||[]).concat(clone(e[o])):"object"!=typeof r[o]||null===r[o]||Array.isArray(r[o])?r[o]=merge({},e[o]):r[o]=merge(r[o],e[o]);return r};
+'use strict';
+
+var merge;
+
+function clone(arr) {
+  var out = [];
+
+  arr.forEach(function(item, index) {
+    if (typeof item === 'object' && item !== null) {
+      out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
+    } else {
+      out[index] = item;
+    }
+  });
+
+  return out;
+}
+
+merge = module.exports = function(a, b) {
+  for (var key in b) {
+    if (typeof b[key] !== 'object' || b[key] === null) {
+      a[key] = b[key];
+    } else if (Array.isArray(b[key])) {
+      a[key] = (a[key] || []).concat(clone(b[key]));
+    } else if (typeof a[key] !== 'object' || a[key] === null || Array.isArray(a[key])) {
+      a[key] = merge({}, b[key]);
+    } else {
+      a[key] = merge(a[key], b[key]);
+    }
+  }
+
+  return a;
+};
 
 },{}],15:[function(require,module,exports){
-"use strict";module.exports={array:require("../types/array"),"boolean":require("../types/boolean"),integer:require("../types/integer"),number:require("../types/number"),"null":require("../types/null"),object:require("../types/object"),string:require("../types/string")};
+'use strict';
+
+module.exports = {
+  array: require('../types/array'),
+  boolean: require('../types/boolean'),
+  integer: require('../types/integer'),
+  number: require('../types/number'),
+  null: require('../types/null'),
+  object: require('../types/object'),
+  string: require('../types/string')
+};
 
 },{"../types/array":2,"../types/boolean":3,"../types/integer":4,"../types/null":5,"../types/number":6,"../types/object":7,"../types/string":8}],16:[function(require,module,exports){
-"use strict";var container=require("./container"),faker=container.get("faker"),random=module.exports=function(n,r,e,a){var o=!0;return"boolean"==typeof n&&(o=n,n=arguments[1],r=arguments[2],e=arguments[3],a=arguments[4]),e="undefined"==typeof e?random.MIN_NUMBER:e,a="undefined"==typeof a?random.MAX_NUMBER:a,n="undefined"==typeof n?e:n,r="undefined"==typeof r?a:r,n>r&&(r+=n),faker.random.number({min:n,max:r,precision:o?1:Math.random()})};random.shuffle=function(n){for(var r=n.slice(),e=n.length;e>0;){var a=Math.floor(Math.random()*e),o=r[--e];r[e]=r[a],r[a]=o}return r},random.pick=function(n){return n[Math.floor(Math.random()*n.length)]},random.MIN_NUMBER=-100,random.MAX_NUMBER=100;
+'use strict';
+
+var container = require('./container');
+
+var faker = container.get('faker');
+
+var random = module.exports = function(min, max, defMin, defMax) {
+  var isInteger = true;
+
+  if (typeof min === 'boolean') {
+    // non-integer values
+    isInteger = min;
+    min = arguments[1];
+    max = arguments[2];
+    defMin = arguments[3];
+    defMax = arguments[4];
+  }
+
+  defMin = typeof defMin === 'undefined' ? random.MIN_NUMBER : defMin;
+  defMax = typeof defMax === 'undefined' ? random.MAX_NUMBER : defMax;
+
+  min = typeof min === 'undefined' ? defMin : min;
+  max = typeof max === 'undefined' ? defMax : max;
+
+  if (max < min) {
+    max += min;
+  }
+
+  return faker.random.number({
+    min: min,
+    max: max,
+    precision: isInteger ? 1 : Math.random()
+  });
+};
+
+random.shuffle = function(obj) {
+  var copy = obj.slice(),
+      length = obj.length;
+
+  for (; length > 0;) {
+    var key = Math.floor(Math.random() * length),
+        tmp = copy[--length];
+
+    copy[length] = copy[key];
+    copy[key] = tmp;
+  }
+
+  return copy;
+};
+
+random.pick = function(obj) {
+  return obj[Math.floor(Math.random() * obj.length)];
+};
+
+random.MIN_NUMBER = -100;
+random.MAX_NUMBER = 100;
 
 },{"./container":9}],17:[function(require,module,exports){
-"use strict";function traverse(r,e,i){i(r);var t={};if(Array.isArray(r)&&(t=[]),Array.isArray(r["enum"]))return random.pick(r["enum"]);var n=r.type;if(Array.isArray(n)?n=random.pick(n):"undefined"==typeof n&&(n=inferredType(r,e)||n),"string"==typeof n){if(!primitives[n])throw new ParseError("unknown primitive "+JSON.stringify(n),e.concat(["type"]));try{return primitives[n](r,e,i)}catch(a){if("undefined"==typeof a.path)throw new ParseError(a.message,e);throw a}}for(var o in r)"object"==typeof r[o]&&"definitions"!==o?t[o]=traverse(r[o],e.concat([o]),i):t[o]=r[o];return t}var random=require("./random"),ParseError=require("./error"),inferredType=require("./inferred"),primitives=null;module.exports=function(){return primitives=primitives||require("./primitives"),traverse.apply(null,arguments)};
+'use strict';
+
+var random = require('./random');
+
+var ParseError = require('./error');
+
+var inferredType = require('./inferred');
+
+var primitives = null;
+
+function traverse(obj, path, resolve) {
+  resolve(obj);
+
+  var copy = {};
+
+  if (Array.isArray(obj)) {
+    copy = [];
+  }
+
+  if (Array.isArray(obj.enum)) {
+    return random.pick(obj.enum);
+  }
+
+  var type = obj.type;
+
+  if (Array.isArray(type)) {
+    type = random.pick(type);
+  } else if (typeof type === 'undefined') {
+    // Attempt to infer the type
+    type = inferredType(obj, path) || type;
+  }
+
+  if (typeof type === 'string') {
+    if (!primitives[type]) {
+      throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+    }
+
+    try {
+      return primitives[type](obj, path, resolve);
+    } catch (e) {
+      if (typeof e.path === 'undefined') {
+        throw new ParseError(e.message, path);
+      }
+
+      throw e;
+    }
+  }
+
+  for (var prop in obj) {
+    if (typeof obj[prop] === 'object' && prop !== 'definitions') {
+      copy[prop] = traverse(obj[prop], path.concat([prop]), resolve);
+    } else {
+      copy[prop] = obj[prop];
+    }
+  }
+
+  return copy;
+}
+
+module.exports = function() {
+  primitives = primitives || require('./primitives');
+
+  return traverse.apply(null, arguments);
+};
 
 },{"./error":10,"./inferred":13,"./primitives":15,"./random":16}],18:[function(require,module,exports){
 (function (Buffer){

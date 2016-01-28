@@ -19,7 +19,7 @@ module.exports = function (grunt) {
       },
       dist: {
         files: {
-          'dist/jsf.js': ['lib/index.js']
+          'dist/json-schema-faker.js': ['lib/index.js']
         }
       },
       min: {
@@ -27,7 +27,7 @@ module.exports = function (grunt) {
           transform: ['uglifyify']
         },
         files: {
-          'dist/jsf-min.js': ['lib/index.js']
+          'dist/json-schema-faker-min.js': ['lib/index.js']
         }
       }
     }
