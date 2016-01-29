@@ -13,8 +13,9 @@ module.exports = function (grunt) {
         watch: "on",
         banner: "<%= banner %>",
         browserifyOptions: {
-          detectGlobals: "off",
-          noBuiltins: "on"
+          standalone: "jsf",
+          noBuiltins: true,
+          detectGlobals: false
         }
       },
       dist: {
@@ -27,7 +28,7 @@ module.exports = function (grunt) {
           transform: ['uglifyify']
         },
         files: {
-          'dist/json-schema-faker-min.js': ['lib/index.js']
+          'dist/json-schema-faker.min.js': ['lib/index.js']
         }
       }
     }
