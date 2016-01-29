@@ -1,3 +1,7 @@
+v0.2.8:
+  date: 2016-01-29
+  changes:
+    - exporting `jsf` object inside distribution files
 v0.2.7:
   date: 2016-01-28
   changes:
