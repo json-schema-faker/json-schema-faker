@@ -1,35 +1,32 @@
 module.exports = function (grunt) {
   require('load-grunt-tasks')(grunt);
 
-  grunt.initConfig({
-    pkg: grunt.file.readJSON('package.json'),
+  grunt.loadNpmTasks('grunt-parts');
 
-    banner: grunt.file.read('.banner.txt'),
-
-    now: (new Date()).toISOString().replace('T', ' '),
-
-    browserify: {
+  grunt.config('pkg', grunt.file.readJSON('package.json'));
+  grunt.config('banner', grunt.file.read('.banner.txt'));
+  grunt.config('now', (new Date()).toISOString().replace('T', ' '));
+  grunt.config('browserify', {
+    options: {
+      watch: true,
+      banner: '<%= banner %>',
+      browserifyOptions: {
+        standalone: 'jsf',
+        noBuiltins: true,
+        detectGlobals: false
+      }
+    },
+    dist: {
+      files: {
+        'dist/json-schema-faker.js': ['lib/index.js']
+      }
+    },
+    min: {
       options: {
-        watch: "on",
-        banner: "<%= banner %>",
-        browserifyOptions: {
-          standalone: "jsf",
-          noBuiltins: true,
-          detectGlobals: false
-        }
+        transform: ['uglifyify']
       },
-      dist: {
-        files: {
-          'dist/json-schema-faker.js': ['lib/index.js']
-        }
-      },
-      min: {
-        options: {
-          transform: ['uglifyify']
-        },
-        files: {
-          'dist/json-schema-faker.min.js': ['lib/index.js']
-        }
+      files: {
+        'dist/json-schema-faker.min.js': ['lib/index.js']
       }
     }
   });
@@ -42,5 +39,4 @@ module.exports = function (grunt) {
     'spec',
     'build'
   ]);
-
 };
