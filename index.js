@@ -1,7 +1,15 @@
 module.exports = require('./lib/jsf')
   .extend('chance', function() {
-    return require('chance').Chance();
+    try {
+      return require('chance').Chance();
+    } catch (e) {
+      return null;
+    }
   })
   .extend('faker', function() {
-    return require('faker');
+    try {
+      return require('faker');
+    } catch (e) {
+      return null;
+    }
   });

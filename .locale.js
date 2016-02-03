@@ -1,4 +1,8 @@
 module.exports = require('../lib/jsf')
   .extend('faker', function() {
-    return require('faker/locale/<%= lang %>');
+    try {
+      return require('faker/locale/<%= lang %>');
+    } catch (e) {
+      return null;
+    }
   });
