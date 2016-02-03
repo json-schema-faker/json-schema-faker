@@ -12,17 +12,29 @@ var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace(
 
 var destFile = path.join(__dirname, 'dist/' + pkg.name + '.js');
 
-var b = browserify(path.join(__dirname, 'lib/index.js'), {
+var b = browserify({
   detectGlobals: false,
   insertGlobals: false,
-  standalone: 'jsf',
   builtins: false
 });
+
+// unfortunately standalone didn't work
+var exposeName = 'jsf';
+
+b.add(path.join(__dirname, 'lib/index.js'), { expose: pkg.name, entry: true });
+
+// this way we can mock locales and minimal stubs
+b.require([
+  { file: path.join(__dirname, 'stubs/faker.js'), expose: 'faker' },
+  { file: path.join(__dirname, 'stubs/chance.js'), expose: 'chance' },
+  { file: path.join(__dirname, 'stubs/randexp.js'), expose: 'randexp' }
+]);
 
 b.bundle(function(err, buffer) {
   if (err) {
     throw err;
   }
 
-  fs.writeFileSync(destFile, banner + buffer.toString());
+  fs.writeFileSync(destFile, banner + '(function(){' + 'var ' + buffer.toString().trim()
+    + ';window.' + exposeName + '=require("' + pkg.name + '")})();');
 });
