@@ -51,7 +51,7 @@ function bundle(options, next) {
     var code = buffer.toString();
 
     if (options.min) {
-      var min = uglifyjs.minify(code, { mangle: true, compress: true, fromString: true });
+      var min = uglifyjs.minify(code, { fromString: true });
 
       // minified output
       fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
