@@ -10,8 +10,10 @@
     "dev:spec": "jasmine-node spec --coffee --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node spec --coffee",
     "cover:up": "coveralls",
+    "test": "npm run dev:lint && npm run dev:spec",
     "bundle": "browserify lib/index.js -s jsf --dg=false --ig=false --no-builtins > dist/json-schema-faker.js",
-    "bundle:min": "uglifyjs --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js"
+    "bundle:min": "uglifyjs --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js",
+    "build": "npm run bundle && npm run bundle:min"
   },
   "contributors": [
     {
