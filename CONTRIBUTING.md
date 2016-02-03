@@ -11,7 +11,7 @@ Contribution to the project is more than welcome!
 ## Releasing new versions
 
 * Include a new entry in [CHANGELOG.md](CHANGELOG.md) file,
-* Be followed by rebuilding and re-releasing new online demo, see [gh-pages branch](https://github.com/pateketrueke/json-schema-faker/tree/gh-pages).
+* Be followed by rebuilding and re-releasing new online demo, see [gh-pages branch](https://github.com/json-schema-faker/json-schema-faker/tree/gh-pages).
 
 ## Development tasks
 
