@@ -9,7 +9,9 @@
     "dev:lint": "eslint lib",
     "dev:spec": "jasmine-node spec --coffee --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node spec --coffee",
-    "cover:up": "coveralls"
+    "cover:up": "coveralls",
+    "bundle": "browserify lib/index.js -s jsf --dg=false --ig=false --no-builtins > dist/json-schema-faker.js",
+    "bundle:min": "uglifyjs --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js"
   },
   "contributors": [
     {
@@ -45,7 +47,7 @@
     "jayschema": "^0.3.1",
     "semver": "^5.1.0",
     "tv4": "^1.2.7",
-    "uglifyify": "^3.0.1",
+    "uglify-js": "^2.6.1",
     "z-schema": "^3.16.1"
   },
   "keywords": [
