@@ -10,3 +10,4 @@ Gruntfile.js
 /coverage
 /generated
 /node_modules
+/dist
