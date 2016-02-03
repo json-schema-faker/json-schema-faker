@@ -1,3 +1,10 @@
+// discuss
+var bundleName = 'jsf';
+
+var withLocales = false,
+    withoutChance = false;
+
+// boilerplate...
 var fs = require('fs-extra'),
     path = require('path'),
     glob = require('glob'),
@@ -16,7 +23,7 @@ var b = browserify({
     detectGlobals: false,
     insertGlobals: false,
     builtins: false,
-    standalone: 'jsf'
+    standalone: bundleName
   });
 
 // custom bundler
@@ -55,10 +62,6 @@ function bundle(options, next) {
 var outputs = [
   { id: pkg.name }
 ];
-
-// discuss
-var withLocales = false,
-    withoutChance = false;
 
 if (withLocales) {
   var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
