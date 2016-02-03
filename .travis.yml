@@ -4,7 +4,10 @@ branches:
     - gh-pages
 node_js:
   - 0.10
-before_script:
-  - 'npm install -g grunt-cli coveralls'
+  - 0.12
+  - 4
+  - iojs
 script:
-  - 'grunt spec && cat generated/reports/spec/lcov.info | coveralls'
+  - 'npm cover && cat coverage/lcov.info | npm run cover:up'
+notifications:
+  email: false

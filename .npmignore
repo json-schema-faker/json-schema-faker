@@ -7,5 +7,6 @@ Gruntfile.js
 /spec
 /package
 /reports
+/coverage
 /generated
 /node_modules
