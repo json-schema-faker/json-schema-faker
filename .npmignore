@@ -3,7 +3,7 @@
 *.log
 *.tgz
 .DS_Store
-Gruntfile.js
+build-dist.js
 /spec
 /package
 /reports
@@ -11,3 +11,4 @@ Gruntfile.js
 /generated
 /node_modules
 /dist
+/logo
