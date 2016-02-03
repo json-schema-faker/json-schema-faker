@@ -22,14 +22,14 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
-    "chance": "^0.8.0",
     "deref": "^0.6.3",
-    "faker": "^3.0.1",
     "randexp": "^0.4.2"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
+    "chance": "^0.8.0",
     "clone": "^1.0.2",
+    "faker": "^3.0.1",
     "glob": "^6.0.3",
     "grunt": "^0.4.5",
     "grunt-browserify": "^4.0.1",
