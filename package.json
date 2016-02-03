@@ -11,8 +11,8 @@
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node spec --coffee",
     "cover:up": "coveralls",
     "test": "npm run dev:lint && npm run dev:spec",
-    "bundle": "browserify lib/index.js -s jsf --dg=false --ig=false --no-builtins > dist/json-schema-faker.js",
-    "bundle:min": "uglifyjs --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js",
+    "bundle": "node build-dist.js",
+    "bundle:min": "uglifyjs --comments --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js",
     "build": "npm run bundle && npm run bundle:min"
   },
   "contributors": [
@@ -47,6 +47,7 @@
     "istanbul": "^0.4.2",
     "jasmine-node": "^1.14.5",
     "jayschema": "^0.3.1",
+    "lodash.template": "^4.0.1",
     "semver": "^5.1.0",
     "tv4": "^1.2.7",
     "uglify-js": "^2.6.1",
