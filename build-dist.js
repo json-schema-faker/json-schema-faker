@@ -26,8 +26,7 @@ b.add(path.join(__dirname, 'lib/index.js'), { expose: pkg.name, entry: true });
 // this way we can mock locales and minimal stubs
 b.require([
   { file: path.join(__dirname, 'stubs/faker.js'), expose: 'faker' },
-  { file: path.join(__dirname, 'stubs/chance.js'), expose: 'chance' },
-  { file: path.join(__dirname, 'stubs/randexp.js'), expose: 'randexp' }
+  { file: path.join(__dirname, 'stubs/chance.js'), expose: 'chance' }
 ]);
 
 b.bundle(function(err, buffer) {
