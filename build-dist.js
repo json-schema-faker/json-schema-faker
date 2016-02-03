@@ -6,6 +6,7 @@ var bundleName = 'jsf',
 var fs = require('fs-extra'),
     path = require('path'),
     glob = require('glob'),
+    uglifyjs = require('uglify-js'),
     browserify = require('browserify'),
     template = require('lodash.template');
 
@@ -20,17 +21,15 @@ var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace(
 
 // reuse instance later
 var b = browserify({
-    detectGlobals: false,
-    insertGlobals: false,
-    builtins: false,
-    standalone: bundleName
-  });
+  detectGlobals: false,
+  insertGlobals: false,
+  builtins: false,
+  standalone: bundleName
+});
 
 // custom bundler
 function bundle(options, next) {
   b.reset();
-
-  // TODO: uglifyjs --comments --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js
 
   var destFile = path.join(__dirname, 'dist', options.dest || '', options.id + '.js');
 
@@ -49,17 +48,26 @@ function bundle(options, next) {
     }
 
     // write out the generated bundle!
-    fs.outputFileSync(destFile, banner + buffer.toString());
+    var code = buffer.toString();
+
+    if (options.min) {
+      var min = uglifyjs.minify(code, { mangle: true, compress: true, fromString: true });
+
+      // minified output
+      fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
+    }
+
+    fs.outputFileSync(destFile, banner + code);
 
     // OK
-    console.log('Bundle: ' + destFile);
+    console.log('Bundle: ' + destFile + (options.min ? ' +minified' : ''));
 
     next();
   });
 }
 
 var outputs = [
-  { id: pkg.name, src: '.' }
+  { id: pkg.name, src: '.', min: true }
 ];
 
 // proxied versions from faker's locales
@@ -70,6 +78,8 @@ if (withLocales) {
     outputs.push({ id: path.basename(lang, '.js'), dest: 'locale' });
   });
 }
+
+console.log('Preparing all sources...');
 
 (function next(err) {
   if (err) {
