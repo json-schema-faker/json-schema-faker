@@ -1,8 +1,6 @@
 // discuss
-var bundleName = 'jsf';
-
-var withLocales = false,
-    withoutChance = false;
+var bundleName = 'jsf',
+    withLocales = true;
 
 // boilerplate...
 var fs = require('fs-extra'),
@@ -11,10 +9,12 @@ var fs = require('fs-extra'),
     browserify = require('browserify'),
     template = require('lodash.template');
 
-var BANNER_TEXT = fs.readFileSync(path.join(__dirname, '.banner.txt')).toString();
+var BANNER_TEXT = fs.readFileSync(path.join(__dirname, '.banner.txt')).toString(),
+    LOCALE_TEXT = fs.readFileSync(path.join(__dirname, '.locale.js')).toString();
 
 var pkg = require('./package.json'),
-    bannerTemplate = template(BANNER_TEXT);
+    bannerTemplate = template(BANNER_TEXT),
+    localeTemplate = template(LOCALE_TEXT);
 
 var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace('T', ' ') });
 
@@ -30,19 +30,18 @@ var b = browserify({
 function bundle(options, next) {
   b.reset();
 
-  var destFile = path.join(__dirname, 'dist/' + options.id + '.js');
+  // TODO: uglifyjs --comments --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js
 
-  b.add(path.join(__dirname, 'lib/index.js'), { expose: pkg.name, entry: true });
+  var destFile = path.join(__dirname, 'dist', options.dest || '', options.id + '.js');
 
-  // this way we can build all locales?
-  if (options.lang) {
-    b.require(path.join('faker/locale', options.lang), { expose: 'faker' });
+  if (!options.src) {
+    // bundle from generated source
+    options.src = path.join(__dirname, options.dest, options.id + '.js');
+
+    fs.outputFileSync(options.src, localeTemplate({ lang: options.id }));
   }
 
-  // disable chance by default?
-  if (options.chance === false) {
-    b.require(path.join(__dirname, 'stubs/chance.js'), { expose: 'chance' });
-  }
+  b.add(path.resolve(options.src), { expose: pkg.name, entry: true });
 
   b.bundle(function(err, buffer) {
     if (err) {
@@ -60,16 +59,15 @@ function bundle(options, next) {
 }
 
 var outputs = [
-  { id: pkg.name }
+  { id: pkg.name, src: '.' }
 ];
 
+// proxied versions from faker's locales
 if (withLocales) {
   var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
 
   languages.forEach(function(lang) {
-    lang = path.basename(lang, '.js');
-
-    outputs.push({ id: path.join(lang, pkg.name), lang: lang, chance: !withoutChance });
+    outputs.push({ id: path.basename(lang, '.js'), dest: 'locale' });
   });
 }
 

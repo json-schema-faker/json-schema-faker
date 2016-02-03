@@ -11,9 +11,7 @@
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node spec --coffee",
     "cover:up": "coveralls",
     "test": "npm run dev:lint && npm run dev:spec",
-    "bundle": "node build-dist.js",
-    "bundle:min": "uglifyjs --comments --compress --mangle -- dist/json-schema-faker.js > dist/json-schema-faker.min.js",
-    "build": "npm run bundle && npm run bundle:min"
+    "build": "node build-dist.js"
   },
   "contributors": [
     {
