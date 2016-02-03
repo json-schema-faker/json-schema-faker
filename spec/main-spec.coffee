@@ -2,7 +2,7 @@ require('./helpers')
 
 fs = require('fs')
 glob = require('glob')
-jsfaker = require('../lib')
+jsfaker = require('../')
 
 pick = (obj, key) ->
   parts = key.split('.')
