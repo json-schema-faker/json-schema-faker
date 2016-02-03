@@ -6,7 +6,8 @@
   "rules": {
     "quotes": [1, "single", "avoid-escape"],
     "strict": [1, "global"],
-    "no-extra-semi": 2
+    "no-extra-semi": 2,
+    "no-unused-vars": 2
   },
   "ecmaFeatures": {
     "modules": true
