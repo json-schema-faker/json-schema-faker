@@ -1,5 +1,6 @@
-var fs = require('fs'),
+var fs = require('fs-extra'),
     path = require('path'),
+    glob = require('glob'),
     browserify = require('browserify'),
     template = require('lodash.template');
 
@@ -10,32 +11,73 @@ var pkg = require('./package.json'),
 
 var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace('T', ' ') });
 
-var destFile = path.join(__dirname, 'dist/' + pkg.name + '.js');
-
+// reuse instance later
 var b = browserify({
-  detectGlobals: false,
-  insertGlobals: false,
-  builtins: false
-});
+    detectGlobals: false,
+    insertGlobals: false,
+    builtins: false,
+    standalone: 'jsf'
+  });
 
-// unfortunately standalone didn't work
-var exposeName = 'jsf',
-    defaultLocale = 'en';
+// custom bundler
+function bundle(options, next) {
+  b.reset();
 
-b.add(path.join(__dirname, 'lib/index.js'), { expose: pkg.name, entry: true });
+  var destFile = path.join(__dirname, 'dist/' + options.id + '.js');
 
-// this way we can build all locales?
-b.require(path.join('faker/locale', defaultLocale), { expose: 'faker' });
+  b.add(path.join(__dirname, 'lib/index.js'), { expose: pkg.name, entry: true });
 
-// disable chance by default?
-b.require(path.join(__dirname, 'stubs/chance.js'), { expose: 'chance' });
+  // this way we can build all locales?
+  if (options.lang) {
+    b.require(path.join('faker/locale', options.lang), { expose: 'faker' });
+  }
 
-b.bundle(function(err, buffer) {
+  // disable chance by default?
+  if (options.chance === false) {
+    b.require(path.join(__dirname, 'stubs/chance.js'), { expose: 'chance' });
+  }
+
+  b.bundle(function(err, buffer) {
+    if (err) {
+      return next(err);
+    }
+
+    // write out the generated bundle!
+    fs.outputFileSync(destFile, banner + buffer.toString());
+
+    // OK
+    console.log('Bundle: ' + destFile);
+
+    next();
+  });
+}
+
+var outputs = [
+  { id: pkg.name }
+];
+
+// discuss
+var withLocales = false,
+    withoutChance = false;
+
+if (withLocales) {
+  var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
+
+  languages.forEach(function(lang) {
+    lang = path.basename(lang, '.js');
+
+    outputs.push({ id: path.join(lang, pkg.name), lang: lang, chance: !withoutChance });
+  });
+}
+
+(function next(err) {
   if (err) {
     throw err;
   }
 
-  // hack the window.jsf variable (we need another kind of export for cdnjs?)
-  fs.writeFileSync(destFile, banner + '(function(){' + 'var ' + buffer.toString().trim()
-    + ';\nwindow.' + exposeName + '=require("' + pkg.name + '")})();');
-});
+  var opts = outputs.shift();
+
+  if (opts) {
+    bundle(opts, next);
+  }
+})();
