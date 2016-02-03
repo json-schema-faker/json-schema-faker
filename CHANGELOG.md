@@ -1,3 +1,6 @@
+UPCOMING:
+  changes:
+    - jsf added to cdnjs
 v0.2.8:
   date: 2016-01-29
   changes:
