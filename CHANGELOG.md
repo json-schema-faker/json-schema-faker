@@ -1,3 +1,10 @@
+UPCOMING:
+  changes:
+    - faker and chance are not longer required as dependencies
+v0.2.10:
+  date: 2016-02-04
+  changes:
+    - fixed faker/chance as dependencies (before next minor version)
 v0.2.9:
   date: 2016-02-04
   changes:
