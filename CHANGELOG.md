@@ -1,3 +1,9 @@
+UPCOMING v0.3:
+  changes:
+    - faker and chance are not longer required as dependencies
+UPCOMING:
+  changes:
+    - inline code docs + module separation
 v0.2.11:
   date: 2016-02-13
   changes:

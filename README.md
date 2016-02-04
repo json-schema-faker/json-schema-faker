@@ -238,6 +238,11 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
 }
 ```
 
+**BREAKING CHANGES**
+
+> Since `0.3.0` the `faker` and `chance` dependencies aren't shipped by default,
+> in order to use both generators you MUST install them with `npm install faker chance --save`.
+
 ## Custom formats
 
 Additionally, you can add custom generators for those:
