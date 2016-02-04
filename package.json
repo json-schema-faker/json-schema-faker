@@ -11,7 +11,7 @@
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node spec --coffee",
     "cover:up": "codecov --file coverage/lcov.info",
     "test": "npm run dev:lint && npm run dev:spec",
-    "build": "node build-dist.js"
+    "build": "node build/dist.js"
   },
   "contributors": [
     {

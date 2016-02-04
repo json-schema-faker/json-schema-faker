@@ -5,6 +5,7 @@
 .DS_Store
 build-dist.js
 /spec
+/build
 /package
 /reports
 /coverage

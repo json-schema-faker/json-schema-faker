@@ -9,10 +9,13 @@ var fs = require('fs-extra'),
     browserify = require('browserify'),
     template = require('lodash.template');
 
-var BANNER_TEXT = fs.readFileSync(path.join(__dirname, '.banner.txt')).toString(),
-    LOCALE_TEXT = fs.readFileSync(path.join(__dirname, '.locale.js')).toString();
+var buildDir = __dirname,
+    projectDir = path.join(__dirname, '..');
 
-var pkg = require('./package.json'),
+var BANNER_TEXT = fs.readFileSync(path.join(buildDir, '.banner.txt')).toString(),
+    LOCALE_TEXT = fs.readFileSync(path.join(buildDir, '.locale.js')).toString();
+
+var pkg = require(path.join(projectDir, 'package.json')),
     bannerTemplate = template(BANNER_TEXT),
     localeTemplate = template(LOCALE_TEXT);
 
@@ -30,11 +33,11 @@ var b = browserify({
 function bundle(options, next) {
   b.reset();
 
-  var destFile = path.join(__dirname, 'dist', options.dest || '', options.id + '.js');
+  var destFile = path.join(projectDir, 'dist', options.dest || '', options.id + '.js');
 
   if (!options.src) {
     // bundle from generated source
-    options.src = path.join(__dirname, options.dest, options.id + '.js');
+    options.src = path.join(projectDir, options.dest, options.id + '.js');
 
     fs.outputFileSync(options.src, localeTemplate({ lang: options.id }));
   }
@@ -58,14 +61,14 @@ function bundle(options, next) {
     fs.outputFileSync(destFile, banner + code);
 
     // OK
-    console.log('Bundle: ' + destFile + (options.min ? ' +minified' : ''));
+    console.log('Bundle: ' + destFile);
 
     next();
   });
 }
 
 var outputs = [
-  { id: pkg.name, src: '.', min: true }
+  { id: pkg.name, src: projectDir }
 ];
 
 // proxied versions from faker's locales
