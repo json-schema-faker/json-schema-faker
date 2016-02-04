@@ -9,7 +9,7 @@
     "dev:lint": "eslint lib",
     "dev:spec": "jasmine-node spec --coffee --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node spec --coffee",
-    "cover:up": "codecov --file coverage/lcov.info",
+    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "test": "npm run dev:lint && npm run dev:spec",
     "build": "node build/dist.js"
   },
