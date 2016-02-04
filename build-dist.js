@@ -1,6 +1,5 @@
 // discuss
-var bundleName = 'jsf',
-    withLocales = true;
+var bundleName = 'jsf';
 
 // boilerplate...
 var fs = require('fs-extra'),
@@ -50,13 +49,12 @@ function bundle(options, next) {
     // write out the generated bundle!
     var code = buffer.toString();
 
-    if (options.min) {
-      var min = uglifyjs.minify(code, { fromString: true });
+    var min = uglifyjs.minify(code, { fromString: true });
 
-      // minified output
-      fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
-    }
+    // minified output
+    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
 
+    // regular output
     fs.outputFileSync(destFile, banner + code);
 
     // OK
@@ -71,13 +69,11 @@ var outputs = [
 ];
 
 // proxied versions from faker's locales
-if (withLocales) {
-  var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
+var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
 
-  languages.forEach(function(lang) {
-    outputs.push({ id: path.basename(lang, '.js'), dest: 'locale' });
-  });
-}
+languages.forEach(function(lang) {
+  outputs.push({ id: path.basename(lang, '.js'), dest: 'locale' });
+});
 
 console.log('Preparing all sources...');
 
