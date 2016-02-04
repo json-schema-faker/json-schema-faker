@@ -52,7 +52,15 @@ function bundle(options, next) {
     // write out the generated bundle!
     var code = buffer.toString();
 
-    var min = uglifyjs.minify(code, { fromString: true });
+    var min = uglifyjs.minify(code, {
+      fromString: true,
+      compress: true,
+      mangle: true,
+      filename: options.src,
+      output: {
+        comments: /^!|^\*!|@preserve|@license|@cc_on/
+      }
+    });
 
     // minified output
     fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
