@@ -31,16 +31,16 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
+    "chance": "^0.8.0",
     "deref": "^0.6.3",
+    "faker": "^3.0.1",
     "randexp": "^0.4.2"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
-    "chance": "^0.8.0",
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
     "eslint": "^1.10.3",
-    "faker": "^3.0.1",
     "fs-extra": "^0.26.5",
     "glob": "^6.0.4",
     "istanbul": "^0.4.2",
