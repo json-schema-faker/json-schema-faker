@@ -1,6 +1,9 @@
-UPCOMING:
+v0.2.9:
+  date: 2016-02-04
   changes:
-    - jsf added to cdnjs
+    - jsf added to cdnjs (with locales)
+    - switching from grunt-parts to npm-scripts
+    - solve issues related with: recursion, bundling and dependencies
 v0.2.8:
   date: 2016-01-29
   changes:
