@@ -8,6 +8,6 @@ node_js:
   - 4
   - iojs
 script:
-  - 'npm run cover && cat coverage/lcov.info | npm run cover:up'
+  - 'npm run cover && npm run cover:up'
 notifications:
   email: false
