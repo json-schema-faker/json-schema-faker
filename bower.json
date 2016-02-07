@@ -1,0 +1,31 @@
+{
+  "name": "json-schema-faker",
+  "version": "0.2.10",
+  "description": "JSON-Schema + fake data generators",
+  "homepage": "http://json-schema-faker.js.org",
+  "main": "dist/json-schema-faker.js",
+  "authors": [
+    "Alvaro Cabrera <pateketrueke@gmail.com>",
+    "Tomasz Ducin <tomasz@ducin.it>"
+  ],
+  "moduleType": [
+    "globals",
+    "node"
+  ],
+  "keywords": [
+    "json",
+    "jsonschema",
+    "fake",
+    "mocks"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "build",
+    "lib",
+    "logo",
+    "spec"
+  ]
+}
