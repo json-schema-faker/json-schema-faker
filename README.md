@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
+[![Bower version](https://badge.fury.io/bo/json-schema-faker.svg)](https://badge.fury.io/bo/json-schema-faker)
 [![Coverage Status](https://codecov.io/github/json-schema-faker/json-schema-faker/coverage.svg?branch=master)](https://codecov.io/github/json-schema-faker/json-schema-faker?branch=master)
 
 [![Dependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker)
@@ -17,6 +18,8 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [JSON-schema-faker](#fake-your-schemas)
   - [Online demo](#online-demo)
   - [Install](#install)
+    - [npm](#npm)
+    - [bower](#bower)
     - [cdnjs](#cdnjs)
   - [Overview](#overview)
   - [Example usage](#example-usage)
@@ -42,13 +45,23 @@ See [online demo](http://json-schema-faker.js.org/).
 
 ## Install
 
+`jsf` is installable through 3 different channels:
+
+### npm
+
 Install `json-schema-faker` with npm:
 
-    npm install json-schema-faker --save-dev
+    npm install json-schema-faker --save
+
+### bower
+
+Install `json-schema-faker` with bower:
+
+    bower install json-schema-faker --save
 
 ### cdnjs
 
-JSON-Schema-faker is available at [cdnjs.com](https://www.cdnjs.com/libraries/json-schema-faker). This means you can just include the script file into your HTML:
+JSON-Schema-faker is also available at [cdnjs.com](https://www.cdnjs.com/libraries/json-schema-faker). This means you can just include the script file into your HTML:
 
     # remember to update the version number!
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.2.8/json-schema-faker.min.js"></script>
