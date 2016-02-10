@@ -42,7 +42,7 @@
     "codecov": "^1.0.1",
     "eslint": "^1.10.3",
     "fs-extra": "^0.26.5",
-    "glob": "^6.0.4",
+    "glob": "^7.0.0",
     "istanbul": "^0.4.2",
     "jasmine-node": "^1.14.5",
     "jayschema": "^0.3.1",
