@@ -40,7 +40,7 @@
     "browserify": "^13.0.0",
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
-    "eslint": "^1.10.3",
+    "eslint": "^2.0.0",
     "fs-extra": "^0.26.5",
     "glob": "^6.0.4",
     "istanbul": "^0.4.2",
