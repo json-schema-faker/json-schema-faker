@@ -26,6 +26,8 @@
     "build",
     "lib",
     "logo",
-    "spec"
+    "spec",
+    "package.json",
+    "CONTRIBUTING.md"
   ]
 }
