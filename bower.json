@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "dist/json-schema-faker.js",

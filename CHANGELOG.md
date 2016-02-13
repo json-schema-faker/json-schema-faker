@@ -1,3 +1,11 @@
+v0.2.11:
+  date: 2016-02-13
+  changes:
+    - dependency update
+v0.2.10:
+  date: 2016-02-04
+  changes:
+    - fixed faker/chance as dependencies (before next minor version)
 v0.2.9:
   date: 2016-02-04
   changes:
