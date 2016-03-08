@@ -434,3 +434,7 @@ but they were either incomplete, outdated, broken or non-standard. That's why `j
 * artwork by [Ajay Karat](http://www.devilsgarage.com/)
 
 Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
+
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/json-schema-faker/json-schema-faker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
