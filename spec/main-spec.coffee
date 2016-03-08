@@ -67,6 +67,10 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
             expect(error).toMatch new RegExp(test.throws, 'i')
 
+          # strict checks
+          if test.nonEmpty
+            expect(sample).toHaveNonEmptyProps()
+
           if test.valid
             try
               expect(sample).toHaveSchema [schema, refs]
