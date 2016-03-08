@@ -1,0 +1,17 @@
+[
+  {
+    "description": "non standard schemas",
+    "tests": [
+      {
+        "description": "should work as expected",
+        "schema": {
+          "testProperty": {
+            "type": "string"
+          }
+        },
+        "valid": true,
+        "hasNot": "json-schema.org"
+      }
+    ]
+  }
+]
