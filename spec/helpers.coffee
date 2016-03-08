@@ -7,60 +7,70 @@ formatValidators = require('./validator').validate
 
 [tv4, ZSchema].map formatValidators
 
-jasmine.Matchers::toHaveType = (expected) ->
-  test = Object::toString.call(@actual).match(/object (\w+)/)
+global.customMatchers =
+  toHaveType: ->
+    compare: (actual, expected) ->
+      test = Object::toString.call(actual).match(/object (\w+)/)
 
-  if test[1].toLowerCase() isnt expected
-    throw new Error """
-      Expected #{JSON.stringify @actual} to have #{expected} type
-    """
-
-  true
-
-jasmine.Matchers::toHaveSchema = (expected, refs) ->
-  fixed = {}
-
-  if refs
-    fixed[s.id.split('#')[0]] = clone(s) for s in refs
-
-  validator = new ZSchema
-    ignoreUnresolvableReferences: false
-
-  validator.setRemoteReference(k, v) for k, v of fixed
-  valid = validator.validate @actual, clone(expected)
-
-  if errors = validator.getLastErrors() or not valid
-    throw errors.map((e) ->
-      if e.code is 'PARENT_SCHEMA_VALIDATION_FAILED'
-        e.inner.map((e) -> e.message).join '\n'
+      if test[1].toLowerCase() isnt expected
+        pass: false
+        message: "Expected #{JSON.stringify actual} to have #{expected} type"
       else
-        e.message
-    ).join('\n') or "Invalid schema #{JSON.stringify @actual}"
+        pass: true
 
-  api = tv4.freshApi()
+  toHaveSchema: ->
+    compare: (actual, expected) ->
+      [ expected, refs ] = expected if Array.isArray(expected)
 
-  api.banUnknown = false
-  api.cyclicCheck = false
+      fail = []
+      fixed = {}
 
-  api.addSchema(id, json) for id, json of fixed
+      if refs
+        fixed[s.id.split('#')[0]] = clone(s) for s in refs
 
-  result = api.validateResult @actual,
-    clone(expected), api.cyclicCheck, api.banUnknown
+      # z-schema
+      validator = new ZSchema
+        ignoreUnresolvableReferences: false
 
-  if result.missing.length
-    throw new Error 'Missing ' + result.missing.join(', ')
+      validator.setRemoteReference(k, v) for k, v of fixed
+      valid = validator.validate actual, clone(expected)
 
-  throw result.error if result.error
+      if errors = validator.getLastErrors() or not valid
+        fail.push errors.map((e) ->
+         if e.code is 'PARENT_SCHEMA_VALIDATION_FAILED'
+           e.inner.map((e) -> e.message).join '\n'
+         else
+           e.message
+        ).join('\n') or "Invalid schema #{JSON.stringify actual}"
 
-  jay = new JaySchema
+      # tv4
+      api = tv4.freshApi()
 
-  formatValidators jay
+      api.banUnknown = false
+      api.cyclicCheck = false
 
-  jay.register(clone(json)) for id, json of fixed
+      api.addSchema(id, json) for id, json of fixed
 
-  result = jay.validate @actual, clone(expected)
+      result = api.validateResult actual,
+        clone(expected), api.cyclicCheck, api.banUnknown
 
-  throw result.map((e) -> e.desc or e.message).join('\n') or
-    "Invalid schema #{JSON.stringify @actual}" if result.length
+      if result.missing.length
+        fail.push 'Missing ' + result.missing.join(', ')
 
-  true
+      fail.push(result.error) if result.error
+
+      # jayschema
+      jay = new JaySchema
+
+      formatValidators jay
+
+      jay.register(clone(json)) for id, json of fixed
+
+      result = jay.validate actual, clone(expected)
+
+      if result.length
+        fail.push result.map((e) -> e.desc or e.message).join('\n') or
+          "Invalid schema #{JSON.stringify actual}"
+
+      pass: !fail.length
+      message: fail.join('\n') if fail.length

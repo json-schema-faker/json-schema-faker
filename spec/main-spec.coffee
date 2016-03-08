@@ -69,7 +69,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
           if test.valid
             try
-              expect(sample).toHaveSchema schema, refs
+              expect(sample).toHaveSchema [schema, refs]
             catch e
               throw new Error """
                 #{suite.description} (#{e})
