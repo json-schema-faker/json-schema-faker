@@ -50,7 +50,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             return
 
           if test.hasNot
-            expect(sample.toString()).not.toContain test.hasNot
+            expect(JSON.stringify sample).not.toContain test.hasNot
 
           if test.type
             expect(sample).toHaveType test.type
