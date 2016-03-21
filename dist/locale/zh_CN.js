@@ -1,14 +1,57 @@
 /*!
- * json-schema-faker library v0.2.11
+ * json-schema-faker library v0.2.12
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-02-13 10:19:27.121Z
+ * Date: 2016-03-21 17:21:06.522Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+/**
+ * Generates randomized boolean value.
+ *
+ * @returns {boolean}
+ */
+module.exports = function() {
+  return Math.random() > 0.5;
+};
+
+},{}],2:[function(require,module,exports){
+/**
+ * Generates null value.
+ *
+ * @returns {null}
+ */
+module.exports = function() {
+  return null;
+};
+
+},{}],3:[function(require,module,exports){
+var random = require('./../util/random');
+
+var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
+  + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
+  + ' commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla'
+  + ' pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est'
+  + ' laborum').split(' ');
+
+/**
+ * Generates randomized array of single lorem ipsum words.
+ *
+ * @param min
+ * @param max
+ * @returns {Array.<string>}
+ */
+module.exports = function(min, max) {
+  var words = random.shuffle(LIPSUM_WORDS),
+      length = random(min || 1, Math.min(LIPSUM_WORDS.length, max || min || 5));
+
+  return words.slice(0, length);
+};
+
+},{"./../util/random":17}],4:[function(require,module,exports){
 var container = require('./util/container'),
     traverse = require('./util/traverse'),
     formats = require('./util/formats'),
@@ -99,7 +142,7 @@ generate.extend = function(name, cb) {
 
 module.exports = generate;
 
-},{"./util/container":9,"./util/formats":11,"./util/merge":14,"./util/random":16,"./util/traverse":17,"deref":19}],2:[function(require,module,exports){
+},{"./util/container":10,"./util/formats":12,"./util/merge":15,"./util/random":17,"./util/traverse":18,"deref":19}],5:[function(require,module,exports){
 var random = require('../util/random'),
     traverse = require('../util/traverse'),
     hasProps = require('../util/has-props');
@@ -166,12 +209,7 @@ module.exports = function(value, path, resolve) {
   return items;
 };
 
-},{"../util/error":10,"../util/has-props":12,"../util/random":16,"../util/traverse":17}],3:[function(require,module,exports){
-module.exports = function() {
-  return Math.random() > 0.5;
-};
-
-},{}],4:[function(require,module,exports){
+},{"../util/error":11,"../util/has-props":13,"../util/random":17,"../util/traverse":18}],6:[function(require,module,exports){
 var number = require('./number');
 
 // The `integer` type is just a wrapper for the `number` type. The `number` type
@@ -185,12 +223,7 @@ module.exports = function(value) {
   return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
 };
 
-},{"./number":6}],5:[function(require,module,exports){
-module.exports = function() {
-  return null;
-};
-
-},{}],6:[function(require,module,exports){
+},{"./number":7}],7:[function(require,module,exports){
 var MIN_INTEGER = -100000000,
     MAX_INTEGER = 100000000;
 
@@ -235,10 +268,10 @@ module.exports = function(value) {
   });
 };
 
-},{"../util/random":16,"./string":8}],7:[function(require,module,exports){
+},{"../util/random":17,"./string":9}],8:[function(require,module,exports){
 var container = require('../util/container'),
     random = require('../util/random'),
-    words = require('../util/words'),
+    words = require('../generators/words'),
     traverse = require('../util/traverse'),
     hasProps = require('../util/has-props');
 
@@ -297,7 +330,7 @@ module.exports = function(value, path, resolve) {
   return traverse(props, path.concat(['properties']), resolve);
 };
 
-},{"../util/container":9,"../util/error":10,"../util/has-props":12,"../util/random":16,"../util/traverse":17,"../util/words":18}],8:[function(require,module,exports){
+},{"../generators/words":3,"../util/container":10,"../util/error":11,"../util/has-props":13,"../util/random":17,"../util/traverse":18}],9:[function(require,module,exports){
 var container = require('../util/container');
 
 var faker = container.get('faker'),
@@ -305,7 +338,7 @@ var faker = container.get('faker'),
     RandExp = container.get('randexp'),
     randexp = RandExp.randexp;
 
-var words = require('../util/words'),
+var words = require('../generators/words'),
     random = require('../util/random'),
     formats = require('../util/formats');
 
@@ -431,7 +464,7 @@ module.exports = function(value) {
   return sample;
 };
 
-},{"../util/container":9,"../util/formats":11,"../util/random":16,"../util/words":18}],9:[function(require,module,exports){
+},{"../generators/words":3,"../util/container":10,"../util/formats":12,"../util/random":17}],10:[function(require,module,exports){
 // static requires - handle both initial dependency load (deps will be available
 // among other modules) as well as they will be included by browserify AST
 var container = {
@@ -459,7 +492,7 @@ module.exports = {
   }
 };
 
-},{"randexp":149}],10:[function(require,module,exports){
+},{"randexp":149}],11:[function(require,module,exports){
 function ParseError(message, path) {
   this.message = message;
   this.path = path;
@@ -470,7 +503,7 @@ ParseError.prototype = Error.prototype;
 
 module.exports = ParseError;
 
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 var registry = {};
 
 module.exports = function(name, callback) {
@@ -487,14 +520,14 @@ module.exports = function(name, callback) {
   return registry;
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 module.exports = function(obj) {
   return Array.prototype.slice.call(arguments, 1).filter(function(key) {
     return typeof obj[key] !== 'undefined';
   }).length > 0;
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 var inferredProperties = {
   array: [
     'additionalItems',
@@ -521,42 +554,59 @@ var inferredProperties = {
   ],
   string: [
     'maxLength',
-    'menlength',
+    'minLength',
     'pattern'
   ]
 };
 
-var subschemaProperties = [
-  'additionalItems', 'items', 'additionalProperties', 'dependencies', 'patternProperties', 'properties'
-];
-
 inferredProperties.number = inferredProperties.integer;
 
-function mayHaveType(obj, path, props) {
+var subschemaProperties = [
+  'additionalItems',
+  'items',
+  'additionalProperties',
+  'dependencies',
+  'patternProperties',
+  'properties'
+];
+
+/**
+ * Iterates through all keys of `obj` and:
+ * - checks whether those keys match properties of a given inferred type
+ * - makes sure that `obj` is not a subschema; _Do not attempt to infer properties named as subschema containers. The
+ * reason for this is that any property name within those containers that matches one of the properties used for
+ * inferring missing type values causes the container itself to get processed which leads to invalid output. (Issue 62)_
+ *
+ * @returns {boolean}
+ */
+function matchesType(obj, lastElementInPath, inferredTypeProperties) {
   return Object.keys(obj).filter(function(prop) {
-    // Do not attempt to infer properties named as subschema containers.  The reason for this is
-    // that any property name within those containers that matches one of the properties used for inferring missing type
-    // values causes the container itself to get processed which leads to invalid output.  (Issue 62)
-    if (props.indexOf(prop) > -1 && subschemaProperties.indexOf(path[path.length - 1]) === -1) {
+    var isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1,
+      inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+    if (inferredPropertyFound && !isSubschema) {
       return true;
     }
   }).length > 0;
 }
 
-module.exports = function(obj, path) {
-  for (var type in inferredProperties) {
-    if (mayHaveType(obj, path, inferredProperties[type])) {
-      return type;
+/**
+ * Checks whether given `obj` type might be inferred. The mechanism iterates through all inferred types definitions,
+ * tries to match allowed properties with properties of given `obj`. Returns type name, if inferred, or null.
+ *
+ * @returns {string|null}
+ */
+module.exports = function(obj, schemaPath) {
+  for (var typeName in inferredProperties) {
+    var lastElementInPath = schemaPath[schemaPath.length - 1];
+    if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
+      return typeName;
     }
   }
 };
 
-},{}],14:[function(require,module,exports){
-var merge;
-
+},{}],15:[function(require,module,exports){
 function clone(arr) {
   var out = [];
-
   arr.forEach(function(item, index) {
     if (typeof item === 'object' && item !== null) {
       out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
@@ -564,11 +614,10 @@ function clone(arr) {
       out[index] = item;
     }
   });
-
   return out;
 }
 
-merge = module.exports = function(a, b) {
+function merge(a, b) {
   for (var key in b) {
     if (typeof b[key] !== 'object' || b[key] === null) {
       a[key] = b[key];
@@ -580,23 +629,24 @@ merge = module.exports = function(a, b) {
       a[key] = merge(a[key], b[key]);
     }
   }
-
   return a;
-};
+}
 
-},{}],15:[function(require,module,exports){
+module.exports = merge;
+
+},{}],16:[function(require,module,exports){
 module.exports = {
+  boolean: require('../generators/boolean'),
+  null: require('../generators/null'),
   array: require('../types/array'),
-  boolean: require('../types/boolean'),
   integer: require('../types/integer'),
   number: require('../types/number'),
-  null: require('../types/null'),
   object: require('../types/object'),
   string: require('../types/string')
 };
 
-},{"../types/array":2,"../types/boolean":3,"../types/integer":4,"../types/null":5,"../types/number":6,"../types/object":7,"../types/string":8}],16:[function(require,module,exports){
-var random = module.exports = function(min, max, defMin, defMax) {
+},{"../generators/boolean":1,"../generators/null":2,"../types/array":5,"../types/integer":6,"../types/number":7,"../types/object":8,"../types/string":9}],17:[function(require,module,exports){
+function random(min, max, defMin, defMax) {
   var hasPrecision = false;
 
   if (typeof min === 'object') {
@@ -648,7 +698,9 @@ random.pick = function(obj) {
 random.MIN_NUMBER = -100;
 random.MAX_NUMBER = 100;
 
-},{}],17:[function(require,module,exports){
+module.exports = random;
+
+},{}],18:[function(require,module,exports){
 var random = require('./random');
 
 var ParseError = require('./error');
@@ -712,23 +764,7 @@ module.exports = function() {
   return traverse.apply(null, arguments);
 };
 
-},{"./error":10,"./inferred":13,"./primitives":15,"./random":16}],18:[function(require,module,exports){
-var random = require('./random');
-
-var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
-  + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
-  + ' commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla'
-  + ' pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est'
-  + ' laborum').split(' ');
-
-module.exports = function(min, max) {
-  var words = random.shuffle(LIPSUM_WORDS),
-      length = random(min || 1, Math.min(LIPSUM_WORDS.length, max || min || 5));
-
-  return words.slice(0, length);
-};
-
-},{"./random":16}],19:[function(require,module,exports){
+},{"./error":11,"./inferred":14,"./primitives":16,"./random":17}],19:[function(require,module,exports){
 'use strict';
 
 var $ = require('./util/uri-helpers');
@@ -13622,5 +13658,5 @@ module.exports = require('../lib/jsf')
     }
   });
 
-},{"../lib/jsf":1,"faker/locale/zh_CN":145}]},{},["json-schema-faker"])("json-schema-faker")
+},{"../lib/jsf":4,"faker/locale/zh_CN":145}]},{},["json-schema-faker"])("json-schema-faker")
 });
