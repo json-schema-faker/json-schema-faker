@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.2.14",
+  "version": "0.2.15",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "index.js",
@@ -31,10 +31,10 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
-    "faker": "~3.0.1",
+    "faker": "~3.1.0",
     "chance": "~1.0.0",
-    "deref": "^0.6.3",
-    "randexp": "^0.4.2"
+    "deref": "~0.6.3",
+    "randexp": "~0.4.2"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
