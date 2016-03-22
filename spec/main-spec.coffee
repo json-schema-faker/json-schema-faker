@@ -1,5 +1,3 @@
-require('./helpers')
-
 fs = require('fs')
 glob = require('glob')
 jsfaker = require('../')
@@ -9,23 +7,16 @@ pick = (obj, key) ->
   obj = obj[parts.shift()] while parts.length
   obj
 
-argv = process.argv.slice(2)
-spec = argv.indexOf('--spec')
-spec = unless spec is -1
-  argv[spec + 1]
-else
-  null
-
 glob.sync("#{__dirname}/**/*.json").forEach (file) ->
-  if spec isnt null
-    return if file.indexOf(spec) is -1
-
   suite = JSON.parse(fs.readFileSync(file))
 
   (if Array.isArray(suite) then suite else [suite]).forEach (suite) ->
     return if suite.xdescription
 
     describe "#{suite.description} (#{file.replace(__dirname + '/', '')})", ->
+      beforeEach ->
+        jasmine.addMatchers(customMatchers)
+
       suite.tests.forEach (test) ->
         return if test.xdescription
 
@@ -54,11 +45,12 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
             throw e unless test.throws
 
           if test.dump
-            console.log JSON.stringify(sample, null, 2)
+            console.log 'IN', JSON.stringify(schema, null, 2)
+            console.log 'OUT', JSON.stringify(sample, null, 2)
             return
 
           if test.hasNot
-            expect(sample.toString()).not.toContain test.hasNot
+            expect(JSON.stringify sample).not.toContain test.hasNot
 
           if test.type
             expect(sample).toHaveType test.type
@@ -77,7 +69,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
           if test.valid
             try
-              expect(sample).toHaveSchema schema, refs
+              expect(sample).toHaveSchema [schema, refs]
             catch e
               throw new Error """
                 #{suite.description} (#{e})
