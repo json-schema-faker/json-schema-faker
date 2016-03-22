@@ -1,6 +1,14 @@
 UPCOMING v0.3:
   changes:
     - faker and chance are not longer required as dependencies
+v0.2.14
+  date: 2016-03-22
+  changes:
+    - support for faker.js 3.1.0
+v0.2.13
+  date: 2016-03-21
+  changes:
+    - quick-fix after 0.2.12 - rolling back faker & chance optional dependencies
 v0.2.12
   date: 2016-03-21
   changes:
