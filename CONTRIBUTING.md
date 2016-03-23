@@ -19,6 +19,9 @@ Contribution to the project is more than welcome!
 * `npm run dev:spec` &mdash; Run jasmine-node
 * `npm run cover` &mdash; Run istanbul + jasmine-node
 * `npm run cover:up` &mdash; Upload to coveralls (CI only)
-* `npm run build` &mdash; Prepare all assets with locales for CDN support
+* `npm run dist` &mdash; Prepare all assets with locales for CDN support
 * `npm test` &mdash; Run all the tests
 
+### Upcoming
+
+* `npm run tsc` &mdash; Compile TypeScript to JavaScript (via commonJS)

@@ -436,7 +436,6 @@ but they were either incomplete, outdated, broken or non-standard. That's why `j
 
 * [Alvaro Cabrera](https://twitter.com/pateketrueke)
 * [Tomasz Ducin](https://twitter.com/tomasz_ducin)
-* [Jeremy Whitlock](https://twitter.com/whitlockjc)
 * artwork by [Ajay Karat](http://www.devilsgarage.com/)
 
 Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
