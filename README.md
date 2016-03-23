@@ -13,6 +13,12 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 
 ***Want to support `jsf`?*** We are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
 
+### migrating to TypeScript
+
+![JSON Schema Faker migration to TypeScript](migration.jpg)
+
+JSON-Schema-Faker is being migrated into TypeScript.
+
 # Table of contents
 
 - Basics
