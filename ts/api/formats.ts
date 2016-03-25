@@ -3,7 +3,7 @@ import FormatRegistry = require('../class/FormatRegistry');
 // instantiate
 var registry = new FormatRegistry();
 
-function formatsAPI(name: string, callback: Function): any {
+function formatsAPI(name: string, callback?: Function): any {
   if (callback) {
     registry.register(name, callback);
   } else if (typeof name === 'object') {
