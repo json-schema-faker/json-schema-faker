@@ -1,4 +1,15 @@
-var inferredProperties = {
+type propertyList = string[];
+
+interface propertyTypeMap {
+  [s: string]: propertyList;
+  array: propertyList;
+  integer: propertyList;
+  number?: propertyList;
+  object: propertyList;
+  string: propertyList;
+}
+
+var inferredProperties: propertyTypeMap = {
   array: [
     'additionalItems',
     'items',
@@ -31,7 +42,7 @@ var inferredProperties = {
 
 inferredProperties.number = inferredProperties.integer;
 
-var subschemaProperties = [
+var subschemaProperties: propertyList = [
   'additionalItems',
   'items',
   'additionalProperties',
@@ -49,10 +60,10 @@ var subschemaProperties = [
  *
  * @returns {boolean}
  */
-function matchesType(obj, lastElementInPath, inferredTypeProperties) {
-  return Object.keys(obj).filter(function(prop) {
-    var isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1,
-      inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+function matchesType(obj: Object, lastElementInPath: string, inferredTypeProperties: propertyList): boolean {
+  return Object.keys(obj).filter(function(prop: string) {
+    var isSubschema: boolean = subschemaProperties.indexOf(lastElementInPath) > -1,
+      inferredPropertyFound: boolean = inferredTypeProperties.indexOf(prop) > -1;
     if (inferredPropertyFound && !isSubschema) {
       return true;
     }
@@ -65,11 +76,13 @@ function matchesType(obj, lastElementInPath, inferredTypeProperties) {
  *
  * @returns {string|null}
  */
-module.exports = function(obj, schemaPath) {
+function inferType(obj: Object, schemaPath: string[]): string {
   for (var typeName in inferredProperties) {
-    var lastElementInPath = schemaPath[schemaPath.length - 1];
+    var lastElementInPath: string = schemaPath[schemaPath.length - 1];
     if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
       return typeName;
     }
   }
-};
+}
+
+export = inferType;

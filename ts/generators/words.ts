@@ -1,4 +1,4 @@
-import random = require('./../util/random');
+import random = require('../core/random');
 
 var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
   + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
@@ -13,9 +13,9 @@ var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed
  * @param max
  * @returns {Array.<string>}
  */
-function wordsGenerator(min, max) {
+function wordsGenerator(min: number = 1, max: number = 5) {
   var words = random.shuffle(LIPSUM_WORDS),
-      length = random.number(min || 1, Math.min(LIPSUM_WORDS.length, max || min || 5));
+      length = random.number(min, Math.min(LIPSUM_WORDS.length, max));
 
   return words.slice(0, length);
 }
