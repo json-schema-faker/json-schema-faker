@@ -63,7 +63,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   var result: number = Math.random() * (max - min) + min;
 
   if (!hasPrecision) {
-    return parseInt(result + "", 10);
+    return parseInt(result + '', 10);
   }
 
   return result;

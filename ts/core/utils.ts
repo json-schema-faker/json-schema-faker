@@ -1,3 +1,15 @@
+/**
+ * Returns true/false whether the object parameter has its own properties defined
+ *
+ * @param obj
+ * @returns {boolean}
+ */
+function hasProperties(obj: Object): boolean {
+  return Array.prototype.slice.call(arguments, 1).filter(function(key: string): boolean {
+    return typeof obj[key] !== 'undefined';
+  }).length > 0;
+}
+
 function clone(arr) {
   var out = [];
   arr.forEach(function(item, index) {
@@ -25,4 +37,8 @@ function merge(a, b) {
   return a;
 }
 
-module.exports = merge;
+export = {
+  hasProperties: hasProperties,
+  clone: clone,
+  merge: merge
+};
