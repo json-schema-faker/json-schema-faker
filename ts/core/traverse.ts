@@ -1,7 +1,9 @@
 import random = require('./random');
 import ParseError = require('./error');
 import inferType = require('./infer');
-import primitives = require('./primitives');
+import cleanProps = require('./clean');
+
+var primitives = null;
 
 function traverse(schema: JsonSchema|any, path, resolve) {
   resolve(schema);
@@ -52,4 +54,8 @@ function traverse(schema: JsonSchema|any, path, resolve) {
   return copy;
 }
 
-export = traverse;
+module.exports = function() {
+  primitives = primitives || require('./primitives');
+
+  return cleanProps(traverse.apply(null, arguments));
+};
