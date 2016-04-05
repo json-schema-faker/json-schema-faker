@@ -1,5 +1,3 @@
-/// <reference path="../../node_modules/randexp/randexp.d.ts"/>
-
 import randexp = require('randexp');
 
 type Dependency = any;
