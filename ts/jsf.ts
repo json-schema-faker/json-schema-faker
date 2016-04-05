@@ -12,7 +12,14 @@ function isKey(prop) {
   return prop === 'enum' || prop === 'required' || prop === 'definitions';
 }
 
-function generate(schema, refs, ex) {
+// stateful function need a separate type
+interface jsfGlobal {
+  (schema: any, refs: any, ex: any): any;
+  formats: Function;
+  extend: Function;
+}
+
+var jsf = <jsfGlobal>function(schema, refs, ex) {
   var $ = deref();
 
   try {
@@ -78,14 +85,14 @@ function generate(schema, refs, ex) {
       throw e;
     }
   }
-}
-
-generate.formats = formats;
-
-// returns itself for chaining
-generate.extend = function(name, cb) {
-  container.extend(name, cb);
-  return generate;
 };
 
-export = generate;
+jsf.formats = formats;
+
+// returns itself for chaining
+jsf.extend = function(name, cb) {
+  container.extend(name, cb);
+  return jsf;
+};
+
+export = jsf;
