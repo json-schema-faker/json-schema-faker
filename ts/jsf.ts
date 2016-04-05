@@ -8,7 +8,7 @@ import utils = require('./core/utils');
 
 var merge  = utils.merge;
 
-function isKey(prop) {
+function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'required' || prop === 'definitions';
 }
 
@@ -90,7 +90,7 @@ var jsf = <jsfGlobal>function(schema, refs, ex) {
 jsf.formats = formats;
 
 // returns itself for chaining
-jsf.extend = function(name, cb) {
+jsf.extend = function(name: string, cb: Function) {
   container.extend(name, cb);
   return jsf;
 };

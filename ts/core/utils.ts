@@ -4,8 +4,8 @@
  * @param obj
  * @returns {boolean}
  */
-function hasProperties(obj: Object): boolean {
-  return Array.prototype.slice.call(arguments, 1).filter(function(key: string): boolean {
+function hasProperties(obj: Object, ...properties: string[]): boolean {
+  return properties.filter(function(key: string): boolean {
     return typeof obj[key] !== 'undefined';
   }).length > 0;
 }
