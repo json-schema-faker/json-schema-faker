@@ -49,6 +49,6 @@ interface JsonSchema extends IGeneratorSchema {
  */
 interface jsfAPI {
   (schema: JsonSchema, refs?: any): any;
-  formats: Function;
+  format: Function;
   extend: Function;
 }

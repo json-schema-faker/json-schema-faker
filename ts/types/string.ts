@@ -4,7 +4,7 @@ import dateTime = require('../generators/dateTime');
 import utils = require('../core/utils');
 import random = require('../core/random');
 import regexp = require('../core/regexp');
-import formats = require('../api/formats');
+import formats = require('../api/format');
 
 import container = require('../class/Container');
 var randexp = container.get('randexp').randexp;

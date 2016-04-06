@@ -255,7 +255,7 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
 Additionally, you can add custom generators for those:
 
 ```javascript
-jsf.formats('semver', function(gen, schema) {
+jsf.format('semver', function(gen, schema) {
   return gen.randexp('^\\d\\.\\d\\.\\d{1,2}$');
 });
 ```
@@ -271,10 +271,10 @@ Now that format can be generated:
 
 Usage:
 
-- **formats()** &mdash; Return all registered formats (custom only)
-- **formats(obj)** &mdash; Register formats by key/value &rarr; name/callback
-- **formats(name)** &mdash; Returns that format generator (undefined if not exists)
-- **formats(name, callback)** &mdash; Register a custom format by name/callback
+- **format()** &mdash; Return all registered formats (custom only)
+- **format(obj)** &mdash; Register formats by key/value &rarr; name/callback
+- **format(name)** &mdash; Returns that format generator (undefined if not exists)
+- **format(name, callback)** &mdash; Register a custom format by name/callback
 
 Callback:
 

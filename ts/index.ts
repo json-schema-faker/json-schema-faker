@@ -1,12 +1,12 @@
 import container = require('./class/Container');
-import formats = require('./api/formats');
+import format = require('./api/format');
 import run = require('./core/run');
 
 var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any) {
   return run(schema, refs);
 };
 
-jsf.formats = formats;
+jsf.format = format;
 
 // returns itself for chaining
 jsf.extend = function(name: string, cb: Function) {
