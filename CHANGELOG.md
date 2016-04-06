@@ -1,6 +1,11 @@
 UPCOMING v0.3:
   changes:
     - faker and chance are not longer required as dependencies
+v0.2.16
+  date: 2016-04-06
+  changes:
+    - minor bugfixes
+    - dependency update
 v0.2.15
   date: 2016-03-22
   changes:
