@@ -1,10 +1,9 @@
 import deref = require('deref');
 
-import container = require('./class/Container');
-import traverse = require('./core/traverse');
-import formats = require('./api/formats');
-import random = require('./core/random');
-import utils = require('./core/utils');
+import container = require('../class/Container');
+import traverse = require('./traverse');
+import random = require('./random');
+import utils = require('./utils');
 
 var merge  = utils.merge;
 
@@ -12,14 +11,7 @@ function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'required' || prop === 'definitions';
 }
 
-// stateful function need a separate type
-interface jsfGlobal {
-  (schema: any, refs: any, ex: any): any;
-  formats: Function;
-  extend: Function;
-}
-
-var jsf = <jsfGlobal>function(schema, refs, ex) {
+function run(schema, refs?, ex?) {
   var $ = deref();
 
   try {
@@ -85,14 +77,6 @@ var jsf = <jsfGlobal>function(schema, refs, ex) {
       throw e;
     }
   }
-};
+}
 
-jsf.formats = formats;
-
-// returns itself for chaining
-jsf.extend = function(name: string, cb: Function) {
-  container.extend(name, cb);
-  return jsf;
-};
-
-export = jsf;
+export = run;

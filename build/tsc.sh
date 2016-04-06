@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # --out will not work with CommonJS, see https://github.com/Microsoft/TypeScript/issues/1544
-tsc --module commonjs ts/jsf.ts ts/jsf.ts
+tsc --module commonjs ts/index.ts ts/index.ts
 mkdir -p lib/api lib/class lib/core lib/generators lib/types
 
 mv ts/api/*.js lib/api/

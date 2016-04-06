@@ -10,6 +10,7 @@ function hasProperties(obj: Object, ...properties: string[]): boolean {
   }).length > 0;
 }
 
+// TODO refactor clone function
 function clone(arr) {
   var out = [];
   arr.forEach(function(item, index) {
@@ -22,6 +23,7 @@ function clone(arr) {
   return out;
 }
 
+// TODO refactor merge function
 function merge(a, b) {
   for (var key in b) {
     if (typeof b[key] !== 'object' || b[key] === null) {

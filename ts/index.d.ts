@@ -8,8 +8,9 @@ interface JsonSchema {
   title?: string;
   description?: string;
   id?: string;
+  enum?: any[];
   $schema?: string;
-  type?: string;
+  type?: string | string[]; // see http://json-schema.org/latest/json-schema-validation.html "5.5.2.1 valid values"
   items?: any;
   properties?: any;
   patternProperties?: any;
@@ -37,4 +38,14 @@ interface INumberSchema extends IGeneratorSchema{
   maximum?: number;
   exclusiveMinimum?: boolean;
   exclusiveMaximum?: boolean;
+}
+
+/**
+ * This interface represents outer JSF object that is accessible by the end users.
+ * It is a stateful function (combined of additional functionalities) and needs a separate type.
+ */
+interface jsfAPI {
+  (schema: JsonSchema, refs?: any): any;
+  formats: Function;
+  extend: Function;
 }

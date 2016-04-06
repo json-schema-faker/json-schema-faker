@@ -3,7 +3,7 @@ import ParseError = require('./error');
 import inferType = require('./infer');
 import primitives = require('./primitives');
 
-function traverse(schema: JsonSchema|any, path, resolve) {
+function traverse(schema: JsonSchema, path, resolve) {
   resolve(schema);
 
   var copy = {};
