@@ -1,10 +1,10 @@
 import thunk = require('../generators/thunk');
 import ipv4 = require('../generators/ipv4');
 import dateTime = require('../generators/dateTime');
+import coreFormat = require('../generators/coreFormat');
 import utils = require('../core/utils');
 import random = require('../core/random');
-import regexp = require('../core/regexp');
-import formats = require('../api/format');
+import format = require('../api/format');
 
 import container = require('../class/Container');
 var randexp = container.get('randexp').randexp;
@@ -55,11 +55,9 @@ function generateFormat(value: IStringSchema): string {
     case 'hostname':
     case 'ipv6':
     case 'uri':
-      return randexp(regexp[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
-        return randexp(regexp[key]);
-      });
+      return coreFormat(value.format);
     default:
-      var callback = formats(value.format);
+      var callback = format(value.format);
       return callback(container.getAll(), value);
   }
 }
