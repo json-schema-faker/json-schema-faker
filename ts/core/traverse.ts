@@ -26,7 +26,7 @@ function traverse(schema: JsonSchema, path, resolve) {
   }
 
   if (schema.faker || schema.chance) {
-    type = 'string';
+    type = 'external';
   }
 
   if (typeof type === 'string') {

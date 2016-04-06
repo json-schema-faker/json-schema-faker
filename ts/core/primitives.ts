@@ -5,6 +5,7 @@ import _integer = require('../types/integer');
 import _number = require('../types/number');
 import _object = require('../types/object');
 import _string = require('../types/string');
+import _external = require('../types/external');
 
 export = {
   boolean: _boolean,
@@ -13,5 +14,6 @@ export = {
   integer: _integer,
   number: _number,
   object: _object,
-  string: _string
+  string: _string,
+  external: _external
 }
