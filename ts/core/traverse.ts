@@ -6,14 +6,14 @@ import primitives = require('./primitives');
 function traverse(schema: JsonSchema, path, resolve) {
   resolve(schema);
 
+  if (Array.isArray(schema.enum)) {
+    return random.pick(schema.enum);
+  }
+
   var copy = {};
 
   if (Array.isArray(schema)) {
     copy = [];
-  }
-
-  if (Array.isArray(schema.enum)) {
-    return random.pick(schema.enum);
   }
 
   var type = schema.type;
@@ -23,6 +23,10 @@ function traverse(schema: JsonSchema, path, resolve) {
   } else if (typeof type === 'undefined') {
     // Attempt to infer the type
     type = inferType(schema, path) || type;
+  }
+
+  if (schema.faker || schema.chance) {
+    type = 'string';
   }
 
   if (typeof type === 'string') {

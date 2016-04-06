@@ -1,16 +1,9 @@
 import random = require('../core/random');
-import string = require('./string');
 
 var MIN_INTEGER = -100000000,
     MAX_INTEGER = 100000000;
 
 function numberType(value: INumberSchema): number {
-  // TODO move this part one level up to remove number -> string dependency
-  // TODO solve the type error thrown (string returns string - and here number is expected) :-)
-  if (value.faker || value.chance) {
-    return string(value);
-  }
-
   var multipleOf = value.multipleOf;
 
   var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
