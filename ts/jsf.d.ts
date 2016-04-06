@@ -18,3 +18,23 @@ interface JsonSchema {
   definitions?: any;
   default?: any;
 }
+
+interface IGeneratorSchema {
+  faker?: any;
+  chance?: any;
+}
+
+interface IStringSchema extends IGeneratorSchema {
+  format?: string;
+  pattern?: RegExp;
+  minLength?: number;
+  maxLength?: number;
+}
+
+interface INumberSchema extends IGeneratorSchema{
+  multipleOf?: number;
+  minimum?: number;
+  maximum?: number;
+  exclusiveMinimum?: boolean;
+  exclusiveMaximum?: boolean;
+}

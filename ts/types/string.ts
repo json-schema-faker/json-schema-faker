@@ -1,34 +1,15 @@
-import words = require('../generators/words');
+import thunk = require('../generators/thunk');
+import ipv4 = require('../generators/ipv4');
+import dateTime = require('../generators/dateTime');
+import utils = require('../core/utils');
 import random = require('../core/random');
-import regexps = require('../core/regexp');
+import regexp = require('../core/regexp');
 import formats = require('../api/formats');
 
 import container = require('../class/Container');
 var randexp = container.get('randexp').randexp;
 
-// TODO move into utils
-
-function get(obj, key) {
-  var parts = key.split('.');
-
-  while (parts.length) {
-    var prop = parts.shift();
-
-    if (!obj[prop]) {
-      break;
-    }
-
-    obj = obj[prop];
-  }
-
-  return obj;
-}
-
-function thunk() {
-  return words().join(' ');
-}
-
-function generate(value) {
+function generateStuff(value): string {
   if (value.use) {
     var args = [],
         path = value.key;
@@ -43,7 +24,7 @@ function generate(value) {
       }
     }
 
-    var gen = get(value.gen, path);
+    var gen = utils.getSubAttribute(value.gen, path);
 
     if (typeof gen !== 'function') {
       throw new Error('unknown ' + value.use + '-generator for ' + JSON.stringify(value.key));
@@ -59,70 +40,44 @@ function generate(value) {
 
     return gen.apply(contextObject, args);
   }
+}
 
+function generateFormat(value: IStringSchema): string {
   switch (value.format) {
     case 'date-time':
-      return new Date(random.number(0, 100000000000000)).toISOString();
-
+      return dateTime();
+    case 'ipv4':
+      return ipv4();
+    case 'regex':
+      // TODO: discuss
+      return '.+?';
     case 'email':
     case 'hostname':
     case 'ipv6':
     case 'uri':
-      return randexp(regexps[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
-        return randexp(regexps[key]);
+      return randexp(regexp[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
+        return randexp(regexp[key]);
       });
-
-    case 'ipv4':
-      return [0, 0, 0, 0].map(function() {
-        return random.number(0, 255);
-      }).join('.');
-
-    case 'regex':
-      // TODO: discuss
-      return '.+?';
-
     default:
       var callback = formats(value.format);
-
-      if (typeof callback !== 'function') {
-        throw new Error('unknown generator for ' + JSON.stringify(value.format));
-      }
-
       return callback(container.getAll(), value);
   }
 }
 
-function stringType(value) {
+function stringType(value: IStringSchema): string {
   if (value.faker || value.chance) {
-    return generate({
+    return generateStuff({
       use: value.faker ? 'faker' : 'chance',
       gen: value.faker ? container.get('faker') : container.get('chance'),
       key: value.faker || value.chance
     });
-  }
-
-  if (value.format) {
-    return generate(value);
-  }
-
-  if (value.pattern) {
+  } else if (value.format) {
+    return generateFormat(value);
+  } else if (value.pattern) {
     return randexp(value.pattern);
+  } else {
+    return thunk(value.minLength, value.maxLength);
   }
-
-  var min = Math.max(0, value.minLength || 0),
-      max = random.number(min, value.maxLength || 140);
-
-  var sample = thunk();
-
-  while (sample.length < min) {
-    sample += thunk();
-  }
-
-  if (sample.length > max) {
-    sample = sample.substr(0, max);
-  }
-
-  return sample;
 }
 
 export = stringType;

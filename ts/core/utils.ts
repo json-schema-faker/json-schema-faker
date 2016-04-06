@@ -37,7 +37,23 @@ function merge(a, b) {
   return a;
 }
 
+function getSubAttribute(obj: any, dotSeparatedKey: string): any {
+  var keyElements = dotSeparatedKey.split('.');
+
+  while (keyElements.length) {
+    var prop = keyElements.shift();
+
+    if (!obj[prop]) {
+      break;
+    }
+
+    obj = obj[prop];
+  }
+  return obj;
+}
+
 export = {
+  getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
   clone: clone,
   merge: merge

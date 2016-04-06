@@ -2,7 +2,7 @@ import random = require('../core/random');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
 
-function unique(path, items, value, sample, resolve, traverseCallback) {
+function unique(path, items, value, sample, resolve, traverseCallback: Function) {
   var tmp = [],
       seen = [];
 
@@ -18,7 +18,7 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
   items.forEach(walk);
 
   // TODO: find a better solution?
-  var limit = 100;
+  var limit: number = 100;
 
   while (tmp.length !== items.length) {
     walk(traverseCallback(value.items || sample, path, resolve));
@@ -31,7 +31,7 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
   return tmp;
 }
 
-function arrayType(value, path, resolve, traverseCallback) {
+function arrayType(value, path, resolve, traverseCallback: Function) {
   var items = [];
 
   if (!(value.items || value.additionalItems)) {

@@ -6,7 +6,7 @@ import ParseError = require('../core/error');
 
 var randexp = container.get('randexp').randexp;
 
-function objectType(value, path, resolve, traverseCallback) {
+function objectType(value, path, resolve, traverseCallback: Function) {
   var props = {};
 
   if (!(value.properties || value.patternProperties || value.additionalProperties)) {
