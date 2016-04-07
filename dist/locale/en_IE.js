@@ -1,583 +1,206 @@
 /*!
- * json-schema-faker library v0.2.16
+ * json-schema-faker library v0.3.0
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-04-06 19:09:29.573Z
+ * Date: 2016-04-07 15:47:55.094Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+var FormatRegistry = require('../class/FormatRegistry');
+// instantiate
+var registry = new FormatRegistry();
 /**
- * Generates randomized boolean value.
+ * Custom formats API
  *
- * @returns {boolean}
+ * @see https://github.com/json-schema-faker/json-schema-faker#custom-formats
+ * @param name
+ * @param callback
+ * @returns {any}
  */
-module.exports = function() {
-  return Math.random() > 0.5;
-};
-
-},{}],2:[function(require,module,exports){
-/**
- * Generates null value.
- *
- * @returns {null}
- */
-module.exports = function() {
-  return null;
-};
-
-},{}],3:[function(require,module,exports){
-var random = require('./../util/random');
-
-var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
-  + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
-  + ' commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla'
-  + ' pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est'
-  + ' laborum').split(' ');
-
-/**
- * Generates randomized array of single lorem ipsum words.
- *
- * @param min
- * @param max
- * @returns {Array.<string>}
- */
-module.exports = function(min, max) {
-  var words = random.shuffle(LIPSUM_WORDS),
-      length = random(min || 1, Math.min(LIPSUM_WORDS.length, max || min || 5));
-
-  return words.slice(0, length);
-};
-
-},{"./../util/random":17}],4:[function(require,module,exports){
-var container = require('./util/container'),
-    traverse = require('./util/traverse'),
-    formats = require('./util/formats'),
-    random = require('./util/random'),
-    merge = require('./util/merge');
-
-var deref = require('deref');
-
-function isKey(prop) {
-  return prop === 'enum' || prop === 'required' || prop === 'definitions';
+function formatAPI(name, callback) {
+    if (callback) {
+        registry.register(name, callback);
+    }
+    else if (typeof name === 'object') {
+        registry.registerMany(name);
+    }
+    else if (name) {
+        return registry.get(name);
+    }
+    else {
+        return registry.list();
+    }
 }
+module.exports = formatAPI;
 
-function generate(schema, refs, ex) {
-  var $ = deref();
-
-  try {
-    var seen = {};
-
-    return traverse($(schema, refs, ex), [], function reduce(sub) {
-      if (seen[sub.$ref] <= 0) {
-        delete sub.$ref;
-        delete sub.oneOf;
-        delete sub.anyOf;
-        delete sub.allOf;
-        return sub;
-      }
-
-      if (typeof sub.$ref === 'string') {
-        var id = sub.$ref;
-
-        delete sub.$ref;
-
-        if (!seen[id]) {
-          // TODO: this should be configurable
-          seen[id] = random(1, 5);
+},{"../class/FormatRegistry":3}],2:[function(require,module,exports){
+var randexp = require('randexp');
+/**
+ * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
+ * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
+ * of pure npm module instances. This class supports consistent access to these instances.
+ */
+var Container = (function () {
+    function Container() {
+        // static requires - handle both initial dependency load (deps will be available
+        // among other modules) as well as they will be included by browserify AST
+        this.registry = {
+            faker: null,
+            chance: null,
+            // randexp is required for "pattern" values
+            randexp: randexp
+        };
+    }
+    /**
+     * Override dependency given by name
+     * @param name
+     * @param callback
+     */
+    Container.prototype.extend = function (name, callback) {
+        if (typeof this.registry[name] === 'undefined') {
+            throw new ReferenceError('"' + name + '" dependency is not allowed.');
         }
-
-        seen[id] -= 1;
-
-        merge(sub, $.util.findByRef(id, $.refs));
-      }
-
-      if (Array.isArray(sub.allOf)) {
-        var schemas = sub.allOf;
-
-        delete sub.allOf;
-
-        // this is the only case where all sub-schemas
-        // must be resolved before any merge
-        schemas.forEach(function(s) {
-          merge(sub, reduce(s));
-        });
-      }
-
-      if (Array.isArray(sub.oneOf || sub.anyOf)) {
-        var mix = sub.oneOf || sub.anyOf;
-
-        delete sub.anyOf;
-        delete sub.oneOf;
-
-        merge(sub, random.pick(mix));
-      }
-
-      for (var prop in sub) {
-        if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
-          sub[prop] = reduce(sub[prop]);
+        this.registry[name] = callback(this.registry[name]);
+    };
+    /**
+     * Returns dependency given by name
+     * @param name
+     * @returns {Dependency}
+     */
+    Container.prototype.get = function (name) {
+        if (typeof this.registry[name] === 'undefined') {
+            throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
         }
-      }
+        else if (name === 'randexp') {
+            return this.registry['randexp'].randexp;
+        }
+        return this.registry[name];
+    };
+    /**
+     * Returns all dependencies
+     *
+     * @returns {Registry}
+     */
+    Container.prototype.getAll = function () {
+        return {
+            faker: this.get('faker'),
+            chance: this.get('chance'),
+            randexp: this.get('randexp')
+        };
+    };
+    return Container;
+})();
+// TODO move instantiation somewhere else (out from class file)
+// instantiate
+var container = new Container();
+module.exports = container;
 
-      return sub;
-    });
-  } catch (e) {
-    if (e.path) {
-      throw new Error(e.message + ' in ' + '/' + e.path.join('/'));
-    } else {
-      throw e;
+},{"randexp":152}],3:[function(require,module,exports){
+/**
+ * This class defines a registry for custom formats used within JSF.
+ */
+var FormatRegistry = (function () {
+    function FormatRegistry() {
+        // empty by default
+        this.registry = {};
     }
-  }
-}
+    /**
+     * Registers custom format
+     */
+    FormatRegistry.prototype.register = function (name, callback) {
+        this.registry[name] = callback;
+    };
+    /**
+     * Register many formats at one shot
+     */
+    FormatRegistry.prototype.registerMany = function (formats) {
+        for (var name in formats) {
+            this.registry[name] = formats[name];
+        }
+    };
+    /**
+     * Returns element by registry key
+     */
+    FormatRegistry.prototype.get = function (name) {
+        var format = this.registry[name];
+        if (typeof format !== 'function') {
+            throw new Error('unknown format generator ' + JSON.stringify(name));
+        }
+        return format;
+    };
+    /**
+     * Returns the whole registry content
+     */
+    FormatRegistry.prototype.list = function () {
+        return this.registry;
+    };
+    return FormatRegistry;
+})();
+module.exports = FormatRegistry;
 
-generate.formats = formats;
-
-// returns itself for chaining
-generate.extend = function(name, cb) {
-  container.set(name, cb);
-  return generate;
+},{}],4:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 };
-
-module.exports = generate;
-
-},{"./util/container":10,"./util/formats":12,"./util/merge":15,"./util/random":17,"./util/traverse":18,"deref":19}],5:[function(require,module,exports){
-var random = require('../util/random'),
-    traverse = require('../util/traverse'),
-    hasProps = require('../util/has-props');
-
-var ParseError = require('../util/error');
-
-function unique(path, items, value, sample, resolve) {
-  var tmp = [],
-      seen = [];
-
-  function walk(obj) {
-    var json = JSON.stringify(obj);
-
-    if (seen.indexOf(json) === -1) {
-      seen.push(json);
-      tmp.push(obj);
+var ParseError = (function (_super) {
+    __extends(ParseError, _super);
+    function ParseError(message, path) {
+        _super.call(this);
+        this.path = path;
+        Error.captureStackTrace(this, this.constructor);
+        this.name = 'ParseError';
+        this.message = message;
+        this.path = path;
     }
-  }
-
-  items.forEach(walk);
-
-  // TODO: find a better solution?
-  var limit = 100;
-
-  while (tmp.length !== items.length) {
-    walk(traverse(value.items || sample, path, resolve));
-
-    if (!limit--) {
-      break;
-    }
-  }
-
-  return tmp;
-}
-
-module.exports = function(value, path, resolve) {
-  var items = [];
-
-  if (!(value.items || value.additionalItems)) {
-    if (hasProps(value, 'minItems', 'maxItems', 'uniqueItems')) {
-      throw new ParseError('missing items for ' + JSON.stringify(value), path);
-    }
-
-    return items;
-  }
-
-  if (Array.isArray(value.items)) {
-    return Array.prototype.concat.apply(items, value.items.map(function(item, key) {
-      return traverse(item, path.concat(['items', key]), resolve);
-    }));
-  }
-
-  var length = random(value.minItems, value.maxItems, 1, 5),
-      sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
-
-  for (var current = items.length; current < length; current += 1) {
-    items.push(traverse(value.items || sample, path.concat(['items', current]), resolve));
-  }
-
-  if (value.uniqueItems) {
-    return unique(path.concat(['items']), items, value, sample, resolve);
-  }
-
-  return items;
-};
-
-},{"../util/error":11,"../util/has-props":13,"../util/random":17,"../util/traverse":18}],6:[function(require,module,exports){
-var number = require('./number');
-
-// The `integer` type is just a wrapper for the `number` type. The `number` type
-// returns floating point numbers, and `integer` type truncates the fraction
-// part, leaving the result as an integer.
-//
-module.exports = function(value) {
-  var generated = number(value);
-  // whether the generated number is positive or negative, need to use either
-  // floor (positive) or ceil (negative) function to get rid of the fraction
-  return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
-};
-
-},{"./number":7}],7:[function(require,module,exports){
-var MIN_INTEGER = -100000000,
-    MAX_INTEGER = 100000000;
-
-var random = require('../util/random'),
-    string = require('./string');
-
-module.exports = function(value) {
-  if (value.faker || value.chance) {
-    return string(value);
-  }
-
-  var multipleOf = value.multipleOf;
-
-  var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
-      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
-
-  if (multipleOf) {
-    max = Math.floor(max / multipleOf) * multipleOf;
-    min = Math.ceil(min / multipleOf) * multipleOf;
-  }
-
-  if (value.exclusiveMinimum && value.minimum && min === value.minimum) {
-    min += multipleOf || 1;
-  }
-
-  if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
-    max -= multipleOf || 1;
-  }
-
-  if (multipleOf) {
-    return Math.floor(random(min, max) / multipleOf) * multipleOf;
-  }
-
-  if (min > max) {
-    return NaN;
-  }
-
-  return random({
-    min: min,
-    max: max,
-    hasPrecision: true
-  });
-};
-
-},{"../util/random":17,"./string":9}],8:[function(require,module,exports){
-var container = require('../util/container'),
-    random = require('../util/random'),
-    words = require('../generators/words'),
-    traverse = require('../util/traverse'),
-    hasProps = require('../util/has-props');
-
-var RandExp = container.get('randexp'),
-    randexp = RandExp.randexp;
-
-var ParseError = require('../util/error');
-
-module.exports = function(value, path, resolve) {
-  var props = {};
-
-  if (!(value.properties || value.patternProperties || value.additionalProperties)) {
-    if (hasProps(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
-      throw new ParseError('missing properties for ' + JSON.stringify(value), path);
-    }
-
-    return props;
-  }
-
-  var reqProps = value.required || [],
-      allProps = value.properties ? Object.keys(value.properties) : [];
-
-  reqProps.forEach(function(key) {
-    if (value.properties && value.properties[key]) {
-      props[key] = value.properties[key];
-    }
-  });
-
-  var optProps = allProps.filter(function(prop) {
-    return reqProps.indexOf(prop) === -1;
-  });
-
-  if (value.patternProperties) {
-    optProps = Array.prototype.concat.apply(optProps, Object.keys(value.patternProperties));
-  }
-
-  var length = random(value.minProperties, value.maxProperties, 0, optProps.length);
-
-  random.shuffle(optProps).slice(0, length).forEach(function(key) {
-    if (value.properties && value.properties[key]) {
-      props[key] = value.properties[key];
-    } else {
-      props[randexp(key)] = value.patternProperties[key];
-    }
-  });
-
-  var current = Object.keys(props).length,
-      sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
-
-  if (current < length) {
-    words(length - current).forEach(function(key) {
-      props[key + randexp('[a-f\\d]{4,7}')] = sample;
-    });
-  }
-
-  return traverse(props, path.concat(['properties']), resolve);
-};
-
-},{"../generators/words":3,"../util/container":10,"../util/error":11,"../util/has-props":13,"../util/random":17,"../util/traverse":18}],9:[function(require,module,exports){
-var container = require('../util/container');
-
-var faker = container.get('faker'),
-    chance = container.get('chance'),
-    RandExp = container.get('randexp'),
-    randexp = RandExp.randexp;
-
-var words = require('../generators/words'),
-    random = require('../util/random'),
-    formats = require('../util/formats');
-
-var regexps = {
-  email: '[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}',
-  hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
-  ipv6: '[abcdef\\d]{4}(:[abcdef\\d]{4}){7}',
-  uri: '[a-zA-Z][a-zA-Z0-9+-.]*'
-};
-
-function get(obj, key) {
-  var parts = key.split('.');
-
-  while (parts.length) {
-    var prop = parts.shift();
-
-    if (!obj[prop]) {
-      break;
-    }
-
-    obj = obj[prop];
-  }
-
-  return obj;
-}
-
-function thunk() {
-  return words().join(' ');
-}
-
-function generate(value) {
-  if (value.use) {
-    var args = [],
-        path = value.key;
-
-    if (typeof path === 'object') {
-      path = Object.keys(path)[0];
-
-      if (Array.isArray(value.key[path])) {
-        args = value.key[path];
-      } else {
-        args.push(value.key[path]);
-      }
-    }
-
-    var gen = get(value.gen, path);
-
-    if (typeof gen !== 'function') {
-      throw new Error('unknown ' + value.use + '-generator for ' + JSON.stringify(value.key));
-    }
-
-    // see #116, #117 - faker.js 3.1.0 introduced local dependencies between generators
-    // making jsf break after upgrading from 3.0.1
-    var contextObject = value.gen;
-    if (value.use === 'faker') {
-      var fakerModuleName = path.split('.')[0];
-      contextObject = value.gen[fakerModuleName];
-    }
-
-    return gen.apply(contextObject, args);
-  }
-
-  switch (value.format) {
-    case 'date-time':
-      return new Date(random(0, 100000000000000)).toISOString();
-
-    case 'email':
-    case 'hostname':
-    case 'ipv6':
-    case 'uri':
-      return randexp(regexps[value.format]).replace(/\{(\w+)\}/, function(matches, key) {
-        return randexp(regexps[key]);
-      });
-
-    case 'ipv4':
-      return [0, 0, 0, 0].map(function() {
-        return random(0, 255);
-      }).join('.');
-
-    case 'regex':
-      // TODO: discuss
-      return '.+?';
-
-    default:
-      var callback = formats(value.format);
-
-      if (typeof callback !== 'function') {
-        throw new Error('unknown generator for ' + JSON.stringify(value.format));
-      }
-
-      var generators = {
-        faker: faker,
-        chance: chance,
-        randexp: randexp
-      };
-
-      return callback(generators, value);
-  }
-}
-
-module.exports = function(value) {
-  if (value.faker || value.chance) {
-    return generate({
-      use: value.faker ? 'faker' : 'chance',
-      gen: value.faker ? faker : chance,
-      key: value.faker || value.chance
-    });
-  }
-
-  if (value.format) {
-    return generate(value);
-  }
-
-  if (value.pattern) {
-    return randexp(value.pattern);
-  }
-
-  var min = Math.max(0, value.minLength || 0),
-      max = random(min, value.maxLength || 140);
-
-  var sample = thunk();
-
-  while (sample.length < min) {
-    sample += thunk();
-  }
-
-  if (sample.length > max) {
-    sample = sample.substr(0, max);
-  }
-
-  return sample;
-};
-
-},{"../generators/words":3,"../util/container":10,"../util/formats":12,"../util/random":17}],10:[function(require,module,exports){
-// static requires - handle both initial dependency load (deps will be available
-// among other modules) as well as they will be included by browserify AST
-var container = {
-  faker: null,
-  chance: null,
-
-  // randexp is required for "pattern" values
-  randexp: require('randexp')
-};
-
-module.exports = {
-  set: function(name, callback) {
-    if (typeof container[name] === 'undefined') {
-      throw new ReferenceError('"' + name + '" dependency is not allowed.');
-    }
-
-    container[name] = callback(container[name]);
-  },
-  get: function(name) {
-    if (typeof container[name] === 'undefined') {
-      throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
-    }
-
-    return container[name];
-  }
-};
-
-},{"randexp":144}],11:[function(require,module,exports){
-function ParseError(message, path) {
-  this.message = message;
-  this.path = path;
-  this.name = 'ParseError';
-}
-
-ParseError.prototype = Error.prototype;
-
+    return ParseError;
+})(Error);
 module.exports = ParseError;
 
-},{}],12:[function(require,module,exports){
-var registry = {};
-
-module.exports = function(name, callback) {
-  if (callback) {
-    registry[name] = callback;
-  } else if (typeof name === 'object') {
-    for (var method in name) {
-      registry[method] = name[method];
-    }
-  } else if (name) {
-    return registry[name];
-  }
-
-  return registry;
-};
-
-},{}],13:[function(require,module,exports){
-module.exports = function(obj) {
-  return Array.prototype.slice.call(arguments, 1).filter(function(key) {
-    return typeof obj[key] !== 'undefined';
-  }).length > 0;
-};
-
-},{}],14:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 var inferredProperties = {
-  array: [
+    array: [
+        'additionalItems',
+        'items',
+        'maxItems',
+        'minItems',
+        'uniqueItems'
+    ],
+    integer: [
+        'exclusiveMaximum',
+        'exclusiveMinimum',
+        'maximum',
+        'minimum',
+        'multipleOf'
+    ],
+    object: [
+        'additionalProperties',
+        'dependencies',
+        'maxProperties',
+        'minProperties',
+        'patternProperties',
+        'properties',
+        'required'
+    ],
+    string: [
+        'maxLength',
+        'minLength',
+        'pattern'
+    ]
+};
+inferredProperties.number = inferredProperties.integer;
+var subschemaProperties = [
     'additionalItems',
     'items',
-    'maxItems',
-    'minItems',
-    'uniqueItems'
-  ],
-  integer: [
-    'exclusiveMaximum',
-    'exclusiveMinimum',
-    'maximum',
-    'minimum',
-    'multipleOf'
-  ],
-  object: [
     'additionalProperties',
     'dependencies',
-    'maxProperties',
-    'minProperties',
     'patternProperties',
-    'properties',
-    'required'
-  ],
-  string: [
-    'maxLength',
-    'minLength',
-    'pattern'
-  ]
-};
-
-inferredProperties.number = inferredProperties.integer;
-
-var subschemaProperties = [
-  'additionalItems',
-  'items',
-  'additionalProperties',
-  'dependencies',
-  'patternProperties',
-  'properties'
+    'properties'
 ];
-
 /**
  * Iterates through all keys of `obj` and:
  * - checks whether those keys match properties of a given inferred type
@@ -588,191 +211,643 @@ var subschemaProperties = [
  * @returns {boolean}
  */
 function matchesType(obj, lastElementInPath, inferredTypeProperties) {
-  return Object.keys(obj).filter(function(prop) {
-    var isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1,
-      inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
-    if (inferredPropertyFound && !isSubschema) {
-      return true;
-    }
-  }).length > 0;
+    return Object.keys(obj).filter(function (prop) {
+        var isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1, inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+        if (inferredPropertyFound && !isSubschema) {
+            return true;
+        }
+    }).length > 0;
 }
-
 /**
  * Checks whether given `obj` type might be inferred. The mechanism iterates through all inferred types definitions,
  * tries to match allowed properties with properties of given `obj`. Returns type name, if inferred, or null.
  *
  * @returns {string|null}
  */
-module.exports = function(obj, schemaPath) {
-  for (var typeName in inferredProperties) {
-    var lastElementInPath = schemaPath[schemaPath.length - 1];
-    if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
-      return typeName;
+function inferType(obj, schemaPath) {
+    for (var typeName in inferredProperties) {
+        var lastElementInPath = schemaPath[schemaPath.length - 1];
+        if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
+            return typeName;
+        }
     }
-  }
+}
+module.exports = inferType;
+
+},{}],6:[function(require,module,exports){
+/// <reference path="../index.d.ts" />
+/**
+ * Returns random element of a collection
+ *
+ * @param collection
+ * @returns {T}
+ */
+function pick(collection) {
+    return collection[Math.floor(Math.random() * collection.length)];
+}
+/**
+ * Returns shuffled collection of elements
+ *
+ * @param collection
+ * @returns {T[]}
+ */
+function shuffle(collection) {
+    var copy = collection.slice(), length = collection.length;
+    for (; length > 0;) {
+        var key = Math.floor(Math.random() * length), tmp = copy[--length];
+        copy[length] = copy[key];
+        copy[key] = tmp;
+    }
+    return copy;
+}
+/**
+ * These values determine default range for random.number function
+ *
+ * @type {number}
+ */
+var MIN_NUMBER = -100, MAX_NUMBER = 100;
+/**
+ * Generates random number according to parameters passed
+ *
+ * @param min
+ * @param max
+ * @param defMin
+ * @param defMax
+ * @param hasPrecision
+ * @returns {number}
+ */
+function number(min, max, defMin, defMax, hasPrecision) {
+    if (hasPrecision === void 0) { hasPrecision = false; }
+    defMin = typeof defMin === 'undefined' ? MIN_NUMBER : defMin;
+    defMax = typeof defMax === 'undefined' ? MAX_NUMBER : defMax;
+    min = typeof min === 'undefined' ? defMin : min;
+    max = typeof max === 'undefined' ? defMax : max;
+    if (max < min) {
+        max += min;
+    }
+    var result = Math.random() * (max - min) + min;
+    if (!hasPrecision) {
+        return parseInt(result + '', 10);
+    }
+    return result;
+}
+module.exports = {
+    pick: pick,
+    shuffle: shuffle,
+    number: number
 };
+
+},{}],7:[function(require,module,exports){
+var deref = require('deref');
+var traverse = require('./traverse');
+var random = require('./random');
+var utils = require('./utils');
+function isKey(prop) {
+    return prop === 'enum' || prop === 'required' || prop === 'definitions';
+}
+// TODO provide types
+function run(schema, refs, ex) {
+    var $ = deref();
+    try {
+        var seen = {};
+        return traverse($(schema, refs, ex), [], function reduce(sub) {
+            if (seen[sub.$ref] <= 0) {
+                delete sub.$ref;
+                delete sub.oneOf;
+                delete sub.anyOf;
+                delete sub.allOf;
+                return sub;
+            }
+            if (typeof sub.$ref === 'string') {
+                var id = sub.$ref;
+                delete sub.$ref;
+                if (!seen[id]) {
+                    // TODO: this should be configurable
+                    seen[id] = random.number(1, 5);
+                }
+                seen[id] -= 1;
+                utils.merge(sub, $.util.findByRef(id, $.refs));
+            }
+            if (Array.isArray(sub.allOf)) {
+                var schemas = sub.allOf;
+                delete sub.allOf;
+                // this is the only case where all sub-schemas
+                // must be resolved before any merge
+                schemas.forEach(function (schema) {
+                    utils.merge(sub, reduce(schema));
+                });
+            }
+            if (Array.isArray(sub.oneOf || sub.anyOf)) {
+                var mix = sub.oneOf || sub.anyOf;
+                delete sub.anyOf;
+                delete sub.oneOf;
+                utils.merge(sub, random.pick(mix));
+            }
+            for (var prop in sub) {
+                if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
+                    sub[prop] = reduce(sub[prop]);
+                }
+            }
+            return sub;
+        });
+    }
+    catch (e) {
+        if (e.path) {
+            throw new Error(e.message + ' in ' + '/' + e.path.join('/'));
+        }
+        else {
+            throw e;
+        }
+    }
+}
+module.exports = run;
+
+},{"./random":6,"./traverse":8,"./utils":9,"deref":27}],8:[function(require,module,exports){
+var random = require('./random');
+var ParseError = require('./error');
+var inferType = require('./infer');
+var types = require('../types/index');
+// TODO provide types
+function traverse(schema, path, resolve) {
+    resolve(schema);
+    if (Array.isArray(schema.enum)) {
+        return random.pick(schema.enum);
+    }
+    // TODO remove the ugly overcome
+    var type = schema.type;
+    if (Array.isArray(type)) {
+        type = random.pick(type);
+    }
+    else if (typeof type === 'undefined') {
+        // Attempt to infer the type
+        type = inferType(schema, path) || type;
+    }
+    if (schema.faker || schema.chance) {
+        type = 'external';
+    }
+    if (typeof type === 'string') {
+        if (!types[type]) {
+            throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+        }
+        try {
+            return types[type](schema, path, resolve, traverse);
+        }
+        catch (e) {
+            if (typeof e.path === 'undefined') {
+                throw new ParseError(e.message, path);
+            }
+            throw e;
+        }
+    }
+    var copy = {};
+    if (Array.isArray(schema)) {
+        copy = [];
+    }
+    for (var prop in schema) {
+        if (typeof schema[prop] === 'object' && prop !== 'definitions') {
+            copy[prop] = traverse(schema[prop], path.concat([prop]), resolve);
+        }
+        else {
+            copy[prop] = schema[prop];
+        }
+    }
+    return copy;
+}
+module.exports = traverse;
+
+},{"../types/index":21,"./error":4,"./infer":5,"./random":6}],9:[function(require,module,exports){
+function getSubAttribute(obj, dotSeparatedKey) {
+    var keyElements = dotSeparatedKey.split('.');
+    while (keyElements.length) {
+        var prop = keyElements.shift();
+        if (!obj[prop]) {
+            break;
+        }
+        obj = obj[prop];
+    }
+    return obj;
+}
+/**
+ * Returns true/false whether the object parameter has its own properties defined
+ *
+ * @param obj
+ * @returns {boolean}
+ */
+function hasProperties(obj) {
+    var properties = [];
+    for (var _i = 1; _i < arguments.length; _i++) {
+        properties[_i - 1] = arguments[_i];
+    }
+    return properties.filter(function (key) {
+        return typeof obj[key] !== 'undefined';
+    }).length > 0;
+}
+function clone(arr) {
+    var out = [];
+    arr.forEach(function (item, index) {
+        if (typeof item === 'object' && item !== null) {
+            out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
+        }
+        else {
+            out[index] = item;
+        }
+    });
+    return out;
+}
+// TODO refactor merge function
+function merge(a, b) {
+    for (var key in b) {
+        if (typeof b[key] !== 'object' || b[key] === null) {
+            a[key] = b[key];
+        }
+        else if (Array.isArray(b[key])) {
+            a[key] = (a[key] || []).concat(clone(b[key]));
+        }
+        else if (typeof a[key] !== 'object' || a[key] === null || Array.isArray(a[key])) {
+            a[key] = merge({}, b[key]);
+        }
+        else {
+            a[key] = merge(a[key], b[key]);
+        }
+    }
+    return a;
+}
+module.exports = {
+    getSubAttribute: getSubAttribute,
+    hasProperties: hasProperties,
+    clone: clone,
+    merge: merge
+};
+
+},{}],10:[function(require,module,exports){
+/**
+ * Generates randomized boolean value.
+ *
+ * @returns {boolean}
+ */
+function booleanGenerator() {
+    return Math.random() > 0.5;
+}
+module.exports = booleanGenerator;
+
+},{}],11:[function(require,module,exports){
+var container = require('../class/Container');
+var randexp = container.get('randexp');
+var regexps = {
+    email: '[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}',
+    hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
+    ipv6: '[a-f\\d]{4}(:[a-f\\d]{4}){7}',
+    uri: '[a-zA-Z][a-zA-Z0-9+-.]*'
+};
+/**
+ * Generates randomized string basing on a built-in regex format
+ *
+ * @param coreFormat
+ * @returns {string}
+ */
+function coreFormatGenerator(coreFormat) {
+    return randexp(regexps[coreFormat]).replace(/\{(\w+)\}/, function (match, key) {
+        return randexp(regexps[key]);
+    });
+}
+module.exports = coreFormatGenerator;
+
+},{"../class/Container":2}],12:[function(require,module,exports){
+var random = require('../core/random');
+/**
+ * Generates randomized date time ISO format string.
+ *
+ * @returns {string}
+ */
+function dateTimeGenerator() {
+    return new Date(random.number(0, 100000000000000)).toISOString();
+}
+module.exports = dateTimeGenerator;
+
+},{"../core/random":6}],13:[function(require,module,exports){
+var random = require('../core/random');
+/**
+ * Generates randomized ipv4 address.
+ *
+ * @returns {string}
+ */
+function ipv4Generator() {
+    return [0, 0, 0, 0].map(function () {
+        return random.number(0, 255);
+    }).join('.');
+}
+module.exports = ipv4Generator;
+
+},{"../core/random":6}],14:[function(require,module,exports){
+/**
+ * Generates null value.
+ *
+ * @returns {null}
+ */
+function nullGenerator() {
+    return null;
+}
+module.exports = nullGenerator;
 
 },{}],15:[function(require,module,exports){
-function clone(arr) {
-  var out = [];
-  arr.forEach(function(item, index) {
-    if (typeof item === 'object' && item !== null) {
-      out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
-    } else {
-      out[index] = item;
-    }
-  });
-  return out;
+var words = require('../generators/words');
+var random = require('../core/random');
+function produce() {
+    return words().join(' ');
 }
-
-function merge(a, b) {
-  for (var key in b) {
-    if (typeof b[key] !== 'object' || b[key] === null) {
-      a[key] = b[key];
-    } else if (Array.isArray(b[key])) {
-      a[key] = (a[key] || []).concat(clone(b[key]));
-    } else if (typeof a[key] !== 'object' || a[key] === null || Array.isArray(a[key])) {
-      a[key] = merge({}, b[key]);
-    } else {
-      a[key] = merge(a[key], b[key]);
+/**
+ * Generates randomized concatenated string based on words generator.
+ *
+ * @returns {string}
+ */
+function thunkGenerator(min, max) {
+    if (min === void 0) { min = 0; }
+    if (max === void 0) { max = 140; }
+    var min = Math.max(0, min), max = random.number(min, max), sample = produce();
+    while (sample.length < min) {
+        sample += produce();
     }
-  }
-  return a;
+    if (sample.length > max) {
+        sample = sample.substr(0, max);
+    }
+    return sample;
 }
+module.exports = thunkGenerator;
 
-module.exports = merge;
-
-},{}],16:[function(require,module,exports){
-module.exports = {
-  boolean: require('../generators/boolean'),
-  null: require('../generators/null'),
-  array: require('../types/array'),
-  integer: require('../types/integer'),
-  number: require('../types/number'),
-  object: require('../types/object'),
-  string: require('../types/string')
-};
-
-},{"../generators/boolean":1,"../generators/null":2,"../types/array":5,"../types/integer":6,"../types/number":7,"../types/object":8,"../types/string":9}],17:[function(require,module,exports){
-function random(min, max, defMin, defMax) {
-  var hasPrecision = false;
-
-  if (typeof min === 'object') {
-    hasPrecision = min.hasPrecision;
-    max = min.max;
-    defMin = min.defMin;
-    defMax = min.defMax;
-    min = min.min;
-  }
-
-  defMin = typeof defMin === 'undefined' ? random.MIN_NUMBER : defMin;
-  defMax = typeof defMax === 'undefined' ? random.MAX_NUMBER : defMax;
-
-  min = typeof min === 'undefined' ? defMin : min;
-  max = typeof max === 'undefined' ? defMax : max;
-
-  if (max < min) {
-    max += min;
-  }
-
-  var number = Math.random() * (max - min) + min;
-
-  if (!hasPrecision) {
-    return parseInt(number, 10);
-  }
-
-  return number;
+},{"../core/random":6,"../generators/words":16}],16:[function(require,module,exports){
+var random = require('../core/random');
+var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
+    + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
+    + ' commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla'
+    + ' pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est'
+    + ' laborum').split(' ');
+/**
+ * Generates randomized array of single lorem ipsum words.
+ *
+ * @param min
+ * @param max
+ * @returns {Array.<string>}
+ */
+function wordsGenerator(min, max) {
+    if (min === void 0) { min = 1; }
+    if (max === void 0) { max = 5; }
+    var words = random.shuffle(LIPSUM_WORDS), length = random.number(min, Math.min(LIPSUM_WORDS.length, max));
+    return words.slice(0, length);
 }
+module.exports = wordsGenerator;
 
-random.shuffle = function(obj) {
-  var copy = obj.slice(),
-      length = obj.length;
-
-  for (; length > 0;) {
-    var key = Math.floor(Math.random() * length),
-        tmp = copy[--length];
-
-    copy[length] = copy[key];
-    copy[key] = tmp;
-  }
-
-  return copy;
+},{"../core/random":6}],17:[function(require,module,exports){
+var container = require('./class/Container');
+var format = require('./api/format');
+var run = require('./core/run');
+var jsf = function (schema, refs) {
+    return run(schema, refs);
 };
-
-random.pick = function(obj) {
-  return obj[Math.floor(Math.random() * obj.length)];
+jsf.format = format;
+// returns itself for chaining
+jsf.extend = function (name, cb) {
+    container.extend(name, cb);
+    return jsf;
 };
+module.exports = jsf;
 
-random.MIN_NUMBER = -100;
-random.MAX_NUMBER = 100;
-
-module.exports = random;
-
-},{}],18:[function(require,module,exports){
-var random = require('./random');
-
-var ParseError = require('./error');
-
-var inferredType = require('./inferred');
-
-var primitives = null;
-
-function traverse(obj, path, resolve) {
-  resolve(obj);
-
-  var copy = {};
-
-  if (Array.isArray(obj)) {
-    copy = [];
-  }
-
-  if (Array.isArray(obj.enum)) {
-    return random.pick(obj.enum);
-  }
-
-  var type = obj.type;
-
-  if (Array.isArray(type)) {
-    type = random.pick(type);
-  } else if (typeof type === 'undefined') {
-    // Attempt to infer the type
-    type = inferredType(obj, path) || type;
-  }
-
-  if (typeof type === 'string') {
-    if (!primitives[type]) {
-      throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+},{"./api/format":1,"./class/Container":2,"./core/run":7}],18:[function(require,module,exports){
+var random = require('../core/random');
+var utils = require('../core/utils');
+var ParseError = require('../core/error');
+// TODO provide types
+function unique(path, items, value, sample, resolve, traverseCallback) {
+    var tmp = [], seen = [];
+    function walk(obj) {
+        var json = JSON.stringify(obj);
+        if (seen.indexOf(json) === -1) {
+            seen.push(json);
+            tmp.push(obj);
+        }
     }
-
-    try {
-      return primitives[type](obj, path, resolve);
-    } catch (e) {
-      if (typeof e.path === 'undefined') {
-        throw new ParseError(e.message, path);
-      }
-
-      throw e;
+    items.forEach(walk);
+    // TODO: find a better solution?
+    var limit = 100;
+    while (tmp.length !== items.length) {
+        walk(traverseCallback(value.items || sample, path, resolve));
+        if (!limit--) {
+            break;
+        }
     }
-  }
-
-  for (var prop in obj) {
-    if (typeof obj[prop] === 'object' && prop !== 'definitions') {
-      copy[prop] = traverse(obj[prop], path.concat([prop]), resolve);
-    } else {
-      copy[prop] = obj[prop];
-    }
-  }
-
-  return copy;
+    return tmp;
 }
+// TODO provide types
+function arrayType(value, path, resolve, traverseCallback) {
+    var items = [];
+    if (!(value.items || value.additionalItems)) {
+        if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
+            throw new ParseError('missing items for ' + JSON.stringify(value), path);
+        }
+        return items;
+    }
+    if (Array.isArray(value.items)) {
+        return Array.prototype.concat.apply(items, value.items.map(function (item, key) {
+            return traverseCallback(item, path.concat(['items', key]), resolve);
+        }));
+    }
+    var length = random.number(value.minItems, value.maxItems, 1, 5), sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+    for (var current = items.length; current < length; current += 1) {
+        items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));
+    }
+    if (value.uniqueItems) {
+        return unique(path.concat(['items']), items, value, sample, resolve, traverseCallback);
+    }
+    return items;
+}
+module.exports = arrayType;
 
-module.exports = function() {
-  primitives = primitives || require('./primitives');
+},{"../core/error":4,"../core/random":6,"../core/utils":9}],19:[function(require,module,exports){
+var booleanGenerator = require('../generators/boolean');
+var booleanType = booleanGenerator;
+module.exports = booleanType;
 
-  return traverse.apply(null, arguments);
+},{"../generators/boolean":10}],20:[function(require,module,exports){
+var utils = require('../core/utils');
+var container = require('../class/Container');
+function externalType(value) {
+    var libraryName = value.faker ? 'faker' : 'chance', libraryModule = value.faker ? container.get('faker') : container.get('chance'), key = value.faker || value.chance, path = key, args = [];
+    if (typeof path === 'object') {
+        path = Object.keys(path)[0];
+        if (Array.isArray(key[path])) {
+            args = key[path];
+        }
+        else {
+            args.push(key[path]);
+        }
+    }
+    var genFunction = utils.getSubAttribute(libraryModule, path);
+    if (typeof genFunction !== 'function') {
+        throw new Error('unknown ' + libraryName + '-generator for ' + JSON.stringify(key));
+    }
+    // see #116, #117 - faker.js 3.1.0 introduced local dependencies between generators
+    // making jsf break after upgrading from 3.0.1
+    var contextObject = libraryModule;
+    if (libraryName === 'faker') {
+        var fakerModuleName = path.split('.')[0];
+        contextObject = libraryModule[fakerModuleName];
+    }
+    return genFunction.apply(contextObject, args);
+}
+module.exports = externalType;
+
+},{"../class/Container":2,"../core/utils":9}],21:[function(require,module,exports){
+var _boolean = require('./boolean');
+var _null = require('./null');
+var _array = require('./array');
+var _integer = require('./integer');
+var _number = require('./number');
+var _object = require('./object');
+var _string = require('./string');
+var _external = require('./external');
+var typeMap = {
+    boolean: _boolean,
+    null: _null,
+    array: _array,
+    integer: _integer,
+    number: _number,
+    object: _object,
+    string: _string,
+    external: _external
 };
+module.exports = typeMap;
 
-},{"./error":11,"./inferred":14,"./primitives":16,"./random":17}],19:[function(require,module,exports){
+},{"./array":18,"./boolean":19,"./external":20,"./integer":22,"./null":23,"./number":24,"./object":25,"./string":26}],22:[function(require,module,exports){
+var number = require('./number');
+// The `integer` type is just a wrapper for the `number` type. The `number` type
+// returns floating point numbers, and `integer` type truncates the fraction
+// part, leaving the result as an integer.
+function integerType(value) {
+    var generated = number(value);
+    // whether the generated number is positive or negative, need to use either
+    // floor (positive) or ceil (negative) function to get rid of the fraction
+    return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
+}
+module.exports = integerType;
+
+},{"./number":24}],23:[function(require,module,exports){
+var nullGenerator = require('../generators/null');
+var nullType = nullGenerator;
+module.exports = nullType;
+
+},{"../generators/null":14}],24:[function(require,module,exports){
+var random = require('../core/random');
+var MIN_INTEGER = -100000000, MAX_INTEGER = 100000000;
+function numberType(value) {
+    var multipleOf = value.multipleOf;
+    var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum, max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
+    if (multipleOf) {
+        max = Math.floor(max / multipleOf) * multipleOf;
+        min = Math.ceil(min / multipleOf) * multipleOf;
+    }
+    if (value.exclusiveMinimum && value.minimum && min === value.minimum) {
+        min += multipleOf || 1;
+    }
+    if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
+        max -= multipleOf || 1;
+    }
+    if (multipleOf) {
+        return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
+    }
+    if (min > max) {
+        return NaN;
+    }
+    return random.number(min, max, undefined, undefined, true);
+}
+module.exports = numberType;
+
+},{"../core/random":6}],25:[function(require,module,exports){
+var container = require('../class/Container');
+var random = require('../core/random');
+var words = require('../generators/words');
+var utils = require('../core/utils');
+var ParseError = require('../core/error');
+var randexp = container.get('randexp');
+// TODO provide types
+function objectType(value, path, resolve, traverseCallback) {
+    var props = {};
+    if (!(value.properties || value.patternProperties || value.additionalProperties)) {
+        if (utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
+            throw new ParseError('missing properties for ' + JSON.stringify(value), path);
+        }
+        return props;
+    }
+    var reqProps = value.required || [], allProps = value.properties ? Object.keys(value.properties) : [];
+    reqProps.forEach(function (key) {
+        if (value.properties && value.properties[key]) {
+            props[key] = value.properties[key];
+        }
+    });
+    var optProps = allProps.filter(function (prop) {
+        return reqProps.indexOf(prop) === -1;
+    });
+    if (value.patternProperties) {
+        optProps = Array.prototype.concat.apply(optProps, Object.keys(value.patternProperties));
+    }
+    var length = random.number(value.minProperties, value.maxProperties, 0, optProps.length);
+    random.shuffle(optProps).slice(0, length).forEach(function (key) {
+        if (value.properties && value.properties[key]) {
+            props[key] = value.properties[key];
+        }
+        else {
+            props[randexp(key)] = value.patternProperties[key];
+        }
+    });
+    var current = Object.keys(props).length, sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
+    if (current < length) {
+        words(length - current).forEach(function (key) {
+            props[key + randexp('[a-f\\d]{4,7}')] = sample;
+        });
+    }
+    return traverseCallback(props, path.concat(['properties']), resolve);
+}
+module.exports = objectType;
+
+},{"../class/Container":2,"../core/error":4,"../core/random":6,"../core/utils":9,"../generators/words":16}],26:[function(require,module,exports){
+var thunk = require('../generators/thunk');
+var ipv4 = require('../generators/ipv4');
+var dateTime = require('../generators/dateTime');
+var coreFormat = require('../generators/coreFormat');
+var format = require('../api/format');
+var container = require('../class/Container');
+var randexp = container.get('randexp');
+function generateFormat(value) {
+    switch (value.format) {
+        case 'date-time':
+            return dateTime();
+        case 'ipv4':
+            return ipv4();
+        case 'regex':
+            // TODO: discuss
+            return '.+?';
+        case 'email':
+        case 'hostname':
+        case 'ipv6':
+        case 'uri':
+            return coreFormat(value.format);
+        default:
+            var callback = format(value.format);
+            return callback(container.getAll(), value);
+    }
+}
+function stringType(value) {
+    if (value.format) {
+        return generateFormat(value);
+    }
+    else if (value.pattern) {
+        return randexp(value.pattern);
+    }
+    else {
+        return thunk(value.minLength, value.maxLength);
+    }
+}
+module.exports = stringType;
+
+},{"../api/format":1,"../class/Container":2,"../generators/coreFormat":11,"../generators/dateTime":12,"../generators/ipv4":13,"../generators/thunk":15}],27:[function(require,module,exports){
 'use strict';
 
 var $ = require('./util/uri-helpers');
@@ -846,7 +921,7 @@ var instance = module.exports = function() {
 
 instance.util = $;
 
-},{"./util/find-reference":21,"./util/normalize-schema":22,"./util/resolve-schema":23,"./util/uri-helpers":24}],20:[function(require,module,exports){
+},{"./util/find-reference":29,"./util/normalize-schema":30,"./util/resolve-schema":31,"./util/uri-helpers":32}],28:[function(require,module,exports){
 'use strict';
 
 var clone = module.exports = function(obj, seen) {
@@ -881,7 +956,7 @@ var clone = module.exports = function(obj, seen) {
   return target;
 };
 
-},{}],21:[function(require,module,exports){
+},{}],29:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -929,7 +1004,7 @@ var find = module.exports = function(id, refs) {
   return target;
 };
 
-},{"./uri-helpers":24}],22:[function(require,module,exports){
+},{"./uri-helpers":32}],30:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -994,7 +1069,7 @@ module.exports = function(fakeroot, schema, push) {
   return copy;
 };
 
-},{"./clone-obj":20,"./uri-helpers":24}],23:[function(require,module,exports){
+},{"./clone-obj":28,"./uri-helpers":32}],31:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -1041,7 +1116,7 @@ module.exports = function(obj, refs, resolve) {
   return copy(obj, refs, parent, resolve);
 };
 
-},{"./find-reference":21,"./uri-helpers":24,"deep-extend":25}],24:[function(require,module,exports){
+},{"./find-reference":29,"./uri-helpers":32,"deep-extend":33}],32:[function(require,module,exports){
 'use strict';
 
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
@@ -1145,7 +1220,7 @@ module.exports = {
   getDocumentURI: getDocumentURI
 };
 
-},{}],25:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
 /*!
  * @description Recursive object extending
  * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>
@@ -1291,7 +1366,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 	return target;
 }
 
-},{}],26:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
 /**
  *
  * @namespace faker.address
@@ -1519,7 +1594,7 @@ function Address (faker) {
 
 module.exports = Address;
 
-},{}],27:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /**
  *
  * @namespace faker.commerce
@@ -1640,7 +1715,7 @@ var Commerce = function (faker) {
 
 module['exports'] = Commerce;
 
-},{}],28:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /**
  *
  * @namespace faker.company
@@ -1765,7 +1840,7 @@ var Company = function (faker) {
 }
 
 module['exports'] = Company;
-},{}],29:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  *
  * @namespace faker.date
@@ -1899,7 +1974,7 @@ var _Date = function (faker) {
 };
 
 module['exports'] = _Date;
-},{}],30:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /*
   fake.js - generator method for combining faker methods based on string input
 
@@ -2008,7 +2083,7 @@ function Fake (faker) {
 }
 
 module['exports'] = Fake;
-},{}],31:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  *
  * @namespace faker.finance
@@ -2165,7 +2240,7 @@ var Finance = function (faker) {
 
 module['exports'] = Finance;
 
-},{}],32:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /**
  *
  * @namespace faker.hacker
@@ -2251,7 +2326,7 @@ var Hacker = function (faker) {
 };
 
 module['exports'] = Hacker;
-},{}],33:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  *
  * @namespace faker.helpers
@@ -2511,7 +2586,7 @@ String.prototype.capitalize = function () { //v1.0
 
 module['exports'] = Helpers;
 
-},{}],34:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /**
  *
  * @namespace faker.image
@@ -2710,7 +2785,7 @@ var Image = function (faker) {
 }
 
 module["exports"] = Image;
-},{}],35:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /*
 
    this index.js file is used for including the faker library as a CommonJS module, instead of a bundle
@@ -2851,7 +2926,7 @@ Faker.prototype.seed = function(value) {
 }
 module['exports'] = Faker;
 
-},{"./address":26,"./commerce":27,"./company":28,"./date":29,"./fake":30,"./finance":31,"./hacker":32,"./helpers":33,"./image":34,"./internet":36,"./lorem":135,"./name":136,"./phone_number":137,"./random":138,"./system":139}],36:[function(require,module,exports){
+},{"./address":34,"./commerce":35,"./company":36,"./date":37,"./fake":38,"./finance":39,"./hacker":40,"./helpers":41,"./image":42,"./internet":44,"./lorem":143,"./name":144,"./phone_number":145,"./random":146,"./system":147}],44:[function(require,module,exports){
 var password_generator = require('../vendor/password-generator.js'),
     random_ua = require('../vendor/user-agent');
 
@@ -3203,14 +3278,14 @@ var Internet = function (faker) {
 
 module["exports"] = Internet;
 
-},{"../vendor/password-generator.js":142,"../vendor/user-agent":143}],37:[function(require,module,exports){
+},{"../vendor/password-generator.js":150,"../vendor/user-agent":151}],45:[function(require,module,exports){
 module["exports"] = [
   "#####",
   "####",
   "###"
 ];
 
-},{}],38:[function(require,module,exports){
+},{}],46:[function(require,module,exports){
 module["exports"] = [
   "#{city_prefix} #{Name.first_name}#{city_suffix}",
   "#{city_prefix} #{Name.first_name}",
@@ -3218,7 +3293,7 @@ module["exports"] = [
   "#{Name.last_name}#{city_suffix}"
 ];
 
-},{}],39:[function(require,module,exports){
+},{}],47:[function(require,module,exports){
 module["exports"] = [
   "North",
   "East",
@@ -3229,7 +3304,7 @@ module["exports"] = [
   "Port"
 ];
 
-},{}],40:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module["exports"] = [
   "town",
   "ton",
@@ -3252,7 +3327,7 @@ module["exports"] = [
   "shire"
 ];
 
-},{}],41:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module["exports"] = [
   "Afghanistan",
   "Albania",
@@ -3501,7 +3576,7 @@ module["exports"] = [
   "Zimbabwe"
 ];
 
-},{}],42:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module["exports"] = [
   "AD",
   "AE",
@@ -3755,7 +3830,7 @@ module["exports"] = [
   "ZW"
 ];
 
-},{}],43:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module["exports"] = [
   "Avon",
   "Bedfordshire",
@@ -3765,12 +3840,12 @@ module["exports"] = [
   "Cambridgeshire"
 ];
 
-},{}],44:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 module["exports"] = [
   "United States of America"
 ];
 
-},{}],45:[function(require,module,exports){
+},{}],53:[function(require,module,exports){
 var address = {};
 module['exports'] = address;
 address.city_prefix = require("./city_prefix");
@@ -3791,21 +3866,21 @@ address.street_name = require("./street_name");
 address.street_address = require("./street_address");
 address.default_country = require("./default_country");
 
-},{"./building_number":37,"./city":38,"./city_prefix":39,"./city_suffix":40,"./country":41,"./country_code":42,"./county":43,"./default_country":44,"./postcode":46,"./postcode_by_state":47,"./secondary_address":48,"./state":49,"./state_abbr":50,"./street_address":51,"./street_name":52,"./street_suffix":53,"./time_zone":54}],46:[function(require,module,exports){
+},{"./building_number":45,"./city":46,"./city_prefix":47,"./city_suffix":48,"./country":49,"./country_code":50,"./county":51,"./default_country":52,"./postcode":54,"./postcode_by_state":55,"./secondary_address":56,"./state":57,"./state_abbr":58,"./street_address":59,"./street_name":60,"./street_suffix":61,"./time_zone":62}],54:[function(require,module,exports){
 module["exports"] = [
   "#####",
   "#####-####"
 ];
 
-},{}],47:[function(require,module,exports){
-arguments[4][46][0].apply(exports,arguments)
-},{"dup":46}],48:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
+arguments[4][54][0].apply(exports,arguments)
+},{"dup":54}],56:[function(require,module,exports){
 module["exports"] = [
   "Apt. ###",
   "Suite ###"
 ];
 
-},{}],49:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module["exports"] = [
   "Alabama",
   "Alaska",
@@ -3859,7 +3934,7 @@ module["exports"] = [
   "Wyoming"
 ];
 
-},{}],50:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module["exports"] = [
   "AL",
   "AK",
@@ -3913,18 +3988,18 @@ module["exports"] = [
   "WY"
 ];
 
-},{}],51:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module["exports"] = [
   "#{building_number} #{street_name}"
 ];
 
-},{}],52:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 module["exports"] = [
   "#{Name.first_name} #{street_suffix}",
   "#{Name.last_name} #{street_suffix}"
 ];
 
-},{}],53:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 module["exports"] = [
   "Alley",
   "Avenue",
@@ -4153,7 +4228,7 @@ module["exports"] = [
   "Wells"
 ];
 
-},{}],54:[function(require,module,exports){
+},{}],62:[function(require,module,exports){
 module["exports"] = [
   "Pacific/Midway",
   "Pacific/Pago_Pago",
@@ -4300,20 +4375,20 @@ module["exports"] = [
   "Pacific/Apia"
 ];
 
-},{}],55:[function(require,module,exports){
+},{}],63:[function(require,module,exports){
 module["exports"] = [
   "#{Name.name}",
   "#{Company.name}"
 ];
 
-},{}],56:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 var app = {};
 module['exports'] = app;
 app.name = require("./name");
 app.version = require("./version");
 app.author = require("./author");
 
-},{"./author":55,"./name":57,"./version":58}],57:[function(require,module,exports){
+},{"./author":63,"./name":65,"./version":66}],65:[function(require,module,exports){
 module["exports"] = [
   "Redhold",
   "Treeflex",
@@ -4379,7 +4454,7 @@ module["exports"] = [
   "Keylex"
 ];
 
-},{}],58:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 module["exports"] = [
   "0.#.#",
   "0.##",
@@ -4388,7 +4463,7 @@ module["exports"] = [
   "#.#.#"
 ];
 
-},{}],59:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 module["exports"] = [
   "2011-10-12",
   "2012-11-12",
@@ -4396,7 +4471,7 @@ module["exports"] = [
   "2013-9-12"
 ];
 
-},{}],60:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module["exports"] = [
   "1234-2121-1221-1211",
   "1212-1221-1121-1234",
@@ -4404,7 +4479,7 @@ module["exports"] = [
   "1228-1221-1221-1431"
 ];
 
-},{}],61:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 module["exports"] = [
   "visa",
   "mastercard",
@@ -4412,14 +4487,14 @@ module["exports"] = [
   "discover"
 ];
 
-},{}],62:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 var business = {};
 module['exports'] = business;
 business.credit_card_numbers = require("./credit_card_numbers");
 business.credit_card_expiry_dates = require("./credit_card_expiry_dates");
 business.credit_card_types = require("./credit_card_types");
 
-},{"./credit_card_expiry_dates":59,"./credit_card_numbers":60,"./credit_card_types":61}],63:[function(require,module,exports){
+},{"./credit_card_expiry_dates":67,"./credit_card_numbers":68,"./credit_card_types":69}],71:[function(require,module,exports){
 module["exports"] = [
   "###-###-####",
   "(###) ###-####",
@@ -4427,12 +4502,12 @@ module["exports"] = [
   "###.###.####"
 ];
 
-},{}],64:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 var cell_phone = {};
 module['exports'] = cell_phone;
 cell_phone.formats = require("./formats");
 
-},{"./formats":63}],65:[function(require,module,exports){
+},{"./formats":71}],73:[function(require,module,exports){
 module["exports"] = [
   "red",
   "green",
@@ -4467,7 +4542,7 @@ module["exports"] = [
   "silver"
 ];
 
-},{}],66:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 module["exports"] = [
   "Books",
   "Movies",
@@ -4493,14 +4568,14 @@ module["exports"] = [
   "Industrial"
 ];
 
-},{}],67:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 var commerce = {};
 module['exports'] = commerce;
 commerce.color = require("./color");
 commerce.department = require("./department");
 commerce.product_name = require("./product_name");
 
-},{"./color":65,"./department":66,"./product_name":68}],68:[function(require,module,exports){
+},{"./color":73,"./department":74,"./product_name":76}],76:[function(require,module,exports){
 module["exports"] = {
   "adjective": [
     "Small",
@@ -4562,7 +4637,7 @@ module["exports"] = {
   ]
 };
 
-},{}],69:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 module["exports"] = [
   "Adaptive",
   "Advanced",
@@ -4666,7 +4741,7 @@ module["exports"] = [
   "Vision-oriented"
 ];
 
-},{}],70:[function(require,module,exports){
+},{}],78:[function(require,module,exports){
 module["exports"] = [
   "clicks-and-mortar",
   "value-added",
@@ -4735,7 +4810,7 @@ module["exports"] = [
   "rich"
 ];
 
-},{}],71:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module["exports"] = [
   "synergies",
   "web-readiness",
@@ -4783,7 +4858,7 @@ module["exports"] = [
   "methodologies"
 ];
 
-},{}],72:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module["exports"] = [
   "implement",
   "utilize",
@@ -4847,7 +4922,7 @@ module["exports"] = [
   "recontextualize"
 ];
 
-},{}],73:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module["exports"] = [
   "24 hour",
   "24/7",
@@ -4952,7 +5027,7 @@ module["exports"] = [
   "zero tolerance"
 ];
 
-},{}],74:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 var company = {};
 module['exports'] = company;
 company.suffix = require("./suffix");
@@ -4964,14 +5039,14 @@ company.bs_adjective = require("./bs_adjective");
 company.bs_noun = require("./bs_noun");
 company.name = require("./name");
 
-},{"./adjective":69,"./bs_adjective":70,"./bs_noun":71,"./bs_verb":72,"./descriptor":73,"./name":75,"./noun":76,"./suffix":77}],75:[function(require,module,exports){
+},{"./adjective":77,"./bs_adjective":78,"./bs_noun":79,"./bs_verb":80,"./descriptor":81,"./name":83,"./noun":84,"./suffix":85}],83:[function(require,module,exports){
 module["exports"] = [
   "#{Name.last_name} #{suffix}",
   "#{Name.last_name}-#{Name.last_name}",
   "#{Name.last_name}, #{Name.last_name} and #{Name.last_name}"
 ];
 
-},{}],76:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 module["exports"] = [
   "ability",
   "access",
@@ -5079,7 +5154,7 @@ module["exports"] = [
   "workforce"
 ];
 
-},{}],77:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module["exports"] = [
   "Inc",
   "and Sons",
@@ -5087,19 +5162,19 @@ module["exports"] = [
   "Group"
 ];
 
-},{}],78:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 module["exports"] = [
   "/34##-######-####L/",
   "/37##-######-####L/"
 ];
 
-},{}],79:[function(require,module,exports){
+},{}],87:[function(require,module,exports){
 module["exports"] = [
   "/30[0-5]#-######-###L/",
   "/368#-######-###L/"
 ];
 
-},{}],80:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
 module["exports"] = [
   "/6011-####-####-###L/",
   "/65##-####-####-###L/",
@@ -5109,7 +5184,7 @@ module["exports"] = [
   "/64[4-9]#-62##-####-####-###L/"
 ];
 
-},{}],81:[function(require,module,exports){
+},{}],89:[function(require,module,exports){
 var credit_card = {};
 module['exports'] = credit_card;
 credit_card.visa = require("./visa");
@@ -5123,14 +5198,14 @@ credit_card.solo = require("./solo");
 credit_card.maestro = require("./maestro");
 credit_card.laser = require("./laser");
 
-},{"./american_express":78,"./diners_club":79,"./discover":80,"./jcb":82,"./laser":83,"./maestro":84,"./mastercard":85,"./solo":86,"./switch":87,"./visa":88}],82:[function(require,module,exports){
+},{"./american_express":86,"./diners_club":87,"./discover":88,"./jcb":90,"./laser":91,"./maestro":92,"./mastercard":93,"./solo":94,"./switch":95,"./visa":96}],90:[function(require,module,exports){
 module["exports"] = [
   "/3528-####-####-###L/",
   "/3529-####-####-###L/",
   "/35[3-8]#-####-####-###L/"
 ];
 
-},{}],83:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 module["exports"] = [
   "/6304###########L/",
   "/6706###########L/",
@@ -5142,46 +5217,46 @@ module["exports"] = [
   "/6709#########{5,6}L/"
 ];
 
-},{}],84:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 module["exports"] = [
   "/50#{9,16}L/",
   "/5[6-8]#{9,16}L/",
   "/56##{9,16}L/"
 ];
 
-},{}],85:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 module["exports"] = [
   "/5[1-5]##-####-####-###L/",
   "/6771-89##-####-###L/"
 ];
 
-},{}],86:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 module["exports"] = [
   "/6767-####-####-###L/",
   "/6767-####-####-####-#L/",
   "/6767-####-####-####-##L/"
 ];
 
-},{}],87:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module["exports"] = [
   "/6759-####-####-###L/",
   "/6759-####-####-####-#L/",
   "/6759-####-####-####-##L/"
 ];
 
-},{}],88:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 module["exports"] = [
   "/4###########L/",
   "/4###-####-####-###L/"
 ];
 
-},{}],89:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var date = {};
 module["exports"] = date;
 date.month = require("./month");
 date.weekday = require("./weekday");
 
-},{"./month":90,"./weekday":91}],90:[function(require,module,exports){
+},{"./month":98,"./weekday":99}],98:[function(require,module,exports){
 // Source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/en.xml#L1799
 module["exports"] = {
   wide: [
@@ -5246,7 +5321,7 @@ module["exports"] = {
   ]
 };
 
-},{}],91:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 // Source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/en.xml#L1847
 module["exports"] = {
   wide: [
@@ -5291,7 +5366,7 @@ module["exports"] = {
   ]
 };
 
-},{}],92:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 module["exports"] = [
   "Checking",
   "Savings",
@@ -5303,7 +5378,7 @@ module["exports"] = [
   "Personal Loan"
 ];
 
-},{}],93:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 module["exports"] = {
   "UAE Dirham": {
     "code": "AED",
@@ -5983,14 +6058,14 @@ module["exports"] = {
   }
 };
 
-},{}],94:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 var finance = {};
 module['exports'] = finance;
 finance.account_type = require("./account_type");
 finance.transaction_type = require("./transaction_type");
 finance.currency = require("./currency");
 
-},{"./account_type":92,"./currency":93,"./transaction_type":95}],95:[function(require,module,exports){
+},{"./account_type":100,"./currency":101,"./transaction_type":103}],103:[function(require,module,exports){
 module["exports"] = [
   "deposit",
   "withdrawal",
@@ -5998,7 +6073,7 @@ module["exports"] = [
   "invoice"
 ];
 
-},{}],96:[function(require,module,exports){
+},{}],104:[function(require,module,exports){
 module["exports"] = [
   "TCP",
   "HTTP",
@@ -6031,7 +6106,7 @@ module["exports"] = [
   "JBOD"
 ];
 
-},{}],97:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
 module["exports"] = [
   "auxiliary",
   "primary",
@@ -6053,7 +6128,7 @@ module["exports"] = [
   "mobile"
 ];
 
-},{}],98:[function(require,module,exports){
+},{}],106:[function(require,module,exports){
 var hacker = {};
 module['exports'] = hacker;
 hacker.abbreviation = require("./abbreviation");
@@ -6062,7 +6137,7 @@ hacker.noun = require("./noun");
 hacker.verb = require("./verb");
 hacker.ingverb = require("./ingverb");
 
-},{"./abbreviation":96,"./adjective":97,"./ingverb":99,"./noun":100,"./verb":101}],99:[function(require,module,exports){
+},{"./abbreviation":104,"./adjective":105,"./ingverb":107,"./noun":108,"./verb":109}],107:[function(require,module,exports){
 module["exports"] = [
   "backing up",
   "bypassing",
@@ -6082,7 +6157,7 @@ module["exports"] = [
   "parsing"
 ];
 
-},{}],100:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 module["exports"] = [
   "driver",
   "protocol",
@@ -6110,7 +6185,7 @@ module["exports"] = [
   "matrix"
 ];
 
-},{}],101:[function(require,module,exports){
+},{}],109:[function(require,module,exports){
 module["exports"] = [
   "back up",
   "bypass",
@@ -6132,7 +6207,7 @@ module["exports"] = [
   "parse"
 ];
 
-},{}],102:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 var en = {};
 module['exports'] = en;
 en.title = "English";
@@ -6154,7 +6229,7 @@ en.finance = require("./finance");
 en.date = require("./date");
 en.system = require("./system");
 
-},{"./address":45,"./app":56,"./business":62,"./cell_phone":64,"./commerce":67,"./company":74,"./credit_card":81,"./date":89,"./finance":94,"./hacker":98,"./internet":107,"./lorem":108,"./name":112,"./phone_number":119,"./system":120,"./team":123}],103:[function(require,module,exports){
+},{"./address":53,"./app":64,"./business":70,"./cell_phone":72,"./commerce":75,"./company":82,"./credit_card":89,"./date":97,"./finance":102,"./hacker":106,"./internet":115,"./lorem":116,"./name":120,"./phone_number":127,"./system":128,"./team":131}],111:[function(require,module,exports){
 module["exports"] = [
   "https://s3.amazonaws.com/uifaces/faces/twitter/jarjan/128.jpg",
   "https://s3.amazonaws.com/uifaces/faces/twitter/mahdif/128.jpg",
@@ -7424,7 +7499,7 @@ module["exports"] = [
   "https://s3.amazonaws.com/uifaces/faces/twitter/areandacom/128.jpg"
 ];
 
-},{}],104:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module["exports"] = [
   "com",
   "biz",
@@ -7434,21 +7509,21 @@ module["exports"] = [
   "org"
 ];
 
-},{}],105:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 module["exports"] = [
   "example.org",
   "example.com",
   "example.net"
 ];
 
-},{}],106:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 module["exports"] = [
   "gmail.com",
   "yahoo.com",
   "hotmail.com"
 ];
 
-},{}],107:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 var internet = {};
 module['exports'] = internet;
 internet.free_email = require("./free_email");
@@ -7456,13 +7531,13 @@ internet.example_email = require("./example_email");
 internet.domain_suffix = require("./domain_suffix");
 internet.avatar_uri = require("./avatar_uri");
 
-},{"./avatar_uri":103,"./domain_suffix":104,"./example_email":105,"./free_email":106}],108:[function(require,module,exports){
+},{"./avatar_uri":111,"./domain_suffix":112,"./example_email":113,"./free_email":114}],116:[function(require,module,exports){
 var lorem = {};
 module['exports'] = lorem;
 lorem.words = require("./words");
 lorem.supplemental = require("./supplemental");
 
-},{"./supplemental":109,"./words":110}],109:[function(require,module,exports){
+},{"./supplemental":117,"./words":118}],117:[function(require,module,exports){
 module["exports"] = [
   "abbas",
   "abduco",
@@ -8306,7 +8381,7 @@ module["exports"] = [
   "xiphias"
 ];
 
-},{}],110:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module["exports"] = [
   "alias",
   "consequatur",
@@ -8559,7 +8634,7 @@ module["exports"] = [
   "repellat"
 ];
 
-},{}],111:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 module["exports"] = [
   "Aaliyah",
   "Aaron",
@@ -11570,7 +11645,7 @@ module["exports"] = [
   "Zula"
 ];
 
-},{}],112:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 var name = {};
 module['exports'] = name;
 name.first_name = require("./first_name");
@@ -11580,7 +11655,7 @@ name.suffix = require("./suffix");
 name.title = require("./title");
 name.name = require("./name");
 
-},{"./first_name":111,"./last_name":113,"./name":114,"./prefix":115,"./suffix":116,"./title":117}],113:[function(require,module,exports){
+},{"./first_name":119,"./last_name":121,"./name":122,"./prefix":123,"./suffix":124,"./title":125}],121:[function(require,module,exports){
 module["exports"] = [
   "Abbott",
   "Abernathy",
@@ -12058,7 +12133,7 @@ module["exports"] = [
   "Zulauf"
 ];
 
-},{}],114:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 module["exports"] = [
   "#{prefix} #{first_name} #{last_name}",
   "#{first_name} #{last_name} #{suffix}",
@@ -12068,7 +12143,7 @@ module["exports"] = [
   "#{first_name} #{last_name}"
 ];
 
-},{}],115:[function(require,module,exports){
+},{}],123:[function(require,module,exports){
 module["exports"] = [
   "Mr.",
   "Mrs.",
@@ -12077,7 +12152,7 @@ module["exports"] = [
   "Dr."
 ];
 
-},{}],116:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 module["exports"] = [
   "Jr.",
   "Sr.",
@@ -12092,7 +12167,7 @@ module["exports"] = [
   "DVM"
 ];
 
-},{}],117:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 module["exports"] = {
   "descriptor": [
     "Lead",
@@ -12186,7 +12261,7 @@ module["exports"] = {
   ]
 };
 
-},{}],118:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module["exports"] = [
   "###-###-####",
   "(###) ###-####",
@@ -12210,16 +12285,16 @@ module["exports"] = [
   "###.###.#### x#####"
 ];
 
-},{}],119:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 var phone_number = {};
 module['exports'] = phone_number;
 phone_number.formats = require("./formats");
 
-},{"./formats":118}],120:[function(require,module,exports){
+},{"./formats":126}],128:[function(require,module,exports){
 var system = {};
 module['exports'] = system;
 system.mimeTypes = require("./mimeTypes");
-},{"./mimeTypes":121}],121:[function(require,module,exports){
+},{"./mimeTypes":129}],129:[function(require,module,exports){
 /*
 
 The MIT License (MIT)
@@ -18801,7 +18876,7 @@ module['exports'] = {
     "compressible": true
   }
 }
-},{}],122:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 module["exports"] = [
   "ants",
   "bats",
@@ -18872,18 +18947,18 @@ module["exports"] = [
   "druids"
 ];
 
-},{}],123:[function(require,module,exports){
+},{}],131:[function(require,module,exports){
 var team = {};
 module['exports'] = team;
 team.creature = require("./creature");
 team.name = require("./name");
 
-},{"./creature":122,"./name":124}],124:[function(require,module,exports){
+},{"./creature":130,"./name":132}],132:[function(require,module,exports){
 module["exports"] = [
   "#{Address.state} #{creature}"
 ];
 
-},{}],125:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 module["exports"] = [
   "Carlow",
   "Cavan",
@@ -18913,18 +18988,18 @@ module["exports"] = [
   "Wicklow"
 ];
 
-},{}],126:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 module["exports"] = [
   "Ireland"
 ];
 
-},{}],127:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 var address = {};
 module['exports'] = address;
 address.county = require("./county");
 address.default_country = require("./default_country");
 
-},{"./county":125,"./default_country":126}],128:[function(require,module,exports){
+},{"./county":133,"./default_country":134}],136:[function(require,module,exports){
 module["exports"] = [
   "082 ### ####",
   "083 ### ####",
@@ -18934,9 +19009,9 @@ module["exports"] = [
   "089 ### ####"
 ];
 
-},{}],129:[function(require,module,exports){
-arguments[4][64][0].apply(exports,arguments)
-},{"./formats":128,"dup":64}],130:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
+arguments[4][72][0].apply(exports,arguments)
+},{"./formats":136,"dup":72}],138:[function(require,module,exports){
 var en_IE = {};
 module['exports'] = en_IE;
 en_IE.title = "Ireland (English)";
@@ -18945,7 +19020,7 @@ en_IE.internet = require("./internet");
 en_IE.phone_number = require("./phone_number");
 en_IE.cell_phone = require("./cell_phone");
 
-},{"./address":127,"./cell_phone":129,"./internet":132,"./phone_number":134}],131:[function(require,module,exports){
+},{"./address":135,"./cell_phone":137,"./internet":140,"./phone_number":142}],139:[function(require,module,exports){
 module["exports"] = [
   "ie",
   "com",
@@ -18954,12 +19029,12 @@ module["exports"] = [
   "eu"
 ];
 
-},{}],132:[function(require,module,exports){
+},{}],140:[function(require,module,exports){
 var internet = {};
 module['exports'] = internet;
 internet.domain_suffix = require("./domain_suffix");
 
-},{"./domain_suffix":131}],133:[function(require,module,exports){
+},{"./domain_suffix":139}],141:[function(require,module,exports){
 module["exports"] = [
   "01 #######",
   "021 #######",
@@ -19012,9 +19087,9 @@ module["exports"] = [
   "099 #######"
 ];
 
-},{}],134:[function(require,module,exports){
-arguments[4][119][0].apply(exports,arguments)
-},{"./formats":133,"dup":119}],135:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
+arguments[4][127][0].apply(exports,arguments)
+},{"./formats":141,"dup":127}],143:[function(require,module,exports){
 
 /**
  *
@@ -19143,7 +19218,7 @@ var Lorem = function (faker) {
 
 module["exports"] = Lorem;
 
-},{}],136:[function(require,module,exports){
+},{}],144:[function(require,module,exports){
 /**
  *
  * @namespace faker.name
@@ -19322,7 +19397,7 @@ function Name (faker) {
 
 module['exports'] = Name;
 
-},{}],137:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 /**
  *
  * @namespace faker.phone
@@ -19367,7 +19442,7 @@ var Phone = function (faker) {
 };
 
 module['exports'] = Phone;
-},{}],138:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 var mersenne = require('../vendor/mersenne');
 
 /**
@@ -19574,7 +19649,7 @@ function Random (faker, seed) {
 
 module['exports'] = Random;
 
-},{"../vendor/mersenne":141}],139:[function(require,module,exports){
+},{"../vendor/mersenne":149}],147:[function(require,module,exports){
 // generates fake data for many computer systems properties
 
 /**
@@ -19733,14 +19808,14 @@ function System (faker) {
 }
 
 module['exports'] = System;
-},{}],140:[function(require,module,exports){
+},{}],148:[function(require,module,exports){
 var Faker = require('../lib');
 var faker = new Faker({ locale: 'en_IE', localeFallback: 'en' });
 faker.locales['en_IE'] = require('../lib/locales/en_IE');
 faker.locales['en'] = require('../lib/locales/en');
 module['exports'] = faker;
 
-},{"../lib":35,"../lib/locales/en":102,"../lib/locales/en_IE":130}],141:[function(require,module,exports){
+},{"../lib":43,"../lib/locales/en":110,"../lib/locales/en_IE":138}],149:[function(require,module,exports){
 // this program is a JavaScript version of Mersenne Twister, with concealment and encapsulation in class,
 // an almost straight conversion from the original program, mt19937ar.c,
 // translated by y. okada on July 17, 2006.
@@ -20028,7 +20103,7 @@ exports.seed_array = function(A) {
     gen.init_by_array(A);
 }
 
-},{}],142:[function(require,module,exports){
+},{}],150:[function(require,module,exports){
 /*
  * password-generator
  * Copyright(c) 2011-2013 Bermi Ferrer <bermi@bermilabs.com>
@@ -20094,7 +20169,7 @@ exports.seed_array = function(A) {
 
   // Establish the root object, `window` in the browser, or `global` on the server.
 }(this));
-},{}],143:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 /*
 
 Copyright (c) 2012-2014 Jeffrey Mealo
@@ -20305,7 +20380,7 @@ exports.generate = function generate() {
     return browser[random[0]](random[1]);
 };
 
-},{}],144:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 var ret = require('ret');
 var DRange = require('discontinuous-range');
 var types = ret.types;
@@ -20543,7 +20618,7 @@ function gen(token, groups) {
 
 
 
-},{"discontinuous-range":145,"ret":146}],145:[function(require,module,exports){
+},{"discontinuous-range":153,"ret":154}],153:[function(require,module,exports){
 //protected helper class
 function _SubRange(low, high) {
     this.low = low;
@@ -20689,7 +20764,7 @@ DiscontinuousRange.prototype.clone = function () {
 
 module.exports = DiscontinuousRange;
 
-},{}],146:[function(require,module,exports){
+},{}],154:[function(require,module,exports){
 var util      = require('./util');
 var types     = require('./types');
 var sets      = require('./sets');
@@ -20969,7 +21044,7 @@ module.exports = function(regexpStr) {
 
 module.exports.types = types;
 
-},{"./positions":147,"./sets":148,"./types":149,"./util":150}],147:[function(require,module,exports){
+},{"./positions":155,"./sets":156,"./types":157,"./util":158}],155:[function(require,module,exports){
 var types = require('./types');
 
 exports.wordBoundary = function() {
@@ -20988,7 +21063,7 @@ exports.end = function() {
   return { type: types.POSITION, value: '$' };
 };
 
-},{"./types":149}],148:[function(require,module,exports){
+},{"./types":157}],156:[function(require,module,exports){
 var types = require('./types');
 
 var INTS = function() {
@@ -21072,7 +21147,7 @@ exports.anyChar = function() {
   return { type: types.SET, set: NOTANYCHAR(), not: true };
 };
 
-},{"./types":149}],149:[function(require,module,exports){
+},{"./types":157}],157:[function(require,module,exports){
 module.exports = {
     ROOT       : 0
   , GROUP      : 1
@@ -21084,7 +21159,7 @@ module.exports = {
   , CHAR       : 7
 };
 
-},{}],150:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 var types = require('./types');
 var sets  = require('./sets');
 
@@ -21197,8 +21272,8 @@ exports.error = function(regexp, msg) {
   throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
 };
 
-},{"./sets":148,"./types":149}],"json-schema-faker":[function(require,module,exports){
-module.exports = require('../lib/jsf')
+},{"./sets":156,"./types":157}],"json-schema-faker":[function(require,module,exports){
+module.exports = require('../lib/')
   .extend('faker', function() {
     try {
       return require('faker/locale/en_IE');
@@ -21207,5 +21282,5 @@ module.exports = require('../lib/jsf')
     }
   });
 
-},{"../lib/jsf":4,"faker/locale/en_IE":140}]},{},["json-schema-faker"])("json-schema-faker")
+},{"../lib/":17,"faker/locale/en_IE":148}]},{},["json-schema-faker"])("json-schema-faker")
 });
