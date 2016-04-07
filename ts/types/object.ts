@@ -4,9 +4,10 @@ import words = require('../generators/words');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
 
-var randexp = container.get('randexp').randexp;
+var randexp = container.get('randexp');
 
-function objectType(value, path, resolve, traverseCallback: Function) {
+// TODO provide types
+function objectType(value: IObjectSchema, path, resolve, traverseCallback: Function): Object {
   var props = {};
 
   if (!(value.properties || value.patternProperties || value.additionalProperties)) {
@@ -17,8 +18,8 @@ function objectType(value, path, resolve, traverseCallback: Function) {
     return props;
   }
 
-  var reqProps = value.required || [],
-      allProps = value.properties ? Object.keys(value.properties) : [];
+  var reqProps: string[] = value.required || [],
+      allProps: string[] = value.properties ? Object.keys(value.properties) : [];
 
   reqProps.forEach(function(key) {
     if (value.properties && value.properties[key]) {
@@ -34,7 +35,7 @@ function objectType(value, path, resolve, traverseCallback: Function) {
     optProps = Array.prototype.concat.apply(optProps, Object.keys(value.patternProperties));
   }
 
-  var length = random.number(value.minProperties, value.maxProperties, 0, optProps.length);
+  var length: number = random.number(value.minProperties, value.maxProperties, 0, optProps.length);
 
   random.shuffle(optProps).slice(0, length).forEach(function(key) {
     if (value.properties && value.properties[key]) {

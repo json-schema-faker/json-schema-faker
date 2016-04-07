@@ -12,7 +12,9 @@
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "test": "npm run dev:lint && npm run dev:spec",
     "dist": "node build/dist.js",
-    "tsc": "./build/tsc.sh"
+    "tsc": "./build/tsc.sh",
+    "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
+    "graphviz": "./node_modules/.bin/madge lib --dot > structure.gv"
   },
   "contributors": [
     {
@@ -51,6 +53,7 @@
     "jayschema": "^0.3.1",
     "lodash.template": "^4.1.0",
     "semver": "^5.1.0",
+    "tsify": "^0.14.2",
     "tv4": "^1.2.7",
     "typescript": "^1.8.9",
     "uglify-js": "^2.6.1",

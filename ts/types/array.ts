@@ -2,6 +2,7 @@ import random = require('../core/random');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
 
+// TODO provide types
 function unique(path, items, value, sample, resolve, traverseCallback: Function) {
   var tmp = [],
       seen = [];
@@ -31,8 +32,11 @@ function unique(path, items, value, sample, resolve, traverseCallback: Function)
   return tmp;
 }
 
-function arrayType(value, path, resolve, traverseCallback: Function) {
-  var items = [];
+type Result = any;
+
+// TODO provide types
+function arrayType(value: IArraySchema, path, resolve, traverseCallback: Function): Result[] {
+  var items: Result[] = [];
 
   if (!(value.items || value.additionalItems)) {
     if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
@@ -48,8 +52,8 @@ function arrayType(value, path, resolve, traverseCallback: Function) {
     }));
   }
 
-  var length = random.number(value.minItems, value.maxItems, 1, 5),
-      sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+  var length: number = random.number(value.minItems, value.maxItems, 1, 5),
+      sample: Object = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
   for (var current = items.length; current < length; current += 1) {
     items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));

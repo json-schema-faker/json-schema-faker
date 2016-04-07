@@ -1,3 +1,18 @@
+function getSubAttribute(obj: any, dotSeparatedKey: string): any {
+  var keyElements: string[] = dotSeparatedKey.split('.');
+
+  while (keyElements.length) {
+    var prop = keyElements.shift();
+
+    if (!obj[prop]) {
+      break;
+    }
+
+    obj = obj[prop];
+  }
+  return obj;
+}
+
 /**
  * Returns true/false whether the object parameter has its own properties defined
  *
@@ -10,10 +25,9 @@ function hasProperties(obj: Object, ...properties: string[]): boolean {
   }).length > 0;
 }
 
-// TODO refactor clone function
-function clone(arr) {
-  var out = [];
-  arr.forEach(function(item, index) {
+function clone(arr: any[]): any[] {
+  var out: any[] = [];
+  arr.forEach(function(item: any, index: number) {
     if (typeof item === 'object' && item !== null) {
       out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
     } else {
@@ -24,7 +38,7 @@ function clone(arr) {
 }
 
 // TODO refactor merge function
-function merge(a, b) {
+function merge(a: Object, b: Object): Object {
   for (var key in b) {
     if (typeof b[key] !== 'object' || b[key] === null) {
       a[key] = b[key];
@@ -37,21 +51,6 @@ function merge(a, b) {
     }
   }
   return a;
-}
-
-function getSubAttribute(obj: any, dotSeparatedKey: string): any {
-  var keyElements = dotSeparatedKey.split('.');
-
-  while (keyElements.length) {
-    var prop = keyElements.shift();
-
-    if (!obj[prop]) {
-      break;
-    }
-
-    obj = obj[prop];
-  }
-  return obj;
 }
 
 export = {

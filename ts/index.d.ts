@@ -21,6 +21,27 @@ interface INumberSchema extends IGeneratorSchema {
   exclusiveMaximum?: boolean;
 }
 
+interface IArraySchema extends IGeneratorSchema {
+  items?: IObjectSchema|IObjectSchema[];
+  additionalItems?: boolean|IObjectSchema;
+  minItems?: number;
+  maxItems?: number;
+  uniqueItems?: boolean;
+}
+
+interface IPropertySchema {
+  [property: string]: IObjectSchema;
+}
+
+interface IObjectSchema extends IGeneratorSchema {
+  additionalProperties?: boolean;
+  required?: string[];
+  properties?: IPropertySchema;
+  patternProperties?: IPropertySchema; // RegExp should be the index of this structure (see "5.4.4.1. Valid values" in http://json-schema.org/latest/json-schema-validation.html), but RegExp-key-based maps are unsupported in TypeScript
+  minProperties?: number;
+  maxProperties?: number;
+}
+
 /**
  * JSON Schema TypeScript interface.
  *
@@ -43,6 +64,21 @@ interface JsonSchema extends IGeneratorSchema {
   default?: any;
 }
 
+declare type SchemaPath = string[];
+
+declare type StackTrace = string[];
+
+/**
+ * This interface is used to check consistency between type generators (string, boolean, array, etc.)
+ */
+interface FTypeGenerator {
+  (value?: IGeneratorSchema, path?: SchemaPath, resolve?: Function, traverseCallback?: Function): any;
+}
+
+interface IStringMap {
+  [format: string]: string;
+}
+
 /**
  * This interface represents outer JSF object that is accessible by the end users.
  * It is a stateful function (combined of additional functionalities) and needs a separate type.
@@ -52,3 +88,8 @@ interface jsfAPI {
   format: Function;
   extend: Function;
 }
+
+// quick and dirty overcome
+// TODO provide proper definitions
+declare module 'randexp' { var randexp: any; export = randexp; }
+declare module 'deref' { var $: any; export = $; }

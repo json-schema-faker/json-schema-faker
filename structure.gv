@@ -1,0 +1,94 @@
+digraph G {
+
+  "index.js";
+
+  subgraph core {
+    node[color=red,style=filled]
+    "core/run.js";
+    "core/traverse.js";
+    "core/infer.js";
+    "core/error.js";
+    "core/random.js";
+    "core/utils.js";
+  }
+
+  subgraph generators {
+    node[color=green,style=filled]
+    "generators/boolean.js";
+    "generators/coreFormat.js";
+    "generators/dateTime.js";
+    "generators/ipv4.js";
+    "generators/null.js";
+    "generators/thunk.js";
+    "generators/words.js";
+  }
+
+  subgraph types {
+    node[color=lightblue,style=filled]
+    "types/index.js";
+    "types/array.js";
+    "types/boolean.js";
+    "types/external.js";
+    "types/integer.js";
+    "types/null.js";
+    "types/number.js";
+    "types/object.js";
+    "types/string.js";
+  }
+
+  "randexp/lib/randexp.js";
+  "deref/lib/index.js";
+  "api/format.js";
+  "class/FormatRegistry.js";
+  "class/Container.js";
+
+  "types/null.js" -> "generators/null.js";
+  "types/object.js" -> "generators/words.js";
+  "types/string.js" -> "generators/coreFormat.js";
+  "types/string.js" -> "generators/dateTime.js";
+  "types/string.js" -> "generators/ipv4.js";
+  "types/string.js" -> "generators/thunk.js";
+  "types/boolean.js" -> "generators/boolean.js";
+  "generators/thunk.js" -> "generators/words.js";
+
+  "types/index.js" -> "types/array.js";
+  "types/index.js" -> "types/boolean.js";
+  "types/index.js" -> "types/external.js";
+  "types/index.js" -> "types/integer.js";
+  "types/index.js" -> "types/null.js";
+  "types/index.js" -> "types/number.js";
+  "types/index.js" -> "types/object.js";
+  "types/index.js" -> "types/string.js";
+  "types/integer.js" -> "types/number.js";
+
+  "api/format.js" -> "class/FormatRegistry.js";
+  "class/Container.js" -> "randexp/lib/randexp.js";
+  "core/run.js" -> "core/random.js";
+  "core/run.js" -> "core/traverse.js";
+  "core/run.js" -> "core/utils.js";
+  "core/run.js" -> "deref/lib/index.js";
+  "core/traverse.js" -> "core/error.js";
+  "core/traverse.js" -> "core/infer.js";
+  "core/traverse.js" -> "core/random.js";
+  "core/traverse.js" -> "types/index.js";
+  "generators/coreFormat.js" -> "class/Container.js";
+  "generators/dateTime.js" -> "core/random.js";
+  "generators/ipv4.js" -> "core/random.js";
+  "generators/thunk.js" -> "core/random.js";
+  "generators/words.js" -> "core/random.js";
+  "index.js" -> "api/format.js";
+  "index.js" -> "class/Container.js";
+  "index.js" -> "core/run.js";
+  "types/array.js" -> "core/error.js";
+  "types/array.js" -> "core/random.js";
+  "types/array.js" -> "core/utils.js";
+  "types/external.js" -> "class/Container.js";
+  "types/external.js" -> "core/utils.js";
+  "types/number.js" -> "core/random.js";
+  "types/object.js" -> "class/Container.js";
+  "types/object.js" -> "core/error.js";
+  "types/object.js" -> "core/random.js";
+  "types/object.js" -> "core/utils.js";
+  "types/string.js" -> "api/format.js";
+  "types/string.js" -> "class/Container.js";
+}

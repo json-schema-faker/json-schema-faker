@@ -1,4 +1,4 @@
-![JSON Schema Faker logo](logo/JSF_logo.png)
+![JSON Schema Faker logo](logo/typescript-logo.png)
 
 [![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
@@ -12,12 +12,6 @@
 Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system.
 
 ***Want to support `jsf`?*** We are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
-
-### migrating to TypeScript
-
-![JSON Schema Faker migration to TypeScript](migration.jpg)
-
-JSON-Schema-Faker is being migrated into TypeScript.
 
 # Table of contents
 
@@ -413,6 +407,19 @@ In that case you may bundle the distribution yourself manually. It's easily achi
 Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
 to automate running `json-schema-faker` against your JSON schemas.
 
+## Contribution
+
+* [Alvaro Cabrera](https://twitter.com/pateketrueke)
+* [Tomasz Ducin](https://twitter.com/tomasz_ducin)
+* artwork by [Ajay Karat](http://www.devilsgarage.com/)
+
+We are more than happy to welcome new contributors, our project is heavily developed, but we need more power :)
+Please see [contribution guide](CONTRIBUTING.md), you can always contact us to ask how you can help.
+
+### Architecture
+
+If you want to contribute, take a look at [the architecture page](ARCHITECTURE.md). You may find some important information there making it easier to start.
+
 ## Resources
 
 * [JSON, JSON Schema & JSON-schema-faker](https://www.youtube.com/watch?v=TkqiUG3j_Xw) - WarsawJS meetup presentation recording, a step-by-step guide to JSON-related tools, including `jsf`
@@ -432,14 +439,4 @@ There were some existing projects or services trying to achieve similar goals as
 
 but they were either incomplete, outdated, broken or non-standard. That's why `jsf` was created.
 
-## Contribution
-
-* [Alvaro Cabrera](https://twitter.com/pateketrueke)
-* [Tomasz Ducin](https://twitter.com/tomasz_ducin)
-* artwork by [Ajay Karat](http://www.devilsgarage.com/)
-
-Any contribution is well received, please see [contribution guide](CONTRIBUTING.md).
-
-
 [![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/json-schema-faker/json-schema-faker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
-

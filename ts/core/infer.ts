@@ -76,7 +76,7 @@ function matchesType(obj: Object, lastElementInPath: string, inferredTypePropert
  *
  * @returns {string|null}
  */
-function inferType(obj: Object, schemaPath: string[]): string {
+function inferType(obj: Object, schemaPath: SchemaPath): string {
   for (var typeName in inferredProperties) {
     var lastElementInPath: string = schemaPath[schemaPath.length - 1];
     if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {

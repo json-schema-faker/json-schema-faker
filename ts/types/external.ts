@@ -2,16 +2,17 @@ import utils = require('../core/utils');
 
 import container = require('../class/Container');
 
-function externalType(value: IGeneratorSchema): string {
+type ExternalParameters = any[];
+
+function externalType(value: IGeneratorSchema): string|any {
   var libraryName: string = value.faker ? 'faker' : 'chance',
     libraryModule = value.faker ? container.get('faker') : container.get('chance'),
     key = value.faker || value.chance,
     path = key,
-    args = [];
+    args: ExternalParameters = [];
 
   if (typeof path === 'object') {
     path = Object.keys(path)[0];
-
     if (Array.isArray(key[path])) {
       args = key[path];
     } else {
@@ -19,7 +20,7 @@ function externalType(value: IGeneratorSchema): string {
     }
   }
 
-  var genFunction = utils.getSubAttribute(libraryModule, path);
+  var genFunction: Function = utils.getSubAttribute(libraryModule, path);
 
   if (typeof genFunction !== 'function') {
     throw new Error('unknown ' + libraryName + '-generator for ' + JSON.stringify(key));
@@ -29,7 +30,7 @@ function externalType(value: IGeneratorSchema): string {
   // making jsf break after upgrading from 3.0.1
   var contextObject = libraryModule;
   if (libraryName === 'faker') {
-    var fakerModuleName = path.split('.')[0];
+    var fakerModuleName: string = path.split('.')[0];
     contextObject = libraryModule[fakerModuleName];
   }
 

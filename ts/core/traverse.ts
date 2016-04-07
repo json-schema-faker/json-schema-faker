@@ -1,22 +1,18 @@
 import random = require('./random');
 import ParseError = require('./error');
 import inferType = require('./infer');
-import primitives = require('./primitives');
+import types = require('../types/index');
 
-function traverse(schema: JsonSchema, path, resolve) {
+// TODO provide types
+function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   resolve(schema);
 
   if (Array.isArray(schema.enum)) {
     return random.pick(schema.enum);
   }
 
-  var copy = {};
-
-  if (Array.isArray(schema)) {
-    copy = [];
-  }
-
-  var type = schema.type;
+  // TODO remove the ugly overcome
+  var type: any = schema.type;
 
   if (Array.isArray(type)) {
     type = random.pick(type);
@@ -30,12 +26,12 @@ function traverse(schema: JsonSchema, path, resolve) {
   }
 
   if (typeof type === 'string') {
-    if (!primitives[type]) {
+    if (!types[type]) {
       throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
     }
 
     try {
-      return primitives[type](schema, path, resolve, traverse);
+      return types[type](schema, path, resolve, traverse);
     } catch (e) {
       if (typeof e.path === 'undefined') {
         throw new ParseError(e.message, path);
@@ -43,6 +39,12 @@ function traverse(schema: JsonSchema, path, resolve) {
 
       throw e;
     }
+  }
+
+  var copy = {};
+
+  if (Array.isArray(schema)) {
+    copy = [];
   }
 
   for (var prop in schema) {

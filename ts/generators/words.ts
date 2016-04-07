@@ -13,7 +13,7 @@ var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed
  * @param max
  * @returns {Array.<string>}
  */
-function wordsGenerator(min: number = 1, max: number = 5) {
+function wordsGenerator(min: number = 1, max: number = 5): string[] {
   var words = random.shuffle(LIPSUM_WORDS),
       length = random.number(min, Math.min(LIPSUM_WORDS.length, max));
 

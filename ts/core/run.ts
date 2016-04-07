@@ -5,12 +5,11 @@ import traverse = require('./traverse');
 import random = require('./random');
 import utils = require('./utils');
 
-var merge  = utils.merge;
-
 function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'required' || prop === 'definitions';
 }
 
+// TODO provide types
 function run(schema, refs?, ex?) {
   var $ = deref();
 
@@ -38,18 +37,18 @@ function run(schema, refs?, ex?) {
 
         seen[id] -= 1;
 
-        merge(sub, $.util.findByRef(id, $.refs));
+        utils.merge(sub, $.util.findByRef(id, $.refs));
       }
 
       if (Array.isArray(sub.allOf)) {
-        var schemas = sub.allOf;
+        var schemas: JsonSchema[] = sub.allOf;
 
         delete sub.allOf;
 
         // this is the only case where all sub-schemas
         // must be resolved before any merge
-        schemas.forEach(function(s) {
-          merge(sub, reduce(s));
+        schemas.forEach(function(schema: JsonSchema) {
+          utils.merge(sub, reduce(schema));
         });
       }
 
@@ -59,7 +58,7 @@ function run(schema, refs?, ex?) {
         delete sub.anyOf;
         delete sub.oneOf;
 
-        merge(sub, random.pick(mix));
+        utils.merge(sub, random.pick(mix));
       }
 
       for (var prop in sub) {

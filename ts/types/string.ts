@@ -5,7 +5,7 @@ import coreFormat = require('../generators/coreFormat');
 import format = require('../api/format');
 
 import container = require('../class/Container');
-var randexp = container.get('randexp').randexp;
+var randexp = container.get('randexp');
 
 function generateFormat(value: IStringSchema): string {
   switch (value.format) {
