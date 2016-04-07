@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.2.15",
+  "version": "0.2.16",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "index.js",
@@ -35,29 +35,25 @@
   "license": "MIT",
   "dependencies": {
     "faker": "~3.1.0",
-    "chance": "~1.0.0",
+    "chance": "~1.0.1",
     "deref": "~0.6.3",
     "randexp": "~0.4.2"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
-    "chance": "^1.0.0",
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
-    "eslint": "^2.0.0",
-    "faker": "^3.0.1",
-    "fs-extra": "^0.26.5",
-    "glob": "^7.0.0",
-    "istanbul": "^0.4.2",
-    "jasmine-node": "^2.0.0-beta4",
+    "eslint": "^2.7.0",
+    "fs-extra": "^0.26.7",
+    "glob": "^7.0.3",
+    "istanbul": "^0.4.3",
+    "jasmine-node": "^2.0.0",
     "jayschema": "^0.3.1",
-    "lodash.template": "^4.1.0",
+    "lodash.template": "^4.2.4",
     "semver": "^5.1.0",
-    "tsify": "^0.14.2",
     "tv4": "^1.2.7",
-    "typescript": "^1.8.9",
-    "uglify-js": "^2.6.1",
-    "z-schema": "^3.16.1"
+    "uglify-js": "^2.6.2",
+    "z-schema": "^3.17.0"
   },
   "keywords": [
     "json",
