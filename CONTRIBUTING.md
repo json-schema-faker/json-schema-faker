@@ -1,4 +1,12 @@
-Contribution to the project is more than welcome!
+Contribution to the project is more than welcome! :beer:
+
+## Bug submission
+
+If you're submitting a bug, please clearly state what is:
+
+1. the JSON Schema content that fails: go to [the demo page](http://json-schema-faker.js.org/), paste your schema, click `generate` and grab the updated URL from browser address bar - and paste it here. It will make it easier for us to fix it, thanks in advance :beer: Otherwise please paste the schema inline.
+2. the result you get
+3. the result you expected
 
 ## Issues & Pull-requests
 
