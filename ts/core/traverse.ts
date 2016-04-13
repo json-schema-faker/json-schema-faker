@@ -3,6 +3,27 @@ import ParseError = require('./error');
 import inferType = require('./infer');
 import types = require('../types/index');
 
+function isExternal(schema: IGeneratorSchema): boolean {
+  return schema.faker || schema.chance;
+}
+
+function reduceExternal(schema: IGeneratorSchema, path: SchemaPath): IGeneratorSchema {
+  if (schema['x-faker']) {
+    schema.faker = schema['x-faker'];
+  }
+  if (schema['x-chance']) {
+    schema.chance = schema['x-chance'];
+  }
+
+  var fakerUsed: boolean = schema.faker !== undefined,
+    chanceUsed: boolean = schema.chance !== undefined;
+  if (fakerUsed && chanceUsed) {
+    throw new ParseError('ambiguous generator when using both faker and chance: ' + JSON.stringify(schema), path);
+  }
+
+  return schema;
+}
+
 // TODO provide types
 function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   resolve(schema);
@@ -21,7 +42,8 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     type = inferType(schema, path) || type;
   }
 
-  if (schema.faker || schema.chance) {
+  schema = reduceExternal(schema, path);
+  if (isExternal(schema)) {
     type = 'external';
   }
 

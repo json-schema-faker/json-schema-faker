@@ -26,12 +26,14 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Example usage](#example-usage)
     - [Gist demos](#gist-demos)
 - Advanced
+  - [JSON Schema specification support](#json-schema-specification-support)
   - [Supported keywords](#supported-keywords)
   - [Using references](#using-references)
   - [Faking values](#faking-values)
   - [Custom formats](#custom-formats)
   - [Extending dependencies](#extending-dependencies)
   - [Inferred Types](#inferred-types)
+  - [Swagger extensions](#swagger-extensions)
   - [Bundling](#bundling)
   - [Automation](#automation)
     - [Grunt plugin](#grunt-plugin)
@@ -395,6 +397,15 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 * `maxLength`
 * `minLength`
 * `pattern`
+
+## Swagger extensions
+
+`jsf` supports [OpenAPI Specification *vendor extensions*](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#vendorExtensions), i.e.
+
+* `x-faker` property that stands for `faker` property
+* `x-chance` property that stands for `chance` property
+
+Thanks to it, you can use valid swagger definitions for `jsf` data generation.
 
 ## Bundling
 

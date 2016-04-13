@@ -3,7 +3,9 @@
  */
 interface IGeneratorSchema {
   faker?: any;
+  "x-faker"?: any;
   chance?: any;
+  "x-chance"?: any;
 }
 
 interface IStringSchema extends IGeneratorSchema {
