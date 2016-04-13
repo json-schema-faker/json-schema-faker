@@ -1,10 +1,16 @@
 import utils = require('../core/utils');
+import ParseError = require('../core/error');
 
 import container = require('../class/Container');
 
 type ExternalParameters = any[];
 
-function externalType(value: IGeneratorSchema): string|any {
+function externalType(value: IGeneratorSchema, path): string|any {
+  var fakerUsed: boolean = value.faker !== undefined,
+    chanceUsed: boolean = value.chance !== undefined;
+  if (fakerUsed && chanceUsed) {
+    throw new ParseError('ambiguous generator when using both faker and chance: ' + JSON.stringify(value), path);
+  }
   var libraryName: string = value.faker ? 'faker' : 'chance',
     libraryModule = value.faker ? container.get('faker') : container.get('chance'),
     key = value.faker || value.chance,
