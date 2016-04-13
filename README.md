@@ -132,30 +132,36 @@ Clone these gists and execute them locally (each gist has its own readme with in
  * [jsf console](https://gist.github.com/ducin/9f2364ccde2e9248fbcd) - minimal example of jsf working directly under command line
  * [jsf grunt](https://gist.github.com/ducin/87e0b55bddd1801d3d99) - example of jsf working under grunt.js
 
+## JSON Schema specification support
+
+Currently `jsf` supports the JSON-Schema specification **draft-04** only.
+
+If you want to use **draft-03**, you may find useful information [here](https://github.com/json-schema-faker/json-schema-faker/issues/66).
+
 ## Supported keywords
 
-Note that `jsf` supports (currently) the JSON-Schema specification **draft-04** only. Below is the list of supported keywords:
+Below is the list of supported keywords:
 
-- **$ref** &mdash; Resolve internal references only, and/or external if provided.
-- **required** &mdash; All required properties are guaranteed, if not can be omitted.
-- **pattern** &mdash; Generate samples based on RegExp values.
-- **format** &mdash; Core formats only: date-time, email, hostname, ipv4, ipv6 and uri.
-- **enum** &mdash; Returns any of these enumerated values.
-- **minLength/maxLength** &mdash; Applies length constraints to string values.
-- **minimum/maximum** &mdash; Applies constraints to numeric values.
-- **exclusiveMinimum/exclusiveMaximum** &mdash; Adds exclusivity for numeric values.
-- **multipleOf** &mdash; Multiply constraints for numeric values.
-- **items** &mdash; Support for subschema and fixed item values.
-- **minItems/maxItems** &mdash; Adds length constraints for array items.
-- **uniqueItems** &mdash; Applies uniqueness constraints for array items.
-- **additionalItems** &mdash; Partially supported (?)
-- **allOf/oneOf/anyOf** &mdash; Subschema combinators.
-- **properties** &mdash; Object properties to be generated.
-- **minProperties/maxProperties** &mdash; Adds length constraints for object properties.
-- **patternProperties** &mdash; RegExp-based object properties.
-- **additionalProperties** &mdash; Partially supported (?)
-- **dependencies** &mdash; Not supported yet (?)
-- **not** &mdash; Not supported yet (?)
+- `$ref` &mdash; Resolve internal references only, and/or external if provided.
+- `required` &mdash; All required properties are guaranteed, if not can be omitted.
+- `pattern` &mdash; Generate samples based on RegExp values.
+- `format` &mdash; Core formats only: `date-time`, `email`, `hostname`, `ipv4`, `ipv6` and `uri`.
+- `enum` &mdash; Returns any of these enumerated values.
+- `minLength`, `maxLength` &mdash; Applies length constraints to string values.
+- `minimum`, `maximum` &mdash; Applies constraints to numeric values.
+- `exclusiveMinimum`, `exclusiveMaximum` &mdash; Adds exclusivity for numeric values.
+- `multipleOf` &mdash; Multiply constraints for numeric values.
+- `items` &mdash; Support for subschema and fixed item values.
+- `minItems`, `maxItems` &mdash; Adds length constraints for array items.
+- `uniqueItems` &mdash; Applies uniqueness constraints for array items.
+- `additionalItems` &mdash; Partially supported (?)
+- `allOf`, `oneOf`, `anyOf` &mdash; Subschema combinators.
+- `properties` &mdash; Object properties to be generated.
+- `minProperties`, `maxProperties` &mdash; Adds length constraints for object properties.
+- `patternProperties` &mdash; RegExp-based object properties.
+- `additionalProperties` &mdash; Partially supported (?)
+- `dependencies` &mdash; Not supported yet (?)
+- `not` &mdash; Not supported yet (?)
 
 ## Using references
 
