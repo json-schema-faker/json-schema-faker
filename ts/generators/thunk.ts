@@ -2,7 +2,8 @@ import words = require('../generators/words');
 import random = require('../core/random');
 
 function produce(): string {
-  return words().join(' ');
+  var length: number = random.number(1, 5);
+  return words(length).join(' ');
 }
 
 /**
