@@ -88,6 +88,7 @@ interface IStringMap {
 interface jsfAPI {
   (schema: JsonSchema, refs?: any): any;
   format: Function;
+  option: Function;
   extend: Function;
 }
 

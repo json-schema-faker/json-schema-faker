@@ -2,6 +2,7 @@ import random = require('./random');
 import ParseError = require('./error');
 import inferType = require('./infer');
 import types = require('../types/index');
+import option = require('../api/option');
 
 function isExternal(schema: IGeneratorSchema): boolean {
   return schema.faker || schema.chance;
@@ -49,17 +50,20 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
 
   if (typeof type === 'string') {
     if (!types[type]) {
-      throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
-    }
-
-    try {
-      return types[type](schema, path, resolve, traverse);
-    } catch (e) {
-      if (typeof e.path === 'undefined') {
-        throw new ParseError(e.message, path);
+      if (option('failOnInvalidTypes')) {
+        throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+      } else {
+        return option('defaultInvalidTypeProduct');
       }
-
-      throw e;
+    } else {
+      try {
+        return types[type](schema, path, resolve, traverse);
+      } catch (e) {
+        if (typeof e.path === 'undefined') {
+          throw new ParseError(e.message, path);
+        }
+        throw e;
+      }
     }
   }
 

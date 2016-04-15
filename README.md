@@ -31,6 +31,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Using references](#using-references)
   - [Faking values](#faking-values)
   - [Custom formats](#custom-formats)
+  - [Custom options](#custom-options)
   - [Extending dependencies](#extending-dependencies)
   - [Inferred Types](#inferred-types)
   - [Swagger extensions](#swagger-extensions)
@@ -288,6 +289,21 @@ Callback:
 - **schema** (object) &mdash; The schema for input
 
 Note that custom generators has lower precedence than core ones.
+
+## Custom Options
+
+You may define following options for `jsf` that alter its behavior:
+
+- `failOnInvalidTypes`: boolean - don't throw exception when invalid type passed
+- `defaultInvalidTypeProduct`: * - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
+
+Set options just as below:
+
+```javascript
+jsf.option({
+  failOnInvalidTypes: false
+});
+```
 
 ## Extending dependencies
 

@@ -1,25 +1,29 @@
-import FormatRegistry = require('../class/FormatRegistry');
+import Registry = require('../class/Registry');
+
+type Format = Function;
 
 // instantiate
-var registry = new FormatRegistry();
+var registry = new Registry<Format>();
 
 /**
- * Custom formats API
+ * Custom format API
  *
  * @see https://github.com/json-schema-faker/json-schema-faker#custom-formats
- * @param name
+ * @param nameOrFormatMap
  * @param callback
  * @returns {any}
  */
-function formatAPI(name: string, callback?: Function): any {
-  if (callback) {
-    registry.register(name, callback);
-  } else if (typeof name === 'object') {
-    registry.registerMany(name);
-  } else if (name) {
-    return registry.get(name);
-  } else {
+function formatAPI(nameOrFormatMap?: string|Object, callback?: Format): any {
+  if (typeof nameOrFormatMap === 'undefined') {
     return registry.list();
+  } else if (typeof nameOrFormatMap === 'string') {
+    if (typeof callback === 'function') {
+      registry.register(nameOrFormatMap, callback);
+    } else {
+      return registry.get(nameOrFormatMap);
+    }
+  } else {
+    registry.registerMany(nameOrFormatMap);
   }
 }
 

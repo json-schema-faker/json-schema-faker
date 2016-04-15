@@ -1,5 +1,6 @@
 import container = require('./class/Container');
 import format = require('./api/format');
+import option = require('./api/option');
 import run = require('./core/run');
 
 var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any) {
@@ -7,6 +8,8 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any) {
 };
 
 jsf.format = format;
+
+jsf.option = option;
 
 // returns itself for chaining
 jsf.extend = function(name: string, cb: Function) {
