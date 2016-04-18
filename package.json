@@ -44,7 +44,7 @@
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
     "eslint": "^2.7.0",
-    "fs-extra": "^0.27.0",
+    "fs-extra": "^0.28.0",
     "glob": "^7.0.3",
     "istanbul": "^0.4.3",
     "jasmine-node": "^2.0.0",
