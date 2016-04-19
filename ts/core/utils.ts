@@ -17,6 +17,7 @@ function getSubAttribute(obj: any, dotSeparatedKey: string): any {
  * Returns true/false whether the object parameter has its own properties defined
  *
  * @param obj
+ * @param properties
  * @returns {boolean}
  */
 function hasProperties(obj: Object, ...properties: string[]): boolean {
