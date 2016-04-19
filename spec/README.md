@@ -7,7 +7,7 @@
 
 # unit tests
 
-location: [`spec/unit`](spec/unit)
+location: [`spec/unit`](unit)
 
 Typical unit tests, low-level. Using `jasmine` under `jasmine-node`. Each *spec* file loads a js unit using node.js `require` function and fires assertions against it. That's all.
 
@@ -15,7 +15,7 @@ Typical unit tests, low-level. Using `jasmine` under `jasmine-node`. Each *spec*
 
 # schema tests
 
-location: [`spec/schema`](spec/schema)
+location: [`spec/schema`](schema)
 
 Kind of functional tests, high-level - executing the whole `jsf` engine to generate fake data against given JSON Schema and checking the quality of the results.
 

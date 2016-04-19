@@ -40,7 +40,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
     - [Grunt plugin](#grunt-plugin)
 - Misc
   - [Contribution](#contribution)
-    - [Architecture](#architecture)
+    - [Technical Documentation](#technical-documentation)
   - [Resources](#resources)
   - [Motivation](#motivation)
 
@@ -450,9 +450,11 @@ to automate running `json-schema-faker` against your JSON schemas.
 We are more than happy to welcome new contributors, our project is heavily developed, but we need more power :)
 Please see [contribution guide](CONTRIBUTING.md), you can always contact us to ask how you can help.
 
-### Architecture
+### Technical Documentation
 
-If you want to contribute, take a look at [the architecture page](ARCHITECTURE.md). You may find some important information there making it easier to start.
+If you want to contribute, take a look at [the technical documentation page](docs/). You may find some important information there making it easier to start.
+
+Moreover, if you find something unclear (e.g. how does something work) or would like to suggest improving the docs, please submit an issue, we'll gladly provide more info for future contributors.
 
 ## Resources
 
