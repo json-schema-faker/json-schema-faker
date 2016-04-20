@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated object values",
+    "description": "object generator",
     "tests": [
       {
         "description": "should skip some non-required properties",

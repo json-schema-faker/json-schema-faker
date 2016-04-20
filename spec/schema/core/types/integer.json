@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated integer values",
+    "description": "integer generator",
     "tests": [
       {
         "description": "should handle minimum",
@@ -68,6 +68,42 @@
           "maximum": 5
         },
         "type": "number"
+      },
+      {
+        "description": "should generate negative values for negative min and negative max",
+        "schema": {
+          "type": "integer",
+          "minimum": -10,
+          "maximum": -5
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle negative minimum and 0 as maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 0
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle negative minimum and 1 as maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 1
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle -1 as minimum and 1 as maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "valid": true
       }
     ]
   }

@@ -6,7 +6,7 @@ describe("Infer", function () {
     var schema = {
       "additionalItems": true
     };
-    
+
     expect(infer(schema, "")).toEqual("array");
   });
 });

@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated array values",
+    "description": "array generator",
     "schemas": [
       {
         "allOf": [
@@ -152,6 +152,17 @@
           }
         },
         "type": "object"
+      },
+      {
+        "description": "should allow minItems > 5",
+        "schema": {
+          "type": "array",
+          "minItems": 10,
+          "items": {
+            "type": "string"
+          }
+        },
+        "valid": true
       }
     ]
   }

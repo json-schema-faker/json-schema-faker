@@ -9,7 +9,9 @@
           "properties": {
             "foo": {
               "type": "array",
-              "items": [{"enum":["bar"]}],
+              "items": [
+                {"enum":["bar"]}
+              ],
               "minItems": 1,
               "maxItems": 1
             }
@@ -27,7 +29,9 @@
           "properties": {
             "items": {
               "type": "array",
-              "items": [{"enum":["bar"]}],
+              "items": [
+                {"enum":["bar"]}
+              ],
               "minItems": 1,
               "maxItems": 1
             }

@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated string values",
+    "description": "string generator",
     "tests": [
       {
         "description": "should handle minLength",
