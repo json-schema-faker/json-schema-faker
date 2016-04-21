@@ -9,14 +9,11 @@ var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed
 /**
  * Generates randomized array of single lorem ipsum words.
  *
- * @param min
- * @param max
+ * @param length
  * @returns {Array.<string>}
  */
-function wordsGenerator(min: number = 1, max: number = 5): string[] {
-  var words = random.shuffle(LIPSUM_WORDS),
-      length = random.number(min, Math.min(LIPSUM_WORDS.length, max));
-
+function wordsGenerator(length: number): string[] {
+  var words = random.shuffle(LIPSUM_WORDS);
   return words.slice(0, length);
 }
 

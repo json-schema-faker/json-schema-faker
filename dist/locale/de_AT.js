@@ -1,42 +1,64 @@
 /*!
- * json-schema-faker library v0.3.0
+ * json-schema-faker library v0.3.1
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-04-07 15:47:55.094Z
+ * Date: 2016-04-15 18:37:35.154Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
-var FormatRegistry = require('../class/FormatRegistry');
+var Registry = require('../class/Registry');
 // instantiate
-var registry = new FormatRegistry();
+var registry = new Registry();
 /**
- * Custom formats API
+ * Custom format API
  *
  * @see https://github.com/json-schema-faker/json-schema-faker#custom-formats
- * @param name
+ * @param nameOrFormatMap
  * @param callback
  * @returns {any}
  */
-function formatAPI(name, callback) {
-    if (callback) {
-        registry.register(name, callback);
+function formatAPI(nameOrFormatMap, callback) {
+    if (typeof nameOrFormatMap === 'undefined') {
+        return registry.list();
     }
-    else if (typeof name === 'object') {
-        registry.registerMany(name);
-    }
-    else if (name) {
-        return registry.get(name);
+    else if (typeof nameOrFormatMap === 'string') {
+        if (typeof callback === 'function') {
+            registry.register(nameOrFormatMap, callback);
+        }
+        else {
+            return registry.get(nameOrFormatMap);
+        }
     }
     else {
-        return registry.list();
+        registry.registerMany(nameOrFormatMap);
     }
 }
 module.exports = formatAPI;
 
-},{"../class/FormatRegistry":3}],2:[function(require,module,exports){
+},{"../class/Registry":5}],2:[function(require,module,exports){
+var OptionRegistry = require('../class/OptionRegistry');
+// instantiate
+var registry = new OptionRegistry();
+/**
+ * Custom option API
+ *
+ * @param nameOrOptionMap
+ * @returns {any}
+ */
+function optionAPI(nameOrOptionMap) {
+    if (typeof nameOrOptionMap === 'string') {
+        return registry.get(nameOrOptionMap);
+    }
+    else {
+        return registry.registerMany(nameOrOptionMap);
+    }
+}
+module.exports = optionAPI;
+
+},{"../class/OptionRegistry":4}],3:[function(require,module,exports){
 var randexp = require('randexp');
 /**
  * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
@@ -98,50 +120,71 @@ var Container = (function () {
 var container = new Container();
 module.exports = container;
 
-},{"randexp":173}],3:[function(require,module,exports){
+},{"randexp":175}],4:[function(require,module,exports){
+var __extends = (this && this.__extends) || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+};
+var Registry = require('./Registry');
 /**
  * This class defines a registry for custom formats used within JSF.
  */
-var FormatRegistry = (function () {
-    function FormatRegistry() {
+var OptionRegistry = (function (_super) {
+    __extends(OptionRegistry, _super);
+    function OptionRegistry() {
+        _super.call(this);
+        this.data['failOnInvalidTypes'] = true;
+        this.data['defaultInvalidTypeProduct'] = null;
+    }
+    return OptionRegistry;
+})(Registry);
+module.exports = OptionRegistry;
+
+},{"./Registry":5}],5:[function(require,module,exports){
+/**
+ * This class defines a registry for custom formats used within JSF.
+ */
+var Registry = (function () {
+    function Registry() {
         // empty by default
-        this.registry = {};
+        this.data = {};
     }
     /**
      * Registers custom format
      */
-    FormatRegistry.prototype.register = function (name, callback) {
-        this.registry[name] = callback;
+    Registry.prototype.register = function (name, callback) {
+        this.data[name] = callback;
     };
     /**
      * Register many formats at one shot
      */
-    FormatRegistry.prototype.registerMany = function (formats) {
+    Registry.prototype.registerMany = function (formats) {
         for (var name in formats) {
-            this.registry[name] = formats[name];
+            this.data[name] = formats[name];
         }
     };
     /**
      * Returns element by registry key
      */
-    FormatRegistry.prototype.get = function (name) {
-        var format = this.registry[name];
-        if (typeof format !== 'function') {
-            throw new Error('unknown format generator ' + JSON.stringify(name));
+    Registry.prototype.get = function (name) {
+        var format = this.data[name];
+        if (typeof format === 'undefined') {
+            throw new Error('unknown registry key ' + JSON.stringify(name));
         }
         return format;
     };
     /**
      * Returns the whole registry content
      */
-    FormatRegistry.prototype.list = function () {
-        return this.registry;
+    Registry.prototype.list = function () {
+        return this.data;
     };
-    return FormatRegistry;
+    return Registry;
 })();
-module.exports = FormatRegistry;
+module.exports = Registry;
 
-},{}],4:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -161,7 +204,7 @@ var ParseError = (function (_super) {
 })(Error);
 module.exports = ParseError;
 
-},{}],5:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 var inferredProperties = {
     array: [
         'additionalItems',
@@ -234,7 +277,7 @@ function inferType(obj, schemaPath) {
 }
 module.exports = inferType;
 
-},{}],6:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 /// <reference path="../index.d.ts" />
 /**
  * Returns random element of a collection
@@ -297,7 +340,7 @@ module.exports = {
     number: number
 };
 
-},{}],7:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 var deref = require('deref');
 var traverse = require('./traverse');
 var random = require('./random');
@@ -362,11 +405,28 @@ function run(schema, refs, ex) {
 }
 module.exports = run;
 
-},{"./random":6,"./traverse":8,"./utils":9,"deref":27}],8:[function(require,module,exports){
+},{"./random":8,"./traverse":10,"./utils":11,"deref":29}],10:[function(require,module,exports){
 var random = require('./random');
 var ParseError = require('./error');
 var inferType = require('./infer');
 var types = require('../types/index');
+var option = require('../api/option');
+function isExternal(schema) {
+    return schema.faker || schema.chance;
+}
+function reduceExternal(schema, path) {
+    if (schema['x-faker']) {
+        schema.faker = schema['x-faker'];
+    }
+    if (schema['x-chance']) {
+        schema.chance = schema['x-chance'];
+    }
+    var fakerUsed = schema.faker !== undefined, chanceUsed = schema.chance !== undefined;
+    if (fakerUsed && chanceUsed) {
+        throw new ParseError('ambiguous generator when using both faker and chance: ' + JSON.stringify(schema), path);
+    }
+    return schema;
+}
 // TODO provide types
 function traverse(schema, path, resolve) {
     resolve(schema);
@@ -382,21 +442,29 @@ function traverse(schema, path, resolve) {
         // Attempt to infer the type
         type = inferType(schema, path) || type;
     }
-    if (schema.faker || schema.chance) {
+    schema = reduceExternal(schema, path);
+    if (isExternal(schema)) {
         type = 'external';
     }
     if (typeof type === 'string') {
         if (!types[type]) {
-            throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
-        }
-        try {
-            return types[type](schema, path, resolve, traverse);
-        }
-        catch (e) {
-            if (typeof e.path === 'undefined') {
-                throw new ParseError(e.message, path);
+            if (option('failOnInvalidTypes')) {
+                throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
             }
-            throw e;
+            else {
+                return option('defaultInvalidTypeProduct');
+            }
+        }
+        else {
+            try {
+                return types[type](schema, path, resolve, traverse);
+            }
+            catch (e) {
+                if (typeof e.path === 'undefined') {
+                    throw new ParseError(e.message, path);
+                }
+                throw e;
+            }
         }
     }
     var copy = {};
@@ -415,7 +483,7 @@ function traverse(schema, path, resolve) {
 }
 module.exports = traverse;
 
-},{"../types/index":21,"./error":4,"./infer":5,"./random":6}],9:[function(require,module,exports){
+},{"../api/option":2,"../types/index":23,"./error":6,"./infer":7,"./random":8}],11:[function(require,module,exports){
 function getSubAttribute(obj, dotSeparatedKey) {
     var keyElements = dotSeparatedKey.split('.');
     while (keyElements.length) {
@@ -479,7 +547,7 @@ module.exports = {
     merge: merge
 };
 
-},{}],10:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
 /**
  * Generates randomized boolean value.
  *
@@ -490,7 +558,7 @@ function booleanGenerator() {
 }
 module.exports = booleanGenerator;
 
-},{}],11:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 var container = require('../class/Container');
 var randexp = container.get('randexp');
 var regexps = {
@@ -512,7 +580,7 @@ function coreFormatGenerator(coreFormat) {
 }
 module.exports = coreFormatGenerator;
 
-},{"../class/Container":2}],12:[function(require,module,exports){
+},{"../class/Container":3}],14:[function(require,module,exports){
 var random = require('../core/random');
 /**
  * Generates randomized date time ISO format string.
@@ -524,7 +592,7 @@ function dateTimeGenerator() {
 }
 module.exports = dateTimeGenerator;
 
-},{"../core/random":6}],13:[function(require,module,exports){
+},{"../core/random":8}],15:[function(require,module,exports){
 var random = require('../core/random');
 /**
  * Generates randomized ipv4 address.
@@ -538,7 +606,7 @@ function ipv4Generator() {
 }
 module.exports = ipv4Generator;
 
-},{"../core/random":6}],14:[function(require,module,exports){
+},{"../core/random":8}],16:[function(require,module,exports){
 /**
  * Generates null value.
  *
@@ -549,11 +617,12 @@ function nullGenerator() {
 }
 module.exports = nullGenerator;
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 var words = require('../generators/words');
 var random = require('../core/random');
 function produce() {
-    return words().join(' ');
+    var length = random.number(1, 5);
+    return words(length).join(' ');
 }
 /**
  * Generates randomized concatenated string based on words generator.
@@ -574,7 +643,7 @@ function thunkGenerator(min, max) {
 }
 module.exports = thunkGenerator;
 
-},{"../core/random":6,"../generators/words":16}],16:[function(require,module,exports){
+},{"../core/random":8,"../generators/words":18}],18:[function(require,module,exports){
 var random = require('../core/random');
 var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
     + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
@@ -584,26 +653,25 @@ var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed
 /**
  * Generates randomized array of single lorem ipsum words.
  *
- * @param min
- * @param max
+ * @param length
  * @returns {Array.<string>}
  */
-function wordsGenerator(min, max) {
-    if (min === void 0) { min = 1; }
-    if (max === void 0) { max = 5; }
-    var words = random.shuffle(LIPSUM_WORDS), length = random.number(min, Math.min(LIPSUM_WORDS.length, max));
+function wordsGenerator(length) {
+    var words = random.shuffle(LIPSUM_WORDS);
     return words.slice(0, length);
 }
 module.exports = wordsGenerator;
 
-},{"../core/random":6}],17:[function(require,module,exports){
+},{"../core/random":8}],19:[function(require,module,exports){
 var container = require('./class/Container');
 var format = require('./api/format');
+var option = require('./api/option');
 var run = require('./core/run');
 var jsf = function (schema, refs) {
     return run(schema, refs);
 };
 jsf.format = format;
+jsf.option = option;
 // returns itself for chaining
 jsf.extend = function (name, cb) {
     container.extend(name, cb);
@@ -611,7 +679,7 @@ jsf.extend = function (name, cb) {
 };
 module.exports = jsf;
 
-},{"./api/format":1,"./class/Container":2,"./core/run":7}],18:[function(require,module,exports){
+},{"./api/format":1,"./api/option":2,"./class/Container":3,"./core/run":9}],20:[function(require,module,exports){
 var random = require('../core/random');
 var utils = require('../core/utils');
 var ParseError = require('../core/error');
@@ -661,15 +729,15 @@ function arrayType(value, path, resolve, traverseCallback) {
 }
 module.exports = arrayType;
 
-},{"../core/error":4,"../core/random":6,"../core/utils":9}],19:[function(require,module,exports){
+},{"../core/error":6,"../core/random":8,"../core/utils":11}],21:[function(require,module,exports){
 var booleanGenerator = require('../generators/boolean');
 var booleanType = booleanGenerator;
 module.exports = booleanType;
 
-},{"../generators/boolean":10}],20:[function(require,module,exports){
+},{"../generators/boolean":12}],22:[function(require,module,exports){
 var utils = require('../core/utils');
 var container = require('../class/Container');
-function externalType(value) {
+function externalType(value, path) {
     var libraryName = value.faker ? 'faker' : 'chance', libraryModule = value.faker ? container.get('faker') : container.get('chance'), key = value.faker || value.chance, path = key, args = [];
     if (typeof path === 'object') {
         path = Object.keys(path)[0];
@@ -695,7 +763,7 @@ function externalType(value) {
 }
 module.exports = externalType;
 
-},{"../class/Container":2,"../core/utils":9}],21:[function(require,module,exports){
+},{"../class/Container":3,"../core/utils":11}],23:[function(require,module,exports){
 var _boolean = require('./boolean');
 var _null = require('./null');
 var _array = require('./array');
@@ -716,7 +784,7 @@ var typeMap = {
 };
 module.exports = typeMap;
 
-},{"./array":18,"./boolean":19,"./external":20,"./integer":22,"./null":23,"./number":24,"./object":25,"./string":26}],22:[function(require,module,exports){
+},{"./array":20,"./boolean":21,"./external":22,"./integer":24,"./null":25,"./number":26,"./object":27,"./string":28}],24:[function(require,module,exports){
 var number = require('./number');
 // The `integer` type is just a wrapper for the `number` type. The `number` type
 // returns floating point numbers, and `integer` type truncates the fraction
@@ -729,12 +797,12 @@ function integerType(value) {
 }
 module.exports = integerType;
 
-},{"./number":24}],23:[function(require,module,exports){
+},{"./number":26}],25:[function(require,module,exports){
 var nullGenerator = require('../generators/null');
 var nullType = nullGenerator;
 module.exports = nullType;
 
-},{"../generators/null":14}],24:[function(require,module,exports){
+},{"../generators/null":16}],26:[function(require,module,exports){
 var random = require('../core/random');
 var MIN_INTEGER = -100000000, MAX_INTEGER = 100000000;
 function numberType(value) {
@@ -760,7 +828,7 @@ function numberType(value) {
 }
 module.exports = numberType;
 
-},{"../core/random":6}],25:[function(require,module,exports){
+},{"../core/random":8}],27:[function(require,module,exports){
 var container = require('../class/Container');
 var random = require('../core/random');
 var words = require('../generators/words');
@@ -807,7 +875,7 @@ function objectType(value, path, resolve, traverseCallback) {
 }
 module.exports = objectType;
 
-},{"../class/Container":2,"../core/error":4,"../core/random":6,"../core/utils":9,"../generators/words":16}],26:[function(require,module,exports){
+},{"../class/Container":3,"../core/error":6,"../core/random":8,"../core/utils":11,"../generators/words":18}],28:[function(require,module,exports){
 var thunk = require('../generators/thunk');
 var ipv4 = require('../generators/ipv4');
 var dateTime = require('../generators/dateTime');
@@ -847,7 +915,7 @@ function stringType(value) {
 }
 module.exports = stringType;
 
-},{"../api/format":1,"../class/Container":2,"../generators/coreFormat":11,"../generators/dateTime":12,"../generators/ipv4":13,"../generators/thunk":15}],27:[function(require,module,exports){
+},{"../api/format":1,"../class/Container":3,"../generators/coreFormat":13,"../generators/dateTime":14,"../generators/ipv4":15,"../generators/thunk":17}],29:[function(require,module,exports){
 'use strict';
 
 var $ = require('./util/uri-helpers');
@@ -921,7 +989,7 @@ var instance = module.exports = function() {
 
 instance.util = $;
 
-},{"./util/find-reference":29,"./util/normalize-schema":30,"./util/resolve-schema":31,"./util/uri-helpers":32}],28:[function(require,module,exports){
+},{"./util/find-reference":31,"./util/normalize-schema":32,"./util/resolve-schema":33,"./util/uri-helpers":34}],30:[function(require,module,exports){
 'use strict';
 
 var clone = module.exports = function(obj, seen) {
@@ -956,7 +1024,7 @@ var clone = module.exports = function(obj, seen) {
   return target;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],31:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -1004,7 +1072,7 @@ var find = module.exports = function(id, refs) {
   return target;
 };
 
-},{"./uri-helpers":32}],30:[function(require,module,exports){
+},{"./uri-helpers":34}],32:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -1069,7 +1137,7 @@ module.exports = function(fakeroot, schema, push) {
   return copy;
 };
 
-},{"./clone-obj":28,"./uri-helpers":32}],31:[function(require,module,exports){
+},{"./clone-obj":30,"./uri-helpers":34}],33:[function(require,module,exports){
 'use strict';
 
 var $ = require('./uri-helpers');
@@ -1116,7 +1184,7 @@ module.exports = function(obj, refs, resolve) {
   return copy(obj, refs, parent, resolve);
 };
 
-},{"./find-reference":29,"./uri-helpers":32,"deep-extend":33}],32:[function(require,module,exports){
+},{"./find-reference":31,"./uri-helpers":34,"deep-extend":35}],34:[function(require,module,exports){
 'use strict';
 
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
@@ -1220,7 +1288,7 @@ module.exports = {
   getDocumentURI: getDocumentURI
 };
 
-},{}],33:[function(require,module,exports){
+},{}],35:[function(require,module,exports){
 /*!
  * @description Recursive object extending
  * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>
@@ -1366,7 +1434,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 	return target;
 }
 
-},{}],34:[function(require,module,exports){
+},{}],36:[function(require,module,exports){
 /**
  *
  * @namespace faker.address
@@ -1594,7 +1662,7 @@ function Address (faker) {
 
 module.exports = Address;
 
-},{}],35:[function(require,module,exports){
+},{}],37:[function(require,module,exports){
 /**
  *
  * @namespace faker.commerce
@@ -1715,7 +1783,7 @@ var Commerce = function (faker) {
 
 module['exports'] = Commerce;
 
-},{}],36:[function(require,module,exports){
+},{}],38:[function(require,module,exports){
 /**
  *
  * @namespace faker.company
@@ -1840,7 +1908,7 @@ var Company = function (faker) {
 }
 
 module['exports'] = Company;
-},{}],37:[function(require,module,exports){
+},{}],39:[function(require,module,exports){
 /**
  *
  * @namespace faker.date
@@ -1974,7 +2042,7 @@ var _Date = function (faker) {
 };
 
 module['exports'] = _Date;
-},{}],38:[function(require,module,exports){
+},{}],40:[function(require,module,exports){
 /*
   fake.js - generator method for combining faker methods based on string input
 
@@ -2083,7 +2151,7 @@ function Fake (faker) {
 }
 
 module['exports'] = Fake;
-},{}],39:[function(require,module,exports){
+},{}],41:[function(require,module,exports){
 /**
  *
  * @namespace faker.finance
@@ -2240,7 +2308,7 @@ var Finance = function (faker) {
 
 module['exports'] = Finance;
 
-},{}],40:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 /**
  *
  * @namespace faker.hacker
@@ -2326,7 +2394,7 @@ var Hacker = function (faker) {
 };
 
 module['exports'] = Hacker;
-},{}],41:[function(require,module,exports){
+},{}],43:[function(require,module,exports){
 /**
  *
  * @namespace faker.helpers
@@ -2586,7 +2654,7 @@ String.prototype.capitalize = function () { //v1.0
 
 module['exports'] = Helpers;
 
-},{}],42:[function(require,module,exports){
+},{}],44:[function(require,module,exports){
 /**
  *
  * @namespace faker.image
@@ -2785,7 +2853,7 @@ var Image = function (faker) {
 }
 
 module["exports"] = Image;
-},{}],43:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 /*
 
    this index.js file is used for including the faker library as a CommonJS module, instead of a bundle
@@ -2926,7 +2994,7 @@ Faker.prototype.seed = function(value) {
 }
 module['exports'] = Faker;
 
-},{"./address":34,"./commerce":35,"./company":36,"./date":37,"./fake":38,"./finance":39,"./hacker":40,"./helpers":41,"./image":42,"./internet":44,"./lorem":164,"./name":165,"./phone_number":166,"./random":167,"./system":168}],44:[function(require,module,exports){
+},{"./address":36,"./commerce":37,"./company":38,"./date":39,"./fake":40,"./finance":41,"./hacker":42,"./helpers":43,"./image":44,"./internet":46,"./lorem":166,"./name":167,"./phone_number":168,"./random":169,"./system":170}],46:[function(require,module,exports){
 var password_generator = require('../vendor/password-generator.js'),
     random_ua = require('../vendor/user-agent');
 
@@ -3278,7 +3346,7 @@ var Internet = function (faker) {
 
 module["exports"] = Internet;
 
-},{"../vendor/password-generator.js":171,"../vendor/user-agent":172}],45:[function(require,module,exports){
+},{"../vendor/password-generator.js":173,"../vendor/user-agent":174}],47:[function(require,module,exports){
 module["exports"] = [
   "###",
   "##",
@@ -3288,12 +3356,12 @@ module["exports"] = [
   "##c"
 ];
 
-},{}],46:[function(require,module,exports){
+},{}],48:[function(require,module,exports){
 module["exports"] = [
   "#{city_name}"
 ];
 
-},{}],47:[function(require,module,exports){
+},{}],49:[function(require,module,exports){
 module["exports"] = [
   "Aigen im Mühlkreis",
   "Allerheiligen bei Wildon",
@@ -3415,7 +3483,7 @@ module["exports"] = [
   "Übersbach"
 ];
 
-},{}],48:[function(require,module,exports){
+},{}],50:[function(require,module,exports){
 module["exports"] = [
   "Ägypten",
   "Äquatorialguinea",
@@ -3656,12 +3724,12 @@ module["exports"] = [
   "Zypern"
 ];
 
-},{}],49:[function(require,module,exports){
+},{}],51:[function(require,module,exports){
 module["exports"] = [
   "Österreich"
 ];
 
-},{}],50:[function(require,module,exports){
+},{}],52:[function(require,module,exports){
 var address = {};
 module['exports'] = address;
 address.country = require("./country");
@@ -3677,19 +3745,19 @@ address.street_name = require("./street_name");
 address.street_address = require("./street_address");
 address.default_country = require("./default_country");
 
-},{"./building_number":45,"./city":46,"./city_name":47,"./country":48,"./default_country":49,"./postcode":51,"./secondary_address":52,"./state":53,"./state_abbr":54,"./street_address":55,"./street_name":56,"./street_root":57}],51:[function(require,module,exports){
+},{"./building_number":47,"./city":48,"./city_name":49,"./country":50,"./default_country":51,"./postcode":53,"./secondary_address":54,"./state":55,"./state_abbr":56,"./street_address":57,"./street_name":58,"./street_root":59}],53:[function(require,module,exports){
 module["exports"] = [
   "####"
 ];
 
-},{}],52:[function(require,module,exports){
+},{}],54:[function(require,module,exports){
 module["exports"] = [
   "Apt. ###",
   "Zimmer ###",
   "# OG"
 ];
 
-},{}],53:[function(require,module,exports){
+},{}],55:[function(require,module,exports){
 module["exports"] = [
   "Burgenland",
   "Kärnten",
@@ -3702,7 +3770,7 @@ module["exports"] = [
   "Wien"
 ];
 
-},{}],54:[function(require,module,exports){
+},{}],56:[function(require,module,exports){
 module["exports"] = [
   "Bgld.",
   "Ktn.",
@@ -3715,17 +3783,17 @@ module["exports"] = [
   "W"
 ];
 
-},{}],55:[function(require,module,exports){
+},{}],57:[function(require,module,exports){
 module["exports"] = [
   "#{street_name} #{building_number}"
 ];
 
-},{}],56:[function(require,module,exports){
+},{}],58:[function(require,module,exports){
 module["exports"] = [
   "#{street_root}"
 ];
 
-},{}],57:[function(require,module,exports){
+},{}],59:[function(require,module,exports){
 module["exports"] = [
   "Ahorn",
   "Ahorngasse (St. Andrä)",
@@ -3927,7 +3995,7 @@ module["exports"] = [
   "Ötzbruck"
 ];
 
-},{}],58:[function(require,module,exports){
+},{}],60:[function(require,module,exports){
 module["exports"] = [
   "+43-6##-#######",
   "06##-########",
@@ -3935,19 +4003,19 @@ module["exports"] = [
   "06##########"
 ];
 
-},{}],59:[function(require,module,exports){
+},{}],61:[function(require,module,exports){
 var cell_phone = {};
 module['exports'] = cell_phone;
 cell_phone.formats = require("./formats");
 
-},{"./formats":58}],60:[function(require,module,exports){
+},{"./formats":60}],62:[function(require,module,exports){
 var company = {};
 module['exports'] = company;
 company.suffix = require("./suffix");
 company.legal_form = require("./legal_form");
 company.name = require("./name");
 
-},{"./legal_form":61,"./name":62,"./suffix":63}],61:[function(require,module,exports){
+},{"./legal_form":63,"./name":64,"./suffix":65}],63:[function(require,module,exports){
 module["exports"] = [
   "GmbH",
   "AG",
@@ -3958,16 +4026,16 @@ module["exports"] = [
   "OHG"
 ];
 
-},{}],62:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module["exports"] = [
   "#{Name.last_name} #{suffix}",
   "#{Name.last_name}-#{Name.last_name}",
   "#{Name.last_name}, #{Name.last_name} und #{Name.last_name}"
 ];
 
-},{}],63:[function(require,module,exports){
-arguments[4][61][0].apply(exports,arguments)
-},{"dup":61}],64:[function(require,module,exports){
+},{}],65:[function(require,module,exports){
+arguments[4][63][0].apply(exports,arguments)
+},{"dup":63}],66:[function(require,module,exports){
 var de_AT = {};
 module['exports'] = de_AT;
 de_AT.title = "German (Austria)";
@@ -3978,7 +4046,7 @@ de_AT.name = require("./name");
 de_AT.phone_number = require("./phone_number");
 de_AT.cell_phone = require("./cell_phone");
 
-},{"./address":50,"./cell_phone":59,"./company":60,"./internet":67,"./name":69,"./phone_number":75}],65:[function(require,module,exports){
+},{"./address":52,"./cell_phone":61,"./company":62,"./internet":69,"./name":71,"./phone_number":77}],67:[function(require,module,exports){
 module["exports"] = [
   "com",
   "info",
@@ -3990,20 +4058,20 @@ module["exports"] = [
   "at"
 ];
 
-},{}],66:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module["exports"] = [
   "gmail.com",
   "yahoo.com",
   "hotmail.com"
 ];
 
-},{}],67:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var internet = {};
 module['exports'] = internet;
 internet.free_email = require("./free_email");
 internet.domain_suffix = require("./domain_suffix");
 
-},{"./domain_suffix":65,"./free_email":66}],68:[function(require,module,exports){
+},{"./domain_suffix":67,"./free_email":68}],70:[function(require,module,exports){
 module["exports"] = [
   "Aaron",
   "Abdul",
@@ -5162,7 +5230,7 @@ module["exports"] = [
   "Zoé"
 ];
 
-},{}],69:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 var name = {};
 module['exports'] = name;
 name.first_name = require("./first_name");
@@ -5171,7 +5239,7 @@ name.prefix = require("./prefix");
 name.nobility_title_prefix = require("./nobility_title_prefix");
 name.name = require("./name");
 
-},{"./first_name":68,"./last_name":70,"./name":71,"./nobility_title_prefix":72,"./prefix":73}],70:[function(require,module,exports){
+},{"./first_name":70,"./last_name":72,"./name":73,"./nobility_title_prefix":74,"./prefix":75}],72:[function(require,module,exports){
 module["exports"] = [
   "Abel",
   "Abicht",
@@ -6864,7 +6932,7 @@ module["exports"] = [
   "Überacker"
 ];
 
-},{}],71:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module["exports"] = [
   "#{prefix} #{first_name} #{last_name}",
   "#{first_name} #{nobility_title_prefix} #{last_name}",
@@ -6874,7 +6942,7 @@ module["exports"] = [
   "#{first_name} #{last_name}"
 ];
 
-},{}],72:[function(require,module,exports){
+},{}],74:[function(require,module,exports){
 module["exports"] = [
   "zu",
   "von",
@@ -6882,13 +6950,13 @@ module["exports"] = [
   "von der"
 ];
 
-},{}],73:[function(require,module,exports){
+},{}],75:[function(require,module,exports){
 module["exports"] = [
   "Dr.",
   "Prof. Dr."
 ];
 
-},{}],74:[function(require,module,exports){
+},{}],76:[function(require,module,exports){
 module["exports"] = [
   "01 #######",
   "01#######",
@@ -6900,19 +6968,19 @@ module["exports"] = [
   "+43 ########"
 ];
 
-},{}],75:[function(require,module,exports){
+},{}],77:[function(require,module,exports){
 var phone_number = {};
 module['exports'] = phone_number;
 phone_number.formats = require("./formats");
 
-},{"./formats":74}],76:[function(require,module,exports){
+},{"./formats":76}],78:[function(require,module,exports){
 module["exports"] = [
   "#####",
   "####",
   "###"
 ];
 
-},{}],77:[function(require,module,exports){
+},{}],79:[function(require,module,exports){
 module["exports"] = [
   "#{city_prefix} #{Name.first_name}#{city_suffix}",
   "#{city_prefix} #{Name.first_name}",
@@ -6920,7 +6988,7 @@ module["exports"] = [
   "#{Name.last_name}#{city_suffix}"
 ];
 
-},{}],78:[function(require,module,exports){
+},{}],80:[function(require,module,exports){
 module["exports"] = [
   "North",
   "East",
@@ -6931,7 +6999,7 @@ module["exports"] = [
   "Port"
 ];
 
-},{}],79:[function(require,module,exports){
+},{}],81:[function(require,module,exports){
 module["exports"] = [
   "town",
   "ton",
@@ -6954,7 +7022,7 @@ module["exports"] = [
   "shire"
 ];
 
-},{}],80:[function(require,module,exports){
+},{}],82:[function(require,module,exports){
 module["exports"] = [
   "Afghanistan",
   "Albania",
@@ -7203,7 +7271,7 @@ module["exports"] = [
   "Zimbabwe"
 ];
 
-},{}],81:[function(require,module,exports){
+},{}],83:[function(require,module,exports){
 module["exports"] = [
   "AD",
   "AE",
@@ -7457,7 +7525,7 @@ module["exports"] = [
   "ZW"
 ];
 
-},{}],82:[function(require,module,exports){
+},{}],84:[function(require,module,exports){
 module["exports"] = [
   "Avon",
   "Bedfordshire",
@@ -7467,12 +7535,12 @@ module["exports"] = [
   "Cambridgeshire"
 ];
 
-},{}],83:[function(require,module,exports){
+},{}],85:[function(require,module,exports){
 module["exports"] = [
   "United States of America"
 ];
 
-},{}],84:[function(require,module,exports){
+},{}],86:[function(require,module,exports){
 var address = {};
 module['exports'] = address;
 address.city_prefix = require("./city_prefix");
@@ -7493,21 +7561,21 @@ address.street_name = require("./street_name");
 address.street_address = require("./street_address");
 address.default_country = require("./default_country");
 
-},{"./building_number":76,"./city":77,"./city_prefix":78,"./city_suffix":79,"./country":80,"./country_code":81,"./county":82,"./default_country":83,"./postcode":85,"./postcode_by_state":86,"./secondary_address":87,"./state":88,"./state_abbr":89,"./street_address":90,"./street_name":91,"./street_suffix":92,"./time_zone":93}],85:[function(require,module,exports){
+},{"./building_number":78,"./city":79,"./city_prefix":80,"./city_suffix":81,"./country":82,"./country_code":83,"./county":84,"./default_country":85,"./postcode":87,"./postcode_by_state":88,"./secondary_address":89,"./state":90,"./state_abbr":91,"./street_address":92,"./street_name":93,"./street_suffix":94,"./time_zone":95}],87:[function(require,module,exports){
 module["exports"] = [
   "#####",
   "#####-####"
 ];
 
-},{}],86:[function(require,module,exports){
-arguments[4][85][0].apply(exports,arguments)
-},{"dup":85}],87:[function(require,module,exports){
+},{}],88:[function(require,module,exports){
+arguments[4][87][0].apply(exports,arguments)
+},{"dup":87}],89:[function(require,module,exports){
 module["exports"] = [
   "Apt. ###",
   "Suite ###"
 ];
 
-},{}],88:[function(require,module,exports){
+},{}],90:[function(require,module,exports){
 module["exports"] = [
   "Alabama",
   "Alaska",
@@ -7561,7 +7629,7 @@ module["exports"] = [
   "Wyoming"
 ];
 
-},{}],89:[function(require,module,exports){
+},{}],91:[function(require,module,exports){
 module["exports"] = [
   "AL",
   "AK",
@@ -7615,18 +7683,18 @@ module["exports"] = [
   "WY"
 ];
 
-},{}],90:[function(require,module,exports){
+},{}],92:[function(require,module,exports){
 module["exports"] = [
   "#{building_number} #{street_name}"
 ];
 
-},{}],91:[function(require,module,exports){
+},{}],93:[function(require,module,exports){
 module["exports"] = [
   "#{Name.first_name} #{street_suffix}",
   "#{Name.last_name} #{street_suffix}"
 ];
 
-},{}],92:[function(require,module,exports){
+},{}],94:[function(require,module,exports){
 module["exports"] = [
   "Alley",
   "Avenue",
@@ -7855,7 +7923,7 @@ module["exports"] = [
   "Wells"
 ];
 
-},{}],93:[function(require,module,exports){
+},{}],95:[function(require,module,exports){
 module["exports"] = [
   "Pacific/Midway",
   "Pacific/Pago_Pago",
@@ -8002,20 +8070,20 @@ module["exports"] = [
   "Pacific/Apia"
 ];
 
-},{}],94:[function(require,module,exports){
+},{}],96:[function(require,module,exports){
 module["exports"] = [
   "#{Name.name}",
   "#{Company.name}"
 ];
 
-},{}],95:[function(require,module,exports){
+},{}],97:[function(require,module,exports){
 var app = {};
 module['exports'] = app;
 app.name = require("./name");
 app.version = require("./version");
 app.author = require("./author");
 
-},{"./author":94,"./name":96,"./version":97}],96:[function(require,module,exports){
+},{"./author":96,"./name":98,"./version":99}],98:[function(require,module,exports){
 module["exports"] = [
   "Redhold",
   "Treeflex",
@@ -8081,7 +8149,7 @@ module["exports"] = [
   "Keylex"
 ];
 
-},{}],97:[function(require,module,exports){
+},{}],99:[function(require,module,exports){
 module["exports"] = [
   "0.#.#",
   "0.##",
@@ -8090,7 +8158,7 @@ module["exports"] = [
   "#.#.#"
 ];
 
-},{}],98:[function(require,module,exports){
+},{}],100:[function(require,module,exports){
 module["exports"] = [
   "2011-10-12",
   "2012-11-12",
@@ -8098,7 +8166,7 @@ module["exports"] = [
   "2013-9-12"
 ];
 
-},{}],99:[function(require,module,exports){
+},{}],101:[function(require,module,exports){
 module["exports"] = [
   "1234-2121-1221-1211",
   "1212-1221-1121-1234",
@@ -8106,7 +8174,7 @@ module["exports"] = [
   "1228-1221-1221-1431"
 ];
 
-},{}],100:[function(require,module,exports){
+},{}],102:[function(require,module,exports){
 module["exports"] = [
   "visa",
   "mastercard",
@@ -8114,14 +8182,14 @@ module["exports"] = [
   "discover"
 ];
 
-},{}],101:[function(require,module,exports){
+},{}],103:[function(require,module,exports){
 var business = {};
 module['exports'] = business;
 business.credit_card_numbers = require("./credit_card_numbers");
 business.credit_card_expiry_dates = require("./credit_card_expiry_dates");
 business.credit_card_types = require("./credit_card_types");
 
-},{"./credit_card_expiry_dates":98,"./credit_card_numbers":99,"./credit_card_types":100}],102:[function(require,module,exports){
+},{"./credit_card_expiry_dates":100,"./credit_card_numbers":101,"./credit_card_types":102}],104:[function(require,module,exports){
 module["exports"] = [
   "###-###-####",
   "(###) ###-####",
@@ -8129,9 +8197,9 @@ module["exports"] = [
   "###.###.####"
 ];
 
-},{}],103:[function(require,module,exports){
-arguments[4][59][0].apply(exports,arguments)
-},{"./formats":102,"dup":59}],104:[function(require,module,exports){
+},{}],105:[function(require,module,exports){
+arguments[4][61][0].apply(exports,arguments)
+},{"./formats":104,"dup":61}],106:[function(require,module,exports){
 module["exports"] = [
   "red",
   "green",
@@ -8166,7 +8234,7 @@ module["exports"] = [
   "silver"
 ];
 
-},{}],105:[function(require,module,exports){
+},{}],107:[function(require,module,exports){
 module["exports"] = [
   "Books",
   "Movies",
@@ -8192,14 +8260,14 @@ module["exports"] = [
   "Industrial"
 ];
 
-},{}],106:[function(require,module,exports){
+},{}],108:[function(require,module,exports){
 var commerce = {};
 module['exports'] = commerce;
 commerce.color = require("./color");
 commerce.department = require("./department");
 commerce.product_name = require("./product_name");
 
-},{"./color":104,"./department":105,"./product_name":107}],107:[function(require,module,exports){
+},{"./color":106,"./department":107,"./product_name":109}],109:[function(require,module,exports){
 module["exports"] = {
   "adjective": [
     "Small",
@@ -8261,7 +8329,7 @@ module["exports"] = {
   ]
 };
 
-},{}],108:[function(require,module,exports){
+},{}],110:[function(require,module,exports){
 module["exports"] = [
   "Adaptive",
   "Advanced",
@@ -8365,7 +8433,7 @@ module["exports"] = [
   "Vision-oriented"
 ];
 
-},{}],109:[function(require,module,exports){
+},{}],111:[function(require,module,exports){
 module["exports"] = [
   "clicks-and-mortar",
   "value-added",
@@ -8434,7 +8502,7 @@ module["exports"] = [
   "rich"
 ];
 
-},{}],110:[function(require,module,exports){
+},{}],112:[function(require,module,exports){
 module["exports"] = [
   "synergies",
   "web-readiness",
@@ -8482,7 +8550,7 @@ module["exports"] = [
   "methodologies"
 ];
 
-},{}],111:[function(require,module,exports){
+},{}],113:[function(require,module,exports){
 module["exports"] = [
   "implement",
   "utilize",
@@ -8546,7 +8614,7 @@ module["exports"] = [
   "recontextualize"
 ];
 
-},{}],112:[function(require,module,exports){
+},{}],114:[function(require,module,exports){
 module["exports"] = [
   "24 hour",
   "24/7",
@@ -8651,7 +8719,7 @@ module["exports"] = [
   "zero tolerance"
 ];
 
-},{}],113:[function(require,module,exports){
+},{}],115:[function(require,module,exports){
 var company = {};
 module['exports'] = company;
 company.suffix = require("./suffix");
@@ -8663,14 +8731,14 @@ company.bs_adjective = require("./bs_adjective");
 company.bs_noun = require("./bs_noun");
 company.name = require("./name");
 
-},{"./adjective":108,"./bs_adjective":109,"./bs_noun":110,"./bs_verb":111,"./descriptor":112,"./name":114,"./noun":115,"./suffix":116}],114:[function(require,module,exports){
+},{"./adjective":110,"./bs_adjective":111,"./bs_noun":112,"./bs_verb":113,"./descriptor":114,"./name":116,"./noun":117,"./suffix":118}],116:[function(require,module,exports){
 module["exports"] = [
   "#{Name.last_name} #{suffix}",
   "#{Name.last_name}-#{Name.last_name}",
   "#{Name.last_name}, #{Name.last_name} and #{Name.last_name}"
 ];
 
-},{}],115:[function(require,module,exports){
+},{}],117:[function(require,module,exports){
 module["exports"] = [
   "ability",
   "access",
@@ -8778,7 +8846,7 @@ module["exports"] = [
   "workforce"
 ];
 
-},{}],116:[function(require,module,exports){
+},{}],118:[function(require,module,exports){
 module["exports"] = [
   "Inc",
   "and Sons",
@@ -8786,19 +8854,19 @@ module["exports"] = [
   "Group"
 ];
 
-},{}],117:[function(require,module,exports){
+},{}],119:[function(require,module,exports){
 module["exports"] = [
   "/34##-######-####L/",
   "/37##-######-####L/"
 ];
 
-},{}],118:[function(require,module,exports){
+},{}],120:[function(require,module,exports){
 module["exports"] = [
   "/30[0-5]#-######-###L/",
   "/368#-######-###L/"
 ];
 
-},{}],119:[function(require,module,exports){
+},{}],121:[function(require,module,exports){
 module["exports"] = [
   "/6011-####-####-###L/",
   "/65##-####-####-###L/",
@@ -8808,7 +8876,7 @@ module["exports"] = [
   "/64[4-9]#-62##-####-####-###L/"
 ];
 
-},{}],120:[function(require,module,exports){
+},{}],122:[function(require,module,exports){
 var credit_card = {};
 module['exports'] = credit_card;
 credit_card.visa = require("./visa");
@@ -8822,14 +8890,14 @@ credit_card.solo = require("./solo");
 credit_card.maestro = require("./maestro");
 credit_card.laser = require("./laser");
 
-},{"./american_express":117,"./diners_club":118,"./discover":119,"./jcb":121,"./laser":122,"./maestro":123,"./mastercard":124,"./solo":125,"./switch":126,"./visa":127}],121:[function(require,module,exports){
+},{"./american_express":119,"./diners_club":120,"./discover":121,"./jcb":123,"./laser":124,"./maestro":125,"./mastercard":126,"./solo":127,"./switch":128,"./visa":129}],123:[function(require,module,exports){
 module["exports"] = [
   "/3528-####-####-###L/",
   "/3529-####-####-###L/",
   "/35[3-8]#-####-####-###L/"
 ];
 
-},{}],122:[function(require,module,exports){
+},{}],124:[function(require,module,exports){
 module["exports"] = [
   "/6304###########L/",
   "/6706###########L/",
@@ -8841,46 +8909,46 @@ module["exports"] = [
   "/6709#########{5,6}L/"
 ];
 
-},{}],123:[function(require,module,exports){
+},{}],125:[function(require,module,exports){
 module["exports"] = [
   "/50#{9,16}L/",
   "/5[6-8]#{9,16}L/",
   "/56##{9,16}L/"
 ];
 
-},{}],124:[function(require,module,exports){
+},{}],126:[function(require,module,exports){
 module["exports"] = [
   "/5[1-5]##-####-####-###L/",
   "/6771-89##-####-###L/"
 ];
 
-},{}],125:[function(require,module,exports){
+},{}],127:[function(require,module,exports){
 module["exports"] = [
   "/6767-####-####-###L/",
   "/6767-####-####-####-#L/",
   "/6767-####-####-####-##L/"
 ];
 
-},{}],126:[function(require,module,exports){
+},{}],128:[function(require,module,exports){
 module["exports"] = [
   "/6759-####-####-###L/",
   "/6759-####-####-####-#L/",
   "/6759-####-####-####-##L/"
 ];
 
-},{}],127:[function(require,module,exports){
+},{}],129:[function(require,module,exports){
 module["exports"] = [
   "/4###########L/",
   "/4###-####-####-###L/"
 ];
 
-},{}],128:[function(require,module,exports){
+},{}],130:[function(require,module,exports){
 var date = {};
 module["exports"] = date;
 date.month = require("./month");
 date.weekday = require("./weekday");
 
-},{"./month":129,"./weekday":130}],129:[function(require,module,exports){
+},{"./month":131,"./weekday":132}],131:[function(require,module,exports){
 // Source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/en.xml#L1799
 module["exports"] = {
   wide: [
@@ -8945,7 +9013,7 @@ module["exports"] = {
   ]
 };
 
-},{}],130:[function(require,module,exports){
+},{}],132:[function(require,module,exports){
 // Source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/en.xml#L1847
 module["exports"] = {
   wide: [
@@ -8990,7 +9058,7 @@ module["exports"] = {
   ]
 };
 
-},{}],131:[function(require,module,exports){
+},{}],133:[function(require,module,exports){
 module["exports"] = [
   "Checking",
   "Savings",
@@ -9002,7 +9070,7 @@ module["exports"] = [
   "Personal Loan"
 ];
 
-},{}],132:[function(require,module,exports){
+},{}],134:[function(require,module,exports){
 module["exports"] = {
   "UAE Dirham": {
     "code": "AED",
@@ -9682,14 +9750,14 @@ module["exports"] = {
   }
 };
 
-},{}],133:[function(require,module,exports){
+},{}],135:[function(require,module,exports){
 var finance = {};
 module['exports'] = finance;
 finance.account_type = require("./account_type");
 finance.transaction_type = require("./transaction_type");
 finance.currency = require("./currency");
 
-},{"./account_type":131,"./currency":132,"./transaction_type":134}],134:[function(require,module,exports){
+},{"./account_type":133,"./currency":134,"./transaction_type":136}],136:[function(require,module,exports){
 module["exports"] = [
   "deposit",
   "withdrawal",
@@ -9697,7 +9765,7 @@ module["exports"] = [
   "invoice"
 ];
 
-},{}],135:[function(require,module,exports){
+},{}],137:[function(require,module,exports){
 module["exports"] = [
   "TCP",
   "HTTP",
@@ -9730,7 +9798,7 @@ module["exports"] = [
   "JBOD"
 ];
 
-},{}],136:[function(require,module,exports){
+},{}],138:[function(require,module,exports){
 module["exports"] = [
   "auxiliary",
   "primary",
@@ -9752,7 +9820,7 @@ module["exports"] = [
   "mobile"
 ];
 
-},{}],137:[function(require,module,exports){
+},{}],139:[function(require,module,exports){
 var hacker = {};
 module['exports'] = hacker;
 hacker.abbreviation = require("./abbreviation");
@@ -9761,7 +9829,7 @@ hacker.noun = require("./noun");
 hacker.verb = require("./verb");
 hacker.ingverb = require("./ingverb");
 
-},{"./abbreviation":135,"./adjective":136,"./ingverb":138,"./noun":139,"./verb":140}],138:[function(require,module,exports){
+},{"./abbreviation":137,"./adjective":138,"./ingverb":140,"./noun":141,"./verb":142}],140:[function(require,module,exports){
 module["exports"] = [
   "backing up",
   "bypassing",
@@ -9781,7 +9849,7 @@ module["exports"] = [
   "parsing"
 ];
 
-},{}],139:[function(require,module,exports){
+},{}],141:[function(require,module,exports){
 module["exports"] = [
   "driver",
   "protocol",
@@ -9809,7 +9877,7 @@ module["exports"] = [
   "matrix"
 ];
 
-},{}],140:[function(require,module,exports){
+},{}],142:[function(require,module,exports){
 module["exports"] = [
   "back up",
   "bypass",
@@ -9831,7 +9899,7 @@ module["exports"] = [
   "parse"
 ];
 
-},{}],141:[function(require,module,exports){
+},{}],143:[function(require,module,exports){
 var en = {};
 module['exports'] = en;
 en.title = "English";
@@ -9853,7 +9921,7 @@ en.finance = require("./finance");
 en.date = require("./date");
 en.system = require("./system");
 
-},{"./address":84,"./app":95,"./business":101,"./cell_phone":103,"./commerce":106,"./company":113,"./credit_card":120,"./date":128,"./finance":133,"./hacker":137,"./internet":146,"./lorem":147,"./name":151,"./phone_number":158,"./system":159,"./team":162}],142:[function(require,module,exports){
+},{"./address":86,"./app":97,"./business":103,"./cell_phone":105,"./commerce":108,"./company":115,"./credit_card":122,"./date":130,"./finance":135,"./hacker":139,"./internet":148,"./lorem":149,"./name":153,"./phone_number":160,"./system":161,"./team":164}],144:[function(require,module,exports){
 module["exports"] = [
   "https://s3.amazonaws.com/uifaces/faces/twitter/jarjan/128.jpg",
   "https://s3.amazonaws.com/uifaces/faces/twitter/mahdif/128.jpg",
@@ -11123,7 +11191,7 @@ module["exports"] = [
   "https://s3.amazonaws.com/uifaces/faces/twitter/areandacom/128.jpg"
 ];
 
-},{}],143:[function(require,module,exports){
+},{}],145:[function(require,module,exports){
 module["exports"] = [
   "com",
   "biz",
@@ -11133,16 +11201,16 @@ module["exports"] = [
   "org"
 ];
 
-},{}],144:[function(require,module,exports){
+},{}],146:[function(require,module,exports){
 module["exports"] = [
   "example.org",
   "example.com",
   "example.net"
 ];
 
-},{}],145:[function(require,module,exports){
-arguments[4][66][0].apply(exports,arguments)
-},{"dup":66}],146:[function(require,module,exports){
+},{}],147:[function(require,module,exports){
+arguments[4][68][0].apply(exports,arguments)
+},{"dup":68}],148:[function(require,module,exports){
 var internet = {};
 module['exports'] = internet;
 internet.free_email = require("./free_email");
@@ -11150,13 +11218,13 @@ internet.example_email = require("./example_email");
 internet.domain_suffix = require("./domain_suffix");
 internet.avatar_uri = require("./avatar_uri");
 
-},{"./avatar_uri":142,"./domain_suffix":143,"./example_email":144,"./free_email":145}],147:[function(require,module,exports){
+},{"./avatar_uri":144,"./domain_suffix":145,"./example_email":146,"./free_email":147}],149:[function(require,module,exports){
 var lorem = {};
 module['exports'] = lorem;
 lorem.words = require("./words");
 lorem.supplemental = require("./supplemental");
 
-},{"./supplemental":148,"./words":149}],148:[function(require,module,exports){
+},{"./supplemental":150,"./words":151}],150:[function(require,module,exports){
 module["exports"] = [
   "abbas",
   "abduco",
@@ -12000,7 +12068,7 @@ module["exports"] = [
   "xiphias"
 ];
 
-},{}],149:[function(require,module,exports){
+},{}],151:[function(require,module,exports){
 module["exports"] = [
   "alias",
   "consequatur",
@@ -12253,7 +12321,7 @@ module["exports"] = [
   "repellat"
 ];
 
-},{}],150:[function(require,module,exports){
+},{}],152:[function(require,module,exports){
 module["exports"] = [
   "Aaliyah",
   "Aaron",
@@ -15264,7 +15332,7 @@ module["exports"] = [
   "Zula"
 ];
 
-},{}],151:[function(require,module,exports){
+},{}],153:[function(require,module,exports){
 var name = {};
 module['exports'] = name;
 name.first_name = require("./first_name");
@@ -15274,7 +15342,7 @@ name.suffix = require("./suffix");
 name.title = require("./title");
 name.name = require("./name");
 
-},{"./first_name":150,"./last_name":152,"./name":153,"./prefix":154,"./suffix":155,"./title":156}],152:[function(require,module,exports){
+},{"./first_name":152,"./last_name":154,"./name":155,"./prefix":156,"./suffix":157,"./title":158}],154:[function(require,module,exports){
 module["exports"] = [
   "Abbott",
   "Abernathy",
@@ -15752,7 +15820,7 @@ module["exports"] = [
   "Zulauf"
 ];
 
-},{}],153:[function(require,module,exports){
+},{}],155:[function(require,module,exports){
 module["exports"] = [
   "#{prefix} #{first_name} #{last_name}",
   "#{first_name} #{last_name} #{suffix}",
@@ -15762,7 +15830,7 @@ module["exports"] = [
   "#{first_name} #{last_name}"
 ];
 
-},{}],154:[function(require,module,exports){
+},{}],156:[function(require,module,exports){
 module["exports"] = [
   "Mr.",
   "Mrs.",
@@ -15771,7 +15839,7 @@ module["exports"] = [
   "Dr."
 ];
 
-},{}],155:[function(require,module,exports){
+},{}],157:[function(require,module,exports){
 module["exports"] = [
   "Jr.",
   "Sr.",
@@ -15786,7 +15854,7 @@ module["exports"] = [
   "DVM"
 ];
 
-},{}],156:[function(require,module,exports){
+},{}],158:[function(require,module,exports){
 module["exports"] = {
   "descriptor": [
     "Lead",
@@ -15880,7 +15948,7 @@ module["exports"] = {
   ]
 };
 
-},{}],157:[function(require,module,exports){
+},{}],159:[function(require,module,exports){
 module["exports"] = [
   "###-###-####",
   "(###) ###-####",
@@ -15904,13 +15972,13 @@ module["exports"] = [
   "###.###.#### x#####"
 ];
 
-},{}],158:[function(require,module,exports){
-arguments[4][75][0].apply(exports,arguments)
-},{"./formats":157,"dup":75}],159:[function(require,module,exports){
+},{}],160:[function(require,module,exports){
+arguments[4][77][0].apply(exports,arguments)
+},{"./formats":159,"dup":77}],161:[function(require,module,exports){
 var system = {};
 module['exports'] = system;
 system.mimeTypes = require("./mimeTypes");
-},{"./mimeTypes":160}],160:[function(require,module,exports){
+},{"./mimeTypes":162}],162:[function(require,module,exports){
 /*
 
 The MIT License (MIT)
@@ -22492,7 +22560,7 @@ module['exports'] = {
     "compressible": true
   }
 }
-},{}],161:[function(require,module,exports){
+},{}],163:[function(require,module,exports){
 module["exports"] = [
   "ants",
   "bats",
@@ -22563,18 +22631,18 @@ module["exports"] = [
   "druids"
 ];
 
-},{}],162:[function(require,module,exports){
+},{}],164:[function(require,module,exports){
 var team = {};
 module['exports'] = team;
 team.creature = require("./creature");
 team.name = require("./name");
 
-},{"./creature":161,"./name":163}],163:[function(require,module,exports){
+},{"./creature":163,"./name":165}],165:[function(require,module,exports){
 module["exports"] = [
   "#{Address.state} #{creature}"
 ];
 
-},{}],164:[function(require,module,exports){
+},{}],166:[function(require,module,exports){
 
 /**
  *
@@ -22703,7 +22771,7 @@ var Lorem = function (faker) {
 
 module["exports"] = Lorem;
 
-},{}],165:[function(require,module,exports){
+},{}],167:[function(require,module,exports){
 /**
  *
  * @namespace faker.name
@@ -22882,7 +22950,7 @@ function Name (faker) {
 
 module['exports'] = Name;
 
-},{}],166:[function(require,module,exports){
+},{}],168:[function(require,module,exports){
 /**
  *
  * @namespace faker.phone
@@ -22927,7 +22995,7 @@ var Phone = function (faker) {
 };
 
 module['exports'] = Phone;
-},{}],167:[function(require,module,exports){
+},{}],169:[function(require,module,exports){
 var mersenne = require('../vendor/mersenne');
 
 /**
@@ -23134,7 +23202,7 @@ function Random (faker, seed) {
 
 module['exports'] = Random;
 
-},{"../vendor/mersenne":170}],168:[function(require,module,exports){
+},{"../vendor/mersenne":172}],170:[function(require,module,exports){
 // generates fake data for many computer systems properties
 
 /**
@@ -23293,14 +23361,14 @@ function System (faker) {
 }
 
 module['exports'] = System;
-},{}],169:[function(require,module,exports){
+},{}],171:[function(require,module,exports){
 var Faker = require('../lib');
 var faker = new Faker({ locale: 'de_AT', localeFallback: 'en' });
 faker.locales['de_AT'] = require('../lib/locales/de_AT');
 faker.locales['en'] = require('../lib/locales/en');
 module['exports'] = faker;
 
-},{"../lib":43,"../lib/locales/de_AT":64,"../lib/locales/en":141}],170:[function(require,module,exports){
+},{"../lib":45,"../lib/locales/de_AT":66,"../lib/locales/en":143}],172:[function(require,module,exports){
 // this program is a JavaScript version of Mersenne Twister, with concealment and encapsulation in class,
 // an almost straight conversion from the original program, mt19937ar.c,
 // translated by y. okada on July 17, 2006.
@@ -23588,7 +23656,7 @@ exports.seed_array = function(A) {
     gen.init_by_array(A);
 }
 
-},{}],171:[function(require,module,exports){
+},{}],173:[function(require,module,exports){
 /*
  * password-generator
  * Copyright(c) 2011-2013 Bermi Ferrer <bermi@bermilabs.com>
@@ -23654,7 +23722,7 @@ exports.seed_array = function(A) {
 
   // Establish the root object, `window` in the browser, or `global` on the server.
 }(this));
-},{}],172:[function(require,module,exports){
+},{}],174:[function(require,module,exports){
 /*
 
 Copyright (c) 2012-2014 Jeffrey Mealo
@@ -23865,7 +23933,7 @@ exports.generate = function generate() {
     return browser[random[0]](random[1]);
 };
 
-},{}],173:[function(require,module,exports){
+},{}],175:[function(require,module,exports){
 var ret = require('ret');
 var DRange = require('discontinuous-range');
 var types = ret.types;
@@ -24103,7 +24171,7 @@ function gen(token, groups) {
 
 
 
-},{"discontinuous-range":174,"ret":175}],174:[function(require,module,exports){
+},{"discontinuous-range":176,"ret":177}],176:[function(require,module,exports){
 //protected helper class
 function _SubRange(low, high) {
     this.low = low;
@@ -24249,7 +24317,7 @@ DiscontinuousRange.prototype.clone = function () {
 
 module.exports = DiscontinuousRange;
 
-},{}],175:[function(require,module,exports){
+},{}],177:[function(require,module,exports){
 var util      = require('./util');
 var types     = require('./types');
 var sets      = require('./sets');
@@ -24529,7 +24597,7 @@ module.exports = function(regexpStr) {
 
 module.exports.types = types;
 
-},{"./positions":176,"./sets":177,"./types":178,"./util":179}],176:[function(require,module,exports){
+},{"./positions":178,"./sets":179,"./types":180,"./util":181}],178:[function(require,module,exports){
 var types = require('./types');
 
 exports.wordBoundary = function() {
@@ -24548,7 +24616,7 @@ exports.end = function() {
   return { type: types.POSITION, value: '$' };
 };
 
-},{"./types":178}],177:[function(require,module,exports){
+},{"./types":180}],179:[function(require,module,exports){
 var types = require('./types');
 
 var INTS = function() {
@@ -24632,7 +24700,7 @@ exports.anyChar = function() {
   return { type: types.SET, set: NOTANYCHAR(), not: true };
 };
 
-},{"./types":178}],178:[function(require,module,exports){
+},{"./types":180}],180:[function(require,module,exports){
 module.exports = {
     ROOT       : 0
   , GROUP      : 1
@@ -24644,7 +24712,7 @@ module.exports = {
   , CHAR       : 7
 };
 
-},{}],179:[function(require,module,exports){
+},{}],181:[function(require,module,exports){
 var types = require('./types');
 var sets  = require('./sets');
 
@@ -24757,7 +24825,7 @@ exports.error = function(regexp, msg) {
   throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
 };
 
-},{"./sets":177,"./types":178}],"json-schema-faker":[function(require,module,exports){
+},{"./sets":179,"./types":180}],"json-schema-faker":[function(require,module,exports){
 module.exports = require('../lib/')
   .extend('faker', function() {
     try {
@@ -24767,5 +24835,5 @@ module.exports = require('../lib/')
     }
   });
 
-},{"../lib/":17,"faker/locale/de_AT":169}]},{},["json-schema-faker"])("json-schema-faker")
+},{"../lib/":19,"faker/locale/de_AT":171}]},{},["json-schema-faker"])("json-schema-faker")
 });

@@ -1,0 +1,54 @@
+[
+  {
+    "description": "support for x-*",
+    "tests": [
+      {
+        "description": "should handle x-faker",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-faker": "name.findName"
+            },
+            "email": {
+              "type": "string",
+              "x-faker": "internet.email"
+            }
+          },
+          "required": [
+            "name",
+            "email"
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle x-chance",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "x-chance": "guid"
+            },
+            "emailAddr": {
+              "type": "string",
+              "x-chance": {
+                "email": {
+                  "domain": "fake.com"
+                }
+              },
+              "pattern": ".+@fake.com"
+            }
+          },
+          "required": [
+            "userId",
+            "emailAddr"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

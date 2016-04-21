@@ -1,6 +1,15 @@
 UPCOMING:
   changes:
     - faker and chance are not longer required as dependencies
+v0.3.2
+  date: ?
+  changes:
+    - unit tests added
+v0.3.1
+  date: 2016-04-15
+  changes:
+    - several bugfixes
+    - brief architecture overview added
 v0.3.0
   date: 2016-04-07
   changes:

@@ -4,10 +4,9 @@ var MIN_INTEGER = -100000000,
     MAX_INTEGER = 100000000;
 
 function numberType(value: INumberSchema): number {
-  var multipleOf = value.multipleOf;
-
   var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
-      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
+      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum,
+      multipleOf = value.multipleOf;
 
   if (multipleOf) {
     max = Math.floor(max / multipleOf) * multipleOf;
@@ -22,12 +21,12 @@ function numberType(value: INumberSchema): number {
     max -= multipleOf || 1;
   }
 
-  if (multipleOf) {
-    return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
-  }
-
   if (min > max) {
     return NaN;
+  }
+
+  if (multipleOf) {
+    return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
   }
 
   return random.number(min, max, undefined, undefined, true);

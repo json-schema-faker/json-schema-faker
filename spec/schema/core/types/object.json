@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated object values",
+    "description": "object generator",
     "tests": [
       {
         "description": "should skip some non-required properties",
@@ -54,7 +54,20 @@
         "valid": true
       },
       {
-        "description": "should handle additionalProperties",
+        "description": "should handle additionalProperties (exact number)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "example": { "type": "string" }
+          },
+          "minProperties": 5,
+          "maxProperties": 5,
+          "additionalProperties": { "type": "string" }
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle additionalProperties (random number)",
         "schema": {
           "type": "object",
           "minProperties": 20,

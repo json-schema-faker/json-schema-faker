@@ -1,6 +1,6 @@
 fs = require('fs')
 glob = require('glob')
-jsfaker = require('../')
+jsf = require('../../index')
 
 pick = (obj, key) ->
   parts = key.split('.')
@@ -23,7 +23,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
         it test.description, ->
           if test.require
             wrapper = require('./' + test.require)
-            wrapper.register(jsfaker)
+            wrapper.register(jsf)
 
           schema = if typeof test.schema is 'string'
             pick(suite, test.schema)
@@ -39,7 +39,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
           error = null
 
           sample = try
-            jsfaker(schema, refs)
+            jsf(schema, refs)
           catch e
             error = String(e)
             throw e unless test.throws
