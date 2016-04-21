@@ -34,20 +34,20 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
-    "chance": "^1.0.1",
-    "deref": "^0.6.3",
-    "faker": "^3.1.0",
-    "randexp": "^0.4.2"
+    "chance": "~1.0.1",
+    "deref": "~0.6.3",
+    "faker": "~3.1.0",
+    "randexp": "~0.4.2"
   },
   "devDependencies": {
     "browserify": "^13.0.0",
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
-    "jasmine-node": "2.0.0-beta4",
     "eslint": "^2.7.0",
     "fs-extra": "^0.26.7",
     "glob": "^7.0.3",
     "istanbul": "^0.4.3",
+    "jasmine-node": "^2.0.0",
     "jayschema": "^0.3.1",
     "lodash.template": "^4.2.4",
     "semver": "^5.1.0",

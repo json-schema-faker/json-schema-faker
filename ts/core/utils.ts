@@ -4,15 +4,15 @@
  * @param obj
  * @returns {boolean}
  */
-function hasProperties(obj: Object): boolean {
-  return Array.prototype.slice.call(arguments, 1).filter(function(key: string): boolean {
+function hasProperties(obj: Object, ...properties: string[]): boolean {
+  return properties.filter(function(key: string): boolean {
     return typeof obj[key] !== 'undefined';
   }).length > 0;
 }
 
-function clone(arr) {
-  var out = [];
-  arr.forEach(function(item, index) {
+function clone(arr: any[]): any[] {
+  var out: any[] = [];
+  arr.forEach(function(item: any, index: number) {
     if (typeof item === 'object' && item !== null) {
       out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
     } else {
@@ -22,7 +22,8 @@ function clone(arr) {
   return out;
 }
 
-function merge(a, b) {
+// TODO refactor merge function
+function merge(a: Object, b: Object): Object {
   for (var key in b) {
     if (typeof b[key] !== 'object' || b[key] === null) {
       a[key] = b[key];
