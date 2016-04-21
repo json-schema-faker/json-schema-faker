@@ -1,7 +1,8 @@
 {
   "env": {
     "es6": true,
-    "node": true
+    "node": true,
+    "browser": true
   },
   "rules": {
     "quotes": [2, "single", "avoid-escape"],
@@ -10,7 +11,7 @@
     "no-extra-semi": 2,
     "no-undef": 2
   },
-  "ecmaFeatures": {
-    "modules": true
+  "parserOptions": {
+    "sourceType": "module"
   }
 }
