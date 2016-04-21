@@ -1,3 +1,18 @@
+function getSubAttribute(obj: any, dotSeparatedKey: string): any {
+  var keyElements: string[] = dotSeparatedKey.split('.');
+
+  while (keyElements.length) {
+    var prop = keyElements.shift();
+
+    if (!obj[prop]) {
+      break;
+    }
+
+    obj = obj[prop];
+  }
+  return obj;
+}
+
 /**
  * Returns true/false whether the object parameter has its own properties defined
  *
@@ -40,6 +55,7 @@ function merge(a: Object, b: Object): Object {
 }
 
 export = {
+  getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
   clone: clone,
   merge: merge
