@@ -9,6 +9,11 @@ type Registry = {
   [s: string]: Dependency;
 }
 
+/**
+ * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
+ * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
+ * of pure npm module instances. This class supports consistent access to these instances.
+ */
 class Container {
   private registry: Registry;
 
@@ -43,6 +48,8 @@ class Container {
   public get(name: string): Dependency {
     if (typeof this.registry[name] === 'undefined') {
       throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
+    } else if (name === 'randexp') {
+      return this.registry['randexp'].randexp;
     }
     return this.registry[name];
   }
@@ -56,7 +63,7 @@ class Container {
     return {
       faker: this.get('faker'),
       chance: this.get('chance'),
-      randexp: this.get('randexp').randexp
+      randexp: this.get('randexp')
     };
   }
 }

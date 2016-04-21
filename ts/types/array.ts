@@ -1,9 +1,9 @@
 import random = require('../core/random');
-import traverse = require('../core/traverse');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
 
-function unique(path, items, value, sample, resolve) {
+// TODO provide types
+function unique(path, items, value, sample, resolve, traverseCallback: Function) {
   var tmp = [],
       seen = [];
 
@@ -19,10 +19,10 @@ function unique(path, items, value, sample, resolve) {
   items.forEach(walk);
 
   // TODO: find a better solution?
-  var limit = 100;
+  var limit: number = 100;
 
   while (tmp.length !== items.length) {
-    walk(traverse(value.items || sample, path, resolve));
+    walk(traverseCallback(value.items || sample, path, resolve));
 
     if (!limit--) {
       break;
@@ -32,8 +32,11 @@ function unique(path, items, value, sample, resolve) {
   return tmp;
 }
 
-function arrayType(value, path, resolve) {
-  var items = [];
+type Result = any;
+
+// TODO provide types
+function arrayType(value: IArraySchema, path, resolve, traverseCallback: Function): Result[] {
+  var items: Result[] = [];
 
   if (!(value.items || value.additionalItems)) {
     if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
@@ -45,19 +48,19 @@ function arrayType(value, path, resolve) {
 
   if (Array.isArray(value.items)) {
     return Array.prototype.concat.apply(items, value.items.map(function(item, key) {
-      return traverse(item, path.concat(['items', key]), resolve);
+      return traverseCallback(item, path.concat(['items', key]), resolve);
     }));
   }
 
-  var length = random.number(value.minItems, value.maxItems, 1, 5),
-      sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+  var length: number = random.number(value.minItems, value.maxItems, 1, 5),
+      sample: Object = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
   for (var current = items.length; current < length; current += 1) {
-    items.push(traverse(value.items || sample, path.concat(['items', current]), resolve));
+    items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));
   }
 
   if (value.uniqueItems) {
-    return unique(path.concat(['items']), items, value, sample, resolve);
+    return unique(path.concat(['items']), items, value, sample, resolve, traverseCallback);
   }
 
   return items;

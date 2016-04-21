@@ -1,4 +1,4 @@
-module.exports = require('./lib/jsf')
+module.exports = require('./lib')
   .extend('chance', function() {
     try {
       return require('chance').Chance();

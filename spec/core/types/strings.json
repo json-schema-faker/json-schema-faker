@@ -114,7 +114,7 @@
           },
           "required": ["test"]
         },
-        "throws": "unknown generator for .+? in \\/properties\\/test"
+        "throws": "Error: unknown format generator .+? in \\/properties\\/test"
       },
       {
         "description": "should validate custom formats",

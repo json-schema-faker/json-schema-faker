@@ -38,7 +38,11 @@ class FormatRegistry {
    * Returns element by registry key
    */
   public get(name: string): Format {
-    return this.registry[name];
+    var format: Format = this.registry[name];
+    if (typeof format !== 'function') {
+      throw new Error('unknown format generator ' + JSON.stringify(name));
+    }
+    return format;
   }
 
   /**

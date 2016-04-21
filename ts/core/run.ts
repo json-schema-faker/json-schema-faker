@@ -1,16 +1,16 @@
-var container = require('./class/Container'),
-    traverse = require('./core/traverse'),
-    formats = require('./api/formats'),
-    random = require('./core/random'),
-    merge = require('./core/utils').merge;
+import deref = require('deref');
 
-var deref = require('deref');
+import container = require('../class/Container');
+import traverse = require('./traverse');
+import random = require('./random');
+import utils = require('./utils');
 
-function isKey(prop) {
+function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'required' || prop === 'definitions';
 }
 
-function generate(schema, refs, ex) {
+// TODO provide types
+function run(schema, refs?, ex?) {
   var $ = deref();
 
   try {
@@ -37,18 +37,18 @@ function generate(schema, refs, ex) {
 
         seen[id] -= 1;
 
-        merge(sub, $.util.findByRef(id, $.refs));
+        utils.merge(sub, $.util.findByRef(id, $.refs));
       }
 
       if (Array.isArray(sub.allOf)) {
-        var schemas = sub.allOf;
+        var schemas: JsonSchema[] = sub.allOf;
 
         delete sub.allOf;
 
         // this is the only case where all sub-schemas
         // must be resolved before any merge
-        schemas.forEach(function(s) {
-          merge(sub, reduce(s));
+        schemas.forEach(function(schema: JsonSchema) {
+          utils.merge(sub, reduce(schema));
         });
       }
 
@@ -58,7 +58,7 @@ function generate(schema, refs, ex) {
         delete sub.anyOf;
         delete sub.oneOf;
 
-        merge(sub, random.pick(mix));
+        utils.merge(sub, random.pick(mix));
       }
 
       for (var prop in sub) {
@@ -78,12 +78,4 @@ function generate(schema, refs, ex) {
   }
 }
 
-generate.formats = formats;
-
-// returns itself for chaining
-generate.extend = function(name, cb) {
-  container.extend(name, cb);
-  return generate;
-};
-
-module.exports = generate;
+export = run;

@@ -3,7 +3,15 @@ import FormatRegistry = require('../class/FormatRegistry');
 // instantiate
 var registry = new FormatRegistry();
 
-function formatsAPI(name: string, callback?: Function): any {
+/**
+ * Custom formats API
+ *
+ * @see https://github.com/json-schema-faker/json-schema-faker#custom-formats
+ * @param name
+ * @param callback
+ * @returns {any}
+ */
+function formatAPI(name: string, callback?: Function): any {
   if (callback) {
     registry.register(name, callback);
   } else if (typeof name === 'object') {
@@ -15,4 +23,4 @@ function formatsAPI(name: string, callback?: Function): any {
   }
 }
 
-export = formatsAPI;
+export = formatAPI;

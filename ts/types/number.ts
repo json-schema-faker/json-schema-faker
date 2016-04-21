@@ -1,14 +1,9 @@
+import random = require('../core/random');
+
 var MIN_INTEGER = -100000000,
     MAX_INTEGER = 100000000;
 
-import random = require('../core/random');
-import string = require('./string');
-
-function numberType(value) {
-  if (value.faker || value.chance) {
-    return string(value);
-  }
-
+function numberType(value: INumberSchema): number {
   var multipleOf = value.multipleOf;
 
   var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
