@@ -3,7 +3,9 @@
  */
 interface IGeneratorSchema {
   faker?: any;
+  "x-faker"?: any;
   chance?: any;
+  "x-chance"?: any;
 }
 
 interface IStringSchema extends IGeneratorSchema {
@@ -86,6 +88,7 @@ interface IStringMap {
 interface jsfAPI {
   (schema: JsonSchema, refs?: any): any;
   format: Function;
+  option: Function;
   extend: Function;
 }
 

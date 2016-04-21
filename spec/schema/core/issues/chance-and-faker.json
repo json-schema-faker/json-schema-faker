@@ -1,0 +1,15 @@
+[
+  {
+    "description": "chance and faker",
+    "tests": [
+      {
+        "description": "should throw error when both defined",
+        "schema": {
+          "chance": "url",
+          "faker": "internet.email"
+        },
+        "throws": "ambiguous generator when using both faker and chance: .+?"
+      }
+    ]
+  }
+]

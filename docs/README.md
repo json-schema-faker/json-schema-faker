@@ -1,3 +1,10 @@
+## Table of Contents
+
+* [Architecture](#architecture)
+* [Sources](#sources)
+* [Building](#building)
+* [Testing](#testing)
+
 # Architecture
 
 ![JSON Schema Faker module graph](structure.png)
@@ -44,3 +51,7 @@ Compile typescript to javascript:
 Build package files:
 
     ./build/dist.js
+
+# Testing
+
+Detailed description of test [can be found here](../spec).

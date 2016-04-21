@@ -4,7 +4,7 @@ import container = require('../class/Container');
 
 type ExternalParameters = any[];
 
-function externalType(value: IGeneratorSchema): string|any {
+function externalType(value: IGeneratorSchema, path): string|any {
   var libraryName: string = value.faker ? 'faker' : 'chance',
     libraryModule = value.faker ? container.get('faker') : container.get('chance'),
     key = value.faker || value.chance,

@@ -1,16 +1,17 @@
 {
   "name": "json-schema-faker",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "index.js",
   "scripts": {
-    "dev": "jasmine-node spec --coffee --verbose --autoTest --watchFolders lib",
+    "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
     "dev:lint": "eslint lib",
-    "dev:spec": "jasmine-node spec --coffee --noStackTrace --captureExceptions",
+    "dev:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",
+    "dev:schema": "jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "test": "npm run dev:lint && npm run dev:spec",
+    "test": "npm run dev:lint && npm run dev:unit && npm run dev:schema",
     "dist": "node build/dist.js",
     "tsc": "./build/tsc.sh",
     "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
@@ -34,9 +35,9 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
-    "faker": "~3.1.0",
     "chance": "~1.0.1",
     "deref": "~0.6.3",
+    "faker": "~3.1.0",
     "randexp": "~0.4.2"
   },
   "devDependencies": {
@@ -44,7 +45,7 @@
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
     "eslint": "^2.7.0",
-    "fs-extra": "^0.26.7",
+    "fs-extra": "^0.28.0",
     "glob": "^7.0.3",
     "istanbul": "^0.4.3",
     "jasmine-node": "^2.0.0",

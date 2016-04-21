@@ -13,12 +13,6 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 
 ***Want to support `jsf`?*** We are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
 
-### migrating to TypeScript
-
-![JSON Schema Faker migration to TypeScript](migration.jpg)
-
-JSON-Schema-Faker is being migrated into TypeScript.
-
 # Table of contents
 
 - Basics
@@ -32,19 +26,23 @@ JSON-Schema-Faker is being migrated into TypeScript.
   - [Example usage](#example-usage)
     - [Gist demos](#gist-demos)
 - Advanced
+  - [JSON Schema specification support](#json-schema-specification-support)
   - [Supported keywords](#supported-keywords)
   - [Using references](#using-references)
   - [Faking values](#faking-values)
   - [Custom formats](#custom-formats)
+  - [Custom options](#custom-options)
   - [Extending dependencies](#extending-dependencies)
   - [Inferred Types](#inferred-types)
+  - [Swagger extensions](#swagger-extensions)
   - [Bundling](#bundling)
   - [Automation](#automation)
     - [Grunt plugin](#grunt-plugin)
 - Misc
+  - [Contribution](#contribution)
+    - [Technical Documentation](#technical-documentation)
   - [Resources](#resources)
   - [Motivation](#motivation)
-  - [Contribution](#contribution)
 
 ## Online demo
 
@@ -137,30 +135,36 @@ Clone these gists and execute them locally (each gist has its own readme with in
  * [jsf console](https://gist.github.com/ducin/9f2364ccde2e9248fbcd) - minimal example of jsf working directly under command line
  * [jsf grunt](https://gist.github.com/ducin/87e0b55bddd1801d3d99) - example of jsf working under grunt.js
 
+## JSON Schema specification support
+
+Currently `jsf` supports the JSON-Schema specification **draft-04** only.
+
+If you want to use **draft-03**, you may find useful information [here](https://github.com/json-schema-faker/json-schema-faker/issues/66).
+
 ## Supported keywords
 
-Note that `jsf` supports (currently) the JSON-Schema specification **draft-04** only. Below is the list of supported keywords:
+Below is the list of supported keywords:
 
-- **$ref** &mdash; Resolve internal references only, and/or external if provided.
-- **required** &mdash; All required properties are guaranteed, if not can be omitted.
-- **pattern** &mdash; Generate samples based on RegExp values.
-- **format** &mdash; Core formats only: date-time, email, hostname, ipv4, ipv6 and uri.
-- **enum** &mdash; Returns any of these enumerated values.
-- **minLength/maxLength** &mdash; Applies length constraints to string values.
-- **minimum/maximum** &mdash; Applies constraints to numeric values.
-- **exclusiveMinimum/exclusiveMaximum** &mdash; Adds exclusivity for numeric values.
-- **multipleOf** &mdash; Multiply constraints for numeric values.
-- **items** &mdash; Support for subschema and fixed item values.
-- **minItems/maxItems** &mdash; Adds length constraints for array items.
-- **uniqueItems** &mdash; Applies uniqueness constraints for array items.
-- **additionalItems** &mdash; Partially supported (?)
-- **allOf/oneOf/anyOf** &mdash; Subschema combinators.
-- **properties** &mdash; Object properties to be generated.
-- **minProperties/maxProperties** &mdash; Adds length constraints for object properties.
-- **patternProperties** &mdash; RegExp-based object properties.
-- **additionalProperties** &mdash; Partially supported (?)
-- **dependencies** &mdash; Not supported yet (?)
-- **not** &mdash; Not supported yet (?)
+- `$ref` &mdash; Resolve internal references only, and/or external if provided.
+- `required` &mdash; All required properties are guaranteed, if not can be omitted.
+- `pattern` &mdash; Generate samples based on RegExp values.
+- `format` &mdash; Core formats only: `date-time`, `email`, `hostname`, `ipv4`, `ipv6` and `uri`.
+- `enum` &mdash; Returns any of these enumerated values.
+- `minLength`, `maxLength` &mdash; Applies length constraints to string values.
+- `minimum`, `maximum` &mdash; Applies constraints to numeric values.
+- `exclusiveMinimum`, `exclusiveMaximum` &mdash; Adds exclusivity for numeric values.
+- `multipleOf` &mdash; Multiply constraints for numeric values.
+- `items` &mdash; Support for subschema and fixed item values.
+- `minItems`, `maxItems` &mdash; Adds length constraints for array items.
+- `uniqueItems` &mdash; Applies uniqueness constraints for array items.
+- `additionalItems` &mdash; Partially supported (?)
+- `allOf`, `oneOf`, `anyOf` &mdash; Subschema combinators.
+- `properties` &mdash; Object properties to be generated.
+- `minProperties`, `maxProperties` &mdash; Adds length constraints for object properties.
+- `patternProperties` &mdash; RegExp-based object properties.
+- `additionalProperties` &mdash; Partially supported (?)
+- `dependencies` &mdash; Not supported yet (?)
+- `not` &mdash; Not supported yet (?)
 
 ## Using references
 
@@ -286,6 +290,21 @@ Callback:
 
 Note that custom generators has lower precedence than core ones.
 
+## Custom Options
+
+You may define following options for `jsf` that alter its behavior:
+
+- `failOnInvalidTypes`: boolean - don't throw exception when invalid type passed
+- `defaultInvalidTypeProduct`: * - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
+
+Set options just as below:
+
+```javascript
+jsf.option({
+  failOnInvalidTypes: false
+});
+```
+
 ## Extending dependencies
 
 You may extend [Faker.js](http://marak.com/faker.js/):
@@ -395,6 +414,15 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 * `minLength`
 * `pattern`
 
+## Swagger extensions
+
+`jsf` supports [OpenAPI Specification *vendor extensions*](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#vendorExtensions), i.e.
+
+* `x-faker` property that stands for `faker` property
+* `x-chance` property that stands for `chance` property
+
+Thanks to it, you can use valid swagger definitions for `jsf` data generation.
+
 ## Bundling
 
 JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using [browserify](http://browserify.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
@@ -422,9 +450,11 @@ to automate running `json-schema-faker` against your JSON schemas.
 We are more than happy to welcome new contributors, our project is heavily developed, but we need more power :)
 Please see [contribution guide](CONTRIBUTING.md), you can always contact us to ask how you can help.
 
-### Architecture
+### Technical Documentation
 
-If you want to contribute, take a look at [the architecture page](ARCHITECTURE.md). You may find some important information there making it easier to start.
+If you want to contribute, take a look at [the technical documentation page](docs/). You may find some important information there making it easier to start.
+
+Moreover, if you find something unclear (e.g. how does something work) or would like to suggest improving the docs, please submit an issue, we'll gladly provide more info for future contributors.
 
 ## Resources
 

@@ -1,6 +1,6 @@
 [
   {
-    "description": "generated number obeying min/max, 6 times to account for randomn test pass",
+    "description": "generated number obeying min/max, 6 times to account for random test pass",
     "tests": [
       {
         "description": "should handle one possible value min/max number",
