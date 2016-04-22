@@ -1,7 +1,8 @@
 import random = require('../core/random');
 
 var MIN_INTEGER = -100000000,
-    MAX_INTEGER = 100000000;
+    MAX_INTEGER = 100000000,
+    FLOAT_DIFFERENCE = 0.1;
 
 function numberType(value: INumberSchema): number {
   var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
@@ -13,12 +14,16 @@ function numberType(value: INumberSchema): number {
     min = Math.ceil(min / multipleOf) * multipleOf;
   }
 
+  // if both numbers are integers the difference should be an integer too,
+  // otherwise having values like { min: 1, max: 1.5 } will produce invalid values (NaN)
+  var fixedUnit: number = ((min % 1) === 0 && (max % 1) === 0) ? 1 : FLOAT_DIFFERENCE;
+
   if (value.exclusiveMinimum && value.minimum && min === value.minimum) {
-    min += multipleOf || 1;
+    min += multipleOf || fixedUnit;
   }
 
   if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
-    max -= multipleOf || 1;
+    max -= multipleOf || fixedUnit;
   }
 
   if (min > max) {
