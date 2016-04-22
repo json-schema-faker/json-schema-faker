@@ -60,10 +60,8 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
     max += min;
   }
 
-  // we need a integer to apply after, see #142
-  var fixedBase = Math.random() * max;
-
-  var result: number = Math.random() * (max - min) + fixedBase;
+  // the random evaluation order was wrong, see #142
+  var result: number = (Math.random() * (max - min)) + min;
 
   if (!hasPrecision) {
     return parseInt(result + '', 10);
