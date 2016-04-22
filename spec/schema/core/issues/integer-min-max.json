@@ -37,6 +37,30 @@
         "type": "number",
         "valid": true,
         "repeat": 100
+      },
+      {
+        "description": "should handle maximumExclusive (smaller decimals)",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1.05,
+          "maximumExclusive": true
+        },
+        "type": "number",
+        "valid": true,
+        "repeat": 100
+      },
+      {
+        "description": "should handle maximumExclusive and minimumExclusive",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2,
+          "maximumExclusive": true
+        },
+        "type": "number",
+        "valid": true,
+        "repeat": 100
       }
     ]
   }
