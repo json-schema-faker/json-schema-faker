@@ -61,7 +61,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   }
 
   // we need a integer to apply after, see #142
-  var fixedBase = Math.random() + min;
+  var fixedBase = Math.random() * max;
 
   var result: number = Math.random() * (max - min) + fixedBase;
 
