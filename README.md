@@ -140,7 +140,7 @@ Clone these gists and execute them locally (each gist has its own readme with in
 
 ### angular-jsf
 
-Use [`angular-jsf`](https://github.com/json-schema-faker/angular-jsf) module (installable via `npm` and `bower`) to get **`jsf` working in your angular app out of the box**! And check out [angular-jsf demo](http://json-schema-faker.github.io/angular-jsf/).
+Use [`angular-jsf`](https://github.com/json-schema-faker/angular-jsf) module (installable via `npm` and `bower`) to get **`jsf` working in your angular app out of the box**! And check out [angular-jsf demo](http://angular-jsf.js.org/).
 
 ### Grunt plugin
 
