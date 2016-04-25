@@ -25,6 +25,9 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Overview](#overview)
   - [Example usage](#example-usage)
     - [Gist demos](#gist-demos)
+  - [Automation](#automation)
+    - [Angular-jsf (AngularJS plugin)](#angular-jsf)
+    - [Grunt plugin](#grunt-plugin)
 - Advanced
   - [JSON Schema specification support](#json-schema-specification-support)
   - [Supported keywords](#supported-keywords)
@@ -36,8 +39,6 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Inferred Types](#inferred-types)
   - [Swagger extensions](#swagger-extensions)
   - [Bundling](#bundling)
-  - [Automation](#automation)
-    - [Grunt plugin](#grunt-plugin)
 - Misc
   - [Contribution](#contribution)
     - [Technical Documentation](#technical-documentation)
@@ -134,6 +135,17 @@ Clone these gists and execute them locally (each gist has its own readme with in
 
  * [jsf console](https://gist.github.com/ducin/9f2364ccde2e9248fbcd) - minimal example of jsf working directly under command line
  * [jsf grunt](https://gist.github.com/ducin/87e0b55bddd1801d3d99) - example of jsf working under grunt.js
+
+## Automation
+
+### angular-jsf
+
+Use [`angular-jsf`](https://github.com/json-schema-faker/angular-jsf) module (installable via `npm` and `bower`) to get **`jsf` working in your angular app out of the box**! And check out [angular-jsf demo](http://json-schema-faker.github.io/angular-jsf/).
+
+### Grunt plugin
+
+Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
+to automate running `json-schema-faker` against your JSON schemas.
 
 ## JSON Schema specification support
 
@@ -433,13 +445,6 @@ However, you may want to bundle a smaller package of `jsf`, because:
 * you wish to use chance.js only and get rid of other dependencies
 * or for any other reason...
 In that case you may bundle the distribution yourself manually. It's easily achievable: just modify the [`lib/util/container.js`](lib/util/container.js) file and either remove o rmodify the `require` calls (they're directly used by browserify to include dependencies). Automation of this feature is expected in near future.
-
-## Automation
-
-### Grunt plugin
-
-Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
-to automate running `json-schema-faker` against your JSON schemas.
 
 ## Contribution
 
