@@ -5,7 +5,6 @@
     "browser": true
   },
   "rules": {
-    "quotes": [2, "single", "avoid-escape"],
     "semi": [2, "always"],
     "no-unused-vars": 2,
     "no-extra-semi": 2,

@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
-    "dev:lint": "eslint lib",
+    "dev:lint": "tslint ts/**/*.ts && eslint lib",
     "dev:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",
     "dev:schema": "jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
@@ -52,7 +52,9 @@
     "jayschema": "^0.3.1",
     "lodash.template": "^4.2.4",
     "semver": "^5.1.0",
+    "tslint": "^3.8.1",
     "tv4": "^1.2.7",
+    "typescript": "^1.8.10",
     "uglify-js": "^2.6.2",
     "z-schema": "^3.17.0"
   },
