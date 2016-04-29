@@ -18,13 +18,14 @@ If you're submitting a bug, please clearly state what is:
 ## Releasing new versions
 
 * Include a new entry in [CHANGELOG.md](CHANGELOG.md) file,
-* Be followed by rebuilding and re-releasing new online demo, see [gh-pages branch](https://github.com/json-schema-faker/json-schema-faker/tree/gh-pages).
+* Be followed by re-building and re-releasing online demo, see [`website-jsf` gh-pages branch](https://github.com/json-schema-faker/website-jsf/tree/gh-pages).
 
 ## Development tasks
 
 * `npm run dev` &mdash; Run the tests and watch (preferred during development)
 * `npm run dev:lint` &mdash; Run eslint on all sources
-* `npm run dev:spec` &mdash; Run jasmine-node
+* `npm run dev:unit` &mdash; Run `jasmine-node` on unit tests
+* `npm run dev:schema` &mdash; Run `jasmine-node` on schema tests
 * `npm run cover` &mdash; Run istanbul + jasmine-node
 * `npm run cover:up` &mdash; Upload to coveralls (CI only)
 * `npm run dist` &mdash; Prepare all assets with locales for CDN support
