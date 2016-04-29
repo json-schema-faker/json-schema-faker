@@ -22,12 +22,12 @@ function generateFormat(value: IStringSchema): string {
     case 'uri':
       return coreFormat(value.format);
     default:
-      var callback = format(value.format);
+      var callback: Function = format(value.format);
       return callback(container.getAll(), value);
   }
 }
 
-function stringType(value: IStringSchema): string {
+var stringType: FTypeGenerator = function stringType(value: IStringSchema): string {
   if (value.format) {
     return generateFormat(value);
   } else if (value.pattern) {
@@ -35,6 +35,6 @@ function stringType(value: IStringSchema): string {
   } else {
     return thunk(value.minLength, value.maxLength);
   }
-}
+};
 
 export = stringType;

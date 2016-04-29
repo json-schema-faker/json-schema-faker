@@ -17,13 +17,15 @@ function pick<T>(collection: T[]): T {
  * @returns {T[]}
  */
 function shuffle<T>(collection: T[]): T[] {
-  var copy = collection.slice(),
-    length = collection.length;
+  var tmp: T,
+    key: number,
+    copy: T[] = collection.slice(),
+    length: number = collection.length;
 
   for (; length > 0;) {
-    var key = Math.floor(Math.random() * length),
-      tmp = copy[--length];
-
+    key = Math.floor(Math.random() * length);
+    // swap
+    tmp = copy[--length];
     copy[length] = copy[key];
     copy[key] = tmp;
   }

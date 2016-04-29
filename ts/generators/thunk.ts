@@ -12,19 +12,21 @@ function produce(): string {
  * @returns {string}
  */
 function thunkGenerator(min: number = 0, max: number = 140): string {
-  var min = Math.max(0, min),
-    max = random.number(min, max),
-    sample = produce();
+  var min: number = Math.max(0, min),
+    max: number = random.number(min, max),
+    result: string = produce();
 
-  while (sample.length < min) {
-    sample += produce();
+  // append until length is reached
+  while (result.length < min) {
+    result += produce();
   }
 
-  if (sample.length > max) {
-    sample = sample.substr(0, max);
+  // cut if needed
+  if (result.length > max) {
+    result = result.substr(0, max);
   }
 
-  return sample;
+  return result;
 }
 
 export = thunkGenerator;
