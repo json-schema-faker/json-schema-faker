@@ -9,12 +9,12 @@
     "dev:lint": "./node_modules/tslint/bin/tslint ts/**/*.ts && ./node_modules/eslint/bin/eslint.js lib",
     "dev:unit": "./node_modules/jasmine-node/bin/jasmine-node spec/unit --noStackTrace --captureExceptions",
     "dev:schema": "./node_modules/jasmine-node/bin/jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
-    "cover": "node_modules/istanbul/lib/cli.js cover --root lib --x '**/spec/**' -- ./node_modules/jasmine-node/bin/jasmine-node --coffee spec",
-    "cover:up": "node_modules/codecov/bin/codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
+    "cover": "./node_modules/istanbul/lib/cli.js cover --root lib --x '**/spec/**' -- ./node_modules/jasmine-node/bin/jasmine-node --coffee spec",
+    "cover:up": "./node_modules/codecov/bin/codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "test": "npm run dev:lint && npm run dev:unit && npm run dev:schema",
     "dist": "node build/dist.js",
     "tsc": "./build/tsc.sh",
-    "tsify": "node_modules/browserify/bin/cmd.js ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
+    "tsify": "./node_modules/browserify/bin/cmd.js ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
     "graphviz": "./node_modules/.bin/madge lib --dot > structure.gv"
   },
   "contributors": [
