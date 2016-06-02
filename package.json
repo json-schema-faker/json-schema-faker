@@ -6,7 +6,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
-    "dev:lint": "tslint ts/**/*.ts && eslint lib",
+    "dev:lint": "./node_modules/tslint/bin/tslint ts/**/*.ts && ./node_modules/eslint/bin/eslint.js lib",
     "dev:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",
     "dev:schema": "jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",

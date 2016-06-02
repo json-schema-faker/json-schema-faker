@@ -10,7 +10,7 @@ var randexp = container.get('randexp');
 var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path, resolve, traverseCallback: Function): Object {
   var props = {};
 
-  if (!(value.properties || value.patternProperties || value.additionalProperties)) {
+  if (value.additionalProperties === false && !(value.properties || value.patternProperties)) {
     if (utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
       throw new ParseError('missing properties for ' + JSON.stringify(value), path);
     }
@@ -19,11 +19,24 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
   }
 
   var reqProps: string[] = value.required || [],
-      allProps: string[] = value.properties ? Object.keys(value.properties) : [];
+      allProps: string[] = value.properties ? Object.keys(value.properties) : [],
+      sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
 
   reqProps.forEach(function(key) {
     if (value.properties && value.properties[key]) {
       props[key] = value.properties[key];
+    } else {
+        var schema = {};
+        Object.keys(value.patternProperties || {}).forEach(function(pattern) {
+          if (key.match(pattern)) {
+            Object.assign(schema, value.patternProperties[pattern]);
+          }
+      });
+
+        if (Object.keys(schema).length === 0) {
+          schema = sample;
+        }
+        props[key] = schema;
     }
   });
 
@@ -45,8 +58,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     }
   });
 
-  var current = Object.keys(props).length,
-      sample = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
+  var current = Object.keys(props).length;
 
   if (current < length) {
     words(length - current).forEach(function(key) {

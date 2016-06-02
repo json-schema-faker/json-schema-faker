@@ -77,6 +77,31 @@
         "valid": true
       },
       {
+        "description": "should handle absence of property definitions",
+        "schema": {
+          "type": "object",
+          "minProperties": 20,
+          "maxProperties": 30
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle conflicting pattern definitions",
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+              "^hyb": {
+                  "type": "integer"
+              },
+              "rid$": {
+                  "type": "string"
+              }
+          },
+          "required": [ "hybrid" ]
+        },
+        "valid": false
+      },
+      {
         "description": "should validate properties using all options",
         "schema": {
           "type": "object",
