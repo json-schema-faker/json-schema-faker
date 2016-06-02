@@ -102,6 +102,36 @@
         "valid": false
       },
       {
+        "description": "should handle required properties with missing additionalProperties field",
+        "schema": {
+          "type": "object",
+          "additionalProperties": {
+              "type": "string"
+          },
+          "required": [ "hybrid", "other" ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle superposition of patternProperties and additionalProperties",
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+              "^hyb": {
+                  "type": "integer"
+              },
+              "rid$": {
+                  "maximum": 3
+              }
+          },
+          "additionalProperties": {
+              "type": "string"
+          },
+          "required": [ "hybrid", "other" ]
+        },
+        "valid": true
+      },
+      {
         "description": "should validate properties using all options",
         "schema": {
           "type": "object",
