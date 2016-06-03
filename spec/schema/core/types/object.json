@@ -2,7 +2,81 @@
   {
     "description": "object generator",
     "tests": [
-      {
+        {
+          "description": "addP === false && !props && !patternProps",
+          "schema": {
+            "type": "object",
+            "additionalProperties": false
+          },
+          "valid": true
+        },
+        {
+          "description": "addP === false && props && !patternProps",
+          "schema": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": false
+          },
+          "valid": true
+        },
+        {
+          "description": "addP === false && !props && patternProps",
+          "schema": {
+            "type": "object",
+            "patternProperties": {
+                "count": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": false
+          },
+          "valid": true
+        },
+        {
+          "description": "addP === false && props && patternProps",
+          "schema": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            },
+            "patternProperties": {
+                "v-[0-3]": {
+                    "type": "integer"
+                }
+            },
+            "additionalProperties": false
+          },
+          "valid": true
+        },
+        {
+          "description": "addP === false && !props && !patternProps && minProperties",
+          "schema": {
+            "type": "object",
+            "minProperties": 2,
+            "additionalProperties": false
+          },
+          "throws": "missing properties for:\n[\\s\\S]+? in \\/"
+        },
+        {
+          "description": "addP === undef || props",
+          "schema": {
+            "type": "object",
+            "minProperties": 2,
+            "properties": {
+                "count": {
+                    "type": "integer"
+                }
+            }
+          },
+          "valid": true
+        },
+        {
         "description": "should skip some non-required properties",
         "schema": {
           "type": "object",
@@ -102,13 +176,58 @@
         "valid": false
       },
       {
-        "description": "should handle required properties with missing additionalProperties field",
+        "description": "should handle required properties with missing properties field",
         "schema": {
           "type": "object",
           "additionalProperties": {
               "type": "string"
           },
           "required": [ "hybrid", "other" ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle required properties with empty properties field",
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "required": [ "hybrid", "other" ]
+        },
+        "throws": "missing properties for:\n[\\s\\S]+? in \\/"
+      },
+      {
+        "description": "should handle required properties with empty properties field and no additionalProperties provided",
+        "schema": {
+          "type": "object",
+          "properties": {},
+          "required": [ "hybrid", "other" ]
+        },
+        "valid": false
+      },
+      {
+        "description": "should handle required properties with patternProperties and minProperties field",
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+              "^hybrid.*": {
+                  "type": "string"
+              },
+              ".*other$": {
+                  "type": "integer"
+              }
+          },
+          "minProperties": 20,
+          "additionalProperties": false,
+          "required": [ "hybrid", "other" ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle additionalProperties being false with no properties or patternProperties",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false
         },
         "valid": true
       },
@@ -122,6 +241,9 @@
               },
               "rid$": {
                   "maximum": 3
+              },
+              "^not-relevant$": {
+                  "type": "string"
               }
           },
           "additionalProperties": {
@@ -139,7 +261,21 @@
           "maxProperties": 30,
           "additionalProperties": false
         },
-        "throws": "missing properties for .+? in \\/"
+        "throws": "missing properties for:\n[\\s\\S]+? in \\/"
+      },
+      {
+        "description": "should throw if it couldnt generate enough keys",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "$count": {
+                "type": "string"
+            }
+          },
+          "minProperties": 20,
+          "additionalProperties": false
+        },
+        "throws": "properties constraints were too strong to successfully generate a valid object for:\n[\\s\\S]+? in \\/"
       },
       {
         "description": "should handle inferred type (when possible)",
