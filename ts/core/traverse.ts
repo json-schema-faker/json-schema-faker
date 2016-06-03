@@ -33,6 +33,10 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     return random.pick(schema.enum);
   }
 
+  if (option('useDefaultValue') && schema.default) {
+    return schema.default;
+  }
+
   // TODO remove the ugly overcome
   var type: any = schema.type;
 

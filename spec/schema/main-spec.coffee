@@ -37,7 +37,7 @@ tryTest = (test, refs, schema) ->
         #{JSON.stringify(sample, null, 2)}
       """
 
-    expect(error).toMatch new RegExp(test.throws, 'i')
+    expect(error).toMatch new RegExp(test.throws, 'im')
 
   # strict checks
   if test.nonEmpty
