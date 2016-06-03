@@ -29,7 +29,11 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         var schema = {};
         Object.keys(value.patternProperties || {}).forEach(function(pattern) {
           if (key.match(pattern)) {
-            Object.assign(schema, value.patternProperties[pattern]);
+              for (var key in value.patternProperties[pattern]) {
+                  if (value.patternProperties[pattern].hasOwnProperty(key)) {
+                      schema[key] = value.patternProperties[pattern][key];
+                  }
+              }
           }
       });
 
