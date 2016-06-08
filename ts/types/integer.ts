@@ -1,17 +1,14 @@
 import number = require('./number');
 
 var base = function(n) {
-    var exponent = 0;
-    while (Math.floor(n*1000000000)/1000000000 !== Math.floor(n) && exponent < 10) {
-        exponent += 1;
-        n *= 10;
+    var s = n + '';
+    var dot = s.match(/\./);
+    if (!dot) {
+        return 0;
+    } else {
+        var exponent = s.length - dot.index - 1
+        return exponent
     }
-
-    if (Math.floor(n*10)/10 === Math.floor(n)) {
-        return exponent;
-    }
-
-    return null;
 };
 
 var gcd = function(_a, _b) {
