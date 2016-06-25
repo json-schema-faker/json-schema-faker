@@ -52,7 +52,7 @@
     "jayschema": "^0.3.1",
     "lodash.template": "^4.2.4",
     "semver": "^5.1.0",
-    "tslint": "^3.9.0",
+    "tslint": "^3.12.1",
     "tv4": "^1.2.7",
     "typescript": "^1.8.10",
     "uglify-js": "^2.6.2",
