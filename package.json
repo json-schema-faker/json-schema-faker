@@ -51,7 +51,7 @@
     "jasmine-node": "^2.0.0",
     "jayschema": "^0.3.1",
     "lodash.template": "^4.2.4",
-    "semver": "^5.1.0",
+    "semver": "^5.1.1",
     "tslint": "^3.12.1",
     "tv4": "^1.2.7",
     "typescript": "^1.8.10",
