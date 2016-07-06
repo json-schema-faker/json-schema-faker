@@ -453,7 +453,7 @@ In that case you may bundle the distribution yourself manually. It's easily achi
 * artwork by [Ajay Karat](http://www.devilsgarage.com/)
 
 We are more than happy to welcome new contributors, our project is heavily developed, but we need more power :)
-Please see [contribution guide](CONTRIBUTING.md), you can always contact us to ask how you can help.
+Please see [contribution guide](.github/CONTRIBUTING.md), you can always contact us to ask how you can help.
 
 ### Technical Documentation
 

@@ -75,4 +75,4 @@ export = {
   pick: pick,
   shuffle: shuffle,
   number: number,
-}
+};
