@@ -236,15 +236,11 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
 
 ### Advanced usage of faker.js and Chance.js
 
-In following examples the `faker` variable is assumed to be created with:
+In following examples the `faker` and `chance` variables are assumed to be created with, respectively:
 
 ```javascript
 var faker = require('faker');
-```
 
-and `chance` with:
-
-```javascript
 var Chance = require('chance'),
   chance = new Chance();
 ```
