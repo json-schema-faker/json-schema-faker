@@ -220,10 +220,17 @@ You can use **faker** or **chance** properties but they are optional:
 }
 ```
 
-The above schema will invoke:
+The above schema will invoke `faker.internet.email()`.
 
-```javascript
-require('faker').internet.email();
+Note that both generators has higher precedence than **format**.
+
+You can also use standard JSON Schema keywords, e.g. `pattern`:
+
+```json
+{
+  "type": "string",
+  "pattern": "yes|no|maybe|i don't know"
+}
 ```
 
 Another example is passing arguments to the generator:
@@ -248,16 +255,51 @@ var Chance = require('chance'),
 chance.email({ "domain": "fake.com" });
 ```
 
-If you pass an array, they will be used as raw arguments.
+or `chance.email({ "domain": "fake.com" })` for short.
 
-Note that both generators has higher precedence than **format**.
+The example above works for single-parameter generator function.
 
-You can also use standard JSON Schema keywords, e.g. `pattern`:
+However, if you pass multiple arguments to the generator function, just pass them wrapped in an array. In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85) generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
 
 ```json
 {
-  "type": "string",
-  "pattern": "yes|no|maybe|i don't know"
+  "type": "object",
+  "properties": {
+    "cash": {
+      "type": "string",
+      "faker": {
+        "finance.amount": [100, 10000, 2, "$"]
+      }
+    }
+  },
+  "required": [
+    "cash"
+  ]
+}
+```
+
+However, if you want to pass a single parameter that is an array itself, e.g. [`chance.pickone(["one", "two", "three"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382), just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171), then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "chance": {
+        "pickone": [
+          [
+            "one",
+            "two",
+            "three"
+          ]
+        ]
+      }
+    }
+  },
+  "required": [
+    "title"
+  ]
 }
 ```
 
