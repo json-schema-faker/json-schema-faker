@@ -33,6 +33,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Supported keywords](#supported-keywords)
   - [Using references](#using-references)
   - [Faking values](#faking-values)
+    - [Advanced usage of faker.js and Chance.js](#user-content-advanced-usage-of-fakerjs-and-chancejs)
   - [Custom formats](#custom-formats)
   - [Custom options](#custom-options)
   - [Extending dependencies](#extending-dependencies)
@@ -233,7 +234,22 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
 }
 ```
 
-Another example is passing arguments to the generator:
+### Advanced usage of faker.js and Chance.js
+
+In following examples the `faker` variable is assumed to be created with:
+
+```javascript
+var faker = require('faker');
+```
+
+and `chance` with:
+
+```javascript
+var Chance = require('chance'),
+  chance = new Chance();
+```
+
+Another example of faking values is passing arguments to the generator:
 
 ```json
 {
@@ -246,18 +262,7 @@ Another example is passing arguments to the generator:
 }
 ```
 
-And will invoke:
-
-```javascript
-var Chance = require('chance'),
-  chance = new Chance();
-
-chance.email({ "domain": "fake.com" });
-```
-
-or `chance.email({ "domain": "fake.com" })` for short.
-
-The example above works for single-parameter generator function.
+which will invoke `chance.email({ "domain": "fake.com" })`. This example works for single-parameter generator function.
 
 However, if you pass multiple arguments to the generator function, just pass them wrapped in an array. In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85) generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
 
