@@ -6,7 +6,7 @@ import random = require('./random');
 import utils = require('./utils');
 
 function isKey(prop: string): boolean {
-  return prop === 'enum' || prop === 'required' || prop === 'definitions';
+  return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 
 // TODO provide types
@@ -62,7 +62,7 @@ function run(schema, refs?, ex?) {
       }
 
       for (var prop in sub) {
-        if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
+        if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && sub[prop] !== null && !isKey(prop)) {
           sub[prop] = reduce(sub[prop]);
         }
       }

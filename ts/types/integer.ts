@@ -4,11 +4,11 @@ import number = require('./number');
 // returns floating point numbers, and `integer` type truncates the fraction
 // part, leaving the result as an integer.
 
-function integerType(value: INumberSchema): number {
+var integerType: FTypeGenerator = function integerType(value: INumberSchema): number {
   var generated: number = number(value);
   // whether the generated number is positive or negative, need to use either
   // floor (positive) or ceil (negative) function to get rid of the fraction
   return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
-}
+};
 
 export = integerType;

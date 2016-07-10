@@ -11,6 +11,7 @@ class OptionRegistry extends Registry<Option> {
     super();
     this.data['failOnInvalidTypes'] = true;
     this.data['defaultInvalidTypeProduct'] = null;
+    this.data['useDefaultValue'] = false;
   }
 }
 

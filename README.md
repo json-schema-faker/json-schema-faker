@@ -25,19 +25,21 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Overview](#overview)
   - [Example usage](#example-usage)
     - [Gist demos](#gist-demos)
+  - [Automation](#automation)
+    - [Angular-jsf (AngularJS plugin)](#angular-jsf)
+    - [Grunt plugin](#grunt-plugin)
 - Advanced
   - [JSON Schema specification support](#json-schema-specification-support)
   - [Supported keywords](#supported-keywords)
   - [Using references](#using-references)
   - [Faking values](#faking-values)
+    - [Advanced usage of faker.js and Chance.js](#user-content-advanced-usage-of-fakerjs-and-chancejs)
   - [Custom formats](#custom-formats)
   - [Custom options](#custom-options)
   - [Extending dependencies](#extending-dependencies)
   - [Inferred Types](#inferred-types)
   - [Swagger extensions](#swagger-extensions)
   - [Bundling](#bundling)
-  - [Automation](#automation)
-    - [Grunt plugin](#grunt-plugin)
 - Misc
   - [Contribution](#contribution)
     - [Technical Documentation](#technical-documentation)
@@ -69,11 +71,11 @@ Install `json-schema-faker` with bower:
 JSON-Schema-faker is also available at [cdnjs.com](https://www.cdnjs.com/libraries/json-schema-faker). This means you can just include the script file into your HTML:
 
     # remember to update the version number!
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.2.8/json-schema-faker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.3.1/json-schema-faker.min.js"></script>
 
 It will be fetched from the [Content Delivery Network](https://en.wikipedia.org/wiki/Content_delivery_network) without installing any node.js package.
 
-You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfiddle.net/ftzhnmzq/).
+You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfiddle.net/ftzhnmzq/4/).
 
 ## Overview
 
@@ -134,6 +136,17 @@ Clone these gists and execute them locally (each gist has its own readme with in
 
  * [jsf console](https://gist.github.com/ducin/9f2364ccde2e9248fbcd) - minimal example of jsf working directly under command line
  * [jsf grunt](https://gist.github.com/ducin/87e0b55bddd1801d3d99) - example of jsf working under grunt.js
+
+## Automation
+
+### angular-jsf
+
+Use [`angular-jsf`](https://github.com/json-schema-faker/angular-jsf) module (installable via `npm` and `bower`) to get **`jsf` working in your angular app out of the box**! And check out [angular-jsf demo](http://angular-jsf.js.org/).
+
+### Grunt plugin
+
+Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
+to automate running `json-schema-faker` against your JSON schemas.
 
 ## JSON Schema specification support
 
@@ -208,13 +221,31 @@ You can use **faker** or **chance** properties but they are optional:
 }
 ```
 
-The above schema will invoke:
+The above schema will invoke `faker.internet.email()`.
 
-```javascript
-require('faker').internet.email();
+Note that both generators has higher precedence than **format**.
+
+You can also use standard JSON Schema keywords, e.g. `pattern`:
+
+```json
+{
+  "type": "string",
+  "pattern": "yes|no|maybe|i don't know"
+}
 ```
 
-Another example is passing arguments to the generator:
+### Advanced usage of faker.js and Chance.js
+
+In following examples the `faker` and `chance` variables are assumed to be created with, respectively:
+
+```javascript
+var faker = require('faker');
+
+var Chance = require('chance'),
+  chance = new Chance();
+```
+
+Another example of faking values is passing arguments to the generator:
 
 ```json
 {
@@ -227,25 +258,49 @@ Another example is passing arguments to the generator:
 }
 ```
 
-And will invoke:
+which will invoke `chance.email({ "domain": "fake.com" })`. This example works for single-parameter generator function.
 
-```javascript
-var Chance = require('chance'),
-  chance = new Chance();
-
-chance.email({ "domain": "fake.com" });
-```
-
-If you pass an array, they will be used as raw arguments.
-
-Note that both generators has higher precedence than **format**.
-
-You can also use standard JSON Schema keywords, e.g. `pattern`:
+However, if you pass multiple arguments to the generator function, just pass them wrapped in an array. In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85) generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
 
 ```json
 {
-  "type": "string",
-  "pattern": "yes|no|maybe|i don't know"
+  "type": "object",
+  "properties": {
+    "cash": {
+      "type": "string",
+      "faker": {
+        "finance.amount": [100, 10000, 2, "$"]
+      }
+    }
+  },
+  "required": [
+    "cash"
+  ]
+}
+```
+
+However, if you want to pass a single parameter that is an array itself, e.g. [`chance.pickone(["one", "two", "three"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382), just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171), then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "chance": {
+        "pickone": [
+          [
+            "one",
+            "two",
+            "three"
+          ]
+        ]
+      }
+    }
+  },
+  "required": [
+    "title"
+  ]
 }
 ```
 
@@ -434,13 +489,6 @@ However, you may want to bundle a smaller package of `jsf`, because:
 * or for any other reason...
 In that case you may bundle the distribution yourself manually. It's easily achievable: just modify the [`lib/util/container.js`](lib/util/container.js) file and either remove o rmodify the `require` calls (they're directly used by browserify to include dependencies). Automation of this feature is expected in near future.
 
-## Automation
-
-### Grunt plugin
-
-Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
-to automate running `json-schema-faker` against your JSON schemas.
-
 ## Contribution
 
 * [Alvaro Cabrera](https://twitter.com/pateketrueke)
@@ -448,7 +496,7 @@ to automate running `json-schema-faker` against your JSON schemas.
 * artwork by [Ajay Karat](http://www.devilsgarage.com/)
 
 We are more than happy to welcome new contributors, our project is heavily developed, but we need more power :)
-Please see [contribution guide](CONTRIBUTING.md), you can always contact us to ask how you can help.
+Please see [contribution guide](.github/CONTRIBUTING.md), you can always contact us to ask how you can help.
 
 ### Technical Documentation
 

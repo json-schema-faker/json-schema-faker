@@ -35,7 +35,7 @@ function unique(path, items, value, sample, resolve, traverseCallback: Function)
 type Result = any;
 
 // TODO provide types
-function arrayType(value: IArraySchema, path, resolve, traverseCallback: Function): Result[] {
+var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: SchemaPath, resolve: Function, traverseCallback: Function): Result[] {
   var items: Result[] = [];
 
   if (!(value.items || value.additionalItems)) {
@@ -53,9 +53,10 @@ function arrayType(value: IArraySchema, path, resolve, traverseCallback: Functio
   }
 
   var length: number = random.number(value.minItems, value.maxItems, 1, 5),
+      // TODO below looks bad. Should additionalItems be copied as-is?
       sample: Object = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
-  for (var current = items.length; current < length; current += 1) {
+  for (var current = items.length; current < length; current++) {
     items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));
   }
 
@@ -64,6 +65,6 @@ function arrayType(value: IArraySchema, path, resolve, traverseCallback: Functio
   }
 
   return items;
-}
+};
 
 export = arrayType;

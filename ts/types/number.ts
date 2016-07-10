@@ -4,7 +4,7 @@ var MIN_INTEGER = -100000000,
     MAX_INTEGER = 100000000,
     FLOAT_DIFFERENCE = 0.1;
 
-function numberType(value: INumberSchema): number {
+var numberType: FTypeGenerator = function numberType(value: INumberSchema): number {
   var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
       max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum,
       multipleOf = value.multipleOf;
@@ -35,6 +35,6 @@ function numberType(value: INumberSchema): number {
   }
 
   return random.number(min, max, undefined, undefined, true);
-}
+};
 
 export = numberType;

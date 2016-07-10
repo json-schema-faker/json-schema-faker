@@ -7,7 +7,7 @@ import ParseError = require('../core/error');
 var randexp = container.get('randexp');
 
 // TODO provide types
-function objectType(value: IObjectSchema, path, resolve, traverseCallback: Function): Object {
+var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path, resolve, traverseCallback: Function): Object {
   var props = {};
 
   if (!(value.properties || value.patternProperties || value.additionalProperties)) {
@@ -55,6 +55,6 @@ function objectType(value: IObjectSchema, path, resolve, traverseCallback: Funct
   }
 
   return traverseCallback(props, path.concat(['properties']), resolve);
-}
+};
 
 export = objectType;

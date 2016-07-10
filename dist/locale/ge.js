@@ -1,14 +1,15 @@
 /*!
- * json-schema-faker library v0.3.1
+ * json-schema-faker library v0.3.4
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-04-15 18:37:35.154Z
+ * Date: 2016-07-06 12:54:51.655Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
 var Registry = require('../class/Registry');
 // instantiate
 var registry = new Registry();
@@ -39,6 +40,7 @@ function formatAPI(nameOrFormatMap, callback) {
 module.exports = formatAPI;
 
 },{"../class/Registry":5}],2:[function(require,module,exports){
+"use strict";
 var OptionRegistry = require('../class/OptionRegistry');
 // instantiate
 var registry = new OptionRegistry();
@@ -59,6 +61,7 @@ function optionAPI(nameOrOptionMap) {
 module.exports = optionAPI;
 
 },{"../class/OptionRegistry":4}],3:[function(require,module,exports){
+"use strict";
 var randexp = require('randexp');
 /**
  * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
@@ -114,13 +117,14 @@ var Container = (function () {
         };
     };
     return Container;
-})();
+}());
 // TODO move instantiation somewhere else (out from class file)
 // instantiate
 var container = new Container();
 module.exports = container;
 
 },{"randexp":176}],4:[function(require,module,exports){
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -136,12 +140,14 @@ var OptionRegistry = (function (_super) {
         _super.call(this);
         this.data['failOnInvalidTypes'] = true;
         this.data['defaultInvalidTypeProduct'] = null;
+        this.data['useDefaultValue'] = false;
     }
     return OptionRegistry;
-})(Registry);
+}(Registry));
 module.exports = OptionRegistry;
 
 },{"./Registry":5}],5:[function(require,module,exports){
+"use strict";
 /**
  * This class defines a registry for custom formats used within JSF.
  */
@@ -181,10 +187,11 @@ var Registry = (function () {
         return this.data;
     };
     return Registry;
-})();
+}());
 module.exports = Registry;
 
 },{}],6:[function(require,module,exports){
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -201,10 +208,11 @@ var ParseError = (function (_super) {
         this.path = path;
     }
     return ParseError;
-})(Error);
+}(Error));
 module.exports = ParseError;
 
 },{}],7:[function(require,module,exports){
+"use strict";
 var inferredProperties = {
     array: [
         'additionalItems',
@@ -279,6 +287,7 @@ module.exports = inferType;
 
 },{}],8:[function(require,module,exports){
 /// <reference path="../index.d.ts" />
+"use strict";
 /**
  * Returns random element of a collection
  *
@@ -295,9 +304,11 @@ function pick(collection) {
  * @returns {T[]}
  */
 function shuffle(collection) {
-    var copy = collection.slice(), length = collection.length;
+    var tmp, key, copy = collection.slice(), length = collection.length;
     for (; length > 0;) {
-        var key = Math.floor(Math.random() * length), tmp = copy[--length];
+        key = Math.floor(Math.random() * length);
+        // swap
+        tmp = copy[--length];
         copy[length] = copy[key];
         copy[key] = tmp;
     }
@@ -341,12 +352,13 @@ module.exports = {
 };
 
 },{}],9:[function(require,module,exports){
+"use strict";
 var deref = require('deref');
 var traverse = require('./traverse');
 var random = require('./random');
 var utils = require('./utils');
 function isKey(prop) {
-    return prop === 'enum' || prop === 'required' || prop === 'definitions';
+    return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 // TODO provide types
 function run(schema, refs, ex) {
@@ -387,7 +399,7 @@ function run(schema, refs, ex) {
                 utils.merge(sub, random.pick(mix));
             }
             for (var prop in sub) {
-                if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
+                if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && sub[prop] !== null && !isKey(prop)) {
                     sub[prop] = reduce(sub[prop]);
                 }
             }
@@ -406,6 +418,7 @@ function run(schema, refs, ex) {
 module.exports = run;
 
 },{"./random":8,"./traverse":10,"./utils":11,"deref":29}],10:[function(require,module,exports){
+"use strict";
 var random = require('./random');
 var ParseError = require('./error');
 var inferType = require('./infer');
@@ -432,6 +445,9 @@ function traverse(schema, path, resolve) {
     resolve(schema);
     if (Array.isArray(schema.enum)) {
         return random.pick(schema.enum);
+    }
+    if (option('useDefaultValue') && schema.default) {
+        return schema.default;
     }
     // TODO remove the ugly overcome
     var type = schema.type;
@@ -484,6 +500,7 @@ function traverse(schema, path, resolve) {
 module.exports = traverse;
 
 },{"../api/option":2,"../types/index":23,"./error":6,"./infer":7,"./random":8}],11:[function(require,module,exports){
+"use strict";
 function getSubAttribute(obj, dotSeparatedKey) {
     var keyElements = dotSeparatedKey.split('.');
     while (keyElements.length) {
@@ -499,6 +516,7 @@ function getSubAttribute(obj, dotSeparatedKey) {
  * Returns true/false whether the object parameter has its own properties defined
  *
  * @param obj
+ * @param properties
  * @returns {boolean}
  */
 function hasProperties(obj) {
@@ -548,6 +566,7 @@ module.exports = {
 };
 
 },{}],12:[function(require,module,exports){
+"use strict";
 /**
  * Generates randomized boolean value.
  *
@@ -559,6 +578,7 @@ function booleanGenerator() {
 module.exports = booleanGenerator;
 
 },{}],13:[function(require,module,exports){
+"use strict";
 var container = require('../class/Container');
 var randexp = container.get('randexp');
 var regexps = {
@@ -581,6 +601,7 @@ function coreFormatGenerator(coreFormat) {
 module.exports = coreFormatGenerator;
 
 },{"../class/Container":3}],14:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 /**
  * Generates randomized date time ISO format string.
@@ -593,6 +614,7 @@ function dateTimeGenerator() {
 module.exports = dateTimeGenerator;
 
 },{"../core/random":8}],15:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 /**
  * Generates randomized ipv4 address.
@@ -607,6 +629,7 @@ function ipv4Generator() {
 module.exports = ipv4Generator;
 
 },{"../core/random":8}],16:[function(require,module,exports){
+"use strict";
 /**
  * Generates null value.
  *
@@ -618,6 +641,7 @@ function nullGenerator() {
 module.exports = nullGenerator;
 
 },{}],17:[function(require,module,exports){
+"use strict";
 var words = require('../generators/words');
 var random = require('../core/random');
 function produce() {
@@ -632,18 +656,21 @@ function produce() {
 function thunkGenerator(min, max) {
     if (min === void 0) { min = 0; }
     if (max === void 0) { max = 140; }
-    var min = Math.max(0, min), max = random.number(min, max), sample = produce();
-    while (sample.length < min) {
-        sample += produce();
+    var min = Math.max(0, min), max = random.number(min, max), result = produce();
+    // append until length is reached
+    while (result.length < min) {
+        result += produce();
     }
-    if (sample.length > max) {
-        sample = sample.substr(0, max);
+    // cut if needed
+    if (result.length > max) {
+        result = result.substr(0, max);
     }
-    return sample;
+    return result;
 }
 module.exports = thunkGenerator;
 
 },{"../core/random":8,"../generators/words":18}],18:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
     + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
@@ -663,6 +690,7 @@ function wordsGenerator(length) {
 module.exports = wordsGenerator;
 
 },{"../core/random":8}],19:[function(require,module,exports){
+"use strict";
 var container = require('./class/Container');
 var format = require('./api/format');
 var option = require('./api/option');
@@ -680,6 +708,7 @@ jsf.extend = function (name, cb) {
 module.exports = jsf;
 
 },{"./api/format":1,"./api/option":2,"./class/Container":3,"./core/run":9}],20:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 var utils = require('../core/utils');
 var ParseError = require('../core/error');
@@ -705,7 +734,7 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
     return tmp;
 }
 // TODO provide types
-function arrayType(value, path, resolve, traverseCallback) {
+var arrayType = function arrayType(value, path, resolve, traverseCallback) {
     var items = [];
     if (!(value.items || value.additionalItems)) {
         if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
@@ -718,26 +747,30 @@ function arrayType(value, path, resolve, traverseCallback) {
             return traverseCallback(item, path.concat(['items', key]), resolve);
         }));
     }
-    var length = random.number(value.minItems, value.maxItems, 1, 5), sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
-    for (var current = items.length; current < length; current += 1) {
+    var length = random.number(value.minItems, value.maxItems, 1, 5), 
+    // TODO below looks bad. Should additionalItems be copied as-is?
+    sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+    for (var current = items.length; current < length; current++) {
         items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));
     }
     if (value.uniqueItems) {
         return unique(path.concat(['items']), items, value, sample, resolve, traverseCallback);
     }
     return items;
-}
+};
 module.exports = arrayType;
 
 },{"../core/error":6,"../core/random":8,"../core/utils":11}],21:[function(require,module,exports){
+"use strict";
 var booleanGenerator = require('../generators/boolean');
 var booleanType = booleanGenerator;
 module.exports = booleanType;
 
 },{"../generators/boolean":12}],22:[function(require,module,exports){
+"use strict";
 var utils = require('../core/utils');
 var container = require('../class/Container');
-function externalType(value, path) {
+var externalType = function externalType(value, path) {
     var libraryName = value.faker ? 'faker' : 'chance', libraryModule = value.faker ? container.get('faker') : container.get('chance'), key = value.faker || value.chance, path = key, args = [];
     if (typeof path === 'object') {
         path = Object.keys(path)[0];
@@ -760,10 +793,11 @@ function externalType(value, path) {
         contextObject = libraryModule[fakerModuleName];
     }
     return genFunction.apply(contextObject, args);
-}
+};
 module.exports = externalType;
 
 },{"../class/Container":3,"../core/utils":11}],23:[function(require,module,exports){
+"use strict";
 var _boolean = require('./boolean');
 var _null = require('./null');
 var _array = require('./array');
@@ -785,29 +819,31 @@ var typeMap = {
 module.exports = typeMap;
 
 },{"./array":20,"./boolean":21,"./external":22,"./integer":24,"./null":25,"./number":26,"./object":27,"./string":28}],24:[function(require,module,exports){
+"use strict";
 var number = require('./number');
 // The `integer` type is just a wrapper for the `number` type. The `number` type
 // returns floating point numbers, and `integer` type truncates the fraction
 // part, leaving the result as an integer.
-function integerType(value) {
+var integerType = function integerType(value) {
     var generated = number(value);
     // whether the generated number is positive or negative, need to use either
     // floor (positive) or ceil (negative) function to get rid of the fraction
     return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
-}
+};
 module.exports = integerType;
 
 },{"./number":26}],25:[function(require,module,exports){
+"use strict";
 var nullGenerator = require('../generators/null');
 var nullType = nullGenerator;
 module.exports = nullType;
 
 },{"../generators/null":16}],26:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 var MIN_INTEGER = -100000000, MAX_INTEGER = 100000000;
-function numberType(value) {
-    var multipleOf = value.multipleOf;
-    var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum, max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
+var numberType = function numberType(value) {
+    var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum, max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum, multipleOf = value.multipleOf;
     if (multipleOf) {
         max = Math.floor(max / multipleOf) * multipleOf;
         min = Math.ceil(min / multipleOf) * multipleOf;
@@ -818,17 +854,18 @@ function numberType(value) {
     if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
         max -= multipleOf || 1;
     }
-    if (multipleOf) {
-        return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
-    }
     if (min > max) {
         return NaN;
     }
+    if (multipleOf) {
+        return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
+    }
     return random.number(min, max, undefined, undefined, true);
-}
+};
 module.exports = numberType;
 
 },{"../core/random":8}],27:[function(require,module,exports){
+"use strict";
 var container = require('../class/Container');
 var random = require('../core/random');
 var words = require('../generators/words');
@@ -836,7 +873,7 @@ var utils = require('../core/utils');
 var ParseError = require('../core/error');
 var randexp = container.get('randexp');
 // TODO provide types
-function objectType(value, path, resolve, traverseCallback) {
+var objectType = function objectType(value, path, resolve, traverseCallback) {
     var props = {};
     if (!(value.properties || value.patternProperties || value.additionalProperties)) {
         if (utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
@@ -872,10 +909,11 @@ function objectType(value, path, resolve, traverseCallback) {
         });
     }
     return traverseCallback(props, path.concat(['properties']), resolve);
-}
+};
 module.exports = objectType;
 
 },{"../class/Container":3,"../core/error":6,"../core/random":8,"../core/utils":11,"../generators/words":18}],28:[function(require,module,exports){
+"use strict";
 var thunk = require('../generators/thunk');
 var ipv4 = require('../generators/ipv4');
 var dateTime = require('../generators/dateTime');
@@ -902,7 +940,7 @@ function generateFormat(value) {
             return callback(container.getAll(), value);
     }
 }
-function stringType(value) {
+var stringType = function stringType(value) {
     if (value.format) {
         return generateFormat(value);
     }
@@ -912,13 +950,13 @@ function stringType(value) {
     else {
         return thunk(value.minLength, value.maxLength);
     }
-}
+};
 module.exports = stringType;
 
 },{"../api/format":1,"../class/Container":3,"../generators/coreFormat":13,"../generators/dateTime":14,"../generators/ipv4":15,"../generators/thunk":17}],29:[function(require,module,exports){
 'use strict';
 
-var $ = require('./util/uri-helpers');
+var $ = require('./util/helpers');
 
 $.findByRef = require('./util/find-reference');
 $.resolveSchema = require('./util/resolve-schema');
@@ -989,7 +1027,7 @@ var instance = module.exports = function() {
 
 instance.util = $;
 
-},{"./util/find-reference":31,"./util/normalize-schema":32,"./util/resolve-schema":33,"./util/uri-helpers":34}],30:[function(require,module,exports){
+},{"./util/find-reference":31,"./util/helpers":32,"./util/normalize-schema":33,"./util/resolve-schema":34}],30:[function(require,module,exports){
 'use strict';
 
 var clone = module.exports = function(obj, seen) {
@@ -1027,7 +1065,7 @@ var clone = module.exports = function(obj, seen) {
 },{}],31:[function(require,module,exports){
 'use strict';
 
-var $ = require('./uri-helpers');
+var $ = require('./helpers');
 
 function get(obj, path) {
   var hash = path.split('#')[1];
@@ -1072,119 +1110,7 @@ var find = module.exports = function(id, refs) {
   return target;
 };
 
-},{"./uri-helpers":34}],32:[function(require,module,exports){
-'use strict';
-
-var $ = require('./uri-helpers');
-
-var cloneObj = require('./clone-obj');
-
-var SCHEMA_URI = [
-  'http://json-schema.org/schema#',
-  'http://json-schema.org/draft-04/schema#'
-];
-
-function expand(obj, parent, callback) {
-  if (obj) {
-    var id = typeof obj.id === 'string' ? obj.id : '#';
-
-    if (!$.isURL(id)) {
-      id = $.resolveURL(parent === id ? null : parent, id);
-    }
-
-    if (typeof obj.$ref === 'string' && !$.isURL(obj.$ref)) {
-      obj.$ref = $.resolveURL(id, obj.$ref);
-    }
-
-    if (typeof obj.id === 'string') {
-      obj.id = parent = id;
-    }
-  }
-
-  for (var key in obj) {
-    var value = obj[key];
-
-    if (typeof value === 'object' && !(key === 'enum' || key === 'required')) {
-      expand(value, parent, callback);
-    }
-  }
-
-  if (typeof callback === 'function') {
-    callback(obj);
-  }
-}
-
-module.exports = function(fakeroot, schema, push) {
-  if (typeof fakeroot === 'object') {
-    push = schema;
-    schema = fakeroot;
-    fakeroot = null;
-  }
-
-  var base = fakeroot || '',
-      copy = cloneObj(schema);
-
-  if (copy.$schema && SCHEMA_URI.indexOf(copy.$schema) === -1) {
-    throw new Error('Unsupported schema version (v4 only)');
-  }
-
-  base = $.resolveURL(copy.$schema || SCHEMA_URI[0], base);
-
-  expand(copy, $.resolveURL(copy.id || '#', base), push);
-
-  copy.id = copy.id || base;
-
-  return copy;
-};
-
-},{"./clone-obj":30,"./uri-helpers":34}],33:[function(require,module,exports){
-'use strict';
-
-var $ = require('./uri-helpers');
-
-var find = require('./find-reference');
-
-var deepExtend = require('deep-extend');
-
-function isKey(prop) {
-  return prop === 'enum' || prop === 'required' || prop === 'definitions';
-}
-
-function copy(obj, refs, parent, resolve) {
-  var target =  Array.isArray(obj) ? [] : {};
-
-  if (typeof obj.$ref === 'string') {
-    var base = $.getDocumentURI(obj.$ref);
-
-    if (parent !== base || (resolve && obj.$ref.indexOf('#/') > -1)) {
-      var fixed = find(obj.$ref, refs);
-
-      deepExtend(obj, fixed);
-
-      delete obj.$ref;
-      delete obj.id;
-    }
-  }
-
-  for (var prop in obj) {
-    if (typeof obj[prop] === 'object' && !isKey(prop)) {
-      target[prop] = copy(obj[prop], refs, parent, resolve);
-    } else {
-      target[prop] = obj[prop];
-    }
-  }
-
-  return target;
-}
-
-module.exports = function(obj, refs, resolve) {
-  var fixedId = $.resolveURL(obj.$schema, obj.id),
-      parent = $.getDocumentURI(fixedId);
-
-  return copy(obj, refs, parent, resolve);
-};
-
-},{"./find-reference":31,"./uri-helpers":34,"deep-extend":35}],34:[function(require,module,exports){
+},{"./helpers":32}],32:[function(require,module,exports){
 'use strict';
 
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
@@ -1281,14 +1207,127 @@ function getDocumentURI(uri) {
   return typeof uri === 'string' && uri.split('#')[0];
 }
 
+function isKeyword(prop) {
+  return prop === 'enum' || prop === 'default' || prop === 'required';
+}
+
 module.exports = {
   isURL: isURL,
   parseURI: parseURI,
+  isKeyword: isKeyword,
   resolveURL: resolveURL,
   getDocumentURI: getDocumentURI
 };
 
-},{}],35:[function(require,module,exports){
+},{}],33:[function(require,module,exports){
+'use strict';
+
+var $ = require('./helpers');
+
+var cloneObj = require('./clone-obj');
+
+var SCHEMA_URI = [
+  'http://json-schema.org/schema#',
+  'http://json-schema.org/draft-04/schema#'
+];
+
+function expand(obj, parent, callback) {
+  if (obj) {
+    var id = typeof obj.id === 'string' ? obj.id : '#';
+
+    if (!$.isURL(id)) {
+      id = $.resolveURL(parent === id ? null : parent, id);
+    }
+
+    if (typeof obj.$ref === 'string' && !$.isURL(obj.$ref)) {
+      obj.$ref = $.resolveURL(id, obj.$ref);
+    }
+
+    if (typeof obj.id === 'string') {
+      obj.id = parent = id;
+    }
+  }
+
+  for (var key in obj) {
+    var value = obj[key];
+
+    if (typeof value === 'object' && value !== null && !$.isKeyword(key)) {
+      expand(value, parent, callback);
+    }
+  }
+
+  if (typeof callback === 'function') {
+    callback(obj);
+  }
+}
+
+module.exports = function(fakeroot, schema, push) {
+  if (typeof fakeroot === 'object') {
+    push = schema;
+    schema = fakeroot;
+    fakeroot = null;
+  }
+
+  var base = fakeroot || '',
+      copy = cloneObj(schema);
+
+  if (copy.$schema && SCHEMA_URI.indexOf(copy.$schema) === -1) {
+    throw new Error('Unsupported schema version (v4 only)');
+  }
+
+  base = $.resolveURL(copy.$schema || SCHEMA_URI[0], base);
+
+  expand(copy, $.resolveURL(copy.id || '#', base), push);
+
+  copy.id = copy.id || base;
+
+  return copy;
+};
+
+},{"./clone-obj":30,"./helpers":32}],34:[function(require,module,exports){
+'use strict';
+
+var $ = require('./helpers');
+
+var find = require('./find-reference');
+
+var deepExtend = require('deep-extend');
+
+function copy(obj, refs, parent, resolve) {
+  var target =  Array.isArray(obj) ? [] : {};
+
+  if (typeof obj.$ref === 'string') {
+    var base = $.getDocumentURI(obj.$ref);
+
+    if (parent !== base || (resolve && obj.$ref.indexOf('#/') > -1)) {
+      var fixed = find(obj.$ref, refs);
+
+      deepExtend(obj, fixed);
+
+      delete obj.$ref;
+      delete obj.id;
+    }
+  }
+
+  for (var prop in obj) {
+    if (typeof obj[prop] === 'object' && obj[prop] !== null && !$.isKeyword(prop)) {
+      target[prop] = copy(obj[prop], refs, parent, resolve);
+    } else {
+      target[prop] = obj[prop];
+    }
+  }
+
+  return target;
+}
+
+module.exports = function(obj, refs, resolve) {
+  var fixedId = $.resolveURL(obj.$schema, obj.id),
+      parent = $.getDocumentURI(fixedId);
+
+  return copy(obj, refs, parent, resolve);
+};
+
+},{"./find-reference":31,"./helpers":32,"deep-extend":35}],35:[function(require,module,exports){
 /*!
  * @description Recursive object extending
  * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>

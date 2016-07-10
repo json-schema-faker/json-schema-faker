@@ -1,14 +1,15 @@
 /*!
- * json-schema-faker library v0.3.1
+ * json-schema-faker library v0.3.4
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-04-15 18:37:35.154Z
+ * Date: 2016-07-06 12:54:51.655Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
+"use strict";
 var Registry = require('../class/Registry');
 // instantiate
 var registry = new Registry();
@@ -39,6 +40,7 @@ function formatAPI(nameOrFormatMap, callback) {
 module.exports = formatAPI;
 
 },{"../class/Registry":5}],2:[function(require,module,exports){
+"use strict";
 var OptionRegistry = require('../class/OptionRegistry');
 // instantiate
 var registry = new OptionRegistry();
@@ -59,6 +61,7 @@ function optionAPI(nameOrOptionMap) {
 module.exports = optionAPI;
 
 },{"../class/OptionRegistry":4}],3:[function(require,module,exports){
+"use strict";
 var randexp = require('randexp');
 /**
  * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
@@ -114,13 +117,14 @@ var Container = (function () {
         };
     };
     return Container;
-})();
+}());
 // TODO move instantiation somewhere else (out from class file)
 // instantiate
 var container = new Container();
 module.exports = container;
 
 },{"randexp":998}],4:[function(require,module,exports){
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -136,12 +140,14 @@ var OptionRegistry = (function (_super) {
         _super.call(this);
         this.data['failOnInvalidTypes'] = true;
         this.data['defaultInvalidTypeProduct'] = null;
+        this.data['useDefaultValue'] = false;
     }
     return OptionRegistry;
-})(Registry);
+}(Registry));
 module.exports = OptionRegistry;
 
 },{"./Registry":5}],5:[function(require,module,exports){
+"use strict";
 /**
  * This class defines a registry for custom formats used within JSF.
  */
@@ -181,10 +187,11 @@ var Registry = (function () {
         return this.data;
     };
     return Registry;
-})();
+}());
 module.exports = Registry;
 
 },{}],6:[function(require,module,exports){
+"use strict";
 var __extends = (this && this.__extends) || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -201,10 +208,11 @@ var ParseError = (function (_super) {
         this.path = path;
     }
     return ParseError;
-})(Error);
+}(Error));
 module.exports = ParseError;
 
 },{}],7:[function(require,module,exports){
+"use strict";
 var inferredProperties = {
     array: [
         'additionalItems',
@@ -279,6 +287,7 @@ module.exports = inferType;
 
 },{}],8:[function(require,module,exports){
 /// <reference path="../index.d.ts" />
+"use strict";
 /**
  * Returns random element of a collection
  *
@@ -295,9 +304,11 @@ function pick(collection) {
  * @returns {T[]}
  */
 function shuffle(collection) {
-    var copy = collection.slice(), length = collection.length;
+    var tmp, key, copy = collection.slice(), length = collection.length;
     for (; length > 0;) {
-        var key = Math.floor(Math.random() * length), tmp = copy[--length];
+        key = Math.floor(Math.random() * length);
+        // swap
+        tmp = copy[--length];
         copy[length] = copy[key];
         copy[key] = tmp;
     }
@@ -341,12 +352,13 @@ module.exports = {
 };
 
 },{}],9:[function(require,module,exports){
+"use strict";
 var deref = require('deref');
 var traverse = require('./traverse');
 var random = require('./random');
 var utils = require('./utils');
 function isKey(prop) {
-    return prop === 'enum' || prop === 'required' || prop === 'definitions';
+    return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 // TODO provide types
 function run(schema, refs, ex) {
@@ -387,7 +399,7 @@ function run(schema, refs, ex) {
                 utils.merge(sub, random.pick(mix));
             }
             for (var prop in sub) {
-                if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
+                if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && sub[prop] !== null && !isKey(prop)) {
                     sub[prop] = reduce(sub[prop]);
                 }
             }
@@ -406,6 +418,7 @@ function run(schema, refs, ex) {
 module.exports = run;
 
 },{"./random":8,"./traverse":10,"./utils":11,"deref":30}],10:[function(require,module,exports){
+"use strict";
 var random = require('./random');
 var ParseError = require('./error');
 var inferType = require('./infer');
@@ -432,6 +445,9 @@ function traverse(schema, path, resolve) {
     resolve(schema);
     if (Array.isArray(schema.enum)) {
         return random.pick(schema.enum);
+    }
+    if (option('useDefaultValue') && schema.default) {
+        return schema.default;
     }
     // TODO remove the ugly overcome
     var type = schema.type;
@@ -484,6 +500,7 @@ function traverse(schema, path, resolve) {
 module.exports = traverse;
 
 },{"../api/option":2,"../types/index":23,"./error":6,"./infer":7,"./random":8}],11:[function(require,module,exports){
+"use strict";
 function getSubAttribute(obj, dotSeparatedKey) {
     var keyElements = dotSeparatedKey.split('.');
     while (keyElements.length) {
@@ -499,6 +516,7 @@ function getSubAttribute(obj, dotSeparatedKey) {
  * Returns true/false whether the object parameter has its own properties defined
  *
  * @param obj
+ * @param properties
  * @returns {boolean}
  */
 function hasProperties(obj) {
@@ -548,6 +566,7 @@ module.exports = {
 };
 
 },{}],12:[function(require,module,exports){
+"use strict";
 /**
  * Generates randomized boolean value.
  *
@@ -559,6 +578,7 @@ function booleanGenerator() {
 module.exports = booleanGenerator;
 
 },{}],13:[function(require,module,exports){
+"use strict";
 var container = require('../class/Container');
 var randexp = container.get('randexp');
 var regexps = {
@@ -581,6 +601,7 @@ function coreFormatGenerator(coreFormat) {
 module.exports = coreFormatGenerator;
 
 },{"../class/Container":3}],14:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 /**
  * Generates randomized date time ISO format string.
@@ -593,6 +614,7 @@ function dateTimeGenerator() {
 module.exports = dateTimeGenerator;
 
 },{"../core/random":8}],15:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 /**
  * Generates randomized ipv4 address.
@@ -607,6 +629,7 @@ function ipv4Generator() {
 module.exports = ipv4Generator;
 
 },{"../core/random":8}],16:[function(require,module,exports){
+"use strict";
 /**
  * Generates null value.
  *
@@ -618,6 +641,7 @@ function nullGenerator() {
 module.exports = nullGenerator;
 
 },{}],17:[function(require,module,exports){
+"use strict";
 var words = require('../generators/words');
 var random = require('../core/random');
 function produce() {
@@ -632,18 +656,21 @@ function produce() {
 function thunkGenerator(min, max) {
     if (min === void 0) { min = 0; }
     if (max === void 0) { max = 140; }
-    var min = Math.max(0, min), max = random.number(min, max), sample = produce();
-    while (sample.length < min) {
-        sample += produce();
+    var min = Math.max(0, min), max = random.number(min, max), result = produce();
+    // append until length is reached
+    while (result.length < min) {
+        result += produce();
     }
-    if (sample.length > max) {
-        sample = sample.substr(0, max);
+    // cut if needed
+    if (result.length > max) {
+        result = result.substr(0, max);
     }
-    return sample;
+    return result;
 }
 module.exports = thunkGenerator;
 
 },{"../core/random":8,"../generators/words":18}],18:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
     + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
@@ -663,6 +690,7 @@ function wordsGenerator(length) {
 module.exports = wordsGenerator;
 
 },{"../core/random":8}],19:[function(require,module,exports){
+"use strict";
 var container = require('./class/Container');
 var format = require('./api/format');
 var option = require('./api/option');
@@ -680,6 +708,7 @@ jsf.extend = function (name, cb) {
 module.exports = jsf;
 
 },{"./api/format":1,"./api/option":2,"./class/Container":3,"./core/run":9}],20:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 var utils = require('../core/utils');
 var ParseError = require('../core/error');
@@ -705,7 +734,7 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
     return tmp;
 }
 // TODO provide types
-function arrayType(value, path, resolve, traverseCallback) {
+var arrayType = function arrayType(value, path, resolve, traverseCallback) {
     var items = [];
     if (!(value.items || value.additionalItems)) {
         if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
@@ -718,26 +747,30 @@ function arrayType(value, path, resolve, traverseCallback) {
             return traverseCallback(item, path.concat(['items', key]), resolve);
         }));
     }
-    var length = random.number(value.minItems, value.maxItems, 1, 5), sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
-    for (var current = items.length; current < length; current += 1) {
+    var length = random.number(value.minItems, value.maxItems, 1, 5), 
+    // TODO below looks bad. Should additionalItems be copied as-is?
+    sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+    for (var current = items.length; current < length; current++) {
         items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));
     }
     if (value.uniqueItems) {
         return unique(path.concat(['items']), items, value, sample, resolve, traverseCallback);
     }
     return items;
-}
+};
 module.exports = arrayType;
 
 },{"../core/error":6,"../core/random":8,"../core/utils":11}],21:[function(require,module,exports){
+"use strict";
 var booleanGenerator = require('../generators/boolean');
 var booleanType = booleanGenerator;
 module.exports = booleanType;
 
 },{"../generators/boolean":12}],22:[function(require,module,exports){
+"use strict";
 var utils = require('../core/utils');
 var container = require('../class/Container');
-function externalType(value, path) {
+var externalType = function externalType(value, path) {
     var libraryName = value.faker ? 'faker' : 'chance', libraryModule = value.faker ? container.get('faker') : container.get('chance'), key = value.faker || value.chance, path = key, args = [];
     if (typeof path === 'object') {
         path = Object.keys(path)[0];
@@ -760,10 +793,11 @@ function externalType(value, path) {
         contextObject = libraryModule[fakerModuleName];
     }
     return genFunction.apply(contextObject, args);
-}
+};
 module.exports = externalType;
 
 },{"../class/Container":3,"../core/utils":11}],23:[function(require,module,exports){
+"use strict";
 var _boolean = require('./boolean');
 var _null = require('./null');
 var _array = require('./array');
@@ -785,29 +819,31 @@ var typeMap = {
 module.exports = typeMap;
 
 },{"./array":20,"./boolean":21,"./external":22,"./integer":24,"./null":25,"./number":26,"./object":27,"./string":28}],24:[function(require,module,exports){
+"use strict";
 var number = require('./number');
 // The `integer` type is just a wrapper for the `number` type. The `number` type
 // returns floating point numbers, and `integer` type truncates the fraction
 // part, leaving the result as an integer.
-function integerType(value) {
+var integerType = function integerType(value) {
     var generated = number(value);
     // whether the generated number is positive or negative, need to use either
     // floor (positive) or ceil (negative) function to get rid of the fraction
     return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
-}
+};
 module.exports = integerType;
 
 },{"./number":26}],25:[function(require,module,exports){
+"use strict";
 var nullGenerator = require('../generators/null');
 var nullType = nullGenerator;
 module.exports = nullType;
 
 },{"../generators/null":16}],26:[function(require,module,exports){
+"use strict";
 var random = require('../core/random');
 var MIN_INTEGER = -100000000, MAX_INTEGER = 100000000;
-function numberType(value) {
-    var multipleOf = value.multipleOf;
-    var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum, max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum;
+var numberType = function numberType(value) {
+    var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum, max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum, multipleOf = value.multipleOf;
     if (multipleOf) {
         max = Math.floor(max / multipleOf) * multipleOf;
         min = Math.ceil(min / multipleOf) * multipleOf;
@@ -818,17 +854,18 @@ function numberType(value) {
     if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
         max -= multipleOf || 1;
     }
-    if (multipleOf) {
-        return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
-    }
     if (min > max) {
         return NaN;
     }
+    if (multipleOf) {
+        return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
+    }
     return random.number(min, max, undefined, undefined, true);
-}
+};
 module.exports = numberType;
 
 },{"../core/random":8}],27:[function(require,module,exports){
+"use strict";
 var container = require('../class/Container');
 var random = require('../core/random');
 var words = require('../generators/words');
@@ -836,7 +873,7 @@ var utils = require('../core/utils');
 var ParseError = require('../core/error');
 var randexp = container.get('randexp');
 // TODO provide types
-function objectType(value, path, resolve, traverseCallback) {
+var objectType = function objectType(value, path, resolve, traverseCallback) {
     var props = {};
     if (!(value.properties || value.patternProperties || value.additionalProperties)) {
         if (utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
@@ -872,10 +909,11 @@ function objectType(value, path, resolve, traverseCallback) {
         });
     }
     return traverseCallback(props, path.concat(['properties']), resolve);
-}
+};
 module.exports = objectType;
 
 },{"../class/Container":3,"../core/error":6,"../core/random":8,"../core/utils":11,"../generators/words":18}],28:[function(require,module,exports){
+"use strict";
 var thunk = require('../generators/thunk');
 var ipv4 = require('../generators/ipv4');
 var dateTime = require('../generators/dateTime');
@@ -902,7 +940,7 @@ function generateFormat(value) {
             return callback(container.getAll(), value);
     }
 }
-function stringType(value) {
+var stringType = function stringType(value) {
     if (value.format) {
         return generateFormat(value);
     }
@@ -912,11 +950,11 @@ function stringType(value) {
     else {
         return thunk(value.minLength, value.maxLength);
     }
-}
+};
 module.exports = stringType;
 
 },{"../api/format":1,"../class/Container":3,"../generators/coreFormat":13,"../generators/dateTime":14,"../generators/ipv4":15,"../generators/thunk":17}],29:[function(require,module,exports){
-//  Chance.js 1.0.1
+//  Chance.js 1.0.3
 //  http://chancejs.com
 //  (c) 2013 Victor Quinn
 //  Chance may be freely distributed or modified under the MIT license.
@@ -980,7 +1018,7 @@ module.exports = stringType;
         return this;
     }
 
-    Chance.prototype.VERSION = "1.0.1";
+    Chance.prototype.VERSION = "1.0.3";
 
     // Random helper functions
     function initOptions(options, defaults) {
@@ -1221,19 +1259,18 @@ module.exports = stringType;
             "Chance: The first argument must be a function."
         );
 
-        options = initOptions(options, {
-            // Default comparator to check that val is not already in arr.
-            // Should return `false` if item not in array, `true` otherwise
-            comparator: function(arr, val) {
-                return arr.indexOf(val) !== -1;
-            }
-        });
+        var comparator = function(arr, val) { return arr.indexOf(val) !== -1; };
+
+        if (options) {
+            comparator = options.comparator || comparator;
+        }
 
         var arr = [], count = 0, result, MAX_DUPLICATES = num * 50, params = slice.call(arguments, 2);
 
         while (arr.length < num) {
-            result = fn.apply(this, params);
-            if (!options.comparator(arr, result)) {
+            var clonedParams = JSON.parse(JSON.stringify(params));
+            result = fn.apply(this, clonedParams);
+            if (!comparator(arr, result)) {
                 arr.push(result);
                 // reset count when unique found
                 count = 0;
@@ -1342,52 +1379,55 @@ module.exports = stringType;
     };
 
     // Returns a single item from an array with relative weighting of odds
-    Chance.prototype.weighted = function(arr, weights) {
+    Chance.prototype.weighted = function (arr, weights, trim) {
         if (arr.length !== weights.length) {
             throw new RangeError("Chance: length of array and weights must match");
         }
 
-        // Handle weights that are less or equal to zero.
-        for (var weightIndex = weights.length - 1; weightIndex >= 0; --weightIndex) {
-            // If the weight is less or equal to zero, remove it and the value.
-            if (weights[weightIndex] <= 0) {
-                arr.splice(weightIndex,1);
-                weights.splice(weightIndex,1);
+        // scan weights array and sum valid entries
+        var sum = 0;
+        var val;
+        for (var weightIndex = 0; weightIndex < weights.length; ++weightIndex) {
+            val = weights[weightIndex];
+            if (val > 0) {
+                sum += val;
             }
         }
 
-        // If any of the weights are less than 1, we want to scale them up to whole
-        //   numbers for the rest of this logic to work
-        if (weights.some(function(weight) { return weight < 1; })) {
-            var min = weights.reduce(function(min, weight) {
-                return (weight < min) ? weight : min;
-            }, weights[0]);
-
-            var scaling_factor = 1 / min;
-
-            weights = weights.map(function(weight) {
-                return weight * scaling_factor;
-            });
+        if (sum === 0) {
+            throw new RangeError("Chance: no valid entries in array weights");
         }
 
-        var sum = weights.reduce(function(total, weight) {
-            return total + weight;
-        }, 0);
+        // select a value within range
+        var selected = this.random() * sum;
 
-        // get an index
-        var selected = this.natural({ min: 1, max: sum });
-
+        // find array entry corresponding to selected value
         var total = 0;
-        var chosen;
-        // Using some() here so we can bail as soon as we get our match
-        weights.some(function(weight, index) {
-            if (selected <= total + weight) {
-                chosen = arr[index];
-                return true;
+        var lastGoodIdx = -1;
+        var chosenIdx;
+        for (weightIndex = 0; weightIndex < weights.length; ++weightIndex) {
+            val = weights[weightIndex];
+            total += val;
+            if (val > 0) {
+                if (selected <= total) {
+                    chosenIdx = weightIndex;
+                    break;
+                }
+                lastGoodIdx = weightIndex;
             }
-            total += weight;
-            return false;
-        });
+
+            // handle any possible rounding error comparison to ensure something is picked
+            if (weightIndex === (weights.length - 1)) {
+                chosenIdx = lastGoodIdx;
+            }
+        }
+
+        var chosen = arr[chosenIdx];
+        trim = (typeof trim === 'undefined') ? false : trim;
+        if (trim) {
+            arr.splice(chosenIdx, 1);
+            weights.splice(chosenIdx, 1);
+        }
 
         return chosen;
     };
@@ -1551,6 +1591,22 @@ module.exports = stringType;
             d2 = 0;
         }
         return ''+n[0]+n[1]+n[2]+'.'+n[3]+n[4]+n[5]+'.'+n[6]+n[7]+n[8]+'-'+d1+d2;
+    };
+
+    // CNPJ: ID to identify companies in Brazil
+    Chance.prototype.cnpj = function () {
+        var n = this.n(this.natural, 12, { max: 12 });
+        var d1 = n[11]*2+n[10]*3+n[9]*4+n[8]*5+n[7]*6+n[6]*7+n[5]*8+n[4]*9+n[3]*2+n[2]*3+n[1]*4+n[0]*5;
+        d1 = 11 - (d1 % 11);
+        if (d1<2) {
+            d1 = 0;
+        }
+        var d2 = d1*2+n[11]*3+n[10]*4+n[9]*5+n[8]*6+n[7]*7+n[6]*8+n[5]*9+n[4]*2+n[3]*3+n[2]*4+n[1]*5+n[0]*6;
+        d2 = 11 - (d2 % 11);
+        if (d2<2) {
+            d2 = 0;
+        }
+        return ''+n[0]+n[1]+'.'+n[2]+n[3]+n[4]+'.'+n[5]+n[6]+n[7]+'/'+n[8]+n[9]+n[10]+n[11]+'-'+d1+d2;
     };
 
     Chance.prototype.first = function (options) {
@@ -2011,10 +2067,10 @@ module.exports = stringType;
     Chance.prototype.ip = function () {
         // Todo: This could return some reserved IPs. See http://vq.io/137dgYy
         // this should probably be updated to account for that rare as it may be
-        return this.natural({max: 255}) + '.' +
+        return this.natural({min: 1, max: 254}) + '.' +
                this.natural({max: 255}) + '.' +
                this.natural({max: 255}) + '.' +
-               this.natural({max: 255});
+               this.natural({min: 1, max: 254});
     };
 
     Chance.prototype.ipv6 = function () {
@@ -2043,7 +2099,7 @@ module.exports = stringType;
     };
 
     Chance.prototype.tlds = function () {
-        return ['com', 'org', 'edu', 'gov', 'co.uk', 'net', 'io'];
+        return ['com', 'org', 'edu', 'gov', 'co.uk', 'net', 'io', 'ac', 'ad', 'ae', 'af', 'ag', 'ai', 'al', 'am', 'an', 'ao', 'aq', 'ar', 'as', 'at', 'au', 'aw', 'ax', 'az', 'ba', 'bb', 'bd', 'be', 'bf', 'bg', 'bh', 'bi', 'bj', 'bm', 'bn', 'bo', 'bq', 'br', 'bs', 'bt', 'bv', 'bw', 'by', 'bz', 'ca', 'cc', 'cd', 'cf', 'cg', 'ch', 'ci', 'ck', 'cl', 'cm', 'cn', 'co', 'cr', 'cu', 'cv', 'cw', 'cx', 'cy', 'cz', 'de', 'dj', 'dk', 'dm', 'do', 'dz', 'ec', 'ee', 'eg', 'eh', 'er', 'es', 'et', 'eu', 'fi', 'fj', 'fk', 'fm', 'fo', 'fr', 'ga', 'gb', 'gd', 'ge', 'gf', 'gg', 'gh', 'gi', 'gl', 'gm', 'gn', 'gp', 'gq', 'gr', 'gs', 'gt', 'gu', 'gw', 'gy', 'hk', 'hm', 'hn', 'hr', 'ht', 'hu', 'id', 'ie', 'il', 'im', 'in', 'io', 'iq', 'ir', 'is', 'it', 'je', 'jm', 'jo', 'jp', 'ke', 'kg', 'kh', 'ki', 'km', 'kn', 'kp', 'kr', 'kw', 'ky', 'kz', 'la', 'lb', 'lc', 'li', 'lk', 'lr', 'ls', 'lt', 'lu', 'lv', 'ly', 'ma', 'mc', 'md', 'me', 'mg', 'mh', 'mk', 'ml', 'mm', 'mn', 'mo', 'mp', 'mq', 'mr', 'ms', 'mt', 'mu', 'mv', 'mw', 'mx', 'my', 'mz', 'na', 'nc', 'ne', 'nf', 'ng', 'ni', 'nl', 'no', 'np', 'nr', 'nu', 'nz', 'om', 'pa', 'pe', 'pf', 'pg', 'ph', 'pk', 'pl', 'pm', 'pn', 'pr', 'ps', 'pt', 'pw', 'py', 'qa', 're', 'ro', 'rs', 'ru', 'rw', 'sa', 'sb', 'sc', 'sd', 'se', 'sg', 'sh', 'si', 'sj', 'sk', 'sl', 'sm', 'sn', 'so', 'sr', 'ss', 'st', 'su', 'sv', 'sx', 'sy', 'sz', 'tc', 'td', 'tf', 'tg', 'th', 'tj', 'tk', 'tl', 'tm', 'tn', 'to', 'tp', 'tr', 'tt', 'tv', 'tw', 'tz', 'ua', 'ug', 'uk', 'us', 'uy', 'uz', 'va', 'vc', 've', 'vg', 'vi', 'vn', 'vu', 'wf', 'ws', 'ye', 'yt', 'za', 'zm', 'zw'];
     };
 
     Chance.prototype.tld = function () {
@@ -2224,14 +2280,15 @@ module.exports = stringType;
         return fsa + " " + ldu;
     };
 
-    Chance.prototype.provinces = function () {
-        return this.get("provinces");
+    Chance.prototype.provinces = function (options) {
+        options = initOptions(options, { country: 'ca' });
+        return this.get("provinces")[options.country.toLowerCase()];
     };
 
     Chance.prototype.province = function (options) {
         return (options && options.full) ?
-            this.pick(this.provinces()).name :
-            this.pick(this.provinces()).abbreviation;
+            this.pick(this.provinces(options)).name :
+            this.pick(this.provinces(options)).abbreviation;
     };
 
     Chance.prototype.state = function (options) {
@@ -2241,47 +2298,68 @@ module.exports = stringType;
     };
 
     Chance.prototype.states = function (options) {
-        options = initOptions(options, { us_states_and_dc: true });
+        options = initOptions(options, { country: 'us', us_states_and_dc: true } );
 
-        var states,
-            us_states_and_dc = this.get("us_states_and_dc"),
-            territories = this.get("territories"),
-            armed_forces = this.get("armed_forces");
+        var states;
 
-        states = [];
+        switch (options.country.toLowerCase()) {
+            case 'us':
+                var us_states_and_dc = this.get("us_states_and_dc"),
+                    territories = this.get("territories"),
+                    armed_forces = this.get("armed_forces");
 
-        if (options.us_states_and_dc) {
-            states = states.concat(us_states_and_dc);
-        }
-        if (options.territories) {
-            states = states.concat(territories);
-        }
-        if (options.armed_forces) {
-            states = states.concat(armed_forces);
+                states = [];
+
+                if (options.us_states_and_dc) {
+                    states = states.concat(us_states_and_dc);
+                }
+                if (options.territories) {
+                    states = states.concat(territories);
+                }
+                if (options.armed_forces) {
+                    states = states.concat(armed_forces);
+                }
+                break;
+            case 'it':
+                states = this.get("country_regions")[options.country.toLowerCase()];
         }
 
         return states;
     };
 
     Chance.prototype.street = function (options) {
-        options = initOptions(options);
+        options = initOptions(options, { country: 'us', syllables: 2 });
+        var     street;
 
-        var street = this.word({syllables: 2});
-        street = this.capitalize(street);
-        street += ' ';
-        street += options.short_suffix ?
-            this.street_suffix().abbreviation :
-            this.street_suffix().name;
+        switch (options.country.toLowerCase()) {
+            case 'us':
+                street = this.word({ syllables: options.syllables });
+                street = this.capitalize(street);
+                street += ' ';
+                street += options.short_suffix ?
+                    this.street_suffix(options).abbreviation :
+                    this.street_suffix(options).name;
+                break;
+            case 'it':
+                street = this.word({ syllables: options.syllables });
+                street = this.capitalize(street);
+                street = (options.short_suffix ?
+                    this.street_suffix(options).abbreviation :
+                    this.street_suffix(options).name) + " " + street;
+                break;
+        }
         return street;
     };
 
-    Chance.prototype.street_suffix = function () {
-        return this.pick(this.street_suffixes());
+    Chance.prototype.street_suffix = function (options) {
+        options = initOptions(options, { country: 'us' });
+        return this.pick(this.street_suffixes(options));
     };
 
-    Chance.prototype.street_suffixes = function () {
+    Chance.prototype.street_suffixes = function (options) {
+        options = initOptions(options, { country: 'us' });
         // These are the most common suffixes.
-        return this.get("street_suffixes");
+        return this.get("street_suffixes")[options.country.toLowerCase()];
     };
 
     // Note: only returning US zip codes, internationalization will be a whole
@@ -2533,6 +2611,10 @@ module.exports = stringType;
         }
     };
 
+    Chance.prototype.euro = function (options) {
+        return Number(this.dollar(options).replace("$", "")).toLocaleString() + "€";
+    };
+
     Chance.prototype.exp = function (options) {
         options = initOptions(options);
         var exp = {};
@@ -2556,7 +2638,7 @@ module.exports = stringType;
             // Date object months are 0 indexed
             curMonth = new Date().getMonth() + 1;
 
-        if (options.future) {
+        if (options.future && (curMonth !== 12)) {
             do {
                 month = this.month({raw: true}).numeric;
                 month_int = parseInt(month, 10);
@@ -2569,12 +2651,113 @@ module.exports = stringType;
     };
 
     Chance.prototype.exp_year = function () {
-        return this.year({max: new Date().getFullYear() + 10});
+        var curMonth = new Date().getMonth() + 1,
+            curYear = new Date().getFullYear();
+
+        return this.year({min: ((curMonth === 12) ? (curYear + 1) : curYear), max: (curYear + 10)});
+    };
+
+    Chance.prototype.vat = function (options) {
+        options = initOptions(options, { country: 'it' });
+        switch (options.country.toLowerCase()) {
+            case 'it':
+                return this.it_vat();
+        }
     };
 
     // -- End Finance
 
     // -- Regional
+
+    Chance.prototype.it_vat = function () {
+        var it_vat = this.natural({min: 1, max: 1800000});
+
+        it_vat = this.pad(it_vat, 7) + this.pad(this.pick(this.provinces({ country: 'it' })).code, 3);
+        return it_vat + this.luhn_calculate(it_vat);
+    };
+
+    /*
+     * this generator is written following the official algorithm
+     * all data can be passed explicitely or randomized by calling chance.cf() without options
+     * the code does not check that the input data is valid (it goes beyond the scope of the generator)
+     *
+     * @param  [Object] options = { first: first name,
+     *                              last: last name,
+     *                              gender: female|male,
+                                    birthday: JavaScript date object,
+                                    city: string(4), 1 letter + 3 numbers
+                                   }
+     * @return [string] codice fiscale
+     *
+    */
+    Chance.prototype.cf = function (options) {
+        options = options || {};
+        var gender = !!options.gender ? options.gender : this.gender(),
+            first = !!options.first ? options.first : this.first( { gender: gender, nationality: 'it'} ),
+            last = !!options.last ? options.last : this.last( { nationality: 'it'} ),
+            birthday = !!options.birthday ? options.birthday : this.birthday(),
+            city = !!options.city ? options.city : this.pickone(['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'L', 'M', 'Z']) + this.pad(this.natural({max:999}), 3),
+            cf = [],
+            name_generator = function(name, isLast) {
+                var temp,
+                    return_value = [];
+
+                if (name.length < 3) {
+                    return_value = name.split("").concat("XXX".split("")).splice(0,3);
+                }
+                else {
+                    temp = name.toUpperCase().split('').map(function(c){
+                        return ("BCDFGHJKLMNPRSTVWZ".indexOf(c) !== -1) ? c : undefined;
+                    }).join('');
+                    if (temp.length > 3) {
+                        if (isLast) {
+                            temp = temp.substr(0,3);
+                        } else {                        
+                            temp = temp[0] + temp.substr(2,2);
+                        }
+                    }
+                    if (temp.length < 3) {
+                        return_value = temp;
+                        temp = name.toUpperCase().split('').map(function(c){
+                            return ("AEIOU".indexOf(c) !== -1) ? c : undefined;
+                        }).join('').substr(0, 3 - return_value.length);
+                    }
+                    return_value = return_value + temp;
+                }
+
+                return return_value;
+            },
+            date_generator = function(birthday, gender, that) {
+                var lettermonths = ['A', 'B', 'C', 'D', 'E', 'H', 'L', 'M', 'P', 'R', 'S', 'T'];
+
+                return  birthday.getFullYear().toString().substr(2) + 
+                        lettermonths[birthday.getMonth()] +
+                        that.pad(birthday.getDate() + ((gender.toLowerCase() === "female") ? 40 : 0), 2);
+            },
+            checkdigit_generator = function(cf) {
+                var range1 = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    range2 = "ABCDEFGHIJABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    evens  = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
+                    odds   = "BAKPLCQDREVOSFTGUHMINJWZYX",
+                    digit  = 0;
+
+
+                for(var i = 0; i < 15; i++) {
+                    if (i % 2 !== 0) {
+                        digit += evens.indexOf(range2[range1.indexOf(cf[i])]);
+                    }
+                    else {
+                        digit +=  odds.indexOf(range2[range1.indexOf(cf[i])]);
+                    }
+                }
+                return evens[digit % 26];
+            };
+
+        cf = cf.concat(name_generator(last, true), name_generator(first), date_generator(birthday, gender, this), city.toUpperCase().split("")).join("");
+        cf += checkdigit_generator(cf.toUpperCase(), this);
+
+        return cf.toUpperCase();
+    };
 
     Chance.prototype.pl_pesel = function () {
         var number = this.natural({min: 1, max: 9999999999});
@@ -2857,41 +3040,158 @@ module.exports = stringType;
         firstNames: {
             "male": {
                 "en": ["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Charles", "Thomas", "Christopher", "Daniel", "Matthew", "George", "Donald", "Anthony", "Paul", "Mark", "Edward", "Steven", "Kenneth", "Andrew", "Brian", "Joshua", "Kevin", "Ronald", "Timothy", "Jason", "Jeffrey", "Frank", "Gary", "Ryan", "Nicholas", "Eric", "Stephen", "Jacob", "Larry", "Jonathan", "Scott", "Raymond", "Justin", "Brandon", "Gregory", "Samuel", "Benjamin", "Patrick", "Jack", "Henry", "Walter", "Dennis", "Jerry", "Alexander", "Peter", "Tyler", "Douglas", "Harold", "Aaron", "Jose", "Adam", "Arthur", "Zachary", "Carl", "Nathan", "Albert", "Kyle", "Lawrence", "Joe", "Willie", "Gerald", "Roger", "Keith", "Jeremy", "Terry", "Harry", "Ralph", "Sean", "Jesse", "Roy", "Louis", "Billy", "Austin", "Bruce", "Eugene", "Christian", "Bryan", "Wayne", "Russell", "Howard", "Fred", "Ethan", "Jordan", "Philip", "Alan", "Juan", "Randy", "Vincent", "Bobby", "Dylan", "Johnny", "Phillip", "Victor", "Clarence", "Ernest", "Martin", "Craig", "Stanley", "Shawn", "Travis", "Bradley", "Leonard", "Earl", "Gabriel", "Jimmy", "Francis", "Todd", "Noah", "Danny", "Dale", "Cody", "Carlos", "Allen", "Frederick", "Logan", "Curtis", "Alex", "Joel", "Luis", "Norman", "Marvin", "Glenn", "Tony", "Nathaniel", "Rodney", "Melvin", "Alfred", "Steve", "Cameron", "Chad", "Edwin", "Caleb", "Evan", "Antonio", "Lee", "Herbert", "Jeffery", "Isaac", "Derek", "Ricky", "Marcus", "Theodore", "Elijah", "Luke", "Jesus", "Eddie", "Troy", "Mike", "Dustin", "Ray", "Adrian", "Bernard", "Leroy", "Angel", "Randall", "Wesley", "Ian", "Jared", "Mason", "Hunter", "Calvin", "Oscar", "Clifford", "Jay", "Shane", "Ronnie", "Barry", "Lucas", "Corey", "Manuel", "Leo", "Tommy", "Warren", "Jackson", "Isaiah", "Connor", "Don", "Dean", "Jon", "Julian", "Miguel", "Bill", "Lloyd", "Charlie", "Mitchell", "Leon", "Jerome", "Darrell", "Jeremiah", "Alvin", "Brett", "Seth", "Floyd", "Jim", "Blake", "Micheal", "Gordon", "Trevor", "Lewis", "Erik", "Edgar", "Vernon", "Devin", "Gavin", "Jayden", "Chris", "Clyde", "Tom", "Derrick", "Mario", "Brent", "Marc", "Herman", "Chase", "Dominic", "Ricardo", "Franklin", "Maurice", "Max", "Aiden", "Owen", "Lester", "Gilbert", "Elmer", "Gene", "Francisco", "Glen", "Cory", "Garrett", "Clayton", "Sam", "Jorge", "Chester", "Alejandro", "Jeff", "Harvey", "Milton", "Cole", "Ivan", "Andre", "Duane", "Landon"],
-                "it": ["Francesco", "Alessandro", "Lorenzo", "Andrea", "Marco", "Leonardo", "Matteo", "Federico", "Mattia", "Riccardo", "Luca", "Davide", "Gabriele", "Edoardo", "Tommaso", "Giacomo", "Simone", "Christian", "Stefano", "Diego", "Filippo", "Giuseppe"]
+                // Data taken from http://www.dati.gov.it/dataset/comune-di-firenze_0163
+                "it": ["Adolfo", "Alberto", "Aldo", "Alessandro", "Alessio", "Alfredo", "Alvaro", "Andrea", "Angelo", "Angiolo", "Antonino", "Antonio", "Attilio", "Benito", "Bernardo", "Bruno", "Carlo", "Cesare", "Christian", "Claudio", "Corrado", "Cosimo", "Cristian", "Cristiano", "Daniele", "Dario", "David", "Davide", "Diego", "Dino", "Domenico", "Duccio", "Edoardo", "Elia", "Elio", "Emanuele", "Emiliano", "Emilio", "Enrico", "Enzo", "Ettore", "Fabio", "Fabrizio", "Federico", "Ferdinando", "Fernando", "Filippo", "Francesco", "Franco", "Gabriele", "Giacomo", "Giampaolo", "Giampiero", "Giancarlo", "Gianfranco", "Gianluca", "Gianmarco", "Gianni", "Gino", "Giorgio", "Giovanni", "Giuliano", "Giulio", "Giuseppe", "Graziano", "Gregorio", "Guido", "Iacopo", "Jacopo", "Lapo", "Leonardo", "Lorenzo", "Luca", "Luciano", "Luigi", "Manuel", "Marcello", "Marco", "Marino", "Mario", "Massimiliano", "Massimo", "Matteo", "Mattia", "Maurizio", "Mauro", "Michele", "Mirko", "Mohamed", "Nello", "Neri", "Niccolò", "Nicola", "Osvaldo", "Otello", "Paolo", "Pier Luigi", "Piero", "Pietro", "Raffaele", "Remo", "Renato", "Renzo", "Riccardo", "Roberto", "Rolando", "Romano", "Salvatore", "Samuele", "Sandro", "Sergio", "Silvano", "Simone", "Stefano", "Thomas", "Tommaso", "Ubaldo", "Ugo", "Umberto", "Valerio", "Valter", "Vasco", "Vincenzo", "Vittorio"]
             },
             "female": {
                 "en": ["Mary", "Emma", "Elizabeth", "Minnie", "Margaret", "Ida", "Alice", "Bertha", "Sarah", "Annie", "Clara", "Ella", "Florence", "Cora", "Martha", "Laura", "Nellie", "Grace", "Carrie", "Maude", "Mabel", "Bessie", "Jennie", "Gertrude", "Julia", "Hattie", "Edith", "Mattie", "Rose", "Catherine", "Lillian", "Ada", "Lillie", "Helen", "Jessie", "Louise", "Ethel", "Lula", "Myrtle", "Eva", "Frances", "Lena", "Lucy", "Edna", "Maggie", "Pearl", "Daisy", "Fannie", "Josephine", "Dora", "Rosa", "Katherine", "Agnes", "Marie", "Nora", "May", "Mamie", "Blanche", "Stella", "Ellen", "Nancy", "Effie", "Sallie", "Nettie", "Della", "Lizzie", "Flora", "Susie", "Maud", "Mae", "Etta", "Harriet", "Sadie", "Caroline", "Katie", "Lydia", "Elsie", "Kate", "Susan", "Mollie", "Alma", "Addie", "Georgia", "Eliza", "Lulu", "Nannie", "Lottie", "Amanda", "Belle", "Charlotte", "Rebecca", "Ruth", "Viola", "Olive", "Amelia", "Hannah", "Jane", "Virginia", "Emily", "Matilda", "Irene", "Kathryn", "Esther", "Willie", "Henrietta", "Ollie", "Amy", "Rachel", "Sara", "Estella", "Theresa", "Augusta", "Ora", "Pauline", "Josie", "Lola", "Sophia", "Leona", "Anne", "Mildred", "Ann", "Beulah", "Callie", "Lou", "Delia", "Eleanor", "Barbara", "Iva", "Louisa", "Maria", "Mayme", "Evelyn", "Estelle", "Nina", "Betty", "Marion", "Bettie", "Dorothy", "Luella", "Inez", "Lela", "Rosie", "Allie", "Millie", "Janie", "Cornelia", "Victoria", "Ruby", "Winifred", "Alta", "Celia", "Christine", "Beatrice", "Birdie", "Harriett", "Mable", "Myra", "Sophie", "Tillie", "Isabel", "Sylvia", "Carolyn", "Isabelle", "Leila", "Sally", "Ina", "Essie", "Bertie", "Nell", "Alberta", "Katharine", "Lora", "Rena", "Mina", "Rhoda", "Mathilda", "Abbie", "Eula", "Dollie", "Hettie", "Eunice", "Fanny", "Ola", "Lenora", "Adelaide", "Christina", "Lelia", "Nelle", "Sue", "Johanna", "Lilly", "Lucinda", "Minerva", "Lettie", "Roxie", "Cynthia", "Helena", "Hilda", "Hulda", "Bernice", "Genevieve", "Jean", "Cordelia", "Marian", "Francis", "Jeanette", "Adeline", "Gussie", "Leah", "Lois", "Lura", "Mittie", "Hallie", "Isabella", "Olga", "Phoebe", "Teresa", "Hester", "Lida", "Lina", "Winnie", "Claudia", "Marguerite", "Vera", "Cecelia", "Bess", "Emilie", "John", "Rosetta", "Verna", "Myrtie", "Cecilia", "Elva", "Olivia", "Ophelia", "Georgie", "Elnora", "Violet", "Adele", "Lily", "Linnie", "Loretta", "Madge", "Polly", "Virgie", "Eugenia", "Lucile", "Lucille", "Mabelle", "Rosalie"],
-                "it": ["Sofia", "Giulia", "Martina", "Giorgia", "Emma", "Chiara", "Aurora", "Sara", "Alice", "Beatrice", "Ginevra", "Elena", "Alessia", "Greta", "Francesca", "Eleonora", "Viola", "Anna", "Elisa", "Giada", "Matilde", "Laura", "Nicole", "Asia", "Camilla", "Arianna", "Rachele", "Rebecca", "Gaia"]
+                // Data taken from http://www.dati.gov.it/dataset/comune-di-firenze_0162
+                "it": ["Ada", "Adriana", "Alessandra", "Alessia", "Alice", "Angela", "Anna", "Anna Maria", "Annalisa", "Annita", "Annunziata", "Antonella", "Arianna", "Asia", "Assunta", "Aurora", "Barbara", "Beatrice", "Benedetta", "Bianca", "Bruna", "Camilla", "Carla", "Carlotta", "Carmela", "Carolina", "Caterina", "Catia", "Cecilia", "Chiara", "Cinzia", "Clara", "Claudia", "Costanza", "Cristina", "Daniela", "Debora", "Diletta", "Dina", "Donatella", "Elena", "Eleonora", "Elisa", "Elisabetta", "Emanuela", "Emma", "Eva", "Federica", "Fernanda", "Fiorella", "Fiorenza", "Flora", "Franca", "Francesca", "Gabriella", "Gaia", "Gemma", "Giada", "Gianna", "Gina", "Ginevra", "Giorgia", "Giovanna", "Giulia", "Giuliana", "Giuseppa", "Giuseppina", "Grazia", "Graziella", "Greta", "Ida", "Ilaria", "Ines", "Iolanda", "Irene", "Irma", "Isabella", "Jessica", "Laura", "Leda", "Letizia", "Licia", "Lidia", "Liliana", "Lina", "Linda", "Lisa", "Livia", "Loretta", "Luana", "Lucia", "Luciana", "Lucrezia", "Luisa", "Manuela", "Mara", "Marcella", "Margherita", "Maria", "Maria Cristina", "Maria Grazia", "Maria Luisa", "Maria Pia", "Maria Teresa", "Marina", "Marisa", "Marta", "Martina", "Marzia", "Matilde", "Melissa", "Michela", "Milena", "Mirella", "Monica", "Natalina", "Nella", "Nicoletta", "Noemi", "Olga", "Paola", "Patrizia", "Piera", "Pierina", "Raffaella", "Rebecca", "Renata", "Rina", "Rita", "Roberta", "Rosa", "Rosanna", "Rossana", "Rossella", "Sabrina", "Sandra", "Sara", "Serena", "Silvana", "Silvia", "Simona", "Simonetta", "Sofia", "Sonia", "Stefania", "Susanna", "Teresa", "Tina", "Tiziana", "Tosca", "Valentina", "Valeria", "Vanda", "Vanessa", "Vanna", "Vera", "Veronica", "Vilma", "Viola", "Virginia", "Vittoria"]
             }
         },
 
         lastNames: {
             "en": ['Smith', 'Johnson', 'Williams', 'Jones', 'Brown', 'Davis', 'Miller', 'Wilson', 'Moore', 'Taylor', 'Anderson', 'Thomas', 'Jackson', 'White', 'Harris', 'Martin', 'Thompson', 'Garcia', 'Martinez', 'Robinson', 'Clark', 'Rodriguez', 'Lewis', 'Lee', 'Walker', 'Hall', 'Allen', 'Young', 'Hernandez', 'King', 'Wright', 'Lopez', 'Hill', 'Scott', 'Green', 'Adams', 'Baker', 'Gonzalez', 'Nelson', 'Carter', 'Mitchell', 'Perez', 'Roberts', 'Turner', 'Phillips', 'Campbell', 'Parker', 'Evans', 'Edwards', 'Collins', 'Stewart', 'Sanchez', 'Morris', 'Rogers', 'Reed', 'Cook', 'Morgan', 'Bell', 'Murphy', 'Bailey', 'Rivera', 'Cooper', 'Richardson', 'Cox', 'Howard', 'Ward', 'Torres', 'Peterson', 'Gray', 'Ramirez', 'James', 'Watson', 'Brooks', 'Kelly', 'Sanders', 'Price', 'Bennett', 'Wood', 'Barnes', 'Ross', 'Henderson', 'Coleman', 'Jenkins', 'Perry', 'Powell', 'Long', 'Patterson', 'Hughes', 'Flores', 'Washington', 'Butler', 'Simmons', 'Foster', 'Gonzales', 'Bryant', 'Alexander', 'Russell', 'Griffin', 'Diaz', 'Hayes', 'Myers', 'Ford', 'Hamilton', 'Graham', 'Sullivan', 'Wallace', 'Woods', 'Cole', 'West', 'Jordan', 'Owens', 'Reynolds', 'Fisher', 'Ellis', 'Harrison', 'Gibson', 'McDonald', 'Cruz', 'Marshall', 'Ortiz', 'Gomez', 'Murray', 'Freeman', 'Wells', 'Webb', 'Simpson', 'Stevens', 'Tucker', 'Porter', 'Hunter', 'Hicks', 'Crawford', 'Henry', 'Boyd', 'Mason', 'Morales', 'Kennedy', 'Warren', 'Dixon', 'Ramos', 'Reyes', 'Burns', 'Gordon', 'Shaw', 'Holmes', 'Rice', 'Robertson', 'Hunt', 'Black', 'Daniels', 'Palmer', 'Mills', 'Nichols', 'Grant', 'Knight', 'Ferguson', 'Rose', 'Stone', 'Hawkins', 'Dunn', 'Perkins', 'Hudson', 'Spencer', 'Gardner', 'Stephens', 'Payne', 'Pierce', 'Berry', 'Matthews', 'Arnold', 'Wagner', 'Willis', 'Ray', 'Watkins', 'Olson', 'Carroll', 'Duncan', 'Snyder', 'Hart', 'Cunningham', 'Bradley', 'Lane', 'Andrews', 'Ruiz', 'Harper', 'Fox', 'Riley', 'Armstrong', 'Carpenter', 'Weaver', 'Greene', 'Lawrence', 'Elliott', 'Chavez', 'Sims', 'Austin', 'Peters', 'Kelley', 'Franklin', 'Lawson', 'Fields', 'Gutierrez', 'Ryan', 'Schmidt', 'Carr', 'Vasquez', 'Castillo', 'Wheeler', 'Chapman', 'Oliver', 'Montgomery', 'Richards', 'Williamson', 'Johnston', 'Banks', 'Meyer', 'Bishop', 'McCoy', 'Howell', 'Alvarez', 'Morrison', 'Hansen', 'Fernandez', 'Garza', 'Harvey', 'Little', 'Burton', 'Stanley', 'Nguyen', 'George', 'Jacobs', 'Reid', 'Kim', 'Fuller', 'Lynch', 'Dean', 'Gilbert', 'Garrett', 'Romero', 'Welch', 'Larson', 'Frazier', 'Burke', 'Hanson', 'Day', 'Mendoza', 'Moreno', 'Bowman', 'Medina', 'Fowler', 'Brewer', 'Hoffman', 'Carlson', 'Silva', 'Pearson', 'Holland', 'Douglas', 'Fleming', 'Jensen', 'Vargas', 'Byrd', 'Davidson', 'Hopkins', 'May', 'Terry', 'Herrera', 'Wade', 'Soto', 'Walters', 'Curtis', 'Neal', 'Caldwell', 'Lowe', 'Jennings', 'Barnett', 'Graves', 'Jimenez', 'Horton', 'Shelton', 'Barrett', 'Obrien', 'Castro', 'Sutton', 'Gregory', 'McKinney', 'Lucas', 'Miles', 'Craig', 'Rodriquez', 'Chambers', 'Holt', 'Lambert', 'Fletcher', 'Watts', 'Bates', 'Hale', 'Rhodes', 'Pena', 'Beck', 'Newman', 'Haynes', 'McDaniel', 'Mendez', 'Bush', 'Vaughn', 'Parks', 'Dawson', 'Santiago', 'Norris', 'Hardy', 'Love', 'Steele', 'Curry', 'Powers', 'Schultz', 'Barker', 'Guzman', 'Page', 'Munoz', 'Ball', 'Keller', 'Chandler', 'Weber', 'Leonard', 'Walsh', 'Lyons', 'Ramsey', 'Wolfe', 'Schneider', 'Mullins', 'Benson', 'Sharp', 'Bowen', 'Daniel', 'Barber', 'Cummings', 'Hines', 'Baldwin', 'Griffith', 'Valdez', 'Hubbard', 'Salazar', 'Reeves', 'Warner', 'Stevenson', 'Burgess', 'Santos', 'Tate', 'Cross', 'Garner', 'Mann', 'Mack', 'Moss', 'Thornton', 'Dennis', 'McGee', 'Farmer', 'Delgado', 'Aguilar', 'Vega', 'Glover', 'Manning', 'Cohen', 'Harmon', 'Rodgers', 'Robbins', 'Newton', 'Todd', 'Blair', 'Higgins', 'Ingram', 'Reese', 'Cannon', 'Strickland', 'Townsend', 'Potter', 'Goodwin', 'Walton', 'Rowe', 'Hampton', 'Ortega', 'Patton', 'Swanson', 'Joseph', 'Francis', 'Goodman', 'Maldonado', 'Yates', 'Becker', 'Erickson', 'Hodges', 'Rios', 'Conner', 'Adkins', 'Webster', 'Norman', 'Malone', 'Hammond', 'Flowers', 'Cobb', 'Moody', 'Quinn', 'Blake', 'Maxwell', 'Pope', 'Floyd', 'Osborne', 'Paul', 'McCarthy', 'Guerrero', 'Lindsey', 'Estrada', 'Sandoval', 'Gibbs', 'Tyler', 'Gross', 'Fitzgerald', 'Stokes', 'Doyle', 'Sherman', 'Saunders', 'Wise', 'Colon', 'Gill', 'Alvarado', 'Greer', 'Padilla', 'Simon', 'Waters', 'Nunez', 'Ballard', 'Schwartz', 'McBride', 'Houston', 'Christensen', 'Klein', 'Pratt', 'Briggs', 'Parsons', 'McLaughlin', 'Zimmerman', 'French', 'Buchanan', 'Moran', 'Copeland', 'Roy', 'Pittman', 'Brady', 'McCormick', 'Holloway', 'Brock', 'Poole', 'Frank', 'Logan', 'Owen', 'Bass', 'Marsh', 'Drake', 'Wong', 'Jefferson', 'Park', 'Morton', 'Abbott', 'Sparks', 'Patrick', 'Norton', 'Huff', 'Clayton', 'Massey', 'Lloyd', 'Figueroa', 'Carson', 'Bowers', 'Roberson', 'Barton', 'Tran', 'Lamb', 'Harrington', 'Casey', 'Boone', 'Cortez', 'Clarke', 'Mathis', 'Singleton', 'Wilkins', 'Cain', 'Bryan', 'Underwood', 'Hogan', 'McKenzie', 'Collier', 'Luna', 'Phelps', 'McGuire', 'Allison', 'Bridges', 'Wilkerson', 'Nash', 'Summers', 'Atkins'],
-            "it": ['Rossi', 'Ferrari', 'Russo', 'Bianchi', 'Esposito', 'Colombo', 'Romano', 'Ricci', 'Gallo', 'Greco', 'Conti', 'Marino', 'De Luca', 'Bruno', 'Costa', 'Giordano', 'Mancini', 'Lombardi', 'Barbieri', 'Moretti', 'Fontana', 'Rizzo', 'Santoro', 'Caruso', 'Mariani', 'Martini', 'Ferrara', 'Galli', 'Rinaldi', 'Leone', 'Serra', 'Conte', 'Villa', 'Marini', 'Ferri', 'Bianco', 'Monti', 'De Santis', 'Parisi', 'Fiore', 'De Angelis', 'Longo', 'Sanna', 'Sala', 'Romeo', 'Martinelli', 'Grassi', 'Neri', 'Marchetti', 'Vitale', 'Mari', 'Gentile', 'Viola', 'Marchi', 'Rossetti', 'Bellini', 'Grasso', 'Fabbri', 'Franco', 'Messina', 'Rosso', 'Rizzi', 'D\'Angelo', 'Morelli', 'Giorgi', 'Riva', 'Mazza', 'De Rosa', 'Testa', 'Coppola', 'Amato', 'Donati', 'Palumbo', 'Ferro', 'Basile', 'Ferraro', 'Franchi', 'Castelli', 'Lombardo', 'Farina', 'Carli', 'Bruni', 'Piras', 'Giuliani', 'Martino', 'Poli', 'Gasparini', 'Montanari', 'Orlando', 'Alberti', 'Bernardi', 'Silvestri', 'Ferretti', 'Pellegrino', 'Sartori', 'Palmieri', 'Cattaneo', 'Benedetti', 'Valenti', 'Bassi', 'Verdi']
+                // Data taken from http://www.dati.gov.it/dataset/comune-di-firenze_0164 (first 1000)
+            "it": ["Acciai", "Aglietti", "Agostini", "Agresti", "Ahmed", "Aiazzi", "Albanese", "Alberti", "Alessi", "Alfani", "Alinari", "Alterini", "Amato", "Ammannati", "Ancillotti", "Andrei", "Andreini", "Andreoni", "Angeli", "Anichini", "Antonelli", "Antonini", "Arena", "Ariani", "Arnetoli", "Arrighi", "Baccani", "Baccetti", "Bacci", "Bacherini", "Badii", "Baggiani", "Baglioni", "Bagni", "Bagnoli", "Baldassini", "Baldi", "Baldini", "Ballerini", "Balli", "Ballini", "Balloni", "Bambi", "Banchi", "Bandinelli", "Bandini", "Bani", "Barbetti", "Barbieri", "Barchielli", "Bardazzi", "Bardelli", "Bardi", "Barducci", "Bargellini", "Bargiacchi", "Barni", "Baroncelli", "Baroncini", "Barone", "Baroni", "Baronti", "Bartalesi", "Bartoletti", "Bartoli", "Bartolini", "Bartoloni", "Bartolozzi", "Basagni", "Basile", "Bassi", "Batacchi", "Battaglia", "Battaglini", "Bausi", "Becagli", "Becattini", "Becchi", "Becucci", "Bellandi", "Bellesi", "Belli", "Bellini", "Bellucci", "Bencini", "Benedetti", "Benelli", "Beni", "Benini", "Bensi", "Benucci", "Benvenuti", "Berlincioni", "Bernacchioni", "Bernardi", "Bernardini", "Berni", "Bernini", "Bertelli", "Berti", "Bertini", "Bessi", "Betti", "Bettini", "Biagi", "Biagini", "Biagioni", "Biagiotti", "Biancalani", "Bianchi", "Bianchini", "Bianco", "Biffoli", "Bigazzi", "Bigi", "Biliotti", "Billi", "Binazzi", "Bindi", "Bini", "Biondi", "Bizzarri", "Bocci", "Bogani", "Bolognesi", "Bonaiuti", "Bonanni", "Bonciani", "Boncinelli", "Bondi", "Bonechi", "Bongini", "Boni", "Bonini", "Borchi", "Boretti", "Borghi", "Borghini", "Borgioli", "Borri", "Borselli", "Boschi", "Bottai", "Bracci", "Braccini", "Brandi", "Braschi", "Bravi", "Brazzini", "Breschi", "Brilli", "Brizzi", "Brogelli", "Brogi", "Brogioni", "Brunelli", "Brunetti", "Bruni", "Bruno", "Brunori", "Bruschi", "Bucci", "Bucciarelli", "Buccioni", "Bucelli", "Bulli", "Burberi", "Burchi", "Burgassi", "Burroni", "Bussotti", "Buti", "Caciolli", "Caiani", "Calabrese", "Calamai", "Calamandrei", "Caldini", "Calo'", "Calonaci", "Calosi", "Calvelli", "Cambi", "Camiciottoli", "Cammelli", "Cammilli", "Campolmi", "Cantini", "Capanni", "Capecchi", "Caponi", "Cappelletti", "Cappelli", "Cappellini", "Cappugi", "Capretti", "Caputo", "Carbone", "Carboni", "Cardini", "Carlesi", "Carletti", "Carli", "Caroti", "Carotti", "Carrai", "Carraresi", "Carta", "Caruso", "Casalini", "Casati", "Caselli", "Casini", "Castagnoli", "Castellani", "Castelli", "Castellucci", "Catalano", "Catarzi", "Catelani", "Cavaciocchi", "Cavallaro", "Cavallini", "Cavicchi", "Cavini", "Ceccarelli", "Ceccatelli", "Ceccherelli", "Ceccherini", "Cecchi", "Cecchini", "Cecconi", "Cei", "Cellai", "Celli", "Cellini", "Cencetti", "Ceni", "Cenni", "Cerbai", "Cesari", "Ceseri", "Checcacci", "Checchi", "Checcucci", "Cheli", "Chellini", "Chen", "Cheng", "Cherici", "Cherubini", "Chiaramonti", "Chiarantini", "Chiarelli", "Chiari", "Chiarini", "Chiarugi", "Chiavacci", "Chiesi", "Chimenti", "Chini", "Chirici", "Chiti", "Ciabatti", "Ciampi", "Cianchi", "Cianfanelli", "Cianferoni", "Ciani", "Ciapetti", "Ciappi", "Ciardi", "Ciatti", "Cicali", "Ciccone", "Cinelli", "Cini", "Ciobanu", "Ciolli", "Cioni", "Cipriani", "Cirillo", "Cirri", "Ciucchi", "Ciuffi", "Ciulli", "Ciullini", "Clemente", "Cocchi", "Cognome", "Coli", "Collini", "Colombo", "Colzi", "Comparini", "Conforti", "Consigli", "Conte", "Conti", "Contini", "Coppini", "Coppola", "Corsi", "Corsini", "Corti", "Cortini", "Cosi", "Costa", "Costantini", "Costantino", "Cozzi", "Cresci", "Crescioli", "Cresti", "Crini", "Curradi", "D'Agostino", "D'Alessandro", "D'Amico", "D'Angelo", "Daddi", "Dainelli", "Dallai", "Danti", "Davitti", "De Angelis", "De Luca", "De Marco", "De Rosa", "De Santis", "De Simone", "De Vita", "Degl'Innocenti", "Degli Innocenti", "Dei", "Del Lungo", "Del Re", "Di Marco", "Di Stefano", "Dini", "Diop", "Dobre", "Dolfi", "Donati", "Dondoli", "Dong", "Donnini", "Ducci", "Dumitru", "Ermini", "Esposito", "Evangelisti", "Fabbri", "Fabbrini", "Fabbrizzi", "Fabbroni", "Fabbrucci", "Fabiani", "Facchini", "Faggi", "Fagioli", "Failli", "Faini", "Falciani", "Falcini", "Falcone", "Fallani", "Falorni", "Falsini", "Falugiani", "Fancelli", "Fanelli", "Fanetti", "Fanfani", "Fani", "Fantappie'", "Fantechi", "Fanti", "Fantini", "Fantoni", "Farina", "Fattori", "Favilli", "Fedi", "Fei", "Ferrante", "Ferrara", "Ferrari", "Ferraro", "Ferretti", "Ferri", "Ferrini", "Ferroni", "Fiaschi", "Fibbi", "Fiesoli", "Filippi", "Filippini", "Fini", "Fioravanti", "Fiore", "Fiorentini", "Fiorini", "Fissi", "Focardi", "Foggi", "Fontana", "Fontanelli", "Fontani", "Forconi", "Formigli", "Forte", "Forti", "Fortini", "Fossati", "Fossi", "Francalanci", "Franceschi", "Franceschini", "Franchi", "Franchini", "Franci", "Francini", "Francioni", "Franco", "Frassineti", "Frati", "Fratini", "Frilli", "Frizzi", "Frosali", "Frosini", "Frullini", "Fusco", "Fusi", "Gabbrielli", "Gabellini", "Gagliardi", "Galanti", "Galardi", "Galeotti", "Galletti", "Galli", "Gallo", "Gallori", "Gambacciani", "Gargani", "Garofalo", "Garuglieri", "Gashi", "Gasperini", "Gatti", "Gelli", "Gensini", "Gentile", "Gentili", "Geri", "Gerini", "Gheri", "Ghini", "Giachetti", "Giachi", "Giacomelli", "Gianassi", "Giani", "Giannelli", "Giannetti", "Gianni", "Giannini", "Giannoni", "Giannotti", "Giannozzi", "Gigli", "Giordano", "Giorgetti", "Giorgi", "Giovacchini", "Giovannelli", "Giovannetti", "Giovannini", "Giovannoni", "Giuliani", "Giunti", "Giuntini", "Giusti", "Gonnelli", "Goretti", "Gori", "Gradi", "Gramigni", "Grassi", "Grasso", "Graziani", "Grazzini", "Greco", "Grifoni", "Grillo", "Grimaldi", "Grossi", "Gualtieri", "Guarducci", "Guarino", "Guarnieri", "Guasti", "Guerra", "Guerri", "Guerrini", "Guidi", "Guidotti", "He", "Hoxha", "Hu", "Huang", "Iandelli", "Ignesti", "Innocenti", "Jin", "La Rosa", "Lai", "Landi", "Landini", "Lanini", "Lapi", "Lapini", "Lari", "Lascialfari", "Lastrucci", "Latini", "Lazzeri", "Lazzerini", "Lelli", "Lenzi", "Leonardi", "Leoncini", "Leone", "Leoni", "Lepri", "Li", "Liao", "Lin", "Linari", "Lippi", "Lisi", "Livi", "Lombardi", "Lombardini", "Lombardo", "Longo", "Lopez", "Lorenzi", "Lorenzini", "Lorini", "Lotti", "Lu", "Lucchesi", "Lucherini", "Lunghi", "Lupi", "Madiai", "Maestrini", "Maffei", "Maggi", "Maggini", "Magherini", "Magini", "Magnani", "Magnelli", "Magni", "Magnolfi", "Magrini", "Malavolti", "Malevolti", "Manca", "Mancini", "Manetti", "Manfredi", "Mangani", "Mannelli", "Manni", "Mannini", "Mannucci", "Manuelli", "Manzini", "Marcelli", "Marchese", "Marchetti", "Marchi", "Marchiani", "Marchionni", "Marconi", "Marcucci", "Margheri", "Mari", "Mariani", "Marilli", "Marinai", "Marinari", "Marinelli", "Marini", "Marino", "Mariotti", "Marsili", "Martelli", "Martinelli", "Martini", "Martino", "Marzi", "Masi", "Masini", "Masoni", "Massai", "Materassi", "Mattei", "Matteini", "Matteucci", "Matteuzzi", "Mattioli", "Mattolini", "Matucci", "Mauro", "Mazzanti", "Mazzei", "Mazzetti", "Mazzi", "Mazzini", "Mazzocchi", "Mazzoli", "Mazzoni", "Mazzuoli", "Meacci", "Mecocci", "Meini", "Melani", "Mele", "Meli", "Mengoni", "Menichetti", "Meoni", "Merlini", "Messeri", "Messina", "Meucci", "Miccinesi", "Miceli", "Micheli", "Michelini", "Michelozzi", "Migliori", "Migliorini", "Milani", "Miniati", "Misuri", "Monaco", "Montagnani", "Montagni", "Montanari", "Montelatici", "Monti", "Montigiani", "Montini", "Morandi", "Morandini", "Morelli", "Moretti", "Morganti", "Mori", "Morini", "Moroni", "Morozzi", "Mugnai", "Mugnaini", "Mustafa", "Naldi", "Naldini", "Nannelli", "Nanni", "Nannini", "Nannucci", "Nardi", "Nardini", "Nardoni", "Natali", "Ndiaye", "Nencetti", "Nencini", "Nencioni", "Neri", "Nesi", "Nesti", "Niccolai", "Niccoli", "Niccolini", "Nigi", "Nistri", "Nocentini", "Noferini", "Novelli", "Nucci", "Nuti", "Nutini", "Oliva", "Olivieri", "Olmi", "Orlandi", "Orlandini", "Orlando", "Orsini", "Ortolani", "Ottanelli", "Pacciani", "Pace", "Paci", "Pacini", "Pagani", "Pagano", "Paggetti", "Pagliai", "Pagni", "Pagnini", "Paladini", "Palagi", "Palchetti", "Palloni", "Palmieri", "Palumbo", "Pampaloni", "Pancani", "Pandolfi", "Pandolfini", "Panerai", "Panichi", "Paoletti", "Paoli", "Paolini", "Papi", "Papini", "Papucci", "Parenti", "Parigi", "Parisi", "Parri", "Parrini", "Pasquini", "Passeri", "Pecchioli", "Pecorini", "Pellegrini", "Pepi", "Perini", "Perrone", "Peruzzi", "Pesci", "Pestelli", "Petri", "Petrini", "Petrucci", "Pettini", "Pezzati", "Pezzatini", "Piani", "Piazza", "Piazzesi", "Piazzini", "Piccardi", "Picchi", "Piccini", "Piccioli", "Pieraccini", "Pieraccioni", "Pieralli", "Pierattini", "Pieri", "Pierini", "Pieroni", "Pietrini", "Pini", "Pinna", "Pinto", "Pinzani", "Pinzauti", "Piras", "Pisani", "Pistolesi", "Poggesi", "Poggi", "Poggiali", "Poggiolini", "Poli", "Pollastri", "Porciani", "Pozzi", "Pratellesi", "Pratesi", "Prosperi", "Pruneti", "Pucci", "Puccini", "Puccioni", "Pugi", "Pugliese", "Puliti", "Querci", "Quercioli", "Raddi", "Radu", "Raffaelli", "Ragazzini", "Ranfagni", "Ranieri", "Rastrelli", "Raugei", "Raveggi", "Renai", "Renzi", "Rettori", "Ricci", "Ricciardi", "Ridi", "Ridolfi", "Rigacci", "Righi", "Righini", "Rinaldi", "Risaliti", "Ristori", "Rizzo", "Rocchi", "Rocchini", "Rogai", "Romagnoli", "Romanelli", "Romani", "Romano", "Romei", "Romeo", "Romiti", "Romoli", "Romolini", "Rontini", "Rosati", "Roselli", "Rosi", "Rossetti", "Rossi", "Rossini", "Rovai", "Ruggeri", "Ruggiero", "Russo", "Sabatini", "Saccardi", "Sacchetti", "Sacchi", "Sacco", "Salerno", "Salimbeni", "Salucci", "Salvadori", "Salvestrini", "Salvi", "Salvini", "Sanesi", "Sani", "Sanna", "Santi", "Santini", "Santoni", "Santoro", "Santucci", "Sardi", "Sarri", "Sarti", "Sassi", "Sbolci", "Scali", "Scarpelli", "Scarselli", "Scopetani", "Secci", "Selvi", "Senatori", "Senesi", "Serafini", "Sereni", "Serra", "Sestini", "Sguanci", "Sieni", "Signorini", "Silvestri", "Simoncini", "Simonetti", "Simoni", "Singh", "Sodi", "Soldi", "Somigli", "Sorbi", "Sorelli", "Sorrentino", "Sottili", "Spina", "Spinelli", "Staccioli", "Staderini", "Stefanelli", "Stefani", "Stefanini", "Stella", "Susini", "Tacchi", "Tacconi", "Taddei", "Tagliaferri", "Tamburini", "Tanganelli", "Tani", "Tanini", "Tapinassi", "Tarchi", "Tarchiani", "Targioni", "Tassi", "Tassini", "Tempesti", "Terzani", "Tesi", "Testa", "Testi", "Tilli", "Tinti", "Tirinnanzi", "Toccafondi", "Tofanari", "Tofani", "Tognaccini", "Tonelli", "Tonini", "Torelli", "Torrini", "Tosi", "Toti", "Tozzi", "Trambusti", "Trapani", "Tucci", "Turchi", "Ugolini", "Ulivi", "Valente", "Valenti", "Valentini", "Vangelisti", "Vanni", "Vannini", "Vannoni", "Vannozzi", "Vannucchi", "Vannucci", "Ventura", "Venturi", "Venturini", "Vestri", "Vettori", "Vichi", "Viciani", "Vieri", "Vigiani", "Vignoli", "Vignolini", "Vignozzi", "Villani", "Vinci", "Visani", "Vitale", "Vitali", "Viti", "Viviani", "Vivoli", "Volpe", "Volpi", "Wang", "Wu", "Xu", "Yang", "Ye", "Zagli", "Zani", "Zanieri", "Zanobini", "Zecchi", "Zetti", "Zhang", "Zheng", "Zhou", "Zhu", "Zingoni", "Zini", "Zoppi"]
         },
 
         // Data taken from https://github.com/umpirsky/country-list/blob/master/country/cldr/en_US/country.json
         countries: [{"name":"Afghanistan","abbreviation":"AF"},{"name":"Albania","abbreviation":"AL"},{"name":"Algeria","abbreviation":"DZ"},{"name":"American Samoa","abbreviation":"AS"},{"name":"Andorra","abbreviation":"AD"},{"name":"Angola","abbreviation":"AO"},{"name":"Anguilla","abbreviation":"AI"},{"name":"Antarctica","abbreviation":"AQ"},{"name":"Antigua and Barbuda","abbreviation":"AG"},{"name":"Argentina","abbreviation":"AR"},{"name":"Armenia","abbreviation":"AM"},{"name":"Aruba","abbreviation":"AW"},{"name":"Australia","abbreviation":"AU"},{"name":"Austria","abbreviation":"AT"},{"name":"Azerbaijan","abbreviation":"AZ"},{"name":"Bahamas","abbreviation":"BS"},{"name":"Bahrain","abbreviation":"BH"},{"name":"Bangladesh","abbreviation":"BD"},{"name":"Barbados","abbreviation":"BB"},{"name":"Belarus","abbreviation":"BY"},{"name":"Belgium","abbreviation":"BE"},{"name":"Belize","abbreviation":"BZ"},{"name":"Benin","abbreviation":"BJ"},{"name":"Bermuda","abbreviation":"BM"},{"name":"Bhutan","abbreviation":"BT"},{"name":"Bolivia","abbreviation":"BO"},{"name":"Bosnia and Herzegovina","abbreviation":"BA"},{"name":"Botswana","abbreviation":"BW"},{"name":"Bouvet Island","abbreviation":"BV"},{"name":"Brazil","abbreviation":"BR"},{"name":"British Antarctic Territory","abbreviation":"BQ"},{"name":"British Indian Ocean Territory","abbreviation":"IO"},{"name":"British Virgin Islands","abbreviation":"VG"},{"name":"Brunei","abbreviation":"BN"},{"name":"Bulgaria","abbreviation":"BG"},{"name":"Burkina Faso","abbreviation":"BF"},{"name":"Burundi","abbreviation":"BI"},{"name":"Cambodia","abbreviation":"KH"},{"name":"Cameroon","abbreviation":"CM"},{"name":"Canada","abbreviation":"CA"},{"name":"Canton and Enderbury Islands","abbreviation":"CT"},{"name":"Cape Verde","abbreviation":"CV"},{"name":"Cayman Islands","abbreviation":"KY"},{"name":"Central African Republic","abbreviation":"CF"},{"name":"Chad","abbreviation":"TD"},{"name":"Chile","abbreviation":"CL"},{"name":"China","abbreviation":"CN"},{"name":"Christmas Island","abbreviation":"CX"},{"name":"Cocos [Keeling] Islands","abbreviation":"CC"},{"name":"Colombia","abbreviation":"CO"},{"name":"Comoros","abbreviation":"KM"},{"name":"Congo - Brazzaville","abbreviation":"CG"},{"name":"Congo - Kinshasa","abbreviation":"CD"},{"name":"Cook Islands","abbreviation":"CK"},{"name":"Costa Rica","abbreviation":"CR"},{"name":"Croatia","abbreviation":"HR"},{"name":"Cuba","abbreviation":"CU"},{"name":"Cyprus","abbreviation":"CY"},{"name":"Czech Republic","abbreviation":"CZ"},{"name":"Côte d’Ivoire","abbreviation":"CI"},{"name":"Denmark","abbreviation":"DK"},{"name":"Djibouti","abbreviation":"DJ"},{"name":"Dominica","abbreviation":"DM"},{"name":"Dominican Republic","abbreviation":"DO"},{"name":"Dronning Maud Land","abbreviation":"NQ"},{"name":"East Germany","abbreviation":"DD"},{"name":"Ecuador","abbreviation":"EC"},{"name":"Egypt","abbreviation":"EG"},{"name":"El Salvador","abbreviation":"SV"},{"name":"Equatorial Guinea","abbreviation":"GQ"},{"name":"Eritrea","abbreviation":"ER"},{"name":"Estonia","abbreviation":"EE"},{"name":"Ethiopia","abbreviation":"ET"},{"name":"Falkland Islands","abbreviation":"FK"},{"name":"Faroe Islands","abbreviation":"FO"},{"name":"Fiji","abbreviation":"FJ"},{"name":"Finland","abbreviation":"FI"},{"name":"France","abbreviation":"FR"},{"name":"French Guiana","abbreviation":"GF"},{"name":"French Polynesia","abbreviation":"PF"},{"name":"French Southern Territories","abbreviation":"TF"},{"name":"French Southern and Antarctic Territories","abbreviation":"FQ"},{"name":"Gabon","abbreviation":"GA"},{"name":"Gambia","abbreviation":"GM"},{"name":"Georgia","abbreviation":"GE"},{"name":"Germany","abbreviation":"DE"},{"name":"Ghana","abbreviation":"GH"},{"name":"Gibraltar","abbreviation":"GI"},{"name":"Greece","abbreviation":"GR"},{"name":"Greenland","abbreviation":"GL"},{"name":"Grenada","abbreviation":"GD"},{"name":"Guadeloupe","abbreviation":"GP"},{"name":"Guam","abbreviation":"GU"},{"name":"Guatemala","abbreviation":"GT"},{"name":"Guernsey","abbreviation":"GG"},{"name":"Guinea","abbreviation":"GN"},{"name":"Guinea-Bissau","abbreviation":"GW"},{"name":"Guyana","abbreviation":"GY"},{"name":"Haiti","abbreviation":"HT"},{"name":"Heard Island and McDonald Islands","abbreviation":"HM"},{"name":"Honduras","abbreviation":"HN"},{"name":"Hong Kong SAR China","abbreviation":"HK"},{"name":"Hungary","abbreviation":"HU"},{"name":"Iceland","abbreviation":"IS"},{"name":"India","abbreviation":"IN"},{"name":"Indonesia","abbreviation":"ID"},{"name":"Iran","abbreviation":"IR"},{"name":"Iraq","abbreviation":"IQ"},{"name":"Ireland","abbreviation":"IE"},{"name":"Isle of Man","abbreviation":"IM"},{"name":"Israel","abbreviation":"IL"},{"name":"Italy","abbreviation":"IT"},{"name":"Jamaica","abbreviation":"JM"},{"name":"Japan","abbreviation":"JP"},{"name":"Jersey","abbreviation":"JE"},{"name":"Johnston Island","abbreviation":"JT"},{"name":"Jordan","abbreviation":"JO"},{"name":"Kazakhstan","abbreviation":"KZ"},{"name":"Kenya","abbreviation":"KE"},{"name":"Kiribati","abbreviation":"KI"},{"name":"Kuwait","abbreviation":"KW"},{"name":"Kyrgyzstan","abbreviation":"KG"},{"name":"Laos","abbreviation":"LA"},{"name":"Latvia","abbreviation":"LV"},{"name":"Lebanon","abbreviation":"LB"},{"name":"Lesotho","abbreviation":"LS"},{"name":"Liberia","abbreviation":"LR"},{"name":"Libya","abbreviation":"LY"},{"name":"Liechtenstein","abbreviation":"LI"},{"name":"Lithuania","abbreviation":"LT"},{"name":"Luxembourg","abbreviation":"LU"},{"name":"Macau SAR China","abbreviation":"MO"},{"name":"Macedonia","abbreviation":"MK"},{"name":"Madagascar","abbreviation":"MG"},{"name":"Malawi","abbreviation":"MW"},{"name":"Malaysia","abbreviation":"MY"},{"name":"Maldives","abbreviation":"MV"},{"name":"Mali","abbreviation":"ML"},{"name":"Malta","abbreviation":"MT"},{"name":"Marshall Islands","abbreviation":"MH"},{"name":"Martinique","abbreviation":"MQ"},{"name":"Mauritania","abbreviation":"MR"},{"name":"Mauritius","abbreviation":"MU"},{"name":"Mayotte","abbreviation":"YT"},{"name":"Metropolitan France","abbreviation":"FX"},{"name":"Mexico","abbreviation":"MX"},{"name":"Micronesia","abbreviation":"FM"},{"name":"Midway Islands","abbreviation":"MI"},{"name":"Moldova","abbreviation":"MD"},{"name":"Monaco","abbreviation":"MC"},{"name":"Mongolia","abbreviation":"MN"},{"name":"Montenegro","abbreviation":"ME"},{"name":"Montserrat","abbreviation":"MS"},{"name":"Morocco","abbreviation":"MA"},{"name":"Mozambique","abbreviation":"MZ"},{"name":"Myanmar [Burma]","abbreviation":"MM"},{"name":"Namibia","abbreviation":"NA"},{"name":"Nauru","abbreviation":"NR"},{"name":"Nepal","abbreviation":"NP"},{"name":"Netherlands","abbreviation":"NL"},{"name":"Netherlands Antilles","abbreviation":"AN"},{"name":"Neutral Zone","abbreviation":"NT"},{"name":"New Caledonia","abbreviation":"NC"},{"name":"New Zealand","abbreviation":"NZ"},{"name":"Nicaragua","abbreviation":"NI"},{"name":"Niger","abbreviation":"NE"},{"name":"Nigeria","abbreviation":"NG"},{"name":"Niue","abbreviation":"NU"},{"name":"Norfolk Island","abbreviation":"NF"},{"name":"North Korea","abbreviation":"KP"},{"name":"North Vietnam","abbreviation":"VD"},{"name":"Northern Mariana Islands","abbreviation":"MP"},{"name":"Norway","abbreviation":"NO"},{"name":"Oman","abbreviation":"OM"},{"name":"Pacific Islands Trust Territory","abbreviation":"PC"},{"name":"Pakistan","abbreviation":"PK"},{"name":"Palau","abbreviation":"PW"},{"name":"Palestinian Territories","abbreviation":"PS"},{"name":"Panama","abbreviation":"PA"},{"name":"Panama Canal Zone","abbreviation":"PZ"},{"name":"Papua New Guinea","abbreviation":"PG"},{"name":"Paraguay","abbreviation":"PY"},{"name":"People's Democratic Republic of Yemen","abbreviation":"YD"},{"name":"Peru","abbreviation":"PE"},{"name":"Philippines","abbreviation":"PH"},{"name":"Pitcairn Islands","abbreviation":"PN"},{"name":"Poland","abbreviation":"PL"},{"name":"Portugal","abbreviation":"PT"},{"name":"Puerto Rico","abbreviation":"PR"},{"name":"Qatar","abbreviation":"QA"},{"name":"Romania","abbreviation":"RO"},{"name":"Russia","abbreviation":"RU"},{"name":"Rwanda","abbreviation":"RW"},{"name":"Réunion","abbreviation":"RE"},{"name":"Saint Barthélemy","abbreviation":"BL"},{"name":"Saint Helena","abbreviation":"SH"},{"name":"Saint Kitts and Nevis","abbreviation":"KN"},{"name":"Saint Lucia","abbreviation":"LC"},{"name":"Saint Martin","abbreviation":"MF"},{"name":"Saint Pierre and Miquelon","abbreviation":"PM"},{"name":"Saint Vincent and the Grenadines","abbreviation":"VC"},{"name":"Samoa","abbreviation":"WS"},{"name":"San Marino","abbreviation":"SM"},{"name":"Saudi Arabia","abbreviation":"SA"},{"name":"Senegal","abbreviation":"SN"},{"name":"Serbia","abbreviation":"RS"},{"name":"Serbia and Montenegro","abbreviation":"CS"},{"name":"Seychelles","abbreviation":"SC"},{"name":"Sierra Leone","abbreviation":"SL"},{"name":"Singapore","abbreviation":"SG"},{"name":"Slovakia","abbreviation":"SK"},{"name":"Slovenia","abbreviation":"SI"},{"name":"Solomon Islands","abbreviation":"SB"},{"name":"Somalia","abbreviation":"SO"},{"name":"South Africa","abbreviation":"ZA"},{"name":"South Georgia and the South Sandwich Islands","abbreviation":"GS"},{"name":"South Korea","abbreviation":"KR"},{"name":"Spain","abbreviation":"ES"},{"name":"Sri Lanka","abbreviation":"LK"},{"name":"Sudan","abbreviation":"SD"},{"name":"Suriname","abbreviation":"SR"},{"name":"Svalbard and Jan Mayen","abbreviation":"SJ"},{"name":"Swaziland","abbreviation":"SZ"},{"name":"Sweden","abbreviation":"SE"},{"name":"Switzerland","abbreviation":"CH"},{"name":"Syria","abbreviation":"SY"},{"name":"São Tomé and Príncipe","abbreviation":"ST"},{"name":"Taiwan","abbreviation":"TW"},{"name":"Tajikistan","abbreviation":"TJ"},{"name":"Tanzania","abbreviation":"TZ"},{"name":"Thailand","abbreviation":"TH"},{"name":"Timor-Leste","abbreviation":"TL"},{"name":"Togo","abbreviation":"TG"},{"name":"Tokelau","abbreviation":"TK"},{"name":"Tonga","abbreviation":"TO"},{"name":"Trinidad and Tobago","abbreviation":"TT"},{"name":"Tunisia","abbreviation":"TN"},{"name":"Turkey","abbreviation":"TR"},{"name":"Turkmenistan","abbreviation":"TM"},{"name":"Turks and Caicos Islands","abbreviation":"TC"},{"name":"Tuvalu","abbreviation":"TV"},{"name":"U.S. Minor Outlying Islands","abbreviation":"UM"},{"name":"U.S. Miscellaneous Pacific Islands","abbreviation":"PU"},{"name":"U.S. Virgin Islands","abbreviation":"VI"},{"name":"Uganda","abbreviation":"UG"},{"name":"Ukraine","abbreviation":"UA"},{"name":"Union of Soviet Socialist Republics","abbreviation":"SU"},{"name":"United Arab Emirates","abbreviation":"AE"},{"name":"United Kingdom","abbreviation":"GB"},{"name":"United States","abbreviation":"US"},{"name":"Unknown or Invalid Region","abbreviation":"ZZ"},{"name":"Uruguay","abbreviation":"UY"},{"name":"Uzbekistan","abbreviation":"UZ"},{"name":"Vanuatu","abbreviation":"VU"},{"name":"Vatican City","abbreviation":"VA"},{"name":"Venezuela","abbreviation":"VE"},{"name":"Vietnam","abbreviation":"VN"},{"name":"Wake Island","abbreviation":"WK"},{"name":"Wallis and Futuna","abbreviation":"WF"},{"name":"Western Sahara","abbreviation":"EH"},{"name":"Yemen","abbreviation":"YE"},{"name":"Zambia","abbreviation":"ZM"},{"name":"Zimbabwe","abbreviation":"ZW"},{"name":"Åland Islands","abbreviation":"AX"}],
 
-        provinces: [
-            {name: 'Alberta', abbreviation: 'AB'},
-            {name: 'British Columbia', abbreviation: 'BC'},
-            {name: 'Manitoba', abbreviation: 'MB'},
-            {name: 'New Brunswick', abbreviation: 'NB'},
-            {name: 'Newfoundland and Labrador', abbreviation: 'NL'},
-            {name: 'Nova Scotia', abbreviation: 'NS'},
-            {name: 'Ontario', abbreviation: 'ON'},
-            {name: 'Prince Edward Island', abbreviation: 'PE'},
-            {name: 'Quebec', abbreviation: 'QC'},
-            {name: 'Saskatchewan', abbreviation: 'SK'},
+        provinces: {
+            "ca": [
+                {name: 'Alberta', abbreviation: 'AB'},
+                {name: 'British Columbia', abbreviation: 'BC'},
+                {name: 'Manitoba', abbreviation: 'MB'},
+                {name: 'New Brunswick', abbreviation: 'NB'},
+                {name: 'Newfoundland and Labrador', abbreviation: 'NL'},
+                {name: 'Nova Scotia', abbreviation: 'NS'},
+                {name: 'Ontario', abbreviation: 'ON'},
+                {name: 'Prince Edward Island', abbreviation: 'PE'},
+                {name: 'Quebec', abbreviation: 'QC'},
+                {name: 'Saskatchewan', abbreviation: 'SK'},
 
-            // The case could be made that the following are not actually provinces
-            // since they are technically considered "territories" however they all
-            // look the same on an envelope!
-            {name: 'Northwest Territories', abbreviation: 'NT'},
-            {name: 'Nunavut', abbreviation: 'NU'},
-            {name: 'Yukon', abbreviation: 'YT'}
-        ],
+                // The case could be made that the following are not actually provinces
+                // since they are technically considered "territories" however they all
+                // look the same on an envelope!
+                {name: 'Northwest Territories', abbreviation: 'NT'},
+                {name: 'Nunavut', abbreviation: 'NU'},
+                {name: 'Yukon', abbreviation: 'YT'}
+            ],
+            "it": [
+                { name: "Agrigento", abbreviation: "AG", code: 84 },
+                { name: "Alessandria", abbreviation: "AL", code: 6 },
+                { name: "Ancona", abbreviation: "AN", code: 42 },
+                { name: "Aosta", abbreviation: "AO", code: 7 },
+                { name: "L'Aquila", abbreviation: "AQ", code: 66 },
+                { name: "Arezzo", abbreviation: "AR", code: 51 },
+                { name: "Ascoli-Piceno", abbreviation: "AP", code: 44 },
+                { name: "Asti", abbreviation: "AT", code: 5 },
+                { name: "Avellino", abbreviation: "AV", code: 64 },
+                { name: "Bari", abbreviation: "BA", code: 72 },
+                { name: "Barletta-Andria-Trani", abbreviation: "BT", code: 72 },
+                { name: "Belluno", abbreviation: "BL", code: 25 },
+                { name: "Benevento", abbreviation: "BN", code: 62 },
+                { name: "Bergamo", abbreviation: "BG", code: 16 },
+                { name: "Biella", abbreviation: "BI", code: 96 },
+                { name: "Bologna", abbreviation: "BO", code: 37 },
+                { name: "Bolzano", abbreviation: "BZ", code: 21 },
+                { name: "Brescia", abbreviation: "BS", code: 17 },
+                { name: "Brindisi", abbreviation: "BR", code: 74 },
+                { name: "Cagliari", abbreviation: "CA", code: 92 },
+                { name: "Caltanissetta", abbreviation: "CL", code: 85 },
+                { name: "Campobasso", abbreviation: "CB", code: 70 },
+                { name: "Carbonia Iglesias", abbreviation: "CI", code: 70 },
+                { name: "Caserta", abbreviation: "CE", code: 61 },
+                { name: "Catania", abbreviation: "CT", code: 87 },
+                { name: "Catanzaro", abbreviation: "CZ", code: 79 },
+                { name: "Chieti", abbreviation: "CH", code: 69 },
+                { name: "Como", abbreviation: "CO", code: 13 },
+                { name: "Cosenza", abbreviation: "CS", code: 78 },
+                { name: "Cremona", abbreviation: "CR", code: 19 },
+                { name: "Crotone", abbreviation: "KR", code: 101 },
+                { name: "Cuneo", abbreviation: "CN", code: 4 },
+                { name: "Enna", abbreviation: "EN", code: 86 },
+                { name: "Fermo", abbreviation: "FM", code: 86 },
+                { name: "Ferrara", abbreviation: "FE", code: 38 },
+                { name: "Firenze", abbreviation: "FI", code: 48 },
+                { name: "Foggia", abbreviation: "FG", code: 71 },
+                { name: "Forli-Cesena", abbreviation: "FC", code: 71 },
+                { name: "Frosinone", abbreviation: "FR", code: 60 },
+                { name: "Genova", abbreviation: "GE", code: 10 },
+                { name: "Gorizia", abbreviation: "GO", code: 31 },
+                { name: "Grosseto", abbreviation: "GR", code: 53 },
+                { name: "Imperia", abbreviation: "IM", code: 8 },
+                { name: "Isernia", abbreviation: "IS", code: 94 },
+                { name: "La-Spezia", abbreviation: "SP", code: 66 },
+                { name: "Latina", abbreviation: "LT", code: 59 },
+                { name: "Lecce", abbreviation: "LE", code: 75 },
+                { name: "Lecco", abbreviation: "LC", code: 97 },
+                { name: "Livorno", abbreviation: "LI", code: 49 },
+                { name: "Lodi", abbreviation: "LO", code: 98 },
+                { name: "Lucca", abbreviation: "LU", code: 46 },
+                { name: "Macerata", abbreviation: "MC", code: 43 },
+                { name: "Mantova", abbreviation: "MN", code: 20 },
+                { name: "Massa-Carrara", abbreviation: "MS", code: 45 },
+                { name: "Matera", abbreviation: "MT", code: 77 },
+                { name: "Medio Campidano", abbreviation: "VS", code: 77 },
+                { name: "Messina", abbreviation: "ME", code: 83 },
+                { name: "Milano", abbreviation: "MI", code: 15 },
+                { name: "Modena", abbreviation: "MO", code: 36 },
+                { name: "Monza-Brianza", abbreviation: "MB", code: 36 },
+                { name: "Napoli", abbreviation: "NA", code: 63 },
+                { name: "Novara", abbreviation: "NO", code: 3 },
+                { name: "Nuoro", abbreviation: "NU", code: 91 },
+                { name: "Ogliastra", abbreviation: "OG", code: 91 },
+                { name: "Olbia Tempio", abbreviation: "OT", code: 91 },
+                { name: "Oristano", abbreviation: "OR", code: 95 },
+                { name: "Padova", abbreviation: "PD", code: 28 },
+                { name: "Palermo", abbreviation: "PA", code: 82 },
+                { name: "Parma", abbreviation: "PR", code: 34 },
+                { name: "Pavia", abbreviation: "PV", code: 18 },
+                { name: "Perugia", abbreviation: "PG", code: 54 },
+                { name: "Pesaro-Urbino", abbreviation: "PU", code: 41 },
+                { name: "Pescara", abbreviation: "PE", code: 68 },
+                { name: "Piacenza", abbreviation: "PC", code: 33 },
+                { name: "Pisa", abbreviation: "PI", code: 50 },
+                { name: "Pistoia", abbreviation: "PT", code: 47 },
+                { name: "Pordenone", abbreviation: "PN", code: 93 },
+                { name: "Potenza", abbreviation: "PZ", code: 76 },
+                { name: "Prato", abbreviation: "PO", code: 100 },
+                { name: "Ragusa", abbreviation: "RG", code: 88 },
+                { name: "Ravenna", abbreviation: "RA", code: 39 },
+                { name: "Reggio-Calabria", abbreviation: "RC", code: 35 },
+                { name: "Reggio-Emilia", abbreviation: "RE", code: 35 },
+                { name: "Rieti", abbreviation: "RI", code: 57 },
+                { name: "Rimini", abbreviation: "RN", code: 99 },
+                { name: "Roma", abbreviation: "Roma", code: 58 },
+                { name: "Rovigo", abbreviation: "RO", code: 29 },
+                { name: "Salerno", abbreviation: "SA", code: 65 },
+                { name: "Sassari", abbreviation: "SS", code: 90 },
+                { name: "Savona", abbreviation: "SV", code: 9 },
+                { name: "Siena", abbreviation: "SI", code: 52 },
+                { name: "Siracusa", abbreviation: "SR", code: 89 },
+                { name: "Sondrio", abbreviation: "SO", code: 14 },
+                { name: "Taranto", abbreviation: "TA", code: 73 },
+                { name: "Teramo", abbreviation: "TE", code: 67 },
+                { name: "Terni", abbreviation: "TR", code: 55 },
+                { name: "Torino", abbreviation: "TO", code: 1 },
+                { name: "Trapani", abbreviation: "TP", code: 81 },
+                { name: "Trento", abbreviation: "TN", code: 22 },
+                { name: "Treviso", abbreviation: "TV", code: 26 },
+                { name: "Trieste", abbreviation: "TS", code: 32 },
+                { name: "Udine", abbreviation: "UD", code: 30 },
+                { name: "Varese", abbreviation: "VA", code: 12 },
+                { name: "Venezia", abbreviation: "VE", code: 27 },
+                { name: "Verbania", abbreviation: "VB", code: 27 },
+                { name: "Vercelli", abbreviation: "VC", code: 2 },
+                { name: "Verona", abbreviation: "VR", code: 23 },
+                { name: "Vibo-Valentia", abbreviation: "VV", code: 102 },
+                { name: "Vicenza", abbreviation: "VI", code: 24 },
+                { name: "Viterbo", abbreviation: "VT", code: 56 }   
+            ]
+        },
 
             // from: https://github.com/samsargent/Useful-Autocomplete-Data/blob/master/data/nationalities.json
         nationalities: [
@@ -3160,43 +3460,140 @@ module.exports = stringType;
             {name: 'Armed Forces the Americas', abbreviation: 'AA'}
         ],
 
-        street_suffixes: [
-            {name: 'Avenue', abbreviation: 'Ave'},
-            {name: 'Boulevard', abbreviation: 'Blvd'},
-            {name: 'Center', abbreviation: 'Ctr'},
-            {name: 'Circle', abbreviation: 'Cir'},
-            {name: 'Court', abbreviation: 'Ct'},
-            {name: 'Drive', abbreviation: 'Dr'},
-            {name: 'Extension', abbreviation: 'Ext'},
-            {name: 'Glen', abbreviation: 'Gln'},
-            {name: 'Grove', abbreviation: 'Grv'},
-            {name: 'Heights', abbreviation: 'Hts'},
-            {name: 'Highway', abbreviation: 'Hwy'},
-            {name: 'Junction', abbreviation: 'Jct'},
-            {name: 'Key', abbreviation: 'Key'},
-            {name: 'Lane', abbreviation: 'Ln'},
-            {name: 'Loop', abbreviation: 'Loop'},
-            {name: 'Manor', abbreviation: 'Mnr'},
-            {name: 'Mill', abbreviation: 'Mill'},
-            {name: 'Park', abbreviation: 'Park'},
-            {name: 'Parkway', abbreviation: 'Pkwy'},
-            {name: 'Pass', abbreviation: 'Pass'},
-            {name: 'Path', abbreviation: 'Path'},
-            {name: 'Pike', abbreviation: 'Pike'},
-            {name: 'Place', abbreviation: 'Pl'},
-            {name: 'Plaza', abbreviation: 'Plz'},
-            {name: 'Point', abbreviation: 'Pt'},
-            {name: 'Ridge', abbreviation: 'Rdg'},
-            {name: 'River', abbreviation: 'Riv'},
-            {name: 'Road', abbreviation: 'Rd'},
-            {name: 'Square', abbreviation: 'Sq'},
-            {name: 'Street', abbreviation: 'St'},
-            {name: 'Terrace', abbreviation: 'Ter'},
-            {name: 'Trail', abbreviation: 'Trl'},
-            {name: 'Turnpike', abbreviation: 'Tpke'},
-            {name: 'View', abbreviation: 'Vw'},
-            {name: 'Way', abbreviation: 'Way'}
-        ],
+        country_regions: {
+            it: [
+                { name: "Valle d'Aosta", abbreviation: "VDA" },
+                { name: "Piemonte", abbreviation: "PIE" },
+                { name: "Lombardia", abbreviation: "LOM" },
+                { name: "Veneto", abbreviation: "VEN" },
+                { name: "Trentino Alto Adige", abbreviation: "TAA" },
+                { name: "Friuli Venezia Giulia", abbreviation: "FVG" },
+                { name: "Liguria", abbreviation: "LIG" },
+                { name: "Emilia Romagna", abbreviation: "EMR" },
+                { name: "Toscana", abbreviation: "TOS" },
+                { name: "Umbria", abbreviation: "UMB" },
+                { name: "Marche", abbreviation: "MAR" },
+                { name: "Abruzzo", abbreviation: "ABR" },
+                { name: "Lazio", abbreviation: "LAZ" },
+                { name: "Campania", abbreviation: "CAM" },
+                { name: "Puglia", abbreviation: "PUG" },
+                { name: "Basilicata", abbreviation: "BAS" },
+                { name: "Molise", abbreviation: "MOL" },
+                { name: "Calabria", abbreviation: "CAL" },
+                { name: "Sicilia", abbreviation: "SIC" },
+                { name: "Sardegna", abbreviation: "SAR" }
+            ]
+        },
+
+        street_suffixes: {
+            'us': [
+                {name: 'Avenue', abbreviation: 'Ave'},
+                {name: 'Boulevard', abbreviation: 'Blvd'},
+                {name: 'Center', abbreviation: 'Ctr'},
+                {name: 'Circle', abbreviation: 'Cir'},
+                {name: 'Court', abbreviation: 'Ct'},
+                {name: 'Drive', abbreviation: 'Dr'},
+                {name: 'Extension', abbreviation: 'Ext'},
+                {name: 'Glen', abbreviation: 'Gln'},
+                {name: 'Grove', abbreviation: 'Grv'},
+                {name: 'Heights', abbreviation: 'Hts'},
+                {name: 'Highway', abbreviation: 'Hwy'},
+                {name: 'Junction', abbreviation: 'Jct'},
+                {name: 'Key', abbreviation: 'Key'},
+                {name: 'Lane', abbreviation: 'Ln'},
+                {name: 'Loop', abbreviation: 'Loop'},
+                {name: 'Manor', abbreviation: 'Mnr'},
+                {name: 'Mill', abbreviation: 'Mill'},
+                {name: 'Park', abbreviation: 'Park'},
+                {name: 'Parkway', abbreviation: 'Pkwy'},
+                {name: 'Pass', abbreviation: 'Pass'},
+                {name: 'Path', abbreviation: 'Path'},
+                {name: 'Pike', abbreviation: 'Pike'},
+                {name: 'Place', abbreviation: 'Pl'},
+                {name: 'Plaza', abbreviation: 'Plz'},
+                {name: 'Point', abbreviation: 'Pt'},
+                {name: 'Ridge', abbreviation: 'Rdg'},
+                {name: 'River', abbreviation: 'Riv'},
+                {name: 'Road', abbreviation: 'Rd'},
+                {name: 'Square', abbreviation: 'Sq'},
+                {name: 'Street', abbreviation: 'St'},
+                {name: 'Terrace', abbreviation: 'Ter'},
+                {name: 'Trail', abbreviation: 'Trl'},
+                {name: 'Turnpike', abbreviation: 'Tpke'},
+                {name: 'View', abbreviation: 'Vw'},
+                {name: 'Way', abbreviation: 'Way'}
+            ],
+            'it': [
+                { name: 'Accesso', abbreviation: 'Acc.' },
+                { name: 'Alzaia', abbreviation: 'Alz.' },
+                { name: 'Arco', abbreviation: 'Arco' },
+                { name: 'Archivolto', abbreviation: 'Acv.' },
+                { name: 'Arena', abbreviation: 'Arena' },
+                { name: 'Argine', abbreviation: 'Argine' },
+                { name: 'Bacino', abbreviation: 'Bacino' },
+                { name: 'Banchi', abbreviation: 'Banchi' },
+                { name: 'Banchina', abbreviation: 'Ban.' },
+                { name: 'Bastioni', abbreviation: 'Bas.' },
+                { name: 'Belvedere', abbreviation: 'Belv.' },
+                { name: 'Borgata', abbreviation: 'B.ta' },
+                { name: 'Borgo', abbreviation: 'B.go' },
+                { name: 'Calata', abbreviation: 'Cal.' },
+                { name: 'Calle', abbreviation: 'Calle' },
+                { name: 'Campiello', abbreviation: 'Cam.' },
+                { name: 'Campo', abbreviation: 'Cam.' },
+                { name: 'Canale', abbreviation: 'Can.' },
+                { name: 'Carraia', abbreviation: 'Carr.' },
+                { name: 'Cascina', abbreviation: 'Cascina' },
+                { name: 'Case sparse', abbreviation: 'c.s.' },
+                { name: 'Cavalcavia', abbreviation: 'Cv.' },
+                { name: 'Circonvallazione', abbreviation: 'Cv.' },
+                { name: 'Complanare', abbreviation: 'C.re' },
+                { name: 'Contrada', abbreviation: 'C.da' },
+                { name: 'Corso', abbreviation: 'C.so' },
+                { name: 'Corte', abbreviation: 'C.te' },
+                { name: 'Cortile', abbreviation: 'C.le' },
+                { name: 'Diramazione', abbreviation: 'Dir.' },
+                { name: 'Fondaco', abbreviation: 'F.co' },
+                { name: 'Fondamenta', abbreviation: 'F.ta' },
+                { name: 'Fondo', abbreviation: 'F.do' },
+                { name: 'Frazione', abbreviation: 'Fr.' },
+                { name: 'Isola', abbreviation: 'Is.' },
+                { name: 'Largo', abbreviation: 'L.go' },
+                { name: 'Litoranea', abbreviation: 'Lit.' },
+                { name: 'Lungolago', abbreviation: 'L.go lago' },
+                { name: 'Lungo Po', abbreviation: 'l.go Po' },
+                { name: 'Molo', abbreviation: 'Molo' },
+                { name: 'Mura', abbreviation: 'Mura' },
+                { name: 'Passaggio privato', abbreviation: 'pass. priv.' },
+                { name: 'Passeggiata', abbreviation: 'Pass.' },
+                { name: 'Piazza', abbreviation: 'P.zza' },
+                { name: 'Piazzale', abbreviation: 'P.le' },
+                { name: 'Ponte', abbreviation: 'P.te' },
+                { name: 'Portico', abbreviation: 'P.co' },
+                { name: 'Rampa', abbreviation: 'Rampa' },
+                { name: 'Regione', abbreviation: 'Reg.' },
+                { name: 'Rione', abbreviation: 'R.ne' },
+                { name: 'Rio', abbreviation: 'Rio' },
+                { name: 'Ripa', abbreviation: 'Ripa' },
+                { name: 'Riva', abbreviation: 'Riva' },
+                { name: 'Rondò', abbreviation: 'Rondò' },
+                { name: 'Rotonda', abbreviation: 'Rot.' },
+                { name: 'Sagrato', abbreviation: 'Sagr.' },
+                { name: 'Salita', abbreviation: 'Sal.' },
+                { name: 'Scalinata', abbreviation: 'Scal.' },
+                { name: 'Scalone', abbreviation: 'Scal.' },
+                { name: 'Slargo', abbreviation: 'Sl.' },
+                { name: 'Sottoportico', abbreviation: 'Sott.' },
+                { name: 'Strada', abbreviation: 'Str.' },
+                { name: 'Stradale', abbreviation: 'Str.le' },
+                { name: 'Strettoia', abbreviation: 'Strett.' },
+                { name: 'Traversa', abbreviation: 'Trav.' },
+                { name: 'Via', abbreviation: 'V.' },
+                { name: 'Viale', abbreviation: 'V.le' },
+                { name: 'Vicinale', abbreviation: 'Vic.le' },
+                { name: 'Vicolo', abbreviation: 'Vic.' }
+            ]
+        },
 
         months: [
             {name: 'January', short_name: 'Jan', numeric: '01', days: 31},
@@ -4008,7 +4405,7 @@ module.exports = stringType;
 },{}],30:[function(require,module,exports){
 'use strict';
 
-var $ = require('./util/uri-helpers');
+var $ = require('./util/helpers');
 
 $.findByRef = require('./util/find-reference');
 $.resolveSchema = require('./util/resolve-schema');
@@ -4079,7 +4476,7 @@ var instance = module.exports = function() {
 
 instance.util = $;
 
-},{"./util/find-reference":32,"./util/normalize-schema":33,"./util/resolve-schema":34,"./util/uri-helpers":35}],31:[function(require,module,exports){
+},{"./util/find-reference":32,"./util/helpers":33,"./util/normalize-schema":34,"./util/resolve-schema":35}],31:[function(require,module,exports){
 'use strict';
 
 var clone = module.exports = function(obj, seen) {
@@ -4117,7 +4514,7 @@ var clone = module.exports = function(obj, seen) {
 },{}],32:[function(require,module,exports){
 'use strict';
 
-var $ = require('./uri-helpers');
+var $ = require('./helpers');
 
 function get(obj, path) {
   var hash = path.split('#')[1];
@@ -4162,119 +4559,7 @@ var find = module.exports = function(id, refs) {
   return target;
 };
 
-},{"./uri-helpers":35}],33:[function(require,module,exports){
-'use strict';
-
-var $ = require('./uri-helpers');
-
-var cloneObj = require('./clone-obj');
-
-var SCHEMA_URI = [
-  'http://json-schema.org/schema#',
-  'http://json-schema.org/draft-04/schema#'
-];
-
-function expand(obj, parent, callback) {
-  if (obj) {
-    var id = typeof obj.id === 'string' ? obj.id : '#';
-
-    if (!$.isURL(id)) {
-      id = $.resolveURL(parent === id ? null : parent, id);
-    }
-
-    if (typeof obj.$ref === 'string' && !$.isURL(obj.$ref)) {
-      obj.$ref = $.resolveURL(id, obj.$ref);
-    }
-
-    if (typeof obj.id === 'string') {
-      obj.id = parent = id;
-    }
-  }
-
-  for (var key in obj) {
-    var value = obj[key];
-
-    if (typeof value === 'object' && !(key === 'enum' || key === 'required')) {
-      expand(value, parent, callback);
-    }
-  }
-
-  if (typeof callback === 'function') {
-    callback(obj);
-  }
-}
-
-module.exports = function(fakeroot, schema, push) {
-  if (typeof fakeroot === 'object') {
-    push = schema;
-    schema = fakeroot;
-    fakeroot = null;
-  }
-
-  var base = fakeroot || '',
-      copy = cloneObj(schema);
-
-  if (copy.$schema && SCHEMA_URI.indexOf(copy.$schema) === -1) {
-    throw new Error('Unsupported schema version (v4 only)');
-  }
-
-  base = $.resolveURL(copy.$schema || SCHEMA_URI[0], base);
-
-  expand(copy, $.resolveURL(copy.id || '#', base), push);
-
-  copy.id = copy.id || base;
-
-  return copy;
-};
-
-},{"./clone-obj":31,"./uri-helpers":35}],34:[function(require,module,exports){
-'use strict';
-
-var $ = require('./uri-helpers');
-
-var find = require('./find-reference');
-
-var deepExtend = require('deep-extend');
-
-function isKey(prop) {
-  return prop === 'enum' || prop === 'required' || prop === 'definitions';
-}
-
-function copy(obj, refs, parent, resolve) {
-  var target =  Array.isArray(obj) ? [] : {};
-
-  if (typeof obj.$ref === 'string') {
-    var base = $.getDocumentURI(obj.$ref);
-
-    if (parent !== base || (resolve && obj.$ref.indexOf('#/') > -1)) {
-      var fixed = find(obj.$ref, refs);
-
-      deepExtend(obj, fixed);
-
-      delete obj.$ref;
-      delete obj.id;
-    }
-  }
-
-  for (var prop in obj) {
-    if (typeof obj[prop] === 'object' && !isKey(prop)) {
-      target[prop] = copy(obj[prop], refs, parent, resolve);
-    } else {
-      target[prop] = obj[prop];
-    }
-  }
-
-  return target;
-}
-
-module.exports = function(obj, refs, resolve) {
-  var fixedId = $.resolveURL(obj.$schema, obj.id),
-      parent = $.getDocumentURI(fixedId);
-
-  return copy(obj, refs, parent, resolve);
-};
-
-},{"./find-reference":32,"./uri-helpers":35,"deep-extend":36}],35:[function(require,module,exports){
+},{"./helpers":33}],33:[function(require,module,exports){
 'use strict';
 
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
@@ -4371,14 +4656,127 @@ function getDocumentURI(uri) {
   return typeof uri === 'string' && uri.split('#')[0];
 }
 
+function isKeyword(prop) {
+  return prop === 'enum' || prop === 'default' || prop === 'required';
+}
+
 module.exports = {
   isURL: isURL,
   parseURI: parseURI,
+  isKeyword: isKeyword,
   resolveURL: resolveURL,
   getDocumentURI: getDocumentURI
 };
 
-},{}],36:[function(require,module,exports){
+},{}],34:[function(require,module,exports){
+'use strict';
+
+var $ = require('./helpers');
+
+var cloneObj = require('./clone-obj');
+
+var SCHEMA_URI = [
+  'http://json-schema.org/schema#',
+  'http://json-schema.org/draft-04/schema#'
+];
+
+function expand(obj, parent, callback) {
+  if (obj) {
+    var id = typeof obj.id === 'string' ? obj.id : '#';
+
+    if (!$.isURL(id)) {
+      id = $.resolveURL(parent === id ? null : parent, id);
+    }
+
+    if (typeof obj.$ref === 'string' && !$.isURL(obj.$ref)) {
+      obj.$ref = $.resolveURL(id, obj.$ref);
+    }
+
+    if (typeof obj.id === 'string') {
+      obj.id = parent = id;
+    }
+  }
+
+  for (var key in obj) {
+    var value = obj[key];
+
+    if (typeof value === 'object' && value !== null && !$.isKeyword(key)) {
+      expand(value, parent, callback);
+    }
+  }
+
+  if (typeof callback === 'function') {
+    callback(obj);
+  }
+}
+
+module.exports = function(fakeroot, schema, push) {
+  if (typeof fakeroot === 'object') {
+    push = schema;
+    schema = fakeroot;
+    fakeroot = null;
+  }
+
+  var base = fakeroot || '',
+      copy = cloneObj(schema);
+
+  if (copy.$schema && SCHEMA_URI.indexOf(copy.$schema) === -1) {
+    throw new Error('Unsupported schema version (v4 only)');
+  }
+
+  base = $.resolveURL(copy.$schema || SCHEMA_URI[0], base);
+
+  expand(copy, $.resolveURL(copy.id || '#', base), push);
+
+  copy.id = copy.id || base;
+
+  return copy;
+};
+
+},{"./clone-obj":31,"./helpers":33}],35:[function(require,module,exports){
+'use strict';
+
+var $ = require('./helpers');
+
+var find = require('./find-reference');
+
+var deepExtend = require('deep-extend');
+
+function copy(obj, refs, parent, resolve) {
+  var target =  Array.isArray(obj) ? [] : {};
+
+  if (typeof obj.$ref === 'string') {
+    var base = $.getDocumentURI(obj.$ref);
+
+    if (parent !== base || (resolve && obj.$ref.indexOf('#/') > -1)) {
+      var fixed = find(obj.$ref, refs);
+
+      deepExtend(obj, fixed);
+
+      delete obj.$ref;
+      delete obj.id;
+    }
+  }
+
+  for (var prop in obj) {
+    if (typeof obj[prop] === 'object' && obj[prop] !== null && !$.isKeyword(prop)) {
+      target[prop] = copy(obj[prop], refs, parent, resolve);
+    } else {
+      target[prop] = obj[prop];
+    }
+  }
+
+  return target;
+}
+
+module.exports = function(obj, refs, resolve) {
+  var fixedId = $.resolveURL(obj.$schema, obj.id),
+      parent = $.getDocumentURI(fixedId);
+
+  return copy(obj, refs, parent, resolve);
+};
+
+},{"./find-reference":32,"./helpers":33,"deep-extend":36}],36:[function(require,module,exports){
 /*!
  * @description Recursive object extending
  * @author Viacheslav Lotsmanov <lotsmanov89@gmail.com>

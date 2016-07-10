@@ -1,0 +1,16 @@
+[
+  {
+    "description": "useDefaultValue option",
+    "tests": [
+      {
+        "description": "should handle useDefaultValue option",
+        "schema": {
+          "type": "string",
+          "default": "Hello"
+        },
+        "equal": "Hello",
+        "require": "core/option/useDefaultValue"
+      }
+    ]
+  }
+]
