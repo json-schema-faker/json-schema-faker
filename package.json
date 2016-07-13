@@ -15,6 +15,7 @@
     "dist": "node build/dist.js",
     "tsc": "./build/tsc.sh",
     "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
+    "typedoc": "./node_modules/.bin/typedoc --out docs/html ts/ --module commonjs",
     "graphviz": "./node_modules/.bin/madge lib --dot > structure.gv"
   },
   "contributors": [
@@ -54,6 +55,7 @@
     "semver": "^5.2.0",
     "tslint": "^3.13.0",
     "tv4": "^1.2.7",
+    "typedoc": "^0.4.4",
     "typescript": "^1.8.10",
     "uglify-js": "^2.7.0",
     "z-schema": "^3.17.0"
