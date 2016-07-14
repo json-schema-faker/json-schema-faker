@@ -1,17 +1,21 @@
-![JSON Schema Faker logo](logo/typescript-logo.png)
+[![JSON Schema Faker logo](logo/typescript-logo.png)](https://github.com/json-schema-faker/json-schema-faker)
 
 [![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
 [![Bower version](https://badge.fury.io/bo/json-schema-faker.svg)](https://badge.fury.io/bo/json-schema-faker)
 [![Coverage Status](https://codecov.io/github/json-schema-faker/json-schema-faker/coverage.svg?branch=master)](https://codecov.io/github/json-schema-faker/json-schema-faker?branch=master)
-[![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
 
 [![Dependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker)
 [![devDependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/dev-status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker#info=devDependencies)
 
+[![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
+[![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
+
 Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system.
 
-***Want to support `jsf`?*** We are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
+***Want to support `jsf`?***
+* we are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
+* we are looking for contributors! If you wanna help us make `jsf` more awesome, simply write us so!
 
 # Table of contents
 
