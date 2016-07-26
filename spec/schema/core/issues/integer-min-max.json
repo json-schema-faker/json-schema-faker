@@ -1,0 +1,67 @@
+[
+  {
+    "description": "generated integer obeying min/max",
+    "tests": [
+      {
+        "description": "should handle one possible value min/max integer",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true,
+        "repeat": 100
+      },
+      {
+        "description": "should handle minimumExclusive",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1.5,
+          "exclusiveMinimum": true
+        },
+        "type": "number",
+        "valid": true,
+        "repeat": 100
+      },
+      {
+        "description": "should handle maximumExclusive",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1.5,
+          "maximumExclusive": true
+        },
+        "type": "number",
+        "valid": true,
+        "repeat": 100
+      },
+      {
+        "description": "should handle maximumExclusive (smaller decimals)",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1.05,
+          "maximumExclusive": true
+        },
+        "type": "number",
+        "valid": true,
+        "repeat": 100
+      },
+      {
+        "description": "should handle maximumExclusive and minimumExclusive",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 2,
+          "maximumExclusive": true
+        },
+        "type": "number",
+        "valid": true,
+        "repeat": 100
+      }
+    ]
+  }
+]
