@@ -11,15 +11,9 @@
 [![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
 [![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
 
-Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system.
+Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent and meaningful fake data for your system.
 
-
-
-***Want to support `jsf`?***
-* we are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
-* we are looking for contributors! If you wanna help us make `jsf` more awesome, simply write us so!
-
-
+We are looking for **contributors**! If you wanna help us make `jsf` more awesome, simply write us so!
 
 ## NEW in JSON Schema Faker: store schemas online!
 
@@ -62,7 +56,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 
 ## Online demo
 
-See [online demo](http://json-schema-faker.js.org/).
+See [online demo](http://json-schema-faker.js.org/). You can save your schemas online and share the link with your collaborators.
 
 ## Install
 
@@ -85,7 +79,7 @@ Install `json-schema-faker` with bower:
 JSON-Schema-faker is also available at [cdnjs.com](https://www.cdnjs.com/libraries/json-schema-faker). This means you can just include the script file into your HTML:
 
     # remember to update the version number!
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.3.1/json-schema-faker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.3.4/json-schema-faker.min.js"></script>
 
 It will be fetched from the [Content Delivery Network](https://en.wikipedia.org/wiki/Content_delivery_network) without installing any node.js package.
 
@@ -140,9 +134,13 @@ var schema = {
 
 var sample = jsf(schema);
 
+console.log(sample);
+// "[object Object]"
+
 console.log(sample.user.name);
-// output: John Doe
+// "John Doe"
 ```
+([demo »](http://json-schema-faker.js.org/#gist/927cf888cbc250a2b8e60eb5834cdfbd))
 
 ### Gist demos
 
@@ -234,6 +232,7 @@ You can use **faker** or **chance** properties but they are optional:
   "faker": "internet.email"
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/89659ebf28be89d3f860c3f80cbffe4b))
 
 The above schema will invoke `faker.internet.email()`.
 
@@ -247,10 +246,11 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
   "pattern": "yes|no|maybe|i don't know"
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/8ee282679da5a31cd7edc4cf35f37081))
 
 ### Advanced usage of faker.js and Chance.js
 
-In following examples the `faker` and `chance` variables are assumed to be created with, respectively:
+In following inline code examples the `faker` and `chance` variables are assumed to be created with, respectively:
 
 ```javascript
 var faker = require('faker');
@@ -271,6 +271,7 @@ Another example of faking values is passing arguments to the generator:
   }
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/c6ab6a0325e53fd3b38ee0293a9aeea3))
 
 which will invoke `chance.email({ "domain": "fake.com" })`. This example works for single-parameter generator function.
 
@@ -292,31 +293,33 @@ However, if you pass multiple arguments to the generator function, just pass the
   ]
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/3a15a11d706e5b145c30f943d55c42b2))
 
-However, if you want to pass a single parameter that is an array itself, e.g. [`chance.pickone(["one", "two", "three"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382), just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171), then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
+However, if you want to pass a single parameter that is an array itself, e.g. [`chance.pickone(["banana", "apple", "orange"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382), just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171), then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
 
 ```json
 {
   "type": "object",
   "properties": {
-    "title": {
+    "food": {
       "type": "string",
       "chance": {
         "pickone": [
           [
-            "one",
-            "two",
-            "three"
+            "banana",
+            "apple",
+            "orange"
           ]
         ]
       }
     }
   },
   "required": [
-    "title"
+    "food"
   ]
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/792d626e7d92841ded5be59b8ed001eb))
 
 **BREAKING CHANGES**
 
