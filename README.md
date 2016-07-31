@@ -185,7 +185,14 @@ Below is the list of supported keywords:
 - `$ref` &mdash; Resolve internal references only, and/or external if provided.
 - `required` &mdash; All required properties are guaranteed, if not can be omitted.
 - `pattern` &mdash; Generate samples based on RegExp values.
-- `format` &mdash; Core formats only: `date-time`, `email`, `hostname`, `ipv4`, `ipv6` and `uri`.
+- `format` &mdash; Core formats only:
+  [`date-time`](http://json-schema.org/latest/json-schema-validation.html#anchor108),
+  [`email`](http://json-schema.org/latest/json-schema-validation.html#anchor111),
+  [`hostname`](http://json-schema.org/latest/json-schema-validation.html#anchor114),
+  [`ipv4`](http://json-schema.org/latest/json-schema-validation.html#anchor117),
+  [`ipv6`](http://json-schema.org/latest/json-schema-validation.html#anchor120)
+  and [`uri`](http://json-schema.org/latest/json-schema-validation.html#anchor123)
+    -- [demo »](http://json-schema-faker.js.org/#gist/f58db80cbf52c12c623166090240d964)
 - `enum` &mdash; Returns any of these enumerated values.
 - `minLength`, `maxLength` &mdash; Applies length constraints to string values.
 - `minimum`, `maximum` &mdash; Applies constraints to numeric values.
