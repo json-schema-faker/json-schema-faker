@@ -39,10 +39,10 @@
     "chance": "^1.0.4",
     "deref": "^0.6.4",
     "faker": "~3.1.0",
-    "randexp": "~0.4.2"
+    "randexp": "~0.4.3"
   },
   "devDependencies": {
-    "browserify": "^13.0.1",
+    "browserify": "^13.1.0",
     "clone": "^1.0.2",
     "codecov": "^1.0.1",
     "eslint": "^3.2.0",
@@ -51,9 +51,9 @@
     "istanbul": "^0.4.4",
     "jasmine-node": "^2.0.0",
     "jayschema": "^0.3.1",
-    "lodash.template": "^4.2.5",
+    "lodash.template": "^4.3.0",
     "semver": "^5.3.0",
-    "tslint": "^3.13.0",
+    "tslint": "^3.14.0",
     "tv4": "^1.2.7",
     "typedoc": "^0.4.4",
     "typescript": "^1.8.10",
