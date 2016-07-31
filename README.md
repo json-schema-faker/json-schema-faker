@@ -32,6 +32,7 @@ We are looking for **contributors**! If you wanna help us make `jsf` more awesom
     - [cdnjs](#cdnjs)
   - [Overview](#overview)
   - [Example usage](#example-usage)
+    - [More examples](#more-examples)
     - [Gist demos](#gist-demos)
   - [Automation](#automation)
     - [Angular-jsf (AngularJS plugin)](#angular-jsf)
@@ -142,6 +143,17 @@ console.log(sample.user.name);
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/927cf888cbc250a2b8e60eb5834cdfbd))
 
+### More examples
+
+ * [json-schema.org/example1.html](http://json-schema.org/example1.html):
+   [warehouse location](http://json-schema-faker.js.org/#gist/bb4774bf26167360e7c5cf2a29db3e56),
+   [Product from Acme catalog](http://json-schema-faker.js.org/#gist/c7a398c537cf7befce0df67fe7feeea8)
+ * [json-schema.org/example2.html](http://json-schema.org/example2.html):
+   [_diskDevice_ storage type](http://json-schema-faker.js.org/#gist/0c0d676023ea505c97eef9af0b4d95da),
+   [_diskUUID_ storage type](http://json-schema-faker.js.org/#gist/0ac23aa547acfdb2897a7afec3042534),
+   [_nfs_ storage type](http://json-schema-faker.js.org/#gist/473ac2bc364b2610f7fc703e59cfe1c9),
+   [_tmpfs_ storage type](http://json-schema-faker.js.org/#gist/de1c5f18f0d231557ce25e44f581cadf)
+
 ### Gist demos
 
 Clone these gists and execute them locally (each gist has its own readme with instructions):
@@ -234,7 +246,7 @@ You can use **faker** or **chance** properties but they are optional:
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/89659ebf28be89d3f860c3f80cbffe4b))
 
-The above schema will invoke `faker.internet.email()`.
+The above schema will invoke [`faker.internet.email()`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/internet.js#L32).
 
 Note that both generators has higher precedence than **format**.
 
@@ -273,9 +285,12 @@ Another example of faking values is passing arguments to the generator:
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/c6ab6a0325e53fd3b38ee0293a9aeea3))
 
-which will invoke `chance.email({ "domain": "fake.com" })`. This example works for single-parameter generator function.
+which will invoke [`chance.email({ "domain": "fake.com" })`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L1118).
+This example works for single-parameter generator function.
 
-However, if you pass multiple arguments to the generator function, just pass them wrapped in an array. In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85) generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
+However, if you pass multiple arguments to the generator function, just pass them wrapped in an array.
+In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85)
+generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
 
 ```json
 {
@@ -295,7 +310,10 @@ However, if you pass multiple arguments to the generator function, just pass the
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/3a15a11d706e5b145c30f943d55c42b2))
 
-However, if you want to pass a single parameter that is an array itself, e.g. [`chance.pickone(["banana", "apple", "orange"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382), just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171), then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
+However, if you want to pass a single parameter that is an array itself, e.g.
+[`chance.pickone(["banana", "apple", "orange"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382),
+just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171),
+then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
 
 ```json
 {
@@ -367,7 +385,7 @@ Note that custom generators has lower precedence than core ones.
 You may define following options for `jsf` that alter its behavior:
 
 - `failOnInvalidTypes`: boolean - don't throw exception when invalid type passed
-- `defaultInvalidTypeProduct`: * - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
+- `defaultInvalidTypeProduct`: - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
 
 Set options just as below:
 
@@ -490,8 +508,8 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 `jsf` supports [OpenAPI Specification *vendor extensions*](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#vendorExtensions), i.e.
 
-* `x-faker` property that stands for `faker` property
-* `x-chance` property that stands for `chance` property
+* `x-faker` property that stands for `faker` property ([demo »](http://json-schema-faker.js.org/#gist/7cdf200c27eceb6163a79fbc50813fcb))
+* `x-chance` property that stands for `chance` property ([demo »](http://json-schema-faker.js.org/#gist/c0084695b4ca1c4cd015ded1f5c6dc33))
 
 Thanks to it, you can use valid swagger definitions for `jsf` data generation.
 
