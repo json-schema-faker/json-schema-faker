@@ -13,9 +13,19 @@
 
 Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system.
 
+
+
 ***Want to support `jsf`?***
 * we are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
 * we are looking for contributors! If you wanna help us make `jsf` more awesome, simply write us so!
+
+
+
+## NEW in JSON Schema Faker: store schemas online!
+
+[![save JSON Schema online](logo/other/save-button-small.png)](http://json-schema-faker.js.org/)
+
+
 
 # Table of contents
 
