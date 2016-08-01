@@ -17,6 +17,6 @@ jsf.extend = function(name: string, cb: Function) {
   return jsf;
 };
 
-jsf.version = '0.3.5';
+jsf.version = '0.3.6';
 
 export = jsf;

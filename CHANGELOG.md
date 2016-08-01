@@ -1,6 +1,10 @@
 UPCOMING:
   changes:
     - faker and chance are not longer required as dependencies
+v0.3.6
+  date: 2016-08-01
+  changes:
+    - typecast to string bug fixed
 v0.3.5
   date: 2016-08-01
   changes:

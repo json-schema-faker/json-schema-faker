@@ -143,6 +143,14 @@ console.log(sample.user.name);
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/927cf888cbc250a2b8e60eb5834cdfbd))
 
+`jsf.version` attribute is available to check which version you're using:
+
+```javascript
+var jsf = require('json-schema-faker');
+console.log(jsf.version);
+// "0.3.6"
+```
+
 ### More examples
 
  * [json-schema.org/example1.html](http://json-schema.org/example1.html):
@@ -236,7 +244,7 @@ var refs = [
 var sample = jsf(schema, refs);
 
 console.log(sample.someValue);
-// output: voluptatem
+// "voluptatem"
 ```
 
 ## Faking values
