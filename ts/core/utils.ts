@@ -26,6 +26,30 @@ function hasProperties(obj: Object, ...properties: string[]): boolean {
   }).length > 0;
 }
 
+/**
+ * Returns typecasted value.
+ * External generators (faker, chance) may return data in non-expected formats, such as string, when you might expect an
+ * integer. This function is used to force the typecast.
+ *
+ * @param value
+ * @param targetType
+ * @returns {any}
+ */
+function typecast(value: any, targetType: ISchemaInternalType): any {
+  switch (targetType) {
+    case 'integer':
+      return parseInt(value, 10);
+    case 'number':
+      return parseFloat(value);
+    case 'string':
+      return JSON.stringify(value);
+    case 'boolean':
+      return !!value;
+    default:
+      return value;
+  }
+}
+
 function clone(arr: any[]): any[] {
   var out: any[] = [];
   arr.forEach(function(item: any, index: number) {
@@ -57,6 +81,7 @@ function merge(a: Object, b: Object): Object {
 export = {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
+  typecast: typecast,
   clone: clone,
   merge: merge
 };

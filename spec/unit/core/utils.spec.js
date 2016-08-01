@@ -55,4 +55,41 @@ describe("Utils", function () {
     });
   });
 
+  describe("typecast function", function() {
+    var typecast = utils.typecast;
+
+    it("should cast boolean to string", function() {
+      expect(typecast(true, "string")).toEqual("true");
+      expect(typecast(false, "string")).toEqual("false");
+    });
+
+    it("should cast number to string", function() {
+      expect(typecast(8935768925789, "string")).toEqual("8935768925789");
+      expect(typecast(234.76, "string")).toEqual("234.76");
+    });
+
+    it("should cast number to boolean", function() {
+      expect(typecast(123, "boolean")).toBe(true);
+      expect(typecast(0, "boolean")).toBe(false);
+    });
+
+    it("should cast string to number", function() {
+      expect(typecast("8482", "number")).toEqual(8482);
+      expect(typecast("827502.73", "number")).toEqual(827502.73);
+      expect(typecast("-8.482", "number")).toEqual(-8.482);
+    });
+
+    it("should cast string to integer", function() {
+      expect(typecast("8482", "integer")).toEqual(8482);
+      expect(typecast("827502.73", "integer")).toEqual(827502);
+      expect(typecast("-8.482", "integer")).toEqual(-8);
+    });
+
+    it("should cast string to boolean", function() {
+      expect(typecast("", "boolean")).toBe(false);
+      expect(typecast("1", "boolean")).toBe(true);
+      expect(typecast(" ", "boolean")).toBe(true);
+    });
+
+  });
 });

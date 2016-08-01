@@ -44,6 +44,8 @@ interface IObjectSchema extends IGeneratorSchema {
   maxProperties?: number;
 }
 
+type ISchemaInternalType = "string" | "integer" | "number" | "object" | "array";
+
 /**
  * JSON Schema TypeScript interface.
  *
@@ -56,7 +58,7 @@ interface JsonSchema extends IGeneratorSchema {
   id?: string;
   enum?: any[];
   $schema?: string;
-  type?: string | string[]; // see http://json-schema.org/latest/json-schema-validation.html "5.5.2.1 valid values"
+  type?: ISchemaInternalType; // | string[] // see http://json-schema.org/latest/json-schema-validation.html "5.5.2.1 valid values"
   items?: any;
   properties?: any;
   patternProperties?: any;

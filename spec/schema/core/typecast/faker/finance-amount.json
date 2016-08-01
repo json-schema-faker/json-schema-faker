@@ -1,0 +1,38 @@
+[
+  {
+    "description": "should typecast faker.finance.amount when generated value type is different than defined",
+    "tests": [
+      {
+        "description": "should generate the value with default type provided by faker.js (no explicit typedef)",
+        "schema": {
+          "faker": "finance.amount"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast to string",
+        "schema": {
+          "type": "string",
+          "faker": "finance.amount"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast faker.finance.amount to number",
+        "schema": {
+          "type": "number",
+          "faker": "finance.amount"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast faker.finance.amount to integer",
+        "schema": {
+          "type": "integer",
+          "faker": "finance.amount"
+        },
+        "valid": true
+      }
+    ]
+  }
+]
