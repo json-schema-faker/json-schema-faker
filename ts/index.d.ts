@@ -92,6 +92,7 @@ interface jsfAPI {
   format: Function;
   option: Function;
   extend: Function;
+  version: string;
 }
 
 // quick and dirty overcome
