@@ -41,6 +41,16 @@ function shuffle<T>(collection: T[]): T[] {
 var MIN_NUMBER = -100,
     MAX_NUMBER = 100;
 
+
+/**
+ * Returns a random integer between min (inclusive) and max (inclusive)
+ * Using Math.round() will give you a non-uniform distribution!
+ * @see http://stackoverflow.com/a/1527820/769384
+ */
+function getRandomInt(min: number, max: number): number {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 /**
  * Generates random number according to parameters passed
  *
@@ -62,7 +72,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
     max += min;
   }
 
-  var result: number = Math.random() * (max - min) + min;
+  var result: number = getRandomInt(min, max);
 
   if (!hasPrecision) {
     return parseInt(result + '', 10);
