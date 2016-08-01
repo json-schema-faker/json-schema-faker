@@ -13,7 +13,7 @@
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "dist": "node build/dist.js",
-    "tsc": "./build/tsc.sh",
+    "tsc": "bash build/tsc.sh",
     "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
     "typedoc": "./node_modules/.bin/typedoc --out docs/html ts/ --module commonjs",
     "graphviz": "./node_modules/.bin/madge lib --dot > structure.gv"
