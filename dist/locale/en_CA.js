@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.3.5
+ * json-schema-faker library v0.3.6
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2016-08-01 20:24:53.199Z
+ * Date: 2016-08-01 21:57:24.752Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
@@ -552,7 +552,7 @@ function typecast(value, targetType) {
         case 'number':
             return parseFloat(value);
         case 'string':
-            return JSON.stringify(value);
+            return '' + value;
         case 'boolean':
             return !!value;
         default:
@@ -746,7 +746,7 @@ jsf.extend = function (name, cb) {
     container.extend(name, cb);
     return jsf;
 };
-jsf.version = '0.3.5';
+jsf.version = '0.3.6';
 module.exports = jsf;
 
 },{"./api/format":1,"./api/option":2,"./class/Container":3,"./core/run":9}],20:[function(require,module,exports){
