@@ -1,6 +1,6 @@
 [
   {
-    "description": "falsey defaults",
+    "description": "falsy defaults",
     "tests": [
       {
         "description": "boolean can be false",
@@ -15,6 +15,15 @@
         "description": "number can be 0",
         "schema": {
           "type": "number",
+          "default": 0
+        },
+        "equal": 0,
+        "require": "core/option/useDefaultValue"
+      },
+      {
+        "description": "integer can be 0",
+        "schema": {
+          "type": "integer",
           "default": 0
         },
         "equal": 0,
