@@ -33,7 +33,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     return random.pick(schema.enum);
   }
 
-  if (option('useDefaultValue') && schema.default) {
+  if (option('useDefaultValue') && 'default' in schema) {
     return schema.default;
   }
 
