@@ -55,7 +55,7 @@ tryTest = (test, refs, schema) ->
         #{JSON.stringify(schema, null, 2)}
       """
 
-  if test.equal
+  if "equal" of test
     expect(sample).toEqual test.equal
 
 glob.sync("#{__dirname}/**/*.json").forEach (file) ->
