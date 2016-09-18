@@ -1,4 +1,4 @@
-[![JSON Schema Faker logo](logo/typescript-logo.png)](https://github.com/json-schema-faker/json-schema-faker)
+[![JSON Schema Faker logo](logo/JSF_logo.png)](https://github.com/json-schema-faker/json-schema-faker)
 
 [![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
