@@ -1,6 +1,7 @@
 import random = require('../core/random');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
+import option = require('../api/option');
 
 // TODO provide types
 function unique(path: SchemaPath, items, value, sample, resolve, traverseCallback: Function) {
@@ -56,7 +57,22 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
     }));
   }
 
-  var length: number = random.number(value.minItems, value.maxItems, 1, 5),
+  var minItems = value.minItems;
+  var maxItems = value.maxItems;
+
+  if (option('maxItems')) {
+    // Don't allow user to set max items above our maximum
+    if (maxItems && maxItems > option('maxItems')) {
+      maxItems = option('maxItems');
+    }
+
+    // Don't allow user to set min items above our maximum
+    if (minItems && minItems > option('maxItems')) {
+      minItems = maxItems;
+    }
+  }
+
+  var length: number = random.number(minItems, maxItems, 1, 5),
       // TODO below looks bad. Should additionalItems be copied as-is?
       sample: Object = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
