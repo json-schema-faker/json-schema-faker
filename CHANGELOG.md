@@ -1,6 +1,22 @@
 UPCOMING:
   changes:
     - faker and chance are not longer required as dependencies
+v0.3.7
+  date: ?
+  changes:
+    - falsy defaults bugfix (thx to @AndreSteenveld)
+v0.3.6
+  date: 2016-08-01
+  changes:
+    - typecast to string bug fixed
+v0.3.5
+  date: 2016-08-01
+  changes:
+    - non-required attributes missing in objects bug fixed
+    - force typecast when external generator returns unexpected value
+    - unit tests added
+    - schema tests added
+    - dependency update
 v0.3.2
   date: ?
   changes:

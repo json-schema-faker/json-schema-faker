@@ -1,17 +1,25 @@
-![JSON Schema Faker logo](logo/typescript-logo.png)
+[![JSON Schema Faker logo](logo/JSF_logo.png)](https://github.com/json-schema-faker/json-schema-faker)
 
 [![Build Status](https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master)](https://travis-ci.org/json-schema-faker/json-schema-faker)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
 [![Bower version](https://badge.fury.io/bo/json-schema-faker.svg)](https://badge.fury.io/bo/json-schema-faker)
 [![Coverage Status](https://codecov.io/github/json-schema-faker/json-schema-faker/coverage.svg?branch=master)](https://codecov.io/github/json-schema-faker/json-schema-faker?branch=master)
-[![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
 
 [![Dependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker)
 [![devDependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/dev-status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker#info=devDependencies)
 
-Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent fake data for your system.
+[![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
+[![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
 
-***Want to support `jsf`?*** We are looking for a free database hosting, please see the [call for providers](https://github.com/json-schema-faker/json-schema-faker/issues/89).
+Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent and meaningful fake data for your system.
+
+We are looking for **contributors**! If you wanna help us make `jsf` more awesome, simply write us so!
+
+## NEW in JSON Schema Faker: store schemas online!
+
+[![save JSON Schema online](logo/other/save-button-small.png)](http://json-schema-faker.js.org/)
+
+
 
 # Table of contents
 
@@ -24,6 +32,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
     - [cdnjs](#cdnjs)
   - [Overview](#overview)
   - [Example usage](#example-usage)
+    - [More examples](#more-examples)
     - [Gist demos](#gist-demos)
   - [Automation](#automation)
     - [Angular-jsf (AngularJS plugin)](#angular-jsf)
@@ -33,6 +42,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
   - [Supported keywords](#supported-keywords)
   - [Using references](#using-references)
   - [Faking values](#faking-values)
+    - [Advanced usage of faker.js and Chance.js](#user-content-advanced-usage-of-fakerjs-and-chancejs)
   - [Custom formats](#custom-formats)
   - [Custom options](#custom-options)
   - [Extending dependencies](#extending-dependencies)
@@ -47,7 +57,7 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 
 ## Online demo
 
-See [online demo](http://json-schema-faker.js.org/).
+See [online demo](http://json-schema-faker.js.org/). You can save your schemas online and share the link with your collaborators.
 
 ## Install
 
@@ -70,7 +80,7 @@ Install `json-schema-faker` with bower:
 JSON-Schema-faker is also available at [cdnjs.com](https://www.cdnjs.com/libraries/json-schema-faker). This means you can just include the script file into your HTML:
 
     # remember to update the version number!
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.3.1/json-schema-faker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.3.4/json-schema-faker.min.js"></script>
 
 It will be fetched from the [Content Delivery Network](https://en.wikipedia.org/wiki/Content_delivery_network) without installing any node.js package.
 
@@ -125,9 +135,32 @@ var schema = {
 
 var sample = jsf(schema);
 
+console.log(sample);
+// "[object Object]"
+
 console.log(sample.user.name);
-// output: John Doe
+// "John Doe"
 ```
+([demo »](http://json-schema-faker.js.org/#gist/927cf888cbc250a2b8e60eb5834cdfbd))
+
+`jsf.version` attribute is available to check which version you're using:
+
+```javascript
+var jsf = require('json-schema-faker');
+console.log(jsf.version);
+// "0.3.6"
+```
+
+### More examples
+
+ * [json-schema.org/example1.html](http://json-schema.org/example1.html):
+   [warehouse location](http://json-schema-faker.js.org/#gist/bb4774bf26167360e7c5cf2a29db3e56),
+   [Product from Acme catalog](http://json-schema-faker.js.org/#gist/c7a398c537cf7befce0df67fe7feeea8)
+ * [json-schema.org/example2.html](http://json-schema.org/example2.html):
+   [_diskDevice_ storage type](http://json-schema-faker.js.org/#gist/0c0d676023ea505c97eef9af0b4d95da),
+   [_diskUUID_ storage type](http://json-schema-faker.js.org/#gist/0ac23aa547acfdb2897a7afec3042534),
+   [_nfs_ storage type](http://json-schema-faker.js.org/#gist/473ac2bc364b2610f7fc703e59cfe1c9),
+   [_tmpfs_ storage type](http://json-schema-faker.js.org/#gist/de1c5f18f0d231557ce25e44f581cadf)
 
 ### Gist demos
 
@@ -160,7 +193,14 @@ Below is the list of supported keywords:
 - `$ref` &mdash; Resolve internal references only, and/or external if provided.
 - `required` &mdash; All required properties are guaranteed, if not can be omitted.
 - `pattern` &mdash; Generate samples based on RegExp values.
-- `format` &mdash; Core formats only: `date-time`, `email`, `hostname`, `ipv4`, `ipv6` and `uri`.
+- `format` &mdash; Core formats only:
+  [`date-time`](http://json-schema.org/latest/json-schema-validation.html#anchor108),
+  [`email`](http://json-schema.org/latest/json-schema-validation.html#anchor111),
+  [`hostname`](http://json-schema.org/latest/json-schema-validation.html#anchor114),
+  [`ipv4`](http://json-schema.org/latest/json-schema-validation.html#anchor117),
+  [`ipv6`](http://json-schema.org/latest/json-schema-validation.html#anchor120)
+  and [`uri`](http://json-schema.org/latest/json-schema-validation.html#anchor123)
+    -- [demo »](http://json-schema-faker.js.org/#gist/f58db80cbf52c12c623166090240d964)
 - `enum` &mdash; Returns any of these enumerated values.
 - `minLength`, `maxLength` &mdash; Applies length constraints to string values.
 - `minimum`, `maximum` &mdash; Applies constraints to numeric values.
@@ -204,7 +244,7 @@ var refs = [
 var sample = jsf(schema, refs);
 
 console.log(sample.someValue);
-// output: voluptatem
+// "voluptatem"
 ```
 
 ## Faking values
@@ -219,36 +259,9 @@ You can use **faker** or **chance** properties but they are optional:
   "faker": "internet.email"
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/89659ebf28be89d3f860c3f80cbffe4b))
 
-The above schema will invoke:
-
-```javascript
-require('faker').internet.email();
-```
-
-Another example is passing arguments to the generator:
-
-```json
-{
-  "type": "string",
-  "chance": {
-    "email": {
-      "domain": "fake.com"
-    }
-  }
-}
-```
-
-And will invoke:
-
-```javascript
-var Chance = require('chance'),
-  chance = new Chance();
-
-chance.email({ "domain": "fake.com" });
-```
-
-If you pass an array, they will be used as raw arguments.
+The above schema will invoke [`faker.internet.email()`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/internet.js#L32).
 
 Note that both generators has higher precedence than **format**.
 
@@ -260,6 +273,86 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
   "pattern": "yes|no|maybe|i don't know"
 }
 ```
+([demo »](http://json-schema-faker.js.org/#gist/8ee282679da5a31cd7edc4cf35f37081))
+
+### Advanced usage of faker.js and Chance.js
+
+In following inline code examples the `faker` and `chance` variables are assumed to be created with, respectively:
+
+```javascript
+var faker = require('faker');
+
+var Chance = require('chance'),
+  chance = new Chance();
+```
+
+Another example of faking values is passing arguments to the generator:
+
+```json
+{
+  "type": "string",
+  "chance": {
+    "email": {
+      "domain": "fake.com"
+    }
+  }
+}
+```
+([demo »](http://json-schema-faker.js.org/#gist/c6ab6a0325e53fd3b38ee0293a9aeea3))
+
+which will invoke [`chance.email({ "domain": "fake.com" })`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L1118).
+This example works for single-parameter generator function.
+
+However, if you pass multiple arguments to the generator function, just pass them wrapped in an array.
+In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85)
+generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "cash": {
+      "type": "string",
+      "faker": {
+        "finance.amount": [100, 10000, 2, "$"]
+      }
+    }
+  },
+  "required": [
+    "cash"
+  ]
+}
+```
+([demo »](http://json-schema-faker.js.org/#gist/3a15a11d706e5b145c30f943d55c42b2))
+
+However, if you want to pass a single parameter that is an array itself, e.g.
+[`chance.pickone(["banana", "apple", "orange"])`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L382),
+just like [described here](https://github.com/json-schema-faker/json-schema-faker/issues/171),
+then you need to wrap it with an array once more (twice in total). The outer brackets determine that the content is gonna be a list of params injected into the generator. The inner brackets are just the value itself - the array we pass:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "food": {
+      "type": "string",
+      "chance": {
+        "pickone": [
+          [
+            "banana",
+            "apple",
+            "orange"
+          ]
+        ]
+      }
+    }
+  },
+  "required": [
+    "food"
+  ]
+}
+```
+([demo »](http://json-schema-faker.js.org/#gist/792d626e7d92841ded5be59b8ed001eb))
 
 **BREAKING CHANGES**
 
@@ -307,7 +400,9 @@ Note that custom generators has lower precedence than core ones.
 You may define following options for `jsf` that alter its behavior:
 
 - `failOnInvalidTypes`: boolean - don't throw exception when invalid type passed
-- `defaultInvalidTypeProduct`: * - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
+- `defaultInvalidTypeProduct`: - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
+- `maxItems`: number - Configure a maximum amount of items to generate in an array. This will override the maximum items found inside a JSON Schema.
+- `maxLength`: number - Configure a maximum length to allow generating strings for. This will override the maximum length found inside a JSON Schema.
 
 Set options just as below:
 
@@ -430,8 +525,8 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 `jsf` supports [OpenAPI Specification *vendor extensions*](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#vendorExtensions), i.e.
 
-* `x-faker` property that stands for `faker` property
-* `x-chance` property that stands for `chance` property
+* `x-faker` property that stands for `faker` property ([demo »](http://json-schema-faker.js.org/#gist/7cdf200c27eceb6163a79fbc50813fcb))
+* `x-chance` property that stands for `chance` property ([demo »](http://json-schema-faker.js.org/#gist/c0084695b4ca1c4cd015ded1f5c6dc33))
 
 Thanks to it, you can use valid swagger definitions for `jsf` data generation.
 
@@ -453,7 +548,7 @@ In that case you may bundle the distribution yourself manually. It's easily achi
 * artwork by [Ajay Karat](http://www.devilsgarage.com/)
 
 We are more than happy to welcome new contributors, our project is heavily developed, but we need more power :)
-Please see [contribution guide](CONTRIBUTING.md), you can always contact us to ask how you can help.
+Please see [contribution guide](.github/CONTRIBUTING.md), you can always contact us to ask how you can help.
 
 ### Technical Documentation
 

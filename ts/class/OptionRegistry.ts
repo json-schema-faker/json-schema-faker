@@ -12,6 +12,8 @@ class OptionRegistry extends Registry<Option> {
     this.data['failOnInvalidTypes'] = true;
     this.data['defaultInvalidTypeProduct'] = null;
     this.data['useDefaultValue'] = false;
+    this.data['maxItems'] = null;
+    this.data['maxLength'] = null;
   }
 }
 

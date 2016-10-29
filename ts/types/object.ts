@@ -8,7 +8,7 @@ var randexp = container.get('randexp');
 
 // TODO provide types
 var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path, resolve, traverseCallback: Function): Object {
-    var props = {};
+  var props = {};
 
     var properties = value.properties || {};
     var patternProperties = value.patternProperties || {};
@@ -107,7 +107,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         );
     }
 
-    return traverseCallback(props, path.concat(['properties']), resolve);
+  return traverseCallback(props, path.concat(['properties']), resolve);
 };
 
 export = objectType;

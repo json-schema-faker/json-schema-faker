@@ -1,9 +1,10 @@
 import random = require('../core/random');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
+import option = require('../api/option');
 
 // TODO provide types
-function unique(path, items, value, sample, resolve, traverseCallback: Function) {
+function unique(path: SchemaPath, items, value, sample, resolve, traverseCallback: Function) {
   var tmp = [],
       seen = [];
 
@@ -42,22 +43,43 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
     if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
       throw new ParseError('missing items for ' + JSON.stringify(value), path);
     }
-
     return items;
   }
 
-  if (Array.isArray(value.items)) {
-    return Array.prototype.concat.apply(items, value.items.map(function(item, key) {
-      return traverseCallback(item, path.concat(['items', key]), resolve);
+  // see http://stackoverflow.com/a/38355228/769384
+  // after type guards support subproperties (in TS 2.0) we can simplify below to (value.items instanceof Array)
+  // so that value.items.map becomes recognized for typescript compiler
+  var tmpItems = value.items;
+  if (tmpItems instanceof Array) {
+    return Array.prototype.concat.apply(items, tmpItems.map(function(item, key) {
+      var itemSubpath: SchemaPath = path.concat(['items', key + '']);
+      return traverseCallback(item, itemSubpath, resolve);
     }));
   }
 
-  var length: number = random.number(value.minItems, value.maxItems, 1, 5),
+  var minItems = value.minItems;
+  var maxItems = value.maxItems;
+
+  if (option('maxItems')) {
+    // Don't allow user to set max items above our maximum
+    if (maxItems && maxItems > option('maxItems')) {
+      maxItems = option('maxItems');
+    }
+
+    // Don't allow user to set min items above our maximum
+    if (minItems && minItems > option('maxItems')) {
+      minItems = maxItems;
+    }
+  }
+
+  var length: number = random.number(minItems, maxItems, 1, 5),
       // TODO below looks bad. Should additionalItems be copied as-is?
       sample: Object = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
-  for (var current = items.length; current < length; current++) {
-    items.push(traverseCallback(value.items || sample, path.concat(['items', current]), resolve));
+  for (var current: number = items.length; current < length; current++) {
+    var itemSubpath: SchemaPath = path.concat(['items', current + '']);
+    var element = traverseCallback(value.items || sample, itemSubpath, resolve);
+    items.push(element);
   }
 
   if (value.uniqueItems) {

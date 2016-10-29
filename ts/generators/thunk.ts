@@ -1,6 +1,11 @@
 import words = require('../generators/words');
 import random = require('../core/random');
 
+/**
+ * Helper function used by thunkGenerator to produce some words for the final result.
+ *
+ * @returns {string}
+ */
 function produce(): string {
   var length: number = random.number(1, 5);
   return words(length).join(' ');

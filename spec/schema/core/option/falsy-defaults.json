@@ -1,0 +1,66 @@
+[
+  {
+    "description": "falsy defaults",
+    "tests": [
+      {
+        "description": "boolean can be false",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        },
+        "equal": false,
+        "require": "core/option/useDefaultValue"
+      },
+      {
+        "description": "number can be 0",
+        "schema": {
+          "type": "number",
+          "default": 0
+        },
+        "equal": 0,
+        "require": "core/option/useDefaultValue"
+      },
+      {
+        "description": "integer can be 0",
+        "schema": {
+          "type": "integer",
+          "default": 0
+        },
+        "equal": 0,
+        "require": "core/option/useDefaultValue"
+      },
+      {
+        "description": "string can be empty",
+        "schema": {
+          "type": "string",
+          "default": ""
+        },
+        "equal": "",
+        "require": "core/option/useDefaultValue"
+      },
+      {
+        "description": "objects can be null",
+        "schema": {
+          "type": "object",
+          "default": null
+        },
+        "equal": null,
+        "require": "core/option/useDefaultValue"
+      },
+      {
+        "description": "array of booleans all being false",
+        "schema": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "boolean",
+            "default": false
+          }
+        },
+        "equal": [ false, false, false, false, false ],
+        "require": "core/option/useDefaultValue"
+      }
+    ]
+  }
+]
