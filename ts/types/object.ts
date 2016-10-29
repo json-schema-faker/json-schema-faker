@@ -12,7 +12,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var properties = value.properties || {};
     var patternProperties = value.patternProperties || {};
-    var additionalProperties = typeof value.additionalProperties === 'object' ? value.additionalProperties : {};
+    var additionalProperties = typeof value.additionalProperties === 'object' ? value.additionalProperties : { enum: ['', -1, null, false] };
 
     var allowsAdditional = value.additionalProperties === false ? false : true;
     var propertyKeys = Object.keys(properties);
@@ -35,7 +35,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         } else {
             var schema = {};
             patternPropertyKeys.forEach(function(pattern) {
-                if (key.match(pattern)) {
+                if (key.match(new RegExp(pattern, 'i'))) {
                     var source = patternProperties[pattern];
                     for (var _key in source) {
                         if (Object.prototype.hasOwnProperty.call(source, _key)) {
@@ -91,7 +91,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
                 props[final] = patternProperties[_key];
                 keyCount += 1;
             }
-        } else {
+        } else if (allowsAdditional) {
             _key = words(1) + randexp('[a-f\\d]{4,7}');
             props[_key] = additionalProperties;
             keyCount += 1;
