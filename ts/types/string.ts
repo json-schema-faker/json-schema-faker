@@ -3,6 +3,7 @@ import ipv4 = require('../generators/ipv4');
 import dateTime = require('../generators/dateTime');
 import coreFormat = require('../generators/coreFormat');
 import format = require('../api/format');
+import option = require('../api/option');
 
 import container = require('../class/Container');
 var randexp = container.get('randexp');
@@ -33,7 +34,22 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   } else if (value.pattern) {
     return randexp(value.pattern);
   } else {
-    return thunk(value.minLength, value.maxLength);
+    var minLength = value.minLength;
+    var maxLength = value.maxLength;
+
+    if (option('maxLength')) {
+      // Don't allow user to set max length above our maximum
+      if (maxLength && maxLength > option('maxLength')) {
+        maxLength = option('maxLength');
+      }
+
+      // Don't allow user to set min length above our maximum
+      if (minLength && minLength > option('maxLength')) {
+        minLength = option('maxLength');
+      }
+    }
+
+    return thunk(minLength, maxLength);
   }
 };
 
