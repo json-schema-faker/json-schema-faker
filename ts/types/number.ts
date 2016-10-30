@@ -8,28 +8,40 @@ var numberType: FTypeGenerator = function numberType(value: INumberSchema): numb
       max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum,
       multipleOf = value.multipleOf;
 
-  if (multipleOf) {
-    max = Math.floor(max / multipleOf) * multipleOf;
-    min = Math.ceil(min / multipleOf) * multipleOf;
-  }
+      if (multipleOf) {
+          if (value.exclusiveMinimum && typeof value.minimum !== 'undefined') {
+              min = Math.floor(min / multipleOf + 1) * multipleOf;
+          } else {
+              min = Math.ceil(min / multipleOf) * multipleOf;
+          }
+      }
 
-  if (value.exclusiveMinimum && value.minimum && min === value.minimum) {
-    min += multipleOf || 1;
-  }
+      if (min >= max) {
+          if (value.exclusiveMinimum || value.exclusiveMaximum) {
+               return NaN;
+          } else if (min === max && (!multipleOf || min === Math.floor(min / multipleOf) * multipleOf)) {
+              return min;
+          } else {
+              return NaN;
+          }
+      }
 
-  if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
-    max -= multipleOf || 1;
-  }
+      if(!value.exclusiveMaximum && value.multipleOf) {
+          max = Math.ceil(max/ multipleOf) * multipleOf;
+      }
 
-  if (min > max) {
-    return NaN;
-  }
+      var raw = random.number(min, max, undefined, undefined, true);
 
-  if (multipleOf) {
-    return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
-  }
+      // if raw equal min and min is exclusive, update to a valid number
+      if (value.exclusiveMinimum && raw === min) {
+          raw = min + (max-min)/2;
+      }
 
-  return random.number(min, max, undefined, undefined, true);
+      if (multipleOf) {
+          raw = Math.floor(raw / multipleOf) * multipleOf;
+      }
+
+      return raw;
 };
 
 export = numberType;
