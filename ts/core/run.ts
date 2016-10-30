@@ -16,11 +16,11 @@ function run(schema, refs?, ex?) {
   try {
     return traverse($(schema, refs, ex), [], function reduce(sub, maxReduceDepth) {
       if (typeof maxReduceDepth === 'undefined') {
-        maxReduceDepth = random.number(0, 1);
+        maxReduceDepth = random.number(0, 3);
       }
 
       if (!sub) {
-        return;
+        return {};
       }
 
       if (typeof sub.$ref === 'string') {
@@ -48,7 +48,7 @@ function run(schema, refs?, ex?) {
         // this is the only case where all sub-schemas
         // must be resolved before any merge
         schemas.forEach(function(schema: JsonSchema) {
-          utils.merge(sub, reduce(schema));
+          utils.merge(sub, reduce(schema, maxReduceDepth));
         });
       }
 

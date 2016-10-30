@@ -12,11 +12,14 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var properties = value.properties || {};
     var patternProperties = value.patternProperties || {};
-    var additionalProperties = typeof value.additionalProperties === 'object' ? value.additionalProperties : null;
-
     var allowsAdditional = value.additionalProperties === false ? false : true;
+
     var propertyKeys = Object.keys(properties);
     var patternPropertyKeys = Object.keys(patternProperties);
+
+    var additionalProperties = allowsAdditional
+      ? (value.additionalProperties === true ? {} : value.additionalProperties)
+      : null;
 
     if (
         !allowsAdditional &&
