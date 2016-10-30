@@ -63,20 +63,6 @@
         "valid": true
       },
       {
-        "description": "should handle multipleOf being a decimal",
-        "schema": {
-          "type": "integer",
-          "minimum": 84,
-          "maximum": 90,
-          "multipleOf": 0.8,
-          "exclusiveMinimum": true,
-          "exclusiveMaximum": true
-        },
-        "hasNot": ".",
-        "type": "number",
-        "valid": true
-      },
-      {
         "description": "should handle inferred type (when possible)",
         "schema": {
           "maximum": 5
