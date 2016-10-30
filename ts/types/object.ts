@@ -12,7 +12,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var properties = value.properties || {};
     var patternProperties = value.patternProperties || {};
-    var additionalProperties = typeof value.additionalProperties === 'object' ? value.additionalProperties : { enum: ['', -1, null, false] };
+    var additionalProperties = typeof value.additionalProperties === 'object' ? value.additionalProperties : null;
 
     var allowsAdditional = value.additionalProperties === false ? false : true;
     var propertyKeys = Object.keys(properties);

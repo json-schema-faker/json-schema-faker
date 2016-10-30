@@ -14,23 +14,32 @@ function run(schema, refs?, ex?) {
   var $ = deref();
 
   try {
-    var seen = {};
+    return traverse($(schema, refs, ex), [], function reduce(sub, maxReduceDepth) {
+      if (typeof maxReduceDepth === 'undefined') {
+        maxReduceDepth = random.number(0, 1);
+      }
 
-    return traverse($(schema, refs, ex), [], function reduce(sub,maxReduceDepth) {
+      if (!sub) {
+        return;
+      }
+
       if (typeof sub.$ref === 'string') {
           var id = sub.$ref;
+
           delete sub.$ref;
-          if (typeof(maxReduceDepth)=='undefined') maxReduceDepth = 5;
-          if (maxReduceDepth<=0) {
+
+          if (maxReduceDepth <= 0) {
             delete sub.$ref;
             delete sub.oneOf;
             delete sub.anyOf;
             delete sub.allOf;
             return sub;
-           }
-           maxReduceDepth -= 1;
-           merge(sub, $.util.findByRef(id, $.refs));
+          }
+
+          maxReduceDepth -= 1;
+          utils.merge(sub, $.util.findByRef(id, $.refs));
       }
+
       if (Array.isArray(sub.allOf)) {
         var schemas: JsonSchema[] = sub.allOf;
 
@@ -54,7 +63,7 @@ function run(schema, refs?, ex?) {
 
       for (var prop in sub) {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
-          sub[prop] = reduce(sub[prop],maxReduceDepth);
+          sub[prop] = reduce(sub[prop], maxReduceDepth);
         }
       }
 
