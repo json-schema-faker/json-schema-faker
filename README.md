@@ -249,7 +249,7 @@ console.log(sample.someValue);
 
 ## Faking values
 
-`jsf` has built-in generators for core-formats, [Faker.js](http://marak.com/faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
+`jsf` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
 
 You can use **faker** or **chance** properties but they are optional:
 
