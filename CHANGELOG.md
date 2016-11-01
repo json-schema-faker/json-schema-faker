@@ -1,10 +1,16 @@
 UPCOMING:
   changes:
     - faker and chance are not longer required as dependencies
-v0.3.7
+v0.4.0
   date: ?
   changes:
+    - dropped support for node.js: 0.10, 0.12, io.js
+    - added support for node.js: 5, 6, 7
+v0.3.7
+  date: 2016-10-31
+  changes:
     - falsy defaults bugfix (thx to @AndreSteenveld)
+    - ?
 v0.3.6
   date: 2016-08-01
   changes:
