@@ -86,6 +86,14 @@ It will be fetched from the [Content Delivery Network](https://en.wikipedia.org/
 
 You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfiddle.net/ftzhnmzq/4/).
 
+## Using in CLI
+
+To generate JSON examples by schema directly from the command line, just use [json-schema-faker-cli](https://github.com/oprogramador/json-schema-faker-cli).
+
+Installing: `sudo npm install -g json-schema-faker-cli`
+
+Running `generate-json schema.json output.json`
+
 ## Overview
 
 JSON-Schema-faker (or `jsf` for short) combines two things:
