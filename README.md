@@ -37,6 +37,8 @@ We are looking for **contributors**! If you wanna help us make `jsf` more awesom
   - [Automation](#automation)
     - [Angular-jsf (AngularJS plugin)](#angular-jsf)
     - [Grunt plugin](#grunt-plugin)
+    - [CLI](#cli)
+    - [Webpack loader](#webpack-loader)
 - Advanced
   - [JSON Schema specification support](#json-schema-specification-support)
   - [Supported keywords](#supported-keywords)
@@ -85,14 +87,6 @@ JSON-Schema-faker is also available at [cdnjs.com](https://www.cdnjs.com/librari
 It will be fetched from the [Content Delivery Network](https://en.wikipedia.org/wiki/Content_delivery_network) without installing any node.js package.
 
 You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfiddle.net/ftzhnmzq/4/).
-
-## Using in CLI
-
-To generate JSON examples by schema directly from the command line, just use [json-schema-faker-cli](https://github.com/oprogramador/json-schema-faker-cli).
-
-Installing: `sudo npm install -g json-schema-faker-cli`
-
-Running `generate-json schema.json output.json`
 
 ## Overview
 
@@ -187,6 +181,16 @@ Use [`angular-jsf`](https://github.com/json-schema-faker/angular-jsf) module (in
 
 Use [grunt-jsonschema-faker](https://github.com/json-schema-faker/grunt-jsonschema-faker)
 to automate running `json-schema-faker` against your JSON schemas.
+
+### CLI
+
+Use [json-schema-faker-cli](https://github.com/oprogramador/json-schema-faker-cli)
+to run `jsf` from your command line.
+
+### Webpack loader
+
+Use [json-schema-faker-loader](https://github.com/jeffcatania/json-schema-faker-loader)
+to execute `jsf` as a [webpack](https://webpack.github.io/) loader.
 
 ## JSON Schema specification support
 
