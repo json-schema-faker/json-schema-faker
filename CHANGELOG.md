@@ -10,7 +10,9 @@ v0.3.7
   date: 2016-10-31
   changes:
     - falsy defaults bugfix (thx to @AndreSteenveld)
-    - ?
+    - allow setting a maxLength and maxItems to limit generation
+    - improved number/object generation compliance with JSON Schema spec
+    - apply suggested max traversal depth implementation
 v0.3.6
   date: 2016-08-01
   changes:
