@@ -3,10 +3,7 @@ branches:
   except:
     - gh-pages
 node_js:
-  - 0.10
-  - 0.12
   - 4
-  - iojs
 before_script:
   - npm run tsc
 script:
