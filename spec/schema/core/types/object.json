@@ -285,6 +285,32 @@
           }
         },
         "type": "object"
+      },
+      {
+        "description": "should handle additionalPropertiesFormat",
+        "schema": {
+          "type": "object",
+          "minProperties": 5,
+          "maxProperties": 5,
+          "additionalPropertiesFormat": "date-time",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "should validate additionalPropertiesFormat core formats",
+        "schema": {
+          "type": "object",
+          "minProperties": 1,
+          "maxProperties": 1,
+          "additionalPropertiesFormat": "unknown",
+          "additionalProperties": {
+            "type": "string"
+          }
+        },
+        "throws": "Error: unknown registry key .+? in \\/"
       }
     ]
   }

@@ -37,6 +37,7 @@ interface IPropertySchema {
 
 interface IObjectSchema extends IGeneratorSchema {
   additionalProperties?: boolean;
+  additionalPropertiesFormat?: string;
   required?: string[];
   properties?: IPropertySchema;
   patternProperties?: IPropertySchema; // RegExp should be the index of this structure (see "5.4.4.1. Valid values" in http://json-schema.org/latest/json-schema-validation.html), but RegExp-key-based maps are unsupported in TypeScript
