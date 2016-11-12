@@ -80,7 +80,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var index, _key;
     while (keyCount < maxKeyCount && tries < maxTries && propSpace > 0) {
-        index = random.number(0, propSpace);
+        index = random.number(0, propSpace - 1);
         if (index < potentialPropertyKeys.length) {
             _key = potentialPropertyKeys.splice(index, 1);
             props[_key] = properties[_key];
