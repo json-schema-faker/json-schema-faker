@@ -3,6 +3,7 @@ import random = require('../core/random');
 import words = require('../generators/words');
 import utils = require('../core/utils');
 import ParseError = require('../core/error');
+import format = require('../api/format');
 
 var randexp = container.get('randexp');
 
@@ -67,6 +68,15 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         max = potentialPropertyKeys.length + patternPropertyKeys.length;
     }
 
+    var additionalPropertiesFormat;
+    if (allowsAdditional) {
+      if (typeof value.additionalPropertiesFormat === 'string') {
+        additionalPropertiesFormat = format(value.additionalPropertiesFormat);
+      } else {
+        additionalPropertiesFormat = function() { return words(1) + randexp('[a-f\\d]{4,7}'); };
+      }
+    }
+
     var keyCount = 0;
     var maxKeyCount = random.number(min, max);
 
@@ -95,7 +105,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
                 keyCount += 1;
             }
         } else if (allowsAdditional) {
-            _key = words(1) + randexp('[a-f\\d]{4,7}');
+            _key = additionalPropertiesFormat(container.getAll(), value);
             props[_key] = additionalProperties;
             keyCount += 1;
         }
