@@ -3,7 +3,7 @@
  */
 type DataMap<T> = {
   [s: string]: T;
-}
+};
 
 /**
  * This class defines a registry for custom formats used within JSF.

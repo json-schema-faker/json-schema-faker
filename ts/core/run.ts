@@ -20,7 +20,7 @@ function run(schema, refs?, ex?) {
       }
 
       if (!sub) {
-        return {};
+        return null;
       }
 
       if (typeof sub.$ref === 'string') {
