@@ -48,12 +48,24 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
       if (properties[key]) {
         props[key] = properties[key];
       } else {
+        var found;
+
         // then try patternProperties
-        if (patternProperties[key]) {
-          props[randexp(key)] = patternProperties[key];
-        } else if (additionalProperties) {
-          // otherwise we can use additionalProperties?
-          props[words(1) + randexp('[a-f\\d]{4,7}')] = additionalProperties;
+        patternPropertyKeys.forEach(function (_key) {
+          if (key.match(new RegExp(_key))) {
+            found = true;
+            props[key] = patternProperties[_key];
+          }
+        });
+
+        if (!found) {
+          if (patternProperties[key]) {
+              props[randexp(key)] = patternProperties[key];
+          }
+          else if (additionalProperties) {
+              // otherwise we can use additionalProperties?
+              props[words(1) + randexp('[a-f\\d]{4,7}')] = additionalProperties;
+          }
         }
       }
     });
