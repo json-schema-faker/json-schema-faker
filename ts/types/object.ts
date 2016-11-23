@@ -35,39 +35,38 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     var max = Math.max(value.maxProperties || random.number(min, min + 5));
 
     patternPropertyKeys.concat(propertyKeys).forEach(function(_key) {
-      if (requiredProperties.indexOf(_key) === -1) {
-        requiredProperties.push(_key);
-      }
+        if (requiredProperties.indexOf(_key) === -1) {
+            requiredProperties.push(_key);
+        }
     });
 
     // properties are read from right-to-left
     var _props = requiredProperties.slice(0, random.number(min, max));
 
     _props.forEach(function(key) {
-      // first ones are the required properies
-      if (properties[key]) {
-        props[key] = properties[key];
-      } else {
-        var found;
+        // first ones are the required properies
+        if (properties[key]) {
+            props[key] = properties[key];
+        } else {
+            var found;
 
-        // then try patternProperties
-        patternPropertyKeys.forEach(function (_key) {
-          if (key.match(new RegExp(_key))) {
-            found = true;
-            props[key] = patternProperties[_key];
-          }
-        });
+            // then try patternProperties
+            patternPropertyKeys.forEach(function (_key) {
+                if (key.match(new RegExp(_key))) {
+                    found = true;
+                    props[key] = patternProperties[_key];
+                }
+            });
 
-        if (!found) {
-          if (patternProperties[key]) {
-              props[randexp(key)] = patternProperties[key];
-          }
-          else if (additionalProperties) {
-              // otherwise we can use additionalProperties?
-              props[words(1) + randexp('[a-f\\d]{4,7}')] = additionalProperties;
-          }
+            if (!found) {
+                if (patternProperties[key]) {
+                    props[randexp(key)] = patternProperties[key];
+                } else if (additionalProperties) {
+                    // otherwise we can use additionalProperties?
+                    props[words(1) + randexp('[a-f\\d]{4,7}')] = additionalProperties;
+                }
+            }
         }
-      }
     });
 
   return traverseCallback(props, path.concat(['properties']), resolve);
