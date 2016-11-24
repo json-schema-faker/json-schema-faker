@@ -59,15 +59,27 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
             });
 
             if (!found) {
-                if (patternProperties[key]) {
-                    props[randexp(key)] = patternProperties[key];
-                } else if (additionalProperties) {
+                // try patternProperties first,
+                var subschema = patternProperties[key] || additionalProperties;
+
+                if (subschema) {
                     // otherwise we can use additionalProperties?
-                    props[words(1) + randexp('[a-f\\d]{4,7}')] = additionalProperties;
+                    props[patternProperties[key] ? randexp(key) : key] = subschema;
                 }
             }
         }
     });
+
+    var current = Object.keys(_props).length;
+
+    if (additionalProperties && current < min) {
+        var suffix = randexp('[a-f\\d]{1,3}');
+
+        while (current < min) {
+          props[words(1) + suffix] = additionalProperties;
+          current += 1;
+        }
+    }
 
   return traverseCallback(props, path.concat(['properties']), resolve);
 };
