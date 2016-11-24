@@ -1,4 +1,7 @@
-import randexp = require('randexp');
+import RandExp = require('randexp');
+
+// set maximum default, see #193
+RandExp.prototype.max = 10;
 
 type Dependency = any;
 
@@ -24,7 +27,7 @@ class Container {
       faker: null,
       chance: null,
       // randexp is required for "pattern" values
-      randexp: randexp
+      randexp: RandExp
     };
   }
 
