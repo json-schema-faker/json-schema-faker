@@ -5,11 +5,19 @@ function isArray(obj) {
 }
 
 function isObject(obj) {
-  return obj && typeof obj === 'object';
+  return obj && obj !== null && typeof obj === 'object';
 }
 
 function hasNothing(obj) {
-  return typeof obj === 'undefined' || obj === '';
+  if (isArray(obj)) {
+    return obj.length === 0;
+  }
+
+  if (isObject(obj)) {
+    return Object.keys(obj).length === 0;
+  }
+
+  return typeof obj === 'undefined' || obj === null || obj === '';
 }
 
 function removeProps(obj, key?, parent?) {
@@ -22,9 +30,10 @@ function removeProps(obj, key?, parent?) {
       value = obj[i];
 
       if (isObject(value)) {
-        isFullyEmpty = false;
         removeProps(value, i, obj);
-      } else if (hasNothing(value)) {
+      }
+
+      if (hasNothing(value)) {
         obj.splice(i--, 1);
       } else {
         isFullyEmpty = false;
@@ -35,9 +44,10 @@ function removeProps(obj, key?, parent?) {
       value = obj[i];
 
       if (isObject(value)) {
-        isFullyEmpty = false;
         removeProps(value, i, obj);
-      } else if (hasNothing(value)) {
+      }
+
+      if (hasNothing(value)) {
         delete obj[i];
       } else {
         isFullyEmpty = false;
