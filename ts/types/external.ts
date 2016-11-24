@@ -22,18 +22,24 @@ var externalType: FTypeGenerator = function externalType(value: JsonSchema, path
 
   var genFunction: Function = utils.getSubAttribute(libraryModule, path);
 
-  // see #116, #117 - faker.js 3.1.0 introduced local dependencies between generators
-  // making jsf break after upgrading from 3.0.1
-  var contextObject = libraryModule;
+  try {
+    // see #116, #117 - faker.js 3.1.0 introduced local dependencies between generators
+    // making jsf break after upgrading from 3.0.1
 
-  if (libraryName === 'faker') {
-    var parts = path.split('.');
+    var contextObject = libraryModule;
 
-    while (parts.length > 1) {
-      contextObject = libraryModule[parts.shift()];
+    if (libraryName === 'faker') {
+      var parts = path.split('.');
+
+      while (parts.length > 1) {
+        contextObject = libraryModule[parts.shift()];
+      }
+
+      genFunction = contextObject[parts[0]];
     }
-
-    genFunction = contextObject[parts[0]];
+  } catch (e) {
+    // unable to resolve
+    genFunction = null;
   }
 
   if (typeof genFunction !== 'function') {
