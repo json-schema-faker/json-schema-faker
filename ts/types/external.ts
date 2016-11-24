@@ -38,8 +38,7 @@ var externalType: FTypeGenerator = function externalType(value: JsonSchema, path
       genFunction = contextObject[parts[0]];
     }
   } catch (e) {
-    // unable to resolve
-    genFunction = null;
+    throw new Error('cannot resolve ' + libraryName + '-generator for ' + JSON.stringify(key));
   }
 
   if (typeof genFunction !== 'function') {
