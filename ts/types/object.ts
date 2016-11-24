@@ -6,6 +6,9 @@ import ParseError = require('../core/error');
 
 var randexp = container.get('randexp');
 
+// fallback generator
+var anyType = { type: ['string', 'number', 'integer', 'boolean'] };
+
 // TODO provide types
 var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path, resolve, traverseCallback: Function): Object {
     var props = {};
@@ -80,7 +83,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         if (allowsAdditional) {
             var suffix = randexp('[a-f\\d]{1,3}');
             while (current < min) {
-                props[words(1) + suffix] = additionalProperties;
+                props[words(1) + suffix] = additionalProperties || anyType;
                 current += 1;
             }
         }
