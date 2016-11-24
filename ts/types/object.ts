@@ -72,13 +72,33 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var current = Object.keys(_props).length;
 
-    if (additionalProperties && current < min) {
-        var suffix = randexp('[a-f\\d]{1,3}');
-
-        while (current < min) {
-          props[words(1) + suffix] = additionalProperties;
-          current += 1;
+    do {
+        if (!(allowsAdditional || patternPropertyKeys.length)) {
+            break;
         }
+
+        if (allowsAdditional) {
+            var suffix = randexp('[a-f\\d]{1,3}');
+            while (current < min) {
+                props[words(1) + suffix] = additionalProperties;
+                current += 1;
+            }
+        }
+
+        patternPropertyKeys.forEach(function (_key) {
+            if (current < min) {
+                props[randexp(_key)] = patternProperties[_key];
+                current += 1;
+            }
+        });
+    } while (current < min);
+
+    if (!allowsAdditional && current < min) {
+        throw new ParseError(
+            'properties constraints were too strong to successfully generate a valid object for:\n' +
+            JSON.stringify(value, null, '  '),
+            path
+        );
     }
 
   return traverseCallback(props, path.concat(['properties']), resolve);
