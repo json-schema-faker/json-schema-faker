@@ -12,11 +12,12 @@ function isKey(prop: string): boolean {
 // TODO provide types
 function run(schema, refs?, ex?) {
   var $ = deref();
+  var _ = {};
 
   try {
     return traverse($(schema, refs, ex), [], function reduce(sub, maxReduceDepth) {
       if (typeof maxReduceDepth === 'undefined') {
-        maxReduceDepth = random.number(0, 3);
+        maxReduceDepth = random.number(1, 3);
       }
 
       if (!sub) {
@@ -26,17 +27,23 @@ function run(schema, refs?, ex?) {
       if (typeof sub.$ref === 'string') {
           var id = sub.$ref;
 
+          // match and increment seen references
+          if (!_[id]) {
+            _[id] = 0;
+          }
+
+          _[id] += 1;
+
+          // cleanup
           delete sub.$ref;
 
-          if (maxReduceDepth <= 0) {
-            delete sub.$ref;
+          if (_[id] > maxReduceDepth) {
             delete sub.oneOf;
             delete sub.anyOf;
             delete sub.allOf;
             return sub;
           }
 
-          maxReduceDepth -= 1;
           utils.merge(sub, $.util.findByRef(id, $.refs));
       }
 
