@@ -55,7 +55,7 @@ function run(schema, refs?, ex?) {
         // this is the only case where all sub-schemas
         // must be resolved before any merge
         schemas.forEach(function(schema: JsonSchema) {
-          utils.merge(sub, reduce(schema, maxReduceDepth));
+          utils.merge(sub, reduce(schema, maxReduceDepth + 1));
         });
       }
 
