@@ -1,4 +1,5 @@
 import RandExp = require('randexp');
+import option = require('../api/option');
 
 // set maximum default, see #193
 RandExp.prototype.max = 10;
@@ -52,7 +53,17 @@ class Container {
     if (typeof this.registry[name] === 'undefined') {
       throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
     } else if (name === 'randexp') {
-      return this.registry['randexp'].randexp;
+      var RandExp_ = this.registry['randexp'];
+
+      // wrapped generator
+      return function (pattern): string {
+        var re = new RandExp_(pattern);
+
+        // apply given setting
+        re.max = option('defaultRandExpMax');
+
+        return re.gen();
+      };
     }
     return this.registry[name];
   }
