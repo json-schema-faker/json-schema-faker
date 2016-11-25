@@ -14,8 +14,8 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     var props = {};
 
     var properties = value.properties || {};
-    var requiredProperties = value.required || [];
     var patternProperties = value.patternProperties || {};
+    var requiredProperties = (value.required || []).slice();
     var allowsAdditional = value.additionalProperties === false ? false : true;
 
     var propertyKeys = Object.keys(properties);
