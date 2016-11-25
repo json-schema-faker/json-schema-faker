@@ -27,8 +27,8 @@
   resolved "https://registry.yarnpkg.com/@types/minimatch/-/minimatch-2.0.29.tgz#5002e14f75e2d71e564281df0431c8c1b4a2a36a"
 
 "@types/node@*":
-  version "6.0.50"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.50.tgz#211c61ef6e0c79c466e9755a75d50496aaf94bea"
+  version "6.0.51"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-6.0.51.tgz#84cbf25111516ec9304d0b61469dc0fa9d12ba32"
 
 "@types/shelljs@^0.3.32":
   version "0.3.33"
@@ -470,7 +470,7 @@ cliui@^2.1.0:
     right-align "^0.1.1"
     wordwrap "0.0.2"
 
-clone@^2.0.0:
+clone@^2.1.0:
   version "2.1.0"
   resolved "https://registry.yarnpkg.com/clone/-/clone-2.1.0.tgz#9c715bfbd39aa197c8ee0f8e65c3912ba34f8cd6"
 
@@ -2325,9 +2325,9 @@ tryit@^1.0.1:
   version "1.0.3"
   resolved "https://registry.yarnpkg.com/tryit/-/tryit-1.0.3.tgz#393be730a9446fd1ead6da59a014308f36c289cb"
 
-tslint@^4.0.1:
-  version "4.0.1"
-  resolved "https://registry.yarnpkg.com/tslint/-/tslint-4.0.1.tgz#42ae8ac2b994331a6f61c5809916df86411fd880"
+tslint@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/tslint/-/tslint-4.0.2.tgz#d43f24c0c1f826de7f3a097bb7808a8b4325feac"
   dependencies:
     colors "^1.1.2"
     diff "^3.0.1"
