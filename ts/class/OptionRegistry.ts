@@ -14,6 +14,7 @@ class OptionRegistry extends Registry<Option> {
     this.data['useDefaultValue'] = false;
     this.data['maxItems'] = null;
     this.data['maxLength'] = null;
+    this.data['defaultMinItems'] = 0;
     this.data['defaultRandExpMax'] = 10;
     this.data['alwaysFakeOptionals'] = false;
   }

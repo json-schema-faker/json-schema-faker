@@ -60,6 +60,13 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
   var minItems = value.minItems;
   var maxItems = value.maxItems;
 
+  if (option('defaultMinItems') && minItems === undefined) {
+    // fix boundaries
+    minItems = !maxItems
+      ? option('defaultMinItems')
+      : Math.min(option('defaultMinItems'), maxItems);
+  }
+
   if (option('maxItems')) {
     // Don't allow user to set max items above our maximum
     if (maxItems && maxItems > option('maxItems')) {
