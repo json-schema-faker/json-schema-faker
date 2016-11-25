@@ -5,9 +5,9 @@ import container = require('../class/Container');
 type ExternalParameters = any[];
 
 var externalType: FTypeGenerator = function externalType(value: JsonSchema, path: string|any): string|any {
-  var libraryName: string = value.faker ? 'faker' : 'chance',
-    libraryModule = value.faker ? container.get('faker') : container.get('chance'),
-    key = value.faker || value.chance,
+  var libraryName: string = value.faker ? 'faker' : (value.chance ? 'chance' : 'casual'),
+    libraryModule = container.get(libraryName),
+    key = value.faker || value.chance || value.casual,
     path = key,
     args: ExternalParameters = [];
 
@@ -42,6 +42,10 @@ var externalType: FTypeGenerator = function externalType(value: JsonSchema, path
   }
 
   if (typeof genFunction !== 'function') {
+    if (libraryName === 'casual') {
+      return utils.typecast(genFunction, value.type);
+    }
+
     throw new Error('unknown ' + libraryName + '-generator for ' + JSON.stringify(key));
   }
 

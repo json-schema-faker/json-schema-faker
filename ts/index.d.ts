@@ -6,6 +6,8 @@ interface IGeneratorSchema {
   'x-faker'?: any;
   chance?: any;
   'x-chance'?: any;
+  casual?: any;
+  'x-casual'?: any;
 }
 
 interface IStringSchema extends IGeneratorSchema {

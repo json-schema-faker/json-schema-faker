@@ -8,7 +8,7 @@
           "chance": "url",
           "faker": "internet.email"
         },
-        "throws": "ambiguous generator when using both faker and chance: .+?"
+        "throws": "ambiguous generator .+: .+?"
       }
     ]
   }

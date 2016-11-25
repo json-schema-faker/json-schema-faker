@@ -14,7 +14,7 @@ type Registry = {
 };
 
 /**
- * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
+ * Container is used to wrap external libraries (faker, chance, casual, randexp) that are used among the whole codebase. These
  * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
  * of pure npm module instances. This class supports consistent access to these instances.
  */
@@ -27,6 +27,7 @@ class Container {
     this.registry = {
       faker: null,
       chance: null,
+      casual: null,
       // randexp is required for "pattern" values
       randexp: RandExp
     };
@@ -77,7 +78,8 @@ class Container {
     return {
       faker: this.get('faker'),
       chance: this.get('chance'),
-      randexp: this.get('randexp')
+      randexp: this.get('randexp'),
+      casual: this.get('casual')
     };
   }
 }
