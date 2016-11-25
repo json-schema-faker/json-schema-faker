@@ -62,7 +62,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
             });
 
             if (!found) {
-                // try patternProperties first,
+                // try patternProperties again,
                 var subschema = patternProperties[key] || additionalProperties;
 
                 if (subschema) {
@@ -73,28 +73,35 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
     });
 
-    var current = Object.keys(_props).length;
+    var current = Object.keys(props).length;
 
-    do {
-        if (!(allowsAdditional || patternPropertyKeys.length)) {
+    while (true) {
+        if (!(patternPropertyKeys.length || allowsAdditional)) {
+            break;
+        }
+
+        if (current >= min) {
             break;
         }
 
         if (allowsAdditional) {
-            var suffix = randexp('[a-f\\d]{1,3}');
-            while (current < min) {
-                props[words(1) + suffix] = additionalProperties || anyType;
+            var word = words(1) + randexp('[a-f\\d]{1,3}');
+
+            if (!props[word]) {
+                props[word] = additionalProperties || anyType;
                 current += 1;
             }
         }
 
         patternPropertyKeys.forEach(function (_key) {
-            if (current < min) {
-                props[randexp(_key)] = patternProperties[_key];
+            var word = randexp(_key);
+
+            if (!props[word]) {
+                props[word] = patternProperties[_key];
                 current += 1;
             }
         });
-    } while (current < min);
+    }
 
     if (!allowsAdditional && current < min) {
         throw new ParseError(
