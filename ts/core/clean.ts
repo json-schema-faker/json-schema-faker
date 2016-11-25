@@ -17,7 +17,7 @@ function hasNothing(obj) {
     return Object.keys(obj).length === 0;
   }
 
-  return typeof obj === 'undefined' || obj === null || obj === '';
+  return typeof obj === 'undefined' || obj === null;
 }
 
 function removeProps(obj, key?, parent?) {
