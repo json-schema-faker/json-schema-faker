@@ -57,7 +57,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
             patternPropertyKeys.forEach(function (_key) {
                 if (key.match(new RegExp(_key))) {
                     found = true;
-                    props[key] = patternProperties[_key];
+                    props[randexp(key)] = patternProperties[_key];
                 }
             });
 
