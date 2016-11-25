@@ -35,6 +35,16 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         throw new ParseError('missing properties for:\n' + JSON.stringify(value, null, '  '), path);
     }
 
+    if (option('requiredOnly') === true) {
+        requiredProperties.forEach(function(key) {
+            if (properties[key]) {
+                props[key] = properties[key];
+            }
+        });
+
+        return traverseCallback(props, path.concat(['properties']), resolve);
+    }
+
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
     var max = Math.max(value.maxProperties || random.number(min, min + 5));
 
