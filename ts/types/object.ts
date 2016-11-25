@@ -2,6 +2,7 @@ import container = require('../class/Container');
 import random = require('../core/random');
 import words = require('../generators/words');
 import utils = require('../core/utils');
+import option = require('../api/option');
 import ParseError = require('../core/error');
 
 var randexp = container.get('randexp');
@@ -44,7 +45,8 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     });
 
     // properties are read from right-to-left
-    var _props = requiredProperties.slice(0, random.number(min, max));
+    var _props = option('alwaysFakeOptionals') ? requiredProperties
+      : requiredProperties.slice(0, random.number(min, max));
 
     _props.forEach(function(key) {
         // first ones are the required properies
