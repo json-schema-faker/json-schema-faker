@@ -1,3 +1,7 @@
+# IDEs
+.idea
+.vscode
+
 *~
 *.log
 *.tgz
@@ -7,6 +11,5 @@
 /coverage
 /generated
 /nbproject
-/.idea
 /node_modules
 /locale

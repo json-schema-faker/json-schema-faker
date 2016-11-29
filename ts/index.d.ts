@@ -44,7 +44,7 @@ interface IObjectSchema extends IGeneratorSchema {
   maxProperties?: number;
 }
 
-type ISchemaInternalType = "string" | "integer" | "number" | "object" | "array" | "boolean";
+type ISchemaInternalType = 'string' | 'integer' | 'number' | 'object' | 'array' | 'boolean';
 
 /**
  * JSON Schema TypeScript interface.

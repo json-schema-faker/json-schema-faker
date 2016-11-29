@@ -7,7 +7,7 @@ type Dependency = any;
  */
 type Registry = {
   [s: string]: Dependency;
-}
+};
 
 /**
  * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
