@@ -1,0 +1,40 @@
+[
+  {
+    "description": "merge and shuffling properties",
+    "tests": [
+      {
+        "description": "should fake all properties as expected",
+        "schema": {
+          "properties": {
+            "test": {
+              "type": "string"
+            },
+            "count": {
+              "type": "integer"
+            }
+          },
+          "additionalProperties": {
+            "type": "string",
+            "faker": "internet.email"
+          },
+          "patternProperties": {
+            "^ignored": {
+              "type": "string"
+            },
+            "prop$": {
+              "faker": "name.findName"
+            }
+          },
+          "required": [
+            "test",
+            "count",
+            "dropped",
+            "ignored-prop"
+          ]
+        },
+        "valid": true,
+        "repeat": 100
+      }
+    ]
+  }
+]

@@ -128,7 +128,7 @@
           },
           "required": ["test"]
         },
-        "throws": "unknown faker-generator for .+? in \\/properties\\/test"
+        "throws": "cannot resolve faker-generator for .+? in \\/properties\\/test"
       },
       {
         "description": "should handle inferred type (when possible)",

@@ -1,4 +1,8 @@
-import randexp = require('randexp');
+import RandExp = require('randexp');
+import option = require('../api/option');
+
+// set maximum default, see #193
+RandExp.prototype.max = 10;
 
 type Dependency = any;
 
@@ -10,7 +14,7 @@ type Registry = {
 };
 
 /**
- * Container is used to wrap external libraries (faker, chance, randexp) that are used among the whole codebase. These
+ * Container is used to wrap external libraries (faker, chance, casual, randexp) that are used among the whole codebase. These
  * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
  * of pure npm module instances. This class supports consistent access to these instances.
  */
@@ -23,8 +27,9 @@ class Container {
     this.registry = {
       faker: null,
       chance: null,
+      casual: null,
       // randexp is required for "pattern" values
-      randexp: randexp
+      randexp: RandExp
     };
   }
 
@@ -49,7 +54,17 @@ class Container {
     if (typeof this.registry[name] === 'undefined') {
       throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
     } else if (name === 'randexp') {
-      return this.registry['randexp'].randexp;
+      var RandExp_ = this.registry['randexp'];
+
+      // wrapped generator
+      return function (pattern): string {
+        var re = new RandExp_(pattern);
+
+        // apply given setting
+        re.max = option('defaultRandExpMax');
+
+        return re.gen();
+      };
     }
     return this.registry[name];
   }
@@ -63,7 +78,8 @@ class Container {
     return {
       faker: this.get('faker'),
       chance: this.get('chance'),
-      randexp: this.get('randexp')
+      randexp: this.get('randexp'),
+      casual: this.get('casual')
     };
   }
 }

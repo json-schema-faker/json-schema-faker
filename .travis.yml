@@ -4,7 +4,6 @@ branches:
     - gh-pages
 node_js:
   - 4
-  - 5
   - 6
   - 7
 before_script:

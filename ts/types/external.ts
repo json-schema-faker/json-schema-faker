@@ -4,10 +4,10 @@ import container = require('../class/Container');
 
 type ExternalParameters = any[];
 
-var externalType: FTypeGenerator = function externalType(value: JsonSchema, path): string|any {
-  var libraryName: string = value.faker ? 'faker' : 'chance',
-    libraryModule = value.faker ? container.get('faker') : container.get('chance'),
-    key = value.faker || value.chance,
+var externalType: FTypeGenerator = function externalType(value: JsonSchema, path: string|any): string|any {
+  var libraryName: string = value.faker ? 'faker' : (value.chance ? 'chance' : 'casual'),
+    libraryModule = container.get(libraryName),
+    key = value.faker || value.chance || value.casual,
     path = key,
     args: ExternalParameters = [];
 
@@ -22,16 +22,31 @@ var externalType: FTypeGenerator = function externalType(value: JsonSchema, path
 
   var genFunction: Function = utils.getSubAttribute(libraryModule, path);
 
-  if (typeof genFunction !== 'function') {
-    throw new Error('unknown ' + libraryName + '-generator for ' + JSON.stringify(key));
+  try {
+    // see #116, #117 - faker.js 3.1.0 introduced local dependencies between generators
+    // making jsf break after upgrading from 3.0.1
+
+    var contextObject = libraryModule;
+
+    if (libraryName === 'faker') {
+      var parts = path.split('.');
+
+      while (parts.length > 1) {
+        contextObject = libraryModule[parts.shift()];
+      }
+
+      genFunction = contextObject[parts[0]];
+    }
+  } catch (e) {
+    throw new Error('cannot resolve ' + libraryName + '-generator for ' + JSON.stringify(key));
   }
 
-  // see #116, #117 - faker.js 3.1.0 introduced local dependencies between generators
-  // making jsf break after upgrading from 3.0.1
-  var contextObject = libraryModule;
-  if (libraryName === 'faker') {
-    var fakerModuleName: string = path.split('.')[0];
-    contextObject = libraryModule[fakerModuleName];
+  if (typeof genFunction !== 'function') {
+    if (libraryName === 'casual') {
+      return utils.typecast(genFunction, value.type);
+    }
+
+    throw new Error('unknown ' + libraryName + '-generator for ' + JSON.stringify(key));
   }
 
   var result: string|any = genFunction.apply(contextObject, args);

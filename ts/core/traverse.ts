@@ -1,3 +1,4 @@
+import clean = require('./clean');
 import random = require('./random');
 import ParseError = require('./error');
 import inferType = require('./infer');
@@ -5,7 +6,7 @@ import types = require('../types/index');
 import option = require('../api/option');
 
 function isExternal(schema: IGeneratorSchema): boolean {
-  return schema.faker || schema.chance;
+  return schema.faker || schema.chance || schema.casual;
 }
 
 function reduceExternal(schema: IGeneratorSchema, path: SchemaPath): IGeneratorSchema {
@@ -15,11 +16,17 @@ function reduceExternal(schema: IGeneratorSchema, path: SchemaPath): IGeneratorS
   if (schema['x-chance']) {
     schema.chance = schema['x-chance'];
   }
+  if (schema['x-casual']) {
+    schema.casual = schema['x-casual'];
+  }
 
-  var fakerUsed: boolean = schema.faker !== undefined,
-    chanceUsed: boolean = schema.chance !== undefined;
-  if (fakerUsed && chanceUsed) {
-    throw new ParseError('ambiguous generator when using both faker and chance: ' + JSON.stringify(schema), path);
+  var count: number = // sum and test later
+    (schema.faker !== undefined ? 1 : 0) +
+    (schema.chance !== undefined ? 1 : 0) +
+    (schema.casual !== undefined ? 1 : 0);
+
+  if (count > 1) {
+    throw new ParseError('ambiguous generator mixing faker, chance or casual: ' + JSON.stringify(schema), path);
   }
 
   return schema;
@@ -85,7 +92,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     }
   }
 
-  return copy;
+  return clean(copy);
 }
 
 export = traverse;
