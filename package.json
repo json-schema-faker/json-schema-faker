@@ -36,14 +36,12 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
+    "casual": "^1.5.8",
     "chance": "^1.0.4",
-    "deref": "^0.6.4",
     "faker": "^3.1.0",
     "randexp": "^0.4.3"
   },
   "devDependencies": {
-    "browserify": "^13.1.1",
-    "casual": "^1.5.8",
     "clone": "^2.1.0",
     "codecov": "^1.0.1",
     "eslint": "^3.11.1",
