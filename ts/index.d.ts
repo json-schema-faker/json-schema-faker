@@ -100,4 +100,4 @@ interface jsfAPI {
 // quick and dirty overcome
 // TODO provide proper definitions
 declare module 'randexp' { var randexp: any; export = randexp; }
-declare module 'deref' { var $: any; export = $; }
+declare module 'json-schema-ref-parser' { var $RefParser: any; export = $RefParser; }

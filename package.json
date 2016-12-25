@@ -39,6 +39,7 @@
     "casual": "^1.5.8",
     "chance": "^1.0.4",
     "faker": "^3.1.0",
+    "json-schema-ref-parser": "^3.1.2",
     "randexp": "^0.4.3"
   },
   "devDependencies": {

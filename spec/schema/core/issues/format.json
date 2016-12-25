@@ -8,7 +8,7 @@
           "type": "string",
           "format": "not_exists"
         },
-        "throws": true
+        "throws": "unknown registry key"
       },
       {
         "description": "should support custom formats",

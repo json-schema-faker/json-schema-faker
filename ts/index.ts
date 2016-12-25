@@ -3,8 +3,8 @@ import format = require('./api/format');
 import option = require('./api/option');
 import run = require('./core/run');
 
-var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any) {
-  return run(schema, refs);
+var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
+  return run(schema, refs, cwd);
 };
 
 jsf.format = format;

@@ -8,55 +8,42 @@ pick = (obj, key) ->
   obj
 
 tryTest = (test, refs, schema) ->
-  error = null
+  jsf(schema, refs).catch (error) ->
+    if typeof test.throws is 'string'
+      expect(error).toMatch new RegExp(test.throws, 'im')
 
-  sample = try
-    jsf(schema, refs)
-  catch e
-    error = String(e)
-    throw e unless test.throws
+    if typeof test.throws is 'boolean'
+      throw error if test.throws isnt true
+  .then (sample) ->
+    if test.dump
+      console.log 'IN', JSON.stringify(schema, null, 2)
+      console.log 'OUT', JSON.stringify(sample, null, 2)
+      return
 
-  if test.dump
-    console.log 'IN', JSON.stringify(schema, null, 2)
-    console.log 'OUT', JSON.stringify(sample, null, 2)
-    return
+    if test.hasNot
+      expect(JSON.stringify sample).not.toContain test.hasNot
 
-  if test.hasNot
-    expect(JSON.stringify sample).not.toContain test.hasNot
+    if test.type
+      expect(sample).toHaveType test.type
 
-  if test.type
-    expect(sample).toHaveType test.type
+    # strict checks
+    if test.nonEmpty
+      expect(sample).toHaveNonEmptyProps()
 
-  if typeof test.throws is 'string'
-    if typeof error isnt 'string'
-      throw new Error """
-        THIS SHOULD NOT HAPPEN --- #{error}
+    if test.valid
+      try
+        expect(sample).toHaveSchema [schema, refs]
+      catch e
+        throw new Error """
+          #{suite.description} (#{e})
 
-        #{JSON.stringify(schema, null, 2)}
+          #{JSON.stringify(sample, null, 2)}
 
-        #{JSON.stringify(sample, null, 2)}
-      """
+          #{JSON.stringify(schema, null, 2)}
+        """
 
-    expect(error).toMatch new RegExp(test.throws, 'im')
-
-  # strict checks
-  if test.nonEmpty
-    expect(sample).toHaveNonEmptyProps()
-
-  if test.valid
-    try
-      expect(sample).toHaveSchema [schema, refs]
-    catch e
-      throw new Error """
-        #{suite.description} (#{e})
-
-        #{JSON.stringify(sample, null, 2)}
-
-        #{JSON.stringify(schema, null, 2)}
-      """
-
-  if "equal" of test
-    expect(sample).toEqual test.equal
+    if "equal" of test
+      expect(sample).toEqual test.equal
 
 glob.sync("#{__dirname}/**/*.json").forEach (file) ->
   suite = JSON.parse(fs.readFileSync(file))
@@ -71,7 +58,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
       suite.tests.forEach (test) ->
         return if test.xdescription
 
-        it test.description, ->
+        it test.description, (done) ->
           if test.require
             wrapper = require('./' + test.require)
             wrapper.register(jsf)
@@ -90,4 +77,8 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
           # support for "exhaustive" testing, increase or set in .json spec
           # for detecting more bugs quickly by executing the same test N-times
           nth = test.repeat or 1
-          tryTest(test, refs, schema) while nth--
+
+          tasks = []
+          tasks.push(tryTest(test, refs, schema)) while nth--
+
+          Promise.all(tasks).then(done)
