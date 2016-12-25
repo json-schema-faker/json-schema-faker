@@ -1,9 +1,9 @@
-import Registry = require('./Registry');
+import Registry from './Registry';
 
 type Option = boolean|number;
 
 /**
- * This class defines a registry for custom formats used within JSF.
+ * This class defines a registry for custom settings used within JSF.
  */
 class OptionRegistry extends Registry<Option> {
 
@@ -11,6 +11,7 @@ class OptionRegistry extends Registry<Option> {
     super();
     this.data['failOnInvalidTypes'] = true;
     this.data['defaultInvalidTypeProduct'] = null;
+    this.data['failOnInvalidFormat'] = true;
     this.data['useDefaultValue'] = false;
     this.data['requiredOnly'] = false;
     this.data['maxItems'] = null;
@@ -21,4 +22,4 @@ class OptionRegistry extends Registry<Option> {
   }
 }
 
-export = OptionRegistry;
+export default OptionRegistry;

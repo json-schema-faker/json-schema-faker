@@ -1,4 +1,4 @@
-import random = require('../core/random');
+import random from '../core/random';
 
 var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
   + ' et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea'
@@ -17,4 +17,4 @@ function wordsGenerator(length: number): string[] {
   return words.slice(0, length);
 }
 
-export = wordsGenerator;
+export default wordsGenerator;

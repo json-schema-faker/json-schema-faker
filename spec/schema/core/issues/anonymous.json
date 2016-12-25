@@ -11,8 +11,7 @@
         },
         "valid": true,
         "equal": {
-          "x": "y",
-          "id": "http://json-schema.org/schema#"
+          "x": "y"
         }
       }
     ]

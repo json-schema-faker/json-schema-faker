@@ -47,8 +47,8 @@ var MIN_NUMBER = -100,
  * Using Math.round() will give you a non-uniform distribution!
  * @see http://stackoverflow.com/a/1527820/769384
  */
-function getRandomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+function getRandom(min: number, max: number): number {
+  return Math.random() * (max - min) + min;
 }
 
 /**
@@ -72,7 +72,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
     max += min;
   }
 
-  var result: number = getRandomInt(min, max);
+  var result: number = getRandom(min, max);
 
   if (!hasPrecision) {
     return parseInt(result + '', 10);
@@ -81,7 +81,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   return result;
 }
 
-export = {
+export default {
   pick: pick,
   shuffle: shuffle,
   number: number,

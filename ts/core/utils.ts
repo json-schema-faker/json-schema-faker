@@ -1,3 +1,19 @@
+import optionAPI from '../api/option';
+
+const RandExp = require('randexp');
+
+// set maximum default, see #193
+RandExp.prototype.max = 10;
+
+function _randexp(value: string) {
+  var re = new RandExp(value);
+
+  // apply given setting
+  re.max = optionAPI('defaultRandExpMax');
+
+  return re.gen();
+}
+
 function getSubAttribute(obj: any, dotSeparatedKey: string): any {
   var keyElements: string[] = dotSeparatedKey.split('.');
 
@@ -35,14 +51,28 @@ function hasProperties(obj: Object, ...properties: string[]): boolean {
  * @param targetType
  * @returns {any}
  */
-function typecast(value: any, targetType: ISchemaInternalType): any {
-  switch (targetType) {
+function typecast(value: any, schema: JsonSchema): any {
+  // FIXME this function should cover most cases and should be reused within generators
+  switch (schema.type) {
     case 'integer':
       return parseInt(value, 10);
     case 'number':
       return parseFloat(value);
     case 'string':
-      return '' + value;
+      value = String(value);
+
+      var min = Math.max(schema.minLength || 0, 0);
+      var max = Math.min(schema.maxLength || Infinity, Infinity);
+
+      while (value.length < min) {
+        value += ' ' + value;
+      }
+
+      if (value.length > max) {
+        value = value.substr(0, max);
+      }
+
+      return value;
     case 'boolean':
       return !!value;
     default:
@@ -78,10 +108,30 @@ function merge(a: Object, b: Object): Object {
   return a;
 }
 
-export = {
+function clean(obj, isArray) {
+  if (!obj || typeof obj !== 'object') {
+      return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj
+      .map(function (value) { return clean(value, true); })
+      .filter(function (value) { return value; });
+  }
+  Object.keys(obj).forEach(function (k) {
+    obj[k] = clean(obj[k]);
+  });
+  if (!Object.keys(obj).length && isArray) {
+    return undefined;
+  }
+  return obj;
+}
+
+export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
   typecast: typecast,
   clone: clone,
-  merge: merge
+  merge: merge,
+  clean: clean,
+  randexp: _randexp
 };

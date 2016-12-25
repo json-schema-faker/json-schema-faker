@@ -6,11 +6,9 @@ node_js:
   - 4
   - 6
   - 7
-before_script:
-  - npm run tsc
 script:
-  - npm run cover
+  - yarn cover:schema
 after_success:
-  - npm run cover:up
+  - yarn cover:up
 notifications:
   email: false

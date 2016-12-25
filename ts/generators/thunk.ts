@@ -1,5 +1,5 @@
-import words = require('../generators/words');
-import random = require('../core/random');
+import words from '../generators/words';
+import random from '../core/random';
 
 /**
  * Helper function used by thunkGenerator to produce some words for the final result.
@@ -34,4 +34,4 @@ function thunkGenerator(min: number = 0, max: number = 140): string {
   return result;
 }
 
-export = thunkGenerator;
+export default thunkGenerator;

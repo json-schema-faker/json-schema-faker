@@ -1,14 +1,18 @@
-import thunk = require('../generators/thunk');
-import ipv4 = require('../generators/ipv4');
-import dateTime = require('../generators/dateTime');
-import coreFormat = require('../generators/coreFormat');
-import format = require('../api/format');
-import option = require('../api/option');
+import thunk from '../generators/thunk';
+import ipv4 from '../generators/ipv4';
+import dateTime from '../generators/dateTime';
+import coreFormat from '../generators/coreFormat';
+import optionAPI from '../api/option';
+import format from '../api/format';
+import utils from '../core/utils';
 
-import container = require('../class/Container');
-var randexp = container.get('randexp');
+function generateFormat(value: IStringSchema, invalid: () => string): string {
+  var callback: Function = format(value.format);
 
-function generateFormat(value: IStringSchema): string {
+  if (typeof callback === 'function') {
+    return callback(value);
+  }
+
   switch (value.format) {
     case 'date-time':
       return dateTime();
@@ -23,8 +27,15 @@ function generateFormat(value: IStringSchema): string {
     case 'uri':
       return coreFormat(value.format);
     default:
-      var callback: Function = format(value.format);
-      return callback(container.getAll(), value);
+      if (typeof callback === 'undefined') {
+        if (optionAPI('failOnInvalidFormat')) {
+          throw new Error('unknown registry key ' + JSON.stringify(value.format));
+        } else {
+          return invalid();
+        }
+      }
+
+      throw new Error('unsupported format "' + value.format + '"');
   }
 }
 
@@ -34,28 +45,28 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   var minLength = value.minLength;
   var maxLength = value.maxLength;
 
-  if (option('maxLength')) {
+  if (optionAPI('maxLength')) {
     // Don't allow user to set max length above our maximum
-    if (maxLength && maxLength > option('maxLength')) {
-      maxLength = option('maxLength');
+    if (maxLength && maxLength > optionAPI('maxLength')) {
+      maxLength = optionAPI('maxLength');
     }
 
     // Don't allow user to set min length above our maximum
-    if (minLength && minLength > option('maxLength')) {
-      minLength = option('maxLength');
+    if (minLength && minLength > optionAPI('maxLength')) {
+      minLength = optionAPI('maxLength');
     }
   }
 
   if (value.format) {
-    output = generateFormat(value);
+    output = generateFormat(value, () => thunk(minLength, maxLength) );
   } else if (value.pattern) {
-    output = randexp(value.pattern);
+    output = utils.randexp(value.pattern);
   } else {
     output = thunk(minLength, maxLength);
   }
 
   while (output.length < minLength) {
-    output += Math.random() > 0.7 ? thunk() : randexp('.+');
+    output += Math.random() > 0.7 ? thunk() : utils.randexp('.+');
   }
 
   if (output.length > maxLength) {
@@ -65,4 +76,4 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   return output;
 };
 
-export = stringType;
+export default stringType;

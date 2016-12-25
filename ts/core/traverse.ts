@@ -1,46 +1,28 @@
-import clean = require('./clean');
-import random = require('./random');
-import ParseError = require('./error');
-import inferType = require('./infer');
-import types = require('../types/index');
-import option = require('../api/option');
-
-function isExternal(schema: IGeneratorSchema): boolean {
-  return schema.faker || schema.chance || schema.casual;
-}
-
-function reduceExternal(schema: IGeneratorSchema, path: SchemaPath): IGeneratorSchema {
-  if (schema['x-faker']) {
-    schema.faker = schema['x-faker'];
-  }
-  if (schema['x-chance']) {
-    schema.chance = schema['x-chance'];
-  }
-  if (schema['x-casual']) {
-    schema.casual = schema['x-casual'];
-  }
-
-  var count: number = // sum and test later
-    (schema.faker !== undefined ? 1 : 0) +
-    (schema.chance !== undefined ? 1 : 0) +
-    (schema.casual !== undefined ? 1 : 0);
-
-  if (count > 1) {
-    throw new ParseError('ambiguous generator mixing faker, chance or casual: ' + JSON.stringify(schema), path);
-  }
-
-  return schema;
-}
+import utils from './utils';
+import random from './random';
+import ParseError from './error';
+import inferType from './infer';
+import types from '../types/index';
+import optionAPI from '../api/option';
 
 // TODO provide types
 function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
-  resolve(schema);
+  schema = resolve(schema);
 
   if (Array.isArray(schema.enum)) {
     return random.pick(schema.enum);
   }
 
-  if (option('useDefaultValue') && 'default' in schema) {
+  // thunks can return sub-schemas
+  if (typeof schema.thunk === 'function') {
+    return traverse(schema.thunk(), path, resolve);
+  }
+
+  if (typeof schema.generate === 'function') {
+    return utils.typecast(schema.generate(), schema);
+  }
+
+  if (optionAPI('useDefaultValue') && 'default' in schema) {
     return schema.default;
   }
 
@@ -54,17 +36,12 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     type = inferType(schema, path) || type;
   }
 
-  schema = reduceExternal(schema, path);
-  if (isExternal(schema)) {
-    type = 'external';
-  }
-
   if (typeof type === 'string') {
     if (!types[type]) {
-      if (option('failOnInvalidTypes')) {
+      if (optionAPI('failOnInvalidTypes')) {
         throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
       } else {
-        return option('defaultInvalidTypeProduct');
+        return optionAPI('defaultInvalidTypeProduct');
       }
     } else {
       try {
@@ -92,7 +69,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     }
   }
 
-  return clean(copy);
+  return utils.clean(copy);
 }
 
-export = traverse;
+export default traverse;

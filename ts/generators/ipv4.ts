@@ -1,4 +1,4 @@
-import random = require('../core/random');
+import random from '../core/random';
 
 /**
  * Generates randomized ipv4 address.
@@ -11,4 +11,4 @@ function ipv4Generator(): string {
   }).join('.');
 }
 
-export = ipv4Generator;
+export default ipv4Generator;

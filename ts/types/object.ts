@@ -1,11 +1,8 @@
-import container = require('../class/Container');
-import random = require('../core/random');
-import words = require('../generators/words');
-import utils = require('../core/utils');
-import option = require('../api/option');
-import ParseError = require('../core/error');
-
-var randexp = container.get('randexp');
+import random from '../core/random';
+import words from '../generators/words';
+import utils from '../core/utils';
+import optionAPI from '../api/option';
+import ParseError from '../core/error';
 
 // fallback generator
 var anyType = { type: ['string', 'number', 'integer', 'boolean'] };
@@ -35,7 +32,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         throw new ParseError('missing properties for:\n' + JSON.stringify(value, null, '  '), path);
     }
 
-    if (option('requiredOnly') === true) {
+    if (optionAPI('requiredOnly') === true) {
         requiredProperties.forEach(function(key) {
             if (properties[key]) {
                 props[key] = properties[key];
@@ -55,7 +52,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     });
 
     // properties are read from right-to-left
-    var _props = option('alwaysFakeOptionals') ? requiredProperties
+    var _props = optionAPI('alwaysFakeOptionals') ? requiredProperties
       : requiredProperties.slice(0, random.number(min, max));
 
     _props.forEach(function(key) {
@@ -69,7 +66,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
             patternPropertyKeys.forEach(function (_key) {
                 if (key.match(new RegExp(_key))) {
                     found = true;
-                    props[randexp(key)] = patternProperties[_key];
+                    props[utils.randexp(key)] = patternProperties[_key];
                 }
             });
 
@@ -79,7 +76,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
                 if (subschema) {
                     // otherwise we can use additionalProperties?
-                    props[patternProperties[key] ? randexp(key) : key] = subschema;
+                    props[patternProperties[key] ? utils.randexp(key) : key] = subschema;
                 }
             }
         }
@@ -97,7 +94,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
 
         if (allowsAdditional) {
-            var word = words(1) + randexp('[a-f\\d]{1,3}');
+            var word = words(1) + utils.randexp('[a-f\\d]{1,3}');
 
             if (!props[word]) {
                 props[word] = additionalProperties || anyType;
@@ -106,7 +103,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
 
         patternPropertyKeys.forEach(function (_key) {
-            var word = randexp(_key);
+            var word = utils.randexp(_key);
 
             if (!props[word]) {
                 props[word] = patternProperties[_key];
@@ -126,4 +123,4 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
   return traverseCallback(props, path.concat(['properties']), resolve);
 };
 
-export = objectType;
+export default objectType;

@@ -1,5 +1,5 @@
-import booleanGenerator = require('../generators/boolean');
+import booleanGenerator from '../generators/boolean';
 
 var booleanType: FTypeGenerator = booleanGenerator;
 
-export = booleanType;
+export default booleanType;
