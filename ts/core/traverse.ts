@@ -1,9 +1,9 @@
-import clean = require('./clean');
-import random = require('./random');
-import ParseError = require('./error');
-import inferType = require('./infer');
-import types = require('../types/index');
-import option = require('../api/option');
+import clean from './clean';
+import random from './random';
+import ParseError from './error';
+import inferType from './infer';
+import types from '../types/index';
+import option from '../api/option';
 
 function isExternal(schema: IGeneratorSchema): boolean {
   return schema.faker || schema.chance || schema.casual;
@@ -95,4 +95,4 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   return clean(copy);
 }
 
-export = traverse;
+export default traverse;

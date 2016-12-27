@@ -1,5 +1,5 @@
-import RandExp = require('randexp');
-import option = require('../api/option');
+import RandExp from 'randexp';
+import option from '../api/option';
 
 // set maximum default, see #193
 RandExp.prototype.max = 10;
@@ -89,4 +89,4 @@ class Container {
 // instantiate
 var container = new Container();
 
-export = container;
+export default container;

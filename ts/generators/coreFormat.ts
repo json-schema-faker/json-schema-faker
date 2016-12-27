@@ -1,4 +1,4 @@
-import container = require('../class/Container');
+import container from '../class/Container';
 var randexp = container.get('randexp');
 
 /**
@@ -24,4 +24,4 @@ function coreFormatGenerator(coreFormat: string): string {
   });
 }
 
-export = coreFormatGenerator;
+export default coreFormatGenerator;

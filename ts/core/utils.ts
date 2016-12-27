@@ -78,7 +78,7 @@ function merge(a: Object, b: Object): Object {
   return a;
 }
 
-export = {
+export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
   typecast: typecast,

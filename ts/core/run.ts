@@ -1,9 +1,9 @@
-import $RefParser = require('json-schema-ref-parser');
+import $RefParser from 'json-schema-ref-parser';
 
-import container = require('../class/Container');
-import traverse = require('./traverse');
-import random = require('./random');
-import utils = require('./utils');
+import container from '../class/Container';
+import traverse from './traverse';
+import random from './random';
+import utils from './utils';
 
 function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
@@ -86,4 +86,4 @@ function run(schema: JsonSchema, refs?, cwd?) {
   });
 }
 
-export = run;
+export default run;

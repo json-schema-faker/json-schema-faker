@@ -81,7 +81,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   return result;
 }
 
-export = {
+export default {
   pick: pick,
   shuffle: shuffle,
   number: number,

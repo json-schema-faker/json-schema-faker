@@ -1,11 +1,11 @@
-import _boolean = require('./boolean');
-import _null = require('./null');
-import _array = require('./array');
-import _integer = require('./integer');
-import _number = require('./number');
-import _object = require('./object');
-import _string = require('./string');
-import _external = require('./external');
+import _boolean from './boolean';
+import _null from './null';
+import _array from './array';
+import _integer from './integer';
+import _number from './number';
+import _object from './object';
+import _string from './string';
+import _external from './external';
 
 var typeMap: {
   [type: string]: FTypeGenerator;
@@ -20,4 +20,4 @@ var typeMap: {
   external: _external
 };
 
-export = typeMap;
+export default typeMap;

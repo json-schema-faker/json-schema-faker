@@ -1,6 +1,6 @@
-import utils = require('../core/utils');
+import utils from '../core/utils';
 
-import container = require('../class/Container');
+import container from '../class/Container';
 
 type ExternalParameters = any[];
 
@@ -53,4 +53,4 @@ var externalType: FTypeGenerator = function externalType(value: JsonSchema, path
   return utils.typecast(result, value.type);
 };
 
-export = externalType;
+export default externalType;

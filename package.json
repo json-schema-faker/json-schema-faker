@@ -35,6 +35,26 @@
   },
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
+  "tarima": {
+    "src": "ts/**",
+    "dest": "lib",
+    "bundle": true,
+    "ignore": [
+      "**/*.d.ts"
+    ],
+    "filter": [
+      "!*/*/**"
+    ],
+    "rename": [
+      "ts/**:{filepath/1}/{filename}.{extname}"
+    ],
+    "bundleOptions": {
+      "rollup": {
+        "bundle": "JSONSchemaFaker",
+        "format": "umd"
+      }
+    }
+  },
   "dependencies": {
     "casual": "^1.5.8",
     "chance": "^1.0.4",
@@ -52,6 +72,7 @@
     "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.1",
     "lodash.template": "^4.4.0",
+    "rollup": "^0.38.0",
     "semver": "^5.3.0",
     "tslint": "^4.0.2",
     "tv4": "^1.2.7",

@@ -61,7 +61,7 @@ function removeProps(obj, key?, parent?) {
   }
 }
 
-export = function(obj: any) {
+export default function(obj: any) {
   removeProps(obj);
   return obj;
 };

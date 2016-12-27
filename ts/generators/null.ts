@@ -7,4 +7,4 @@ function nullGenerator(): any {
   return null;
 }
 
-export = nullGenerator;
+export default nullGenerator;

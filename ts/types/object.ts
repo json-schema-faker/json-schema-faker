@@ -1,9 +1,9 @@
-import container = require('../class/Container');
-import random = require('../core/random');
-import words = require('../generators/words');
-import utils = require('../core/utils');
-import option = require('../api/option');
-import ParseError = require('../core/error');
+import container from '../class/Container';
+import random from '../core/random';
+import words from '../generators/words';
+import utils from '../core/utils';
+import option from '../api/option';
+import ParseError from '../core/error';
 
 var randexp = container.get('randexp');
 
@@ -126,4 +126,4 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
   return traverseCallback(props, path.concat(['properties']), resolve);
 };
 
-export = objectType;
+export default objectType;
