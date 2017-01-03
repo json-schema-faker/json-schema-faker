@@ -60,7 +60,8 @@
     "chance": "^1.0.4",
     "faker": "^3.1.0",
     "json-schema-ref-parser": "^3.1.2",
-    "randexp": "^0.4.3"
+    "randexp": "^0.4.3",
+    "tslib": "^1.4.0"
   },
   "devDependencies": {
     "clone": "^2.1.0",
