@@ -42,7 +42,7 @@
     "randexp": "^0.4.3"
   },
   "devDependencies": {
-    "browserify": "^13.1.1",
+    "browserify": "^14.1.0",
     "casual": "^1.5.8",
     "clone": "^2.1.0",
     "codecov": "^1.0.1",
