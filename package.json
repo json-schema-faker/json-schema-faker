@@ -5,18 +5,17 @@
   "homepage": "http://json-schema-faker.js.org",
   "main": "index.js",
   "scripts": {
-    "test:lint": "tslint ts/**/*.ts && eslint lib",
+    "build": "tarima -qf",
+    "test:lint": "tslint ts/**/*.ts",
     "test:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",
     "test:schema": "jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
-    "test": "npm run test:lint && npm run test:unit && npm run test:schema",
+    "test": "yarn test:lint && yarn build && yarn test:unit && yarn test:schema",
     "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
     "dist": "node build/dist.js",
-    "tsc": "bash build/tsc.sh",
-    "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
-    "typedoc": "./node_modules/.bin/typedoc --out docs/html ts/ --module commonjs",
-    "graphviz": "./node_modules/.bin/madge lib --dot > structure.gv"
+    "typedoc": "typedoc --out docs/html ts/ --module commonjs",
+    "graphviz": "madge lib --dot > structure.gv"
   },
   "contributors": [
     {
@@ -75,6 +74,7 @@
     "lodash.template": "^4.4.0",
     "rollup": "^0.38.0",
     "semver": "^5.3.0",
+    "tarima-cli": "gextech/tarima-cli",
     "tslint": "^4.0.2",
     "tv4": "^1.2.7",
     "typedoc": "^0.5.1",
