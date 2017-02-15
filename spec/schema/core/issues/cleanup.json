@@ -1,0 +1,56 @@
+[
+  {
+    "description": "should solve #243",
+    "schemas": [
+      {
+        "type": "array",
+        "minItems": 10,
+        "maxItems": 20,
+        "items": {
+          "type": "object",
+          "properties": {
+            "salary": {
+              "type": "object",
+              "properties": {
+                "amount": {
+                  "type": "number",
+                  "faker": {
+                    "random.number": {
+                      "min": 2000,
+                      "max": 5000,
+                      "precision": 100
+                    }
+                  }
+                },
+                "currency": {
+                  "enum": ["GBP", "USD", "EUR", "PLN"]
+                }
+              },
+              "required": [
+                "amount",
+                "currency"
+              ]
+            },
+            "hiredAt": {
+              "faker": {
+                "date.between": ["1990-01-01", "2012-12-29"]
+              }
+            }
+          },
+          "required": [
+            "salary",
+            "hiredAt"
+          ]
+        }
+      }
+    ],
+    "tests": [
+      {
+        "description": "should keep faker props",
+        "schema": "schemas.0",
+        "valid": true,
+        "hasProps": ["salary", "hiredAt"]
+      }
+    ]
+  }
+]

@@ -20,6 +20,14 @@ tryTest = (test, refs, schema) ->
       console.log 'OUT', JSON.stringify(sample, null, 2)
       return
 
+    if test.hasProps
+      test.hasProps.forEach (prop) ->
+        if Array.isArray(sample)
+          sample.forEach (s) ->
+            expect(s[prop]).not.toBeUndefined()
+        else
+          expect(sample[prop]).not.toBeUndefined()
+
     if test.hasNot
       expect(JSON.stringify sample).not.toContain test.hasNot
 

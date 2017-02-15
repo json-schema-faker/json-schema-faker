@@ -1,4 +1,3 @@
-import clean from './clean';
 import random from './random';
 import ParseError from './error';
 import inferType from './infer';
@@ -92,7 +91,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     }
   }
 
-  return clean(copy);
+  return copy;
 }
 
 export default traverse;
