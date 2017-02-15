@@ -6,21 +6,23 @@
   "main": "index.js",
   "scripts": {
     "build": "tarima -qf",
+    "build:dist": "node build/dist.js",
+    "test": "yarn test:lint && yarn build && yarn test:unit && yarn test:schema",
     "test:lint": "tslint ts/**/*.ts",
     "test:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",
     "test:schema": "jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
-    "test": "yarn test:lint && yarn build && yarn test:unit && yarn test:schema",
     "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
-    "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "dist": "node build/dist.js",
+    "cover:unit": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec/unit",
+    "cover:schema": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec/schema",
     "typedoc": "typedoc --out docs/html ts/ --module commonjs",
     "graphviz": "madge lib --dot > structure.gv"
   },
   "contributors": [
     {
       "name": "Alvaro Cabrera",
-      "email": "pateketrueke@gmail.com"
+      "email": "pateketrueke@gmail.com",
+      "url": "https://soypache.co"
     },
     {
       "name": "Tomasz Ducin",
