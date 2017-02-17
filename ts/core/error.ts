@@ -9,7 +9,9 @@ declare class Error implements ErrorInterface {
 class ParseError extends Error {
   constructor(message: string, public path: StackTrace) {
     super();
-    Error.captureStackTrace(this, this.constructor);
+    if (Error.captureStackTrace) {
+      Error.captureStackTrace(this, this.constructor);
+    }
     this.name = 'ParseError';
     this.message = message;
     this.path = path;
