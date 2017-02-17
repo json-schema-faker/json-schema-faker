@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.4.0
+ * json-schema-faker library v0.4.1
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-04-09 21:51:28.808Z
+ * Date: 2017-04-10 02:41:22.036Z
  */
 
 var JSONSchemaFaker = (function () {
