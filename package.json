@@ -5,6 +5,7 @@
   "homepage": "http://json-schema-faker.js.org",
   "main": "index.js",
   "scripts": {
+    "dist": "yarn build && yarn build:dist",
     "build": "tarima -qf",
     "build:dist": "node build/dist.js",
     "test": "yarn test:lint && yarn build && yarn test:unit && yarn test:schema",
@@ -53,12 +54,13 @@
     "bundleOptions": {
       "rollup": {
         "bundle": "JSONSchemaFaker",
-        "format": "umd"
+        "format": "cjs",
+        "interop": false
       }
     }
   },
   "dependencies": {
-    "casual": "1.5.8",
+    "casual-cjs": "1.5.10",
     "chance": "1.0.4",
     "faker": "3.0.1",
     "json-schema-ref-parser": "3.1.2",
@@ -76,6 +78,8 @@
     "jayschema": "0.3.1",
     "lodash.template": "4.4.0",
     "rollup": "0.38.0",
+    "rollup-plugin-commonjs": "^7.0.0",
+    "rollup-plugin-node-resolve": "^2.0.0",
     "semver": "5.3.0",
     "tarima-cli": "gextech/tarima-cli",
     "ts-node": "2.1.0",
