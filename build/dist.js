@@ -1,12 +1,14 @@
 // discuss
-var bundleName = 'jsf';
+var bundleName = 'JSONSchemaFaker';
 
 // boilerplate...
 var fs = require('fs-extra'),
     path = require('path'),
     glob = require('glob'),
+    rollup = require('rollup'),
     uglifyjs = require('uglify-js'),
-    browserify = require('browserify'),
+    commonJs = require('rollup-plugin-commonjs'),
+    nodeResolve = require('rollup-plugin-node-resolve'),
     template = require('lodash.template');
 
 var buildDir = __dirname,
@@ -21,18 +23,8 @@ var pkg = require(path.join(projectDir, 'package.json')),
 
 var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace('T', ' ') });
 
-// reuse instance later
-var b = browserify({
-  detectGlobals: false,
-  insertGlobals: false,
-  builtins: false,
-  standalone: bundleName
-});
-
 // custom bundler
 function bundle(options, next) {
-  b.reset();
-
   var destFile = path.join(projectDir, 'dist', options.dest || '', options.id + '.js');
 
   if (!options.src) {
@@ -42,41 +34,88 @@ function bundle(options, next) {
     fs.outputFileSync(options.src, localeTemplate({ lang: options.id }));
   }
 
-  b.add(path.resolve(options.src), { expose: pkg.name, entry: true });
+  rollup.rollup({
+    entry: options.src,
+    plugins: [
+      {
+        resolveId(importee, importer) {
+          if (!importer) {
+            return importee;
+          }
 
-  b.bundle(function(err, buffer) {
-    if (err) {
-      return next(err);
+          switch (importee) {
+            case 'json-schema-ref-parser':
+            case 'faker':
+              return importee;
+          }
+        },
+        load(importee) {
+          switch (importee) {
+            case 'json-schema-ref-parser':
+            case 'faker':
+              return 'export default __DEREQ__("' + importee + '");';
+          }
+        },
+      },
+      commonJs(),
+      nodeResolve({
+        module: true,
+        jsnext: true,
+        main: true,
+        browser: true,
+      }),
+    ],
+  }).then(function(_bundle) {
+    var result = _bundle.generate({
+      banner,
+      format: 'iife',
+      moduleName: bundleName,
+    });
+
+    function dereq(file) {
+      return 'createCommonjsModule(function(module, exports) {'
+        + fs.readFileSync(file).toString().replace(/\brequire\b/g, '_dereq_')
+        + '});';
     }
 
-    // write out the generated bundle!
-    var code = buffer.toString();
+    _bundle = result.code.replace(/__DEREQ__\("(.+?)"\);/g, (_, src) => {
+      switch (src) {
+        case 'json-schema-ref-parser':
+          return dereq(require.resolve('json-schema-ref-parser/dist/ref-parser.js'));
 
-    var min = uglifyjs.minify(code, {
+        case 'faker':
+          return dereq(require.resolve('faker/build/build/faker.js'));
+      }
+    });
+
+    var min = uglifyjs.minify(_bundle, {
       fromString: true,
       compress: true,
       mangle: true,
       filename: options.src,
       output: {
         comments: /^!|^\*!|@preserve|@license|@cc_on/
-      }
+      },
     });
 
     // minified output
-    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
+    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), min.code);
 
     // regular output
-    fs.outputFileSync(destFile, banner + code);
+    fs.outputFileSync(destFile, _bundle);
 
     // OK
     console.log('Bundle: ' + destFile);
 
     next();
+  })
+  .catch(function(error) {
+    console.log(error);
   });
 }
 
 var outputs = [
-  { id: pkg.name, src: projectDir }
+  { id: pkg.name, src: path.join(projectDir, 'index.js') }
 ];
 
 // proxied versions from faker's locales
