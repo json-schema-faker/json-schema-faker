@@ -23,8 +23,9 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
     },
   };
 
-  // normalize basedir
-  cwd = (cwd || process.cwd()).replace(/\/+$/, '') + '/';
+  // normalize basedir (browser aware)
+  cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
+  cwd = cwd.replace(/\/+$/, '') + '/';
 
   return $RefParser.dereference(cwd, schema, {
     resolve: {
