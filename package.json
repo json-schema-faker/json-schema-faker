@@ -38,7 +38,7 @@
   "dependencies": {
     "chance": "^1.0.4",
     "deref": "^0.6.4",
-    "faker": "3.0.1",
+    "faker": "4.0.0",
     "randexp": "^0.4.3"
   },
   "devDependencies": {
