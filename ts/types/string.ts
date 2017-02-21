@@ -8,7 +8,7 @@ import option from '../api/option';
 import container from '../class/Container';
 var randexp = container.get('randexp');
 
-function generateFormat(value: IStringSchema): string {
+function generateFormat(value: IStringSchema, invalid: () => string): string {
   switch (value.format) {
     case 'date-time':
       return dateTime();
@@ -24,6 +24,13 @@ function generateFormat(value: IStringSchema): string {
       return coreFormat(value.format);
     default:
       var callback: Function = format(value.format);
+      if (typeof callback === 'undefined') {
+        if (option('failOnInvalidFormat')) {
+          throw new Error('unknown registry key ' + JSON.stringify(value.format));
+        } else {
+          return invalid();
+        }
+      }
       return callback(container.getAll(), value);
   }
 }
@@ -47,7 +54,7 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   }
 
   if (value.format) {
-    output = generateFormat(value);
+    output = generateFormat(value, () => thunk(minLength, maxLength) );
   } else if (value.pattern) {
     output = randexp(value.pattern);
   } else {
