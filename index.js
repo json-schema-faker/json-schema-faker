@@ -1,7 +1,7 @@
 module.exports = require('./lib')
   .extend('casual', function() {
     try {
-      return require('casual');
+      return require('casual-cjs');
     } catch (e) {
       return null;
     }
