@@ -1,4 +1,4 @@
-var numberType = require('../../../lib/types/number');
+var numberType = require('../../../ts/types/number').default;
 
 describe("Number Generator", function() {
   it("should return number with a fractional part", function() {
