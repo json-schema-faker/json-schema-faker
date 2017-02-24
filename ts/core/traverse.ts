@@ -36,6 +36,10 @@ function reduceExternal(schema: IGeneratorSchema, path: SchemaPath): IGeneratorS
 function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   resolve(schema);
 
+  if (schema.thunk) {
+    return traverse(schema.thunk(), [], resolve);
+  }
+
   if (Array.isArray(schema.enum)) {
     return random.pick(schema.enum);
   }

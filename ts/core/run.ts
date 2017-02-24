@@ -37,7 +37,9 @@ function run(schema: JsonSchema) {
         delete sub.anyOf;
         delete sub.oneOf;
 
-        utils.merge(sub, random.pick(mix));
+        sub.thunk = function () {
+          return random.pick(mix);
+        };
       }
 
       for (var prop in sub) {
