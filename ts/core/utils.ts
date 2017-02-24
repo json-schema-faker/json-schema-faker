@@ -78,10 +78,29 @@ function merge(a: Object, b: Object): Object {
   return a;
 }
 
+function clean(obj, isArray) {
+  if (!obj || typeof obj !== 'object') {
+      return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj
+      .map(function (value) { return clean(value, true); })
+      .filter(function (value) { return value; });
+  }
+  Object.keys(obj).forEach(function (k) {
+    obj[k] = clean(obj[k]);
+  });
+  if (!Object.keys(obj).length && isArray) {
+    return undefined;
+  }
+  return obj;
+}
+
 export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
   typecast: typecast,
   clone: clone,
-  merge: merge
+  merge: merge,
+  clean: clean
 };

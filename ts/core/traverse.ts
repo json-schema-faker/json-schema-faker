@@ -1,3 +1,4 @@
+import utils from './utils';
 import random from './random';
 import ParseError from './error';
 import inferType from './infer';
@@ -91,7 +92,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     }
   }
 
-  return copy;
+  return utils.clean(copy);
 }
 
 export default traverse;
