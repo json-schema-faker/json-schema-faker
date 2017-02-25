@@ -9,6 +9,10 @@ import optionAPI from '../api/option';
 function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   schema = resolve(schema);
 
+  if (typeof schema === 'function') {
+    return utils.clean(schema());
+  }
+
   if (Array.isArray(schema.enum)) {
     return random.pick(schema.enum);
   }
