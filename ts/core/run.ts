@@ -1,4 +1,3 @@
-import container from '../class/Container';
 import traverse from './traverse';
 import random from './random';
 import utils from './utils';
@@ -8,7 +7,7 @@ function isKey(prop: string): boolean {
 }
 
 // TODO provide types
-function run(schema: JsonSchema) {
+function run(schema: JsonSchema, container: Container) {
   try {
     return traverse(schema, [], function reduce(sub, maxReduceDepth) {
       if (typeof maxReduceDepth === 'undefined') {
@@ -32,13 +31,14 @@ function run(schema: JsonSchema) {
       }
 
       if (Array.isArray(sub.oneOf || sub.anyOf)) {
+        var key = sub.oneOf ? 'oneOf' : 'anyOf';
         var mix = sub.oneOf || sub.anyOf;
 
         delete sub.anyOf;
         delete sub.oneOf;
 
-        sub.thunk = function () {
-          return random.pick(mix);
+        return {
+          thunk: () => random.pick(mix)
         };
       }
 
@@ -48,7 +48,8 @@ function run(schema: JsonSchema) {
         }
       }
 
-      return sub;
+      // apply custom keywords and formats
+      return container.run(sub);
     });
   } catch (e) {
     if (e.path) {

@@ -1,8 +1,11 @@
 import $RefParser from 'json-schema-ref-parser';
-import container from './class/Container';
+import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';
+import utils from './core/utils';
 import run from './core/run';
+
+var container = new Container();
 
 var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   var $refs = {};
@@ -31,17 +34,29 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
     resolve: {
       fixedRefs: fixedRefs,
     },
-  }).then(run);
+  }).then((schema) => run(schema, container));
 };
 
 jsf.format = format;
 
 jsf.option = option;
 
+// built-in support
+container.define('pattern', utils.randexp);
+
 // returns itself for chaining
 jsf.extend = function(name: string, cb: Function) {
   container.extend(name, cb);
   return jsf;
+};
+
+jsf.define = function(name: string, cb: Function) {
+  container.define(name, cb);
+  return jsf;
+};
+
+jsf.locate = function(name: string) {
+  return container.get(name);
 };
 
 jsf.version = '0.4.0';

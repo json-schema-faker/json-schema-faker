@@ -1,9 +1,3 @@
-import RandExp from 'randexp';
-import option from '../api/option';
-
-// set maximum default, see #193
-RandExp.prototype.max = 10;
-
 type Dependency = any;
 
 /**
@@ -14,23 +8,22 @@ type Registry = {
 };
 
 /**
- * Container is used to wrap external libraries (faker, chance, casual, randexp) that are used among the whole codebase. These
- * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
- * of pure npm module instances. This class supports consistent access to these instances.
+ * Container is used to wrap external generators (faker, chance, casual, etc.) and its dependencies.
+ *
+ * - `jsf.extend('faker')` will enhance or define the given dependency.
+ * - `jsf.define('faker')` will provide the "faker" keyword support.
+ *
+ * RandExp is not longer considered an "extension".
  */
 class Container {
   private registry: Registry;
+  private support: Registry;
 
   constructor() {
-    // static requires - handle both initial dependency load (deps will be available
-    // among other modules) as well as they will be included by browserify AST
-    this.registry = {
-      faker: null,
-      chance: null,
-      casual: null,
-      // randexp is required for "pattern" values
-      randexp: RandExp
-    };
+    // dynamic requires - handle all dependencies
+    // they will NOT be included on the bundle
+    this.registry = {};
+    this.support = {};
   }
 
   /**
@@ -39,10 +32,16 @@ class Container {
    * @param callback
    */
   public extend(name: string, callback: Function): void {
-    if (typeof this.registry[name] === 'undefined') {
-      throw new ReferenceError('"' + name + '" dependency is not allowed.');
-    }
     this.registry[name] = callback(this.registry[name]);
+  }
+
+  /**
+   * Set keyword support by name
+   * @param name
+   * @param callback
+   */
+  public define(name: string, callback: Function): void {
+    this.support[name] = callback;
   }
 
   /**
@@ -53,40 +52,29 @@ class Container {
   public get(name: string): Dependency {
     if (typeof this.registry[name] === 'undefined') {
       throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
-    } else if (name === 'randexp') {
-      var RandExp_ = this.registry['randexp'];
-
-      // wrapped generator
-      return function (pattern): string {
-        var re = new RandExp_(pattern);
-
-        // apply given setting
-        re.max = option('defaultRandExpMax');
-
-        return re.gen();
-      };
     }
     return this.registry[name];
   }
 
   /**
-   * Returns all dependencies
-   *
-   * @returns {Registry}
+   * Apply registered keywords
+   * @param schema
    */
-  public getAll(): Registry {
-    return {
-      faker: this.get('faker'),
-      chance: this.get('chance'),
-      randexp: this.get('randexp'),
-      casual: this.get('casual')
-    };
+  public run(schema: JsonSchema): any {
+    var props = Object.keys(schema);
+    var length = props.length;
+
+    while (length--) {
+      var gen = this.support[props[length]];
+      var value = schema[props[length]];
+
+      if (typeof gen === 'function') {
+        return () => gen(value);
+      }
+    }
+
+    return schema;
   }
 }
 
-// TODO move instantiation somewhere else (out from class file)
-
-// instantiate
-var container = new Container();
-
-export default container;
+export default Container;

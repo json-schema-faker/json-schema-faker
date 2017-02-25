@@ -1,3 +1,18 @@
+import RandExp from 'randexp';
+import optionAPI from '../api/option';
+
+// set maximum default, see #193
+RandExp.prototype.max = 10;
+
+function _randexp(value: string) {
+  var re = new RandExp(value);
+
+  // apply given setting
+  re.max = optionAPI('defaultRandExpMax');
+
+  return re.gen();
+}
+
 function getSubAttribute(obj: any, dotSeparatedKey: string): any {
   var keyElements: string[] = dotSeparatedKey.split('.');
 
@@ -102,5 +117,6 @@ export default {
   typecast: typecast,
   clone: clone,
   merge: merge,
-  clean: clean
+  clean: clean,
+  randexp: _randexp
 };

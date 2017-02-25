@@ -1,7 +1,7 @@
 import random from '../core/random';
 import utils from '../core/utils';
 import ParseError from '../core/error';
-import option from '../api/option';
+import optionAPI from '../api/option';
 
 // TODO provide types
 function unique(path: SchemaPath, items, value, sample, resolve, traverseCallback: Function) {
@@ -60,21 +60,21 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
   var minItems = value.minItems;
   var maxItems = value.maxItems;
 
-  if (option('defaultMinItems') && minItems === undefined) {
+  if (optionAPI('defaultMinItems') && minItems === undefined) {
     // fix boundaries
     minItems = !maxItems
-      ? option('defaultMinItems')
-      : Math.min(option('defaultMinItems'), maxItems);
+      ? optionAPI('defaultMinItems')
+      : Math.min(optionAPI('defaultMinItems'), maxItems);
   }
 
-  if (option('maxItems')) {
+  if (optionAPI('maxItems')) {
     // Don't allow user to set max items above our maximum
-    if (maxItems && maxItems > option('maxItems')) {
-      maxItems = option('maxItems');
+    if (maxItems && maxItems > optionAPI('maxItems')) {
+      maxItems = optionAPI('maxItems');
     }
 
     // Don't allow user to set min items above our maximum
-    if (minItems && minItems > option('maxItems')) {
+    if (minItems && minItems > optionAPI('maxItems')) {
       minItems = maxItems;
     }
   }

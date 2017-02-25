@@ -5,7 +5,6 @@ import _integer from './integer';
 import _number from './number';
 import _object from './object';
 import _string from './string';
-import _external from './external';
 
 var typeMap: {
   [type: string]: FTypeGenerator;
@@ -16,8 +15,7 @@ var typeMap: {
   integer: _integer,
   number: _number,
   object: _object,
-  string: _string,
-  external: _external
+  string: _string
 };
 
 export default typeMap;

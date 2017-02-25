@@ -3,7 +3,7 @@ import Registry from './Registry';
 type Option = boolean|number;
 
 /**
- * This class defines a registry for custom formats used within JSF.
+ * This class defines a registry for custom settings used within JSF.
  */
 class OptionRegistry extends Registry<Option> {
 

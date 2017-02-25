@@ -2,11 +2,9 @@ import thunk from '../generators/thunk';
 import ipv4 from '../generators/ipv4';
 import dateTime from '../generators/dateTime';
 import coreFormat from '../generators/coreFormat';
+import optionAPI from '../api/option';
 import format from '../api/format';
-import option from '../api/option';
-
-import container from '../class/Container';
-var randexp = container.get('randexp');
+import utils from '../core/utils';
 
 function generateFormat(value: IStringSchema, invalid: () => string): string {
   switch (value.format) {
@@ -25,13 +23,14 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
     default:
       var callback: Function = format(value.format);
       if (typeof callback === 'undefined') {
-        if (option('failOnInvalidFormat')) {
+        if (optionAPI('failOnInvalidFormat')) {
           throw new Error('unknown registry key ' + JSON.stringify(value.format));
         } else {
           return invalid();
         }
       }
-      return callback(container.getAll(), value);
+
+      return callback(value);
   }
 }
 
@@ -41,28 +40,28 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   var minLength = value.minLength;
   var maxLength = value.maxLength;
 
-  if (option('maxLength')) {
+  if (optionAPI('maxLength')) {
     // Don't allow user to set max length above our maximum
-    if (maxLength && maxLength > option('maxLength')) {
-      maxLength = option('maxLength');
+    if (maxLength && maxLength > optionAPI('maxLength')) {
+      maxLength = optionAPI('maxLength');
     }
 
     // Don't allow user to set min length above our maximum
-    if (minLength && minLength > option('maxLength')) {
-      minLength = option('maxLength');
+    if (minLength && minLength > optionAPI('maxLength')) {
+      minLength = optionAPI('maxLength');
     }
   }
 
   if (value.format) {
     output = generateFormat(value, () => thunk(minLength, maxLength) );
   } else if (value.pattern) {
-    output = randexp(value.pattern);
+    output = utils.randexp(value.pattern);
   } else {
     output = thunk(minLength, maxLength);
   }
 
   while (output.length < minLength) {
-    output += Math.random() > 0.7 ? thunk() : randexp('.+');
+    output += Math.random() > 0.7 ? thunk() : utils.randexp('.+');
   }
 
   if (output.length > maxLength) {
