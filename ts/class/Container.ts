@@ -103,19 +103,20 @@ class Container {
   }
 
   /**
-   * Apply registered keywords
+   * Apply a custom keyword
    * @param schema
    */
-  public run(schema: JsonSchema): any {
-    var props = Object.keys(schema);
-    var length = props.length;
+  public wrap(schema: JsonSchema): any {
+    var keys = Object.keys(schema);
+    var length = keys.length;
 
     while (length--) {
-      var gen = this.support[props[length]];
-      var value = schema[props[length]];
+      var fn = keys[length];
+      var gen = this.support[fn];
 
       if (typeof gen === 'function') {
-        return () => gen(value);
+        schema.generate = () => gen(schema[fn]);
+        break;
       }
     }
 

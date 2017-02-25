@@ -48,8 +48,7 @@ function run(schema: JsonSchema, container: Container) {
         }
       }
 
-      // apply custom keywords and formats
-      return container.run(sub);
+      return container.wrap(sub);
     });
   } catch (e) {
     if (e.path) {

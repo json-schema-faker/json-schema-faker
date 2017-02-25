@@ -9,10 +9,6 @@ import optionAPI from '../api/option';
 function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   schema = resolve(schema);
 
-  if (typeof schema === 'function') {
-    return utils.clean(schema());
-  }
-
   if (Array.isArray(schema.enum)) {
     return random.pick(schema.enum);
   }
@@ -20,6 +16,10 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   // thunks can return sub-schemas
   if (typeof schema.thunk === 'function') {
     return traverse(schema.thunk(), path, resolve);
+  }
+
+  if (typeof schema.generate === 'function') {
+    return utils.clean(schema.generate(), schema.type);
   }
 
   if (optionAPI('useDefaultValue') && 'default' in schema) {
@@ -65,8 +65,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
       copy[prop] = traverse(schema[prop], path.concat([prop]), resolve);
     } else {
-      // function-values are wrapped generators
-      copy[prop] = typeof schema[prop] === 'function' ? schema[prop]() : schema[prop];
+      copy[prop] = schema[prop];
     }
   }
 

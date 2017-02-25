@@ -37,6 +37,8 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   }).then((schema) => run(schema, container));
 };
 
+jsf.utils = utils;
+
 jsf.format = format;
 
 jsf.option = option;
