@@ -19,7 +19,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   }
 
   if (typeof schema.generate === 'function') {
-    return utils.typecast(schema.generate(), schema.type);
+    return utils.typecast(schema.generate(), schema);
   }
 
   if (optionAPI('useDefaultValue') && 'default' in schema) {

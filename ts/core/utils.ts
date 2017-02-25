@@ -50,14 +50,28 @@ function hasProperties(obj: Object, ...properties: string[]): boolean {
  * @param targetType
  * @returns {any}
  */
-function typecast(value: any, targetType: ISchemaInternalType): any {
-  switch (targetType) {
+function typecast(value: any, schema: JsonSchema): any {
+  // FIXME this function should cover most cases and should be reused within generators
+  switch (schema.type) {
     case 'integer':
       return parseInt(value, 10);
     case 'number':
       return parseFloat(value);
     case 'string':
-      return '' + value;
+      value = String(value);
+
+      var min = Math.max(schema.minLength || 0, 0);
+      var max = Math.min(schema.maxLength || Infinity, Infinity);
+
+      while (value.length < min) {
+        value += ' ' + value;
+      }
+
+      if (value.length > max) {
+        value = value.substr(0, max);
+      }
+
+      return value;
     case 'boolean':
       return !!value;
     default:
