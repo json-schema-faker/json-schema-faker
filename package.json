@@ -60,17 +60,16 @@
     }
   },
   "dependencies": {
-    "casual-cjs": "1.5.10",
-    "chance": "1.0.4",
-    "faker": "4.1.0",
     "json-schema-ref-parser": "3.1.2",
     "randexp": "0.4.3",
     "tslib": "1.4.0"
   },
   "devDependencies": {
+    "casual-cjs": "1.5.10",
+    "chance": "1.0.4",
+    "faker": "4.1.0",
     "clone": "2.1.0",
     "codecov": "1.0.1",
-    "eslint": "3.11.1",
     "fs-extra": "1.0.0",
     "glob": "7.1.1",
     "istanbul": "0.4.5",
