@@ -17,6 +17,7 @@
           "format": "semver"
         },
         "valid": true,
+        "repeat": 100,
         "require": "core/formats/semver"
       },
       {
