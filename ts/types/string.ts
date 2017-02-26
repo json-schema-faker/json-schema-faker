@@ -7,6 +7,12 @@ import format from '../api/format';
 import utils from '../core/utils';
 
 function generateFormat(value: IStringSchema, invalid: () => string): string {
+  var callback: Function = format(value.format);
+
+  if (typeof callback === 'function') {
+    return callback(value);
+  }
+
   switch (value.format) {
     case 'date-time':
       return dateTime();
@@ -21,7 +27,6 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
     case 'uri':
       return coreFormat(value.format);
     default:
-      var callback: Function = format(value.format);
       if (typeof callback === 'undefined') {
         if (optionAPI('failOnInvalidFormat')) {
           throw new Error('unknown registry key ' + JSON.stringify(value.format));
@@ -30,7 +35,7 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
         }
       }
 
-      return callback(value);
+      throw new Error('unsupported format "' + value.format + '"');
   }
 }
 
