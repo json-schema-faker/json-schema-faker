@@ -1,5 +1,6 @@
-import RandExp from 'randexp';
 import optionAPI from '../api/option';
+
+const RandExp = require('randexp');
 
 // set maximum default, see #193
 RandExp.prototype.max = 10;
