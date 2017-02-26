@@ -115,7 +115,7 @@ class Container {
       var gen = this.support[fn];
 
       if (typeof gen === 'function') {
-        schema.generate = () => gen(schema[fn]);
+        schema.generate = () => gen(schema[fn], schema);
         break;
       }
     }
