@@ -9,15 +9,10 @@ function isObject(obj) {
 }
 
 function hasNothing(obj) {
-  if (isArray(obj)) {
-    return obj.length === 0;
-  }
-
   if (isObject(obj)) {
     return Object.keys(obj).length === 0;
   }
-
-  return typeof obj === 'undefined' || obj === null;
+  return typeof obj === 'undefined';
 }
 
 function removeProps(obj, key?, parent?) {
