@@ -3,7 +3,7 @@
   "version": "0.4.0",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "dist": "yarn build && yarn build:dist",
     "build": "tarima -qf",
@@ -67,9 +67,9 @@
   "devDependencies": {
     "casual-cjs": "1.5.10",
     "chance": "1.0.4",
-    "faker": "4.1.0",
     "clone": "2.1.0",
     "codecov": "1.0.1",
+    "faker": "4.1.0",
     "fs-extra": "1.0.0",
     "glob": "7.1.1",
     "istanbul": "0.4.5",
