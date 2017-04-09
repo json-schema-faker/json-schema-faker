@@ -6,7 +6,7 @@
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-04-10 02:41:22.036Z
+ * Date: 2017-04-10 03:05:27.114Z
  */
 
 var JSONSchemaFaker = (function () {
