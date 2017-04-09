@@ -1,6 +1,6 @@
 fs = require('fs')
 glob = require('glob')
-jsf = require('../../index')
+jsf = require('../../')
 
 pick = (obj, key) ->
   parts = key.split('.')

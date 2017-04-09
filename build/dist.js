@@ -14,25 +14,16 @@ var fs = require('fs-extra'),
 var buildDir = __dirname,
     projectDir = path.join(__dirname, '..');
 
-var BANNER_TEXT = fs.readFileSync(path.join(buildDir, '.banner.txt')).toString(),
-    LOCALE_TEXT = fs.readFileSync(path.join(buildDir, '.locale.js')).toString();
+var BANNER_TEXT = fs.readFileSync(path.join(buildDir, '.banner.txt')).toString();
 
 var pkg = require(path.join(projectDir, 'package.json')),
-    bannerTemplate = template(BANNER_TEXT),
-    localeTemplate = template(LOCALE_TEXT);
+    bannerTemplate = template(BANNER_TEXT);
 
 var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace('T', ' ') });
 
 // custom bundler
 function bundle(options, next) {
   var destFile = path.join(projectDir, 'dist', options.dest || '', options.id + '.js');
-
-  if (!options.src) {
-    // bundle from generated source
-    options.src = path.join(projectDir, options.dest, options.id + '.js');
-
-    fs.outputFileSync(options.src, localeTemplate({ lang: options.id }));
-  }
 
   rollup.rollup({
     entry: options.src,
@@ -45,14 +36,12 @@ function bundle(options, next) {
 
           switch (importee) {
             case 'json-schema-ref-parser':
-            case 'faker':
               return importee;
           }
         },
         load(importee) {
           switch (importee) {
             case 'json-schema-ref-parser':
-            case 'faker':
               return 'export default __DEREQ__("' + importee + '");';
           }
         },
@@ -79,12 +68,8 @@ function bundle(options, next) {
     }
 
     _bundle = result.code.replace(/__DEREQ__\("(.+?)"\);/g, (_, src) => {
-      switch (src) {
-        case 'json-schema-ref-parser':
-          return dereq(require.resolve('json-schema-ref-parser/dist/ref-parser.js'));
-
-        case 'faker':
-          return dereq(require.resolve('faker/build/build/faker.js'));
+      if (src === 'json-schema-ref-parser') {
+        return dereq(require.resolve('json-schema-ref-parser/dist/ref-parser.js'));
       }
     });
 
@@ -115,15 +100,8 @@ function bundle(options, next) {
 }
 
 var outputs = [
-  { id: pkg.name, src: path.join(projectDir, 'index.js') }
+  { id: pkg.name, src: path.join(projectDir, 'lib/index.js') }
 ];
-
-// proxied versions from faker's locales
-var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
-
-languages.forEach(function(lang) {
-  outputs.push({ id: path.basename(lang, '.js'), dest: 'locale' });
-});
 
 console.log('Preparing all sources...');
 

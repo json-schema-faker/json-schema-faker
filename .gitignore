@@ -1,6 +1,7 @@
 # IDEs
 .idea
 .vscode
+.tarima
 
 *~
 *.log

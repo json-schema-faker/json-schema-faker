@@ -1,6 +1,6 @@
 module.exports = {
-    extend: function (faker) {
-        faker.locale = "de";
+    extend: function () {
+        var faker = require('faker/locale/de');
 
         faker.mixin = function (namespace, fnObject) {
             faker[namespace] = fnObject;
