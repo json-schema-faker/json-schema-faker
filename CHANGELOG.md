@@ -1,6 +1,19 @@
-UPCOMING:
+v0.5.0-rc1
+  date: 2017-04-10
   changes:
-    - faker and chance are not longer required as dependencies
+    - Improve dist and sources; see #133
+    - Drop external generators' dependencies; see #164
+    - Use ES6 module syntax w/ Rollup for better bundles
+    - Try custom formats before built-in ones; fix #88
+    - Avoid extreme future dates for built-in datetime format; fix #180
+    - Apply common constraints, see #153
+    - Normalize general strategy for custom generators; see #251
+    - Rewrite container for handling keywords; fix #169
+    - Hack thunk() method for picking random oneOf/anyOf values; see #239
+    - Fast clean(); fixing prune strategy, see #238 #232 #227 #243
+    - Allow generation of numbers with fractional part. (#249)
+    - Allow for a fallback if format is not recognized. (#250)
+    - Use json-schema-ref-parser for dereferencing
 v0.4.0
   date: ?
   changes:
