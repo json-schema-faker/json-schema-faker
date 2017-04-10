@@ -3,10 +3,10 @@
  * http://json-schema-faker.js.org
  * @preserve
  *
- * Copyright (c) 2014-2012017 Alvaro Cabrera & Tomasz Ducin
+ * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-04-10 05:42:59.488Z
+ * Date: 2017-04-10 05:43:22.914Z
  */
 
 (function (global, factory) {
