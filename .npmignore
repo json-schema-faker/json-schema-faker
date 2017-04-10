@@ -4,6 +4,10 @@
 *.tgz
 .DS_Store
 build-dist.js
+bower.json
+tslint.json
+/ts
+/docs
 /spec
 /build
 /package
