@@ -15,11 +15,34 @@ Use [JSON Schema](http://json-schema.org/) along with fake generators to provide
 
 We are looking for **contributors**! If you wanna help us make `jsf` more awesome, simply write us so!
 
-## NEW in JSON Schema Faker: store schemas online!
+## What's new?
 
-[![save JSON Schema online](logo/other/save-button-small.png)](http://json-schema-faker.js.org/)
+A release candidate for `v0.5.x` series was released in order to support local/remote reference downloading thanks to `json-schema-ref-parser`, this change forced `jsf` to be completely async.
 
+```js
+var jsf = require('json-schema-faker');
 
+var REMOTE_REF = 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json';
+
+var schema = {
+  $ref: REMOTE_REF
+};
+
+jsf(schema).then(function(result) {
+  console.log(JSON.stringify(result, null, 2));
+});
+```
+
+**WIP: BREAKING CHANGES**
+
+- All code examples from previous versions (`v0.4.x` and below) will not work, however the fix is easy
+- All dependent tools are of course outdated and they may not work as expected, please take care of this: If you're a maintainer please upgrade your API.
+
+Until a polished `v0.5.0` version is released we encourage you to use and test around this RC, the main API will remain intact but probably option names, or subtle behaviors can be introduced.
+
+Examples, new ideas, tips and any kind of kindly feedback is greatly appreciated.
+
+Thanks for all your feedback in advance to everyone!
 
 # Table of contents
 
@@ -82,7 +105,7 @@ Install `json-schema-faker` with bower:
 JSON-Schema-faker is also available at [cdnjs.com](https://www.cdnjs.com/libraries/json-schema-faker). This means you can just include the script file into your HTML:
 
     # remember to update the version number!
-    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.4.1/json-schema-faker.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/json-schema-faker/0.5.0-rc1/json-schema-faker.min.js"></script>
 
 It will be fetched from the [Content Delivery Network](https://en.wikipedia.org/wiki/Content_delivery_network) without installing any node.js package.
 
@@ -93,10 +116,9 @@ You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfi
 JSON-Schema-faker (or `jsf` for short) combines two things:
 
  * The [JSON-schema specification](http://json-schema.org/), that defines what is the allowed content of a JSON document
- * Fake data generators, that are used to generate basic or complex data, conforming to the schema. Following libraries come bundled with jsf:
-   * [faker.js](https://github.com/Marak/faker.js)
-   * [chance.js](https://github.com/victorquinn/chancejs)
-   * [randexp](https://github.com/fent/randexp.js)
+ * Fake data generators, that are used to generate basic or complex data, conforming to the schema.
+
+Since `v0.5.x` external generators are not longer bundled with jsf, however built-in defaults are shipped for all basic types and formats.
 
 ## Example usage
 
@@ -135,13 +157,13 @@ var schema = {
   }
 };
 
-var sample = jsf(schema);
+jsf(schema).then(function(sample) {
+  console.log(sample);
+  // "[object Object]"
 
-console.log(sample);
-// "[object Object]"
-
-console.log(sample.user.name);
-// "John Doe"
+  console.log(sample.user.name);
+  // "John Doe"
+});
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/927cf888cbc250a2b8e60eb5834cdfbd))
 
@@ -150,7 +172,7 @@ console.log(sample.user.name);
 ```javascript
 var jsf = require('json-schema-faker');
 console.log(jsf.version);
-// "0.3.6"
+// "0.5.0-rc1"
 ```
 
 ### More examples
@@ -234,7 +256,7 @@ Below is the list of supported keywords:
 
 Inline references are fully supported (json-pointers) but external can't be resolved by `jsf`.
 
-In order to achieve that you can use [refaker](https://github.com/json-schema-faker/refaker) and then use the resolved schemas:
+Remote en local references are automatically resolved thanks to `json-schema-ref-parser`.
 
 ```javascript
 var schema = {
@@ -253,17 +275,23 @@ var refs = [
   }
 ];
 
-var sample = jsf(schema, refs);
-
-console.log(sample.someValue);
-// "voluptatem"
+jsf(schema, refs).then(function(sample) {
+  console.log(sample.someValue);
+  // "voluptatem"
+});
 ```
+
+Local references are always resolved from the `process.cwd()`, of course you can specify a custom folder to look-up: `jsf(schema, refs, cwd)`
 
 ## Faking values
 
-`jsf` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) are also supported.
+`jsf` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) (and others) are also supported but they require setup:
 
-You can use **faker** or **chance** properties but they are optional:
+```js
+jsf.extend('faker', function() {
+  return require('faker');
+});
+```
 
 ```json
 {
@@ -366,18 +394,13 @@ then you need to wrap it with an array once more (twice in total). The outer bra
 ```
 ([demo »](http://json-schema-faker.js.org/#gist/792d626e7d92841ded5be59b8ed001eb))
 
-**BREAKING CHANGES**
-
-> Since `0.3.0` the `faker` and `chance` dependencies aren't shipped by default,
-> in order to use both generators you MUST install them with `npm install faker chance --save`.
-
 ## Custom formats
 
 Additionally, you can add custom generators for those:
 
 ```javascript
-jsf.format('semver', function(gen, schema) {
-  return gen.randexp('^\\d\\.\\d\\.\\d{1,2}$');
+jsf.format('semver', function() {
+  return jsf.utils.randexp('\\d\\.\\d\\.[1-9]\\d?');
 });
 ```
 
@@ -399,10 +422,6 @@ Usage:
 
 Callback:
 
-- **gen** (object) &mdash; Built in generators
-  - **faker** (object) &mdash; Faker.js instance
-  - **chance** (object) &mdash; Chance.js instance
-  - **randexp** (function) &mdash; Randexp generator
 - **schema** (object) &mdash; The schema for input
 
 Note that custom generators has lower precedence than core ones.
@@ -431,7 +450,9 @@ You may extend [Faker.js](http://marak.com/faker.js/):
 ```javascript
 var jsf = require('json-schema-faker');
 
-jsf.extend('faker', function(faker){
+jsf.extend('faker', function(){
+  var faker = require('faker');
+
   faker.locale = "de"; // or any other language
   faker.custom = {
     statement: function(length) {
@@ -448,7 +469,7 @@ var schema = {
   }
 }
 
-var sample = jsf(schema);
+jsf(schema).then(...);
 ```
 
 or if you want to use [faker's *individual localization packages*](https://github.com/Marak/faker.js#individual-localization-packages), simply do the following:
@@ -467,7 +488,10 @@ You can also extend [Chance.js](http://chancejs.com/), using built-in [chance.mi
 ```javascript
 var jsf = require('json-schema-faker');
 
-jsf.extend('chance', function(chance){
+jsf.extend('chance', function(){
+  var Chance = require('chance');
+  var chance = new Chance();
+
   chance.mixin({
     'user': function() {
       return {
@@ -486,10 +510,10 @@ var schema = {
   "chance": "user"
 }
 
-var sample = jsf(schema);
+jsf(schema).then(...);
 ```
 
-The first parameter of `extend` function is the generator name (`faker` or `chance`). The second one is the function that accepts the dependency library; the function alters the library and **returns it**.
+The first parameter of `extend` function is the generator name (`faker`, `chance`, etc.). The second one is the function that **must return** the dependency library.
 
 ## Inferred Types
 
@@ -544,14 +568,9 @@ Thanks to it, you can use valid swagger definitions for `jsf` data generation.
 
 ## Bundling
 
-JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using [browserify](http://browserify.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
+JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using [Rollup.js](http://rollupjs.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
 
-However, you may want to bundle a smaller package of `jsf`, because:
-* you want to reduce the bundle file size
-* you don't need all languages from faker.js
-* you wish to use chance.js only and get rid of other dependencies
-* or for any other reason...
-In that case you may bundle the distribution yourself manually. It's easily achievable: just modify the [`lib/util/container.js`](lib/util/container.js) file and either remove o rmodify the `require` calls (they're directly used by browserify to include dependencies). Automation of this feature is expected in near future.
+From `v0.5.x` and beyond we'll not longer bundle external generators, locales and such due the unnecessary waste of time and space.
 
 ## Contribution
 
@@ -586,5 +605,3 @@ There were some existing projects or services trying to achieve similar goals as
 - https://github.com/tomarad/JSON-Schema-Instantiator
 
 but they were either incomplete, outdated, broken or non-standard. That's why `jsf` was created.
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/json-schema-faker/json-schema-faker/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
