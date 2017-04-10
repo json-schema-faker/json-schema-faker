@@ -37,9 +37,6 @@ class Registry<T> {
    */
   public get(name: string): T {
     var format: T = this.data[name];
-    if (typeof format === 'undefined') {
-      throw new Error('unknown registry key ' + JSON.stringify(name));
-    }
     return format;
   }
 
@@ -52,4 +49,4 @@ class Registry<T> {
 
 }
 
-export = Registry;
+export default Registry;

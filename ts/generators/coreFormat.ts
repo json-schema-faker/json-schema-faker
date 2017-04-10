@@ -1,5 +1,4 @@
-import container = require('../class/Container');
-var randexp = container.get('randexp');
+import utils from '../core/utils';
 
 /**
  * Predefined core formats
@@ -19,9 +18,9 @@ var regexps: IStringMap = {
  * @returns {string}
  */
 function coreFormatGenerator(coreFormat: string): string {
-  return randexp(regexps[coreFormat]).replace(/\{(\w+)\}/, function(match: string, key: string) {
-    return randexp(regexps[key]);
+  return utils.randexp(regexps[coreFormat]).replace(/\{(\w+)\}/, function(match: string, key: string) {
+    return utils.randexp(regexps[key]);
   });
 }
 
-export = coreFormatGenerator;
+export default coreFormatGenerator;

@@ -1,6 +1,7 @@
 # IDEs
 .idea
 .vscode
+.tarima
 
 *~
 *.log
@@ -13,3 +14,4 @@
 /nbproject
 /node_modules
 /locale
+/build/index.json

@@ -1,50 +1,21 @@
-import deref = require('deref');
-
-import container = require('../class/Container');
-import traverse = require('./traverse');
-import random = require('./random');
-import utils = require('./utils');
+import traverse from './traverse';
+import random from './random';
+import utils from './utils';
 
 function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 
 // TODO provide types
-function run(schema, refs?, ex?) {
-  var $ = deref();
-  var _ = {};
-
+function run(schema: JsonSchema, container: Container) {
   try {
-    return traverse($(schema, refs, ex), [], function reduce(sub, maxReduceDepth) {
+    return traverse(schema, [], function reduce(sub, maxReduceDepth) {
       if (typeof maxReduceDepth === 'undefined') {
         maxReduceDepth = random.number(1, 3);
       }
 
       if (!sub) {
         return null;
-      }
-
-      if (typeof sub.$ref === 'string') {
-          var id = sub.$ref;
-
-          // match and increment seen references
-          if (!_[id]) {
-            _[id] = 0;
-          }
-
-          _[id] += 1;
-
-          // cleanup
-          delete sub.$ref;
-
-          if (_[id] > maxReduceDepth) {
-            delete sub.oneOf;
-            delete sub.anyOf;
-            delete sub.allOf;
-            return sub;
-          }
-
-          utils.merge(sub, $.util.findByRef(id, $.refs));
       }
 
       if (Array.isArray(sub.allOf)) {
@@ -54,18 +25,21 @@ function run(schema, refs?, ex?) {
 
         // this is the only case where all sub-schemas
         // must be resolved before any merge
-        schemas.forEach(function(schema: JsonSchema) {
-          utils.merge(sub, reduce(schema, maxReduceDepth + 1));
+        schemas.forEach(function(subSchema: JsonSchema) {
+          utils.merge(sub, reduce(subSchema, maxReduceDepth + 1));
         });
       }
 
       if (Array.isArray(sub.oneOf || sub.anyOf)) {
+        var key = sub.oneOf ? 'oneOf' : 'anyOf';
         var mix = sub.oneOf || sub.anyOf;
 
         delete sub.anyOf;
         delete sub.oneOf;
 
-        utils.merge(sub, random.pick(mix));
+        return {
+          thunk: () => random.pick(mix)
+        };
       }
 
       for (var prop in sub) {
@@ -74,7 +48,7 @@ function run(schema, refs?, ex?) {
         }
       }
 
-      return sub;
+      return container.wrap(sub);
     });
   } catch (e) {
     if (e.path) {
@@ -85,4 +59,4 @@ function run(schema, refs?, ex?) {
   }
 }
 
-export = run;
+export default run;

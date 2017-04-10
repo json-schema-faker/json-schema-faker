@@ -1,5 +1,8 @@
 module.exports = {
-    extend: function (chance) {
+    extend: function () {
+        var Chance = require('chance');
+        var chance = new Chance();
+
         chance.mixin({
             'user': function() {
                 return {

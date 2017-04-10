@@ -1,8 +1,43 @@
-import RandExp = require('randexp');
-import option = require('../api/option');
+// dynamic proxy for custom generators
+function proxy(gen) {
+  return (value) => {
+    var fn = value;
+    var args = [];
 
-// set maximum default, see #193
-RandExp.prototype.max = 10;
+    // support for nested object, first-key is the generator
+    if (typeof value === 'object') {
+      fn = Object.keys(value)[0];
+
+      // treat the given array as arguments,
+      if (Array.isArray(value[fn])) {
+        // if the generator is expecting arrays they should be nested, e.g. `[[1, 2, 3], true, ...]`
+        args = value[fn];
+      } else {
+        args.push(value[fn]);
+      }
+    }
+
+    // support for keypaths, e.g. "internet.email"
+    var props = fn.split('.');
+
+    // retrieve a fresh dependency
+    var ctx = gen();
+
+    while (props.length > 1) {
+      ctx = ctx[props.shift()];
+    }
+
+    // retrieve last value from context object
+    value = typeof ctx === 'object' ? ctx[props[0]] : ctx;
+
+    // invoke dynamic generators
+    if (typeof value === 'function') {
+      value = value.apply(ctx, args);
+    }
+
+    return value;
+  };
+}
 
 type Dependency = any;
 
@@ -14,23 +49,22 @@ type Registry = {
 };
 
 /**
- * Container is used to wrap external libraries (faker, chance, casual, randexp) that are used among the whole codebase. These
- * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
- * of pure npm module instances. This class supports consistent access to these instances.
+ * Container is used to wrap external generators (faker, chance, casual, etc.) and its dependencies.
+ *
+ * - `jsf.extend('faker')` will enhance or define the given dependency.
+ * - `jsf.define('faker')` will provide the "faker" keyword support.
+ *
+ * RandExp is not longer considered an "extension".
  */
 class Container {
   private registry: Registry;
+  private support: Registry;
 
   constructor() {
-    // static requires - handle both initial dependency load (deps will be available
-    // among other modules) as well as they will be included by browserify AST
-    this.registry = {
-      faker: null,
-      chance: null,
-      casual: null,
-      // randexp is required for "pattern" values
-      randexp: RandExp
-    };
+    // dynamic requires - handle all dependencies
+    // they will NOT be included on the bundle
+    this.registry = {};
+    this.support = {};
   }
 
   /**
@@ -39,10 +73,21 @@ class Container {
    * @param callback
    */
   public extend(name: string, callback: Function): void {
-    if (typeof this.registry[name] === 'undefined') {
-      throw new ReferenceError('"' + name + '" dependency is not allowed.');
-    }
     this.registry[name] = callback(this.registry[name]);
+
+    // built-in proxy (can be overridden)
+    if (!this.support[name]) {
+      this.support[name] = proxy(() => this.registry[name]);
+    }
+  }
+
+  /**
+   * Set keyword support by name
+   * @param name
+   * @param callback
+   */
+  public define(name: string, callback: Function): void {
+    this.support[name] = callback;
   }
 
   /**
@@ -53,40 +98,30 @@ class Container {
   public get(name: string): Dependency {
     if (typeof this.registry[name] === 'undefined') {
       throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
-    } else if (name === 'randexp') {
-      var RandExp_ = this.registry['randexp'];
-
-      // wrapped generator
-      return function (pattern): string {
-        var re = new RandExp_(pattern);
-
-        // apply given setting
-        re.max = option('defaultRandExpMax');
-
-        return re.gen();
-      };
     }
     return this.registry[name];
   }
 
   /**
-   * Returns all dependencies
-   *
-   * @returns {Registry}
+   * Apply a custom keyword
+   * @param schema
    */
-  public getAll(): Registry {
-    return {
-      faker: this.get('faker'),
-      chance: this.get('chance'),
-      randexp: this.get('randexp'),
-      casual: this.get('casual')
-    };
+  public wrap(schema: JsonSchema): any {
+    var keys = Object.keys(schema);
+    var length = keys.length;
+
+    while (length--) {
+      var fn = keys[length];
+      var gen = this.support[fn];
+
+      if (typeof gen === 'function') {
+        schema.generate = () => gen(schema[fn], schema);
+        break;
+      }
+    }
+
+    return schema;
   }
 }
 
-// TODO move instantiation somewhere else (out from class file)
-
-// instantiate
-var container = new Container();
-
-export = container;
+export default Container;

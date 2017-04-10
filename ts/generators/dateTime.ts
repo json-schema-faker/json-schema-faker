@@ -1,4 +1,6 @@
-import random = require('../core/random');
+import random from '../core/random';
+
+const MOST_NEAR_DATETIME = 2524608000000;
 
 /**
  * Generates randomized date time ISO format string.
@@ -6,7 +8,12 @@ import random = require('../core/random');
  * @returns {string}
  */
 function dateTimeGenerator(): string {
-  return new Date(random.number(0, 100000000000000)).toISOString();
+  var date = new Date();
+  var days = random.number(-1000, MOST_NEAR_DATETIME);
+
+  date.setTime(date.getTime() - days);
+
+  return date.toISOString();
 }
 
-export = dateTimeGenerator;
+export default dateTimeGenerator;
