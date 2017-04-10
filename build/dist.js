@@ -57,7 +57,7 @@ function bundle(options, next) {
   }).then(function(_bundle) {
     var result = _bundle.generate({
       banner,
-      format: 'iife',
+      format: 'umd',
       moduleName: bundleName,
     });
 
@@ -99,20 +99,11 @@ function bundle(options, next) {
   });
 }
 
-var outputs = [
-  { id: pkg.name, src: path.join(projectDir, 'lib/index.js') }
-];
+console.log('Building...');
 
-console.log('Preparing all sources...');
-
-(function next(err) {
+bundle({ id: pkg.name, src: path.join(projectDir, 'lib/index.js') }, function(err) {
   if (err) {
     throw err;
+    return;
   }
-
-  var opts = outputs.shift();
-
-  if (opts) {
-    bundle(opts, next);
-  }
-})();
+});
