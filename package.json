@@ -85,7 +85,7 @@
     "tslint": "4.0.2",
     "tv4": "1.2.7",
     "typedoc": "0.5.1",
-    "typescript": "2.1.1",
+    "typescript": "2.3.1",
     "uglify-js": "2.7.4",
     "z-schema": "3.18.1"
   },
