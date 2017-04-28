@@ -66,7 +66,7 @@
   },
   "devDependencies": {
     "casual-cjs": "1.5.10",
-    "chance": "1.0.4",
+    "chance": "1.0.7",
     "clone": "2.1.0",
     "codecov": "1.0.1",
     "faker": "4.1.0",
