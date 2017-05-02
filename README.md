@@ -432,6 +432,7 @@ You may define following options for `jsf` that alter its behavior:
 
 - `failOnInvalidTypes`: boolean - don't throw exception when invalid type passed
 - `defaultInvalidTypeProduct`: - default value generated for a schema with invalid type (works only if `failOnInvalidTypes` is set to `false`)
+- `failOnInvalidFormat`: boolean - don't throw exception when invalid format passed
 - `maxItems`: number - Configure a maximum amount of items to generate in an array. This will override the maximum items found inside a JSON Schema.
 - `maxLength`: number - Configure a maximum length to allow generating strings for. This will override the maximum length found inside a JSON Schema.
 
