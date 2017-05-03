@@ -81,7 +81,7 @@
     "rollup-plugin-node-resolve": "^2.0.0",
     "semver": "5.3.0",
     "tarima-cli": "gextech/tarima-cli",
-    "ts-node": "2.1.0",
+    "ts-node": "3.0.3",
     "tslint": "4.0.2",
     "tv4": "1.2.7",
     "typedoc": "0.5.1",
