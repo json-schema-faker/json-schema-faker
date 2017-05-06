@@ -86,7 +86,7 @@
     "tv4": "1.2.7",
     "typedoc": "0.5.1",
     "typescript": "2.1.1",
-    "uglify-js": "2.7.4",
+    "uglify-js": "3.0.0",
     "z-schema": "3.18.1"
   },
   "keywords": [
