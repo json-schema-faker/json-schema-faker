@@ -74,6 +74,6 @@ jsf.locate = function(name: string) {
   return container.get(name);
 };
 
-jsf.version = '0.5.0-rc1';
+jsf.version = '0.5.0-rc2';
 
 export default jsf;
