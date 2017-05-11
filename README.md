@@ -42,6 +42,10 @@ Until a polished `v0.5.0` version is released we encourage you to use and test a
 
 Examples, new ideas, tips and any kind of kindly feedback is greatly appreciated.
 
+**NEW: BACKWARD COMPATIBILITY**
+
+- Since `0.5.0-rc2` we introduced a `jsf.sync()` method for fast results. This way all your sync code will keep working as expected.
+
 Thanks for all your feedback in advance to everyone!
 
 # Table of contents
