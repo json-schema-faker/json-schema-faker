@@ -1,0 +1,51 @@
+[
+  {
+    "description": "should work on sync/async mode",
+    "tests": [
+      {
+        "description": "should resolve all references in async mode",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "#/definitions/test"
+            }
+          },
+          "definitions": {
+            "test": {
+              "type": "string"
+            },
+            "other": {
+              "$ref": "ok"
+            }
+          }
+        },
+        "refs": [
+          {
+            "id": "ok",
+            "type": "boolean"
+          }
+        ],
+        "valid": true
+      },
+      {
+        "description": "should resolve only local references on sync mode",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "#/definitions/test"
+            }
+          },
+          "definitions": {
+            "test": {
+              "type": "string"
+            }
+          }
+        },
+        "sync": true,
+        "valid": true
+      }
+    ]
+  }
+]

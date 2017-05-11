@@ -2,6 +2,7 @@ import $RefParser from 'json-schema-ref-parser';
 import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';
+import deref from './core/deref';
 import utils from './core/utils';
 import run from './core/run';
 
@@ -9,6 +10,11 @@ var container = new Container();
 
 var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   var $refs = {};
+
+  if (typeof refs === 'string') {
+    cwd = refs;
+    refs = [];
+  }
 
   if (Array.isArray(refs)) {
     refs.forEach(function(schema) {
@@ -36,6 +42,8 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
     },
   }).then((schema) => run(schema, container));
 };
+
+jsf.sync = (schema, refs) => run(deref(schema, refs), container);
 
 jsf.utils = utils;
 
