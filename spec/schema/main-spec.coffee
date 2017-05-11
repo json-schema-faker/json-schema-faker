@@ -81,7 +81,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
           # support for "exhaustive" testing, increase or set in .json spec
           # for detecting more bugs quickly by executing the same test N-times
-          nth = test.repeat or 1
+          nth = test.repeat or (if process.CI then 100 else 10)
 
           tasks = []
           tasks.push(tryTest(test, refs, schema)) while nth--
