@@ -33,7 +33,11 @@ global.customMatchers =
         ignoreUnresolvableReferences: false
 
       validator.setRemoteReference(k, v) for k, v of fixed
-      valid = validator.validate actual, clone(expected)
+
+      try
+        valid = validator.validate clone(actual), clone(expected)
+      catch e
+        fail.push e.message
 
       if errors = validator.getLastErrors() or not valid
         fail.push errors.map((e) ->

@@ -6,9 +6,13 @@
         "description": "should resolve all references in async mode",
         "schema": {
           "type": "object",
+          "required": ["value", "other"],
           "properties": {
             "value": {
               "$ref": "#/definitions/test"
+            },
+            "other": {
+              "$ref": "#/definitions/other"
             }
           },
           "definitions": {
@@ -16,16 +20,11 @@
               "type": "string"
             },
             "other": {
-              "$ref": "ok"
+              "$ref": "https://gist.githubusercontent.com/anonymous/eb11f16c9edccf040c028dc8bd2b1756/raw/cbac21f18550ff559b5bec4187aa813e59a8d825/User"
             }
           }
         },
-        "refs": [
-          {
-            "id": "ok",
-            "type": "boolean"
-          }
-        ],
+        "async": true,
         "valid": true
       },
       {
@@ -43,8 +42,19 @@
             }
           }
         },
-        "sync": true,
         "valid": true
+      },
+      {
+        "description": "should fail on undefined/unreachable references",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "LocalIfOrRemoteURL"
+            }
+          }
+        },
+        "throws": "Reference not found"
       }
     ]
   }

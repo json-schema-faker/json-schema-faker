@@ -1,5 +1,6 @@
 fs = require('fs')
 glob = require('glob')
+deref = require('deref')
 jsf = require('../../')
 
 pick = (obj, key) ->
@@ -8,11 +9,11 @@ pick = (obj, key) ->
   obj
 
 tryTest = (test, refs, schema) ->
-  (if test.sync
-    Promise.resolve().then ->
-      jsf.sync(schema, refs)
+  (if test.async
+    jsf(schema, refs)
   else
-    jsf(schema, refs))
+    Promise.resolve().then ->
+      jsf.sync(schema, refs))
   .catch (error) ->
     if typeof test.throws is 'string'
       expect(error).toMatch new RegExp(test.throws, 'im')
@@ -44,16 +45,7 @@ tryTest = (test, refs, schema) ->
       expect(sample).toHaveNonEmptyProps()
 
     if test.valid
-      try
-        expect(sample).toHaveSchema [schema, refs]
-      catch e
-        throw new Error """
-          #{suite.description} (#{e})
-
-          #{JSON.stringify(sample, null, 2)}
-
-          #{JSON.stringify(schema, null, 2)}
-        """
+      expect(sample).toHaveSchema [schema, refs]
 
     if "equal" of test
       expect(sample).toEqual test.equal

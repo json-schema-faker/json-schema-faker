@@ -60,6 +60,7 @@
     }
   },
   "dependencies": {
+    "deref": "^0.7.0",
     "json-schema-ref-parser": "3.1.2",
     "randexp": "0.4.3",
     "tslib": "1.4.0"

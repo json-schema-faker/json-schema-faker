@@ -1,8 +1,9 @@
 import $RefParser from 'json-schema-ref-parser';
+import deref from 'deref';
+
 import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';
-import deref from './core/deref';
 import utils from './core/utils';
 import run from './core/run';
 
@@ -43,7 +44,11 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   }).then((schema) => run(schema, container));
 };
 
-jsf.sync = (schema, refs) => run(deref(schema, refs), container);
+jsf.sync = (schema, refs) => {
+  const $ = deref();
+
+  return run($(schema, refs, true), container);
+};
 
 jsf.utils = utils;
 
