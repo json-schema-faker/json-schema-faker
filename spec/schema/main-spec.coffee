@@ -1,6 +1,5 @@
 fs = require('fs')
 glob = require('glob')
-deref = require('deref')
 jsf = require('../../')
 
 pick = (obj, key) ->
