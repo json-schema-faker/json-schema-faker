@@ -9,13 +9,8 @@ import run from './core/run';
 
 var container = new Container();
 
-var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
+function getRefs(refs?: any) {
   var $refs = {};
-
-  if (typeof refs === 'string') {
-    cwd = refs;
-    refs = [];
-  }
 
   if (Array.isArray(refs)) {
     refs.forEach(function(schema) {
@@ -24,6 +19,25 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   } else {
     $refs = refs || {};
   }
+
+  return $refs;
+}
+
+var jsf = function(schema: JsonSchema, refs?: any) {
+  const $ = deref();
+
+  var $refs = getRefs(refs);
+
+  return run($(schema, $refs, true), container);
+};
+
+jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
+  if (typeof refs === 'string') {
+    cwd = refs;
+    refs = [];
+  }
+
+  var $refs = getRefs(refs);
 
   var fixedRefs = {
     order: 300,
@@ -42,12 +56,6 @@ var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
       fixedRefs: fixedRefs,
     },
   }).then((schema) => run(schema, container));
-};
-
-jsf.sync = (schema, refs) => {
-  const $ = deref();
-
-  return run($(schema, refs, true), container);
 };
 
 jsf.utils = utils;
@@ -74,6 +82,6 @@ jsf.locate = function(name: string) {
   return container.get(name);
 };
 
-jsf.version = '0.5.0-rc2';
+jsf.version = '0.5.0-rc3';
 
 export default jsf;
