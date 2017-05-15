@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.5.0-rc2",
+  "version": "0.5.0-rc3",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "lib/index.js",
@@ -81,7 +81,7 @@
     "rollup-plugin-commonjs": "^7.0.0",
     "rollup-plugin-node-resolve": "^2.0.0",
     "semver": "5.3.0",
-    "tarima": "^2.0.0",
+    "tarima": "^2.0.1",
     "ts-node": "2.1.0",
     "tslint": "4.0.2",
     "tv4": "1.2.7",

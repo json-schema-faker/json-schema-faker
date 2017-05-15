@@ -28,7 +28,7 @@ var schema = {
   $ref: REMOTE_REF
 };
 
-jsf(schema).then(function(result) {
+jsf.resolve(schema).then(function(result) {
   console.log(JSON.stringify(result, null, 2));
 });
 ```
@@ -44,7 +44,8 @@ Examples, new ideas, tips and any kind of kindly feedback is greatly appreciated
 
 **NEW: BACKWARD COMPATIBILITY**
 
-- Since `0.5.0-rc2` we introduced a `jsf.sync()` method for fast results. This way all your sync code will keep working as expected.
+- Since `0.5.0-rc3` we introduced a `jsf.resolve()` method for full-async results.
+- Since `0.5.0-rc3` the methods `jsf.sync()` is REMOVED and the API for `jsf()` will remain sync.
 
 Thanks for all your feedback in advance to everyone!
 
@@ -161,7 +162,7 @@ var schema = {
   }
 };
 
-jsf(schema).then(function(sample) {
+jsf.resolve(schema).then(function(sample) {
   console.log(sample);
   // "[object Object]"
 
@@ -279,7 +280,7 @@ var refs = [
   }
 ];
 
-jsf(schema, refs).then(function(sample) {
+jsf.resolve(schema, refs).then(function(sample) {
   console.log(sample.someValue);
   // "voluptatem"
 });
@@ -473,7 +474,7 @@ var schema = {
   }
 }
 
-jsf(schema).then(...);
+jsf.resolve(schema).then(...);
 ```
 
 or if you want to use [faker's *individual localization packages*](https://github.com/Marak/faker.js#individual-localization-packages), simply do the following:
@@ -514,7 +515,7 @@ var schema = {
   "chance": "user"
 }
 
-jsf(schema).then(...);
+jsf.resolve(schema).then(...);
 ```
 
 The first parameter of `extend` function is the generator name (`faker`, `chance`, etc.). The second one is the function that **must return** the dependency library.

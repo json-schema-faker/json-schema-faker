@@ -9,10 +9,10 @@ pick = (obj, key) ->
 
 tryTest = (test, refs, schema) ->
   (if test.async
-    jsf(schema, refs)
+    jsf.resolve(schema, refs)
   else
     Promise.resolve().then ->
-      jsf.sync(schema, refs))
+      jsf(schema, refs))
   .catch (error) ->
     if typeof test.throws is 'string'
       expect(error).toMatch new RegExp(test.throws, 'im')
