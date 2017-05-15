@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.5.0-rc2
+ * json-schema-faker library v0.5.0-rc3
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-11 17:20:51.970Z
+ * Date: 2017-05-15 06:04:26.756Z
  */
 
 (function (global, factory) {
@@ -15872,8 +15872,8 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 	var val, src, clone;
 
 	args.forEach(function (obj) {
-		// skip argument if it is array or isn't object
-		if (typeof obj !== 'object' || Array.isArray(obj)) {
+		// skip argument if isn't an object, is null, or is an array
+		if (typeof obj !== 'object' || obj === null || Array.isArray(obj)) {
 			return;
 		}
 
@@ -18161,12 +18161,8 @@ function run(schema, container) {
 }
 
 var container = new Container();
-var jsf = function (schema, refs, cwd) {
+function getRefs(refs) {
     var $refs = {};
-    if (typeof refs === 'string') {
-        cwd = refs;
-        refs = [];
-    }
     if (Array.isArray(refs)) {
         refs.forEach(function (schema) {
             $refs[schema.id] = schema;
@@ -18175,6 +18171,19 @@ var jsf = function (schema, refs, cwd) {
     else {
         $refs = refs || {};
     }
+    return $refs;
+}
+var jsf = function (schema, refs) {
+    var $ = deref();
+    var $refs = getRefs(refs);
+    return run($(schema, $refs, true), container);
+};
+jsf.resolve = function (schema, refs, cwd) {
+    if (typeof refs === 'string') {
+        cwd = refs;
+        refs = [];
+    }
+    var $refs = getRefs(refs);
     var fixedRefs = {
         order: 300,
         canRead: true,
@@ -18190,10 +18199,6 @@ var jsf = function (schema, refs, cwd) {
             fixedRefs: fixedRefs,
         },
     }).then(function (schema) { return run(schema, container); });
-};
-jsf.sync = function (schema, refs) {
-    var $ = deref();
-    return run($(schema, refs, true), container);
 };
 jsf.utils = utils;
 jsf.format = formatAPI;
@@ -18212,7 +18217,7 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-jsf.version = '0.5.0-rc2';
+jsf.version = '0.5.0-rc3';
 
 var index = jsf;
 
