@@ -108,7 +108,7 @@ function merge(a: Object, b: Object): Object {
   return a;
 }
 
-function clean(obj, isArray) {
+function clean(obj, isArray, requiredProps) {
   if (!obj || typeof obj !== 'object') {
       return obj;
   }
@@ -116,7 +116,7 @@ function clean(obj, isArray) {
     obj = obj
       .map(function (value) { return clean(value, true); })
       .filter(function (value) { return value; });
-    if (isArray && !obj.length) {
+    if ((!requiredProps || isArray) && !obj.length) {
       return undefined;
     }
     return obj;
