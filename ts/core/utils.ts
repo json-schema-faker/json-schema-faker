@@ -115,14 +115,20 @@ function clean(obj, isArray, requiredProps) {
   if (Array.isArray(obj)) {
     obj = obj
       .map(function (value) { return clean(value, true); })
-      .filter(function (value) { return value; });
-    if ((!requiredProps || isArray) && !obj.length) {
+      .filter(function (value) { return typeof value !== 'undefined'; });
+    if (isArray && !obj.length) {
       return undefined;
     }
     return obj;
   }
-  Object.keys(obj).forEach(function (k) {
-    obj[k] = clean(obj[k]);
+  Object.keys(obj).forEach(function(k) {
+    if (!requiredProps || requiredProps.indexOf(k) === -1) {
+      if (Array.isArray(obj[k]) && !obj[k].length) {
+        delete obj[k];
+      }
+    } else {
+      obj[k] = clean(obj[k]);
+    }
   });
   if (!Object.keys(obj).length && isArray) {
     return undefined;
