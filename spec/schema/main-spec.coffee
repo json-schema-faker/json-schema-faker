@@ -39,10 +39,6 @@ tryTest = (test, refs, schema) ->
     if test.type
       expect(sample).toHaveType test.type
 
-    # strict checks
-    if test.nonEmpty
-      expect(sample).toHaveNonEmptyProps()
-
     if test.valid
       expect(sample).toHaveSchema [schema, refs]
 
