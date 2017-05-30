@@ -2,6 +2,7 @@
 *~
 *.log
 *.tgz
+*.json
 .DS_Store
 build-dist.js
 bower.json
@@ -15,5 +16,7 @@ tslint.json
 /coverage
 /generated
 /node_modules
+/ts
+/docs
 /dist
 /logo
