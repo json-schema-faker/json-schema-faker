@@ -49,7 +49,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
       }
     } else {
       try {
-        return types[type](schema, path, resolve, traverse);
+        return utils.clean(types[type](schema, path, resolve, traverse), schema.required);
       } catch (e) {
         if (typeof e.path === 'undefined') {
           throw new ParseError(e.message, path);
@@ -73,7 +73,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     }
   }
 
-  return utils.clean(copy);
+  return copy;
 }
 
 export default traverse;
