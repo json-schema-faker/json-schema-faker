@@ -39,10 +39,6 @@ tryTest = (test, refs, schema) ->
 
     expect(error).toMatch new RegExp(test.throws, 'im')
 
-  # strict checks
-  if test.nonEmpty
-    expect(sample).toHaveNonEmptyProps()
-
   if test.valid
     try
       expect(sample).toHaveSchema [schema, refs]

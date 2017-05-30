@@ -6,7 +6,7 @@
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-02-17 19:35:15.530Z
+ * Date: 2017-05-30 21:51:25.093Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
@@ -227,7 +227,7 @@ function hasNothing(obj) {
     }
     return typeof obj === 'undefined' || obj === null;
 }
-function removeProps(obj, key, parent) {
+function removeProps(obj, key, parent, required) {
     var i, value, isFullyEmpty = true;
     if (isArray(obj)) {
         for (i = 0; i < obj.length; ++i) {
@@ -246,6 +246,11 @@ function removeProps(obj, key, parent) {
     else {
         for (i in obj) {
             value = obj[i];
+            if (required && required.indexOf(i) > -1) {
+                isFullyEmpty = false;
+                removeProps(value);
+                continue;
+            }
             if (isObject(value)) {
                 removeProps(value, i, obj);
             }
@@ -262,8 +267,8 @@ function removeProps(obj, key, parent) {
         removeProps(obj);
     }
 }
-module.exports = function (obj) {
-    removeProps(obj);
+module.exports = function (obj, required) {
+    removeProps(obj, undefined, undefined, required);
     return obj;
 };
 
@@ -511,7 +516,6 @@ module.exports = run;
 
 },{"./random":9,"./traverse":11,"./utils":12,"deref":31}],11:[function(require,module,exports){
 "use strict";
-var clean = require("./clean");
 var random = require("./random");
 var ParseError = require("./error");
 var inferType = require("./infer");
@@ -593,11 +597,11 @@ function traverse(schema, path, resolve) {
             copy[prop] = schema[prop];
         }
     }
-    return clean(copy);
+    return copy;
 }
 module.exports = traverse;
 
-},{"../api/option":2,"../types/index":24,"./clean":6,"./error":7,"./infer":8,"./random":9}],12:[function(require,module,exports){
+},{"../api/option":2,"../types/index":24,"./error":7,"./infer":8,"./random":9}],12:[function(require,module,exports){
 "use strict";
 function getSubAttribute(obj, dotSeparatedKey) {
     var keyElements = dotSeparatedKey.split('.');
@@ -1039,6 +1043,7 @@ module.exports = numberType;
 var container = require("../class/Container");
 var random = require("../core/random");
 var words = require("../generators/words");
+var clean = require("../core/clean");
 var utils = require("../core/utils");
 var option = require("../api/option");
 var ParseError = require("../core/error");
@@ -1069,7 +1074,7 @@ var objectType = function objectType(value, path, resolve, traverseCallback) {
                 props[key] = properties[key];
             }
         });
-        return traverseCallback(props, path.concat(['properties']), resolve);
+        return clean(traverseCallback(props, path.concat(['properties']), resolve), value.required);
     }
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
     var max = Math.max(value.maxProperties || random.number(min, min + 5));
@@ -1132,11 +1137,11 @@ var objectType = function objectType(value, path, resolve, traverseCallback) {
         throw new ParseError('properties constraints were too strong to successfully generate a valid object for:\n' +
             JSON.stringify(value, null, '  '), path);
     }
-    return traverseCallback(props, path.concat(['properties']), resolve);
+    return clean(traverseCallback(props, path.concat(['properties']), resolve), value.required);
 };
 module.exports = objectType;
 
-},{"../api/option":2,"../class/Container":3,"../core/error":7,"../core/random":9,"../core/utils":12,"../generators/words":19}],29:[function(require,module,exports){
+},{"../api/option":2,"../class/Container":3,"../core/clean":6,"../core/error":7,"../core/random":9,"../core/utils":12,"../generators/words":19}],29:[function(require,module,exports){
 "use strict";
 var thunk = require("../generators/thunk");
 var ipv4 = require("../generators/ipv4");

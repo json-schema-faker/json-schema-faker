@@ -1,4 +1,3 @@
-import clean = require('./clean');
 import random = require('./random');
 import ParseError = require('./error');
 import inferType = require('./infer');
@@ -92,7 +91,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     }
   }
 
-  return clean(copy);
+  return copy;
 }
 
 export = traverse;

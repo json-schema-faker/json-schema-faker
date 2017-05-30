@@ -20,7 +20,7 @@ function hasNothing(obj) {
   return typeof obj === 'undefined' || obj === null;
 }
 
-function removeProps(obj, key?, parent?) {
+function removeProps(obj, key?, parent?, required?) {
   var i,
       value,
       isFullyEmpty = true;
@@ -43,6 +43,12 @@ function removeProps(obj, key?, parent?) {
     for (i in obj) {
       value = obj[i];
 
+      if (required && required.indexOf(i) > -1) {
+        isFullyEmpty = false;
+        removeProps(value);
+        continue;
+      }
+
       if (isObject(value)) {
         removeProps(value, i, obj);
       }
@@ -61,7 +67,7 @@ function removeProps(obj, key?, parent?) {
   }
 }
 
-export = function(obj: any) {
-  removeProps(obj);
+export = function(obj: any, required?: Array<string>) {
+  removeProps(obj, undefined, undefined, required);
   return obj;
 };

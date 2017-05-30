@@ -1,6 +1,7 @@
 import container = require('../class/Container');
 import random = require('../core/random');
 import words = require('../generators/words');
+import clean = require('../core/clean');
 import utils = require('../core/utils');
 import option = require('../api/option');
 import ParseError = require('../core/error');
@@ -41,8 +42,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
                 props[key] = properties[key];
             }
         });
-
-        return traverseCallback(props, path.concat(['properties']), resolve);
+        return clean(traverseCallback(props, path.concat(['properties']), resolve), value.required);
     }
 
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
@@ -123,7 +123,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         );
     }
 
-  return traverseCallback(props, path.concat(['properties']), resolve);
+  return clean(traverseCallback(props, path.concat(['properties']), resolve), value.required);
 };
 
 export = objectType;

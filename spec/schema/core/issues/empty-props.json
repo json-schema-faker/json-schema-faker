@@ -18,10 +18,32 @@
                 ]
               }
             }
+          }
+        },
+        "equal": {}
+      },
+      {
+        "description": "should leave props when required",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "foo": { "$ref": "#/definitions/baz" }
+          },
+          "definitions": {
+            "baz": {
+              "type": "array",
+              "items": {
+                "anyOf": [
+                  { "$ref": "#/definitions/baz" }
+                ]
+              }
+            }
           },
           "required": ["foo"]
         },
-        "nonEmpty": true
+        "equal": {
+          "foo": []
+        }
       }
     ]
   }
