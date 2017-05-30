@@ -113,9 +113,13 @@ function clean(obj, isArray) {
       return obj;
   }
   if (Array.isArray(obj)) {
-    return obj
+    obj = obj
       .map(function (value) { return clean(value, true); })
       .filter(function (value) { return value; });
+    if (isArray && !obj.length) {
+      return undefined;
+    }
+    return obj;
   }
   Object.keys(obj).forEach(function (k) {
     obj[k] = clean(obj[k]);
