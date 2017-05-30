@@ -26,7 +26,7 @@ function run(schema: JsonSchema, container: Container) {
 
       if (typeof sub.$ref === 'string') {
         if (sub.$ref.indexOf('#/') === -1) {
-          throw new Error('Only local references are allowed in sync mode.')
+          throw new Error('Only local references are allowed in sync mode.');
         }
         return null;
       }
