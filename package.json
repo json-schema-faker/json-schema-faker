@@ -74,7 +74,7 @@
     "fs-extra": "^3.0.1",
     "glob": "^7.1.2",
     "istanbul": "^0.4.5",
-    "jasmine-node": "^1.14.5",
+    "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.1",
     "lodash.template": "^4.4.0",
     "rollup": "^0.41.6",
