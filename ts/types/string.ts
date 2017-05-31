@@ -29,7 +29,7 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
     default:
       if (typeof callback === 'undefined') {
         if (optionAPI('failOnInvalidFormat')) {
-          throw new Error('unknown registry key ' + JSON.stringify(value.format));
+          throw new Error('unknown registry key ' + utils.short(value.format));
         } else {
           return invalid();
         }

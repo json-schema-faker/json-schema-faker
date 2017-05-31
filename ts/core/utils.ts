@@ -136,6 +136,13 @@ function clean(obj, isArray, requiredProps) {
   return obj;
 }
 
+function short(schema) {
+  var s = JSON.stringify(schema);
+  var l = JSON.stringify(schema, null, 2);
+
+  return s.length > 400 ? l.substr(0, 400) + '...' : l;
+}
+
 export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
@@ -143,5 +150,6 @@ export default {
   clone: clone,
   merge: merge,
   clean: clean,
+  short: short,
   randexp: _randexp
 };

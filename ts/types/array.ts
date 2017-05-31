@@ -41,7 +41,7 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
 
   if (!(value.items || value.additionalItems)) {
     if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
-      throw new ParseError('missing items for ' + JSON.stringify(value), path);
+      throw new ParseError('missing items for ' + utils.short(value), path);
     }
     return items;
   }

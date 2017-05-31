@@ -29,7 +29,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         patternPropertyKeys.length === 0 &&
         utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
     ) {
-        throw new ParseError('missing properties for:\n' + JSON.stringify(value, null, '  '), path);
+        throw new ParseError('missing properties for:\n' + utils.short(value), path);
     }
 
     if (optionAPI('requiredOnly') === true) {
@@ -115,7 +115,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     if (!allowsAdditional && current < min) {
         throw new ParseError(
             'properties constraints were too strong to successfully generate a valid object for:\n' +
-            JSON.stringify(value, null, '  '),
+            utils.short(value),
             path
         );
     }

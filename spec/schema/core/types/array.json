@@ -97,7 +97,7 @@
           "uniqueItems": true,
           "additionalItems": false
         },
-        "throws": "missing items for .+? in \\/"
+        "throws": "missing items for [\\s\\S]+ in \\/"
       },
       {
         "description": "should handle inferred type (when possible)",

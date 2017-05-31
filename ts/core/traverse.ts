@@ -43,7 +43,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   if (typeof type === 'string') {
     if (!types[type]) {
       if (optionAPI('failOnInvalidTypes')) {
-        throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+        throw new ParseError('unknown primitive ' + utils.short(type), path.concat(['type']));
       } else {
         return optionAPI('defaultInvalidTypeProduct');
       }
