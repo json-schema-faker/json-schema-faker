@@ -1,6 +1,6 @@
 // dynamic proxy for custom generators
 function proxy(gen) {
-  return (value) => {
+  return (value, schema, property) => {
     var fn = value;
     var args = [];
 
@@ -33,6 +33,15 @@ function proxy(gen) {
     // invoke dynamic generators
     if (typeof value === 'function') {
       value = value.apply(ctx, args);
+    }
+
+    // test for pending callbacks
+    if (Object.prototype.toString.call(value) === '[object Object]') {
+      for (var key in value) {
+        if (typeof value[key] === 'function') {
+          throw new Error('Cannot resolve value for "' + property + ': ' + fn + '", given: ' + value);
+        }
+      }
     }
 
     return value;
@@ -111,11 +120,11 @@ class Container {
     var length = keys.length;
 
     while (length--) {
-      var fn = keys[length];
+      var fn = keys[length].replace(/^x-/, '');
       var gen = this.support[fn];
 
       if (typeof gen === 'function') {
-        schema.generate = () => gen(schema[fn], schema);
+        schema.generate = () => gen(schema[keys[length]], schema, keys[length]);
         break;
       }
     }
