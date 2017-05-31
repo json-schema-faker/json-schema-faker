@@ -6,7 +6,7 @@
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-31 05:10:23.186Z
+ * Date: 2017-05-31 06:43:08.899Z
  */
 
 (function (global, factory) {
@@ -15727,7 +15727,7 @@ var helpers = {
 var findReference = createCommonjsModule(function (module) {
 'use strict';
 
-var $ = helpers;
+
 
 function get(obj, path) {
   var hash = path.split('#')[1];
@@ -15748,13 +15748,13 @@ function get(obj, path) {
 }
 
 var find = module.exports = function(id, refs) {
-  var target = refs[id] || refs[id.split('#')[1]] || refs[$.getDocumentURI(id)];
+  var target = refs[id] || refs[id.split('#')[1]] || refs[helpers.getDocumentURI(id)];
 
   if (target) {
     target = id.indexOf('#/') > -1 ? get(target, id) : target;
   } else {
     for (var key in refs) {
-      if ($.resolveURL(refs[key].id, id) === refs[key].id) {
+      if (helpers.resolveURL(refs[key].id, id) === refs[key].id) {
         target = refs[key];
         break;
       }
@@ -15920,24 +15920,18 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 };
 });
 
-var $ = helpers;
-
-var find = findReference;
-
-var deepExtend = deepExtend_1;
-
 function copy(_, obj, refs, parent, resolve) {
   var target =  Array.isArray(obj) ? [] : {};
 
   if (typeof obj.$ref === 'string') {
     var id = obj.$ref;
-    var base = $.getDocumentURI(id);
+    var base = helpers.getDocumentURI(id);
     var local = id.indexOf('#/') > -1;
 
     if (local || (resolve && base !== parent)) {
-      var fixed = find(id, refs);
+      var fixed = findReference(id, refs);
 
-      deepExtend(obj, fixed);
+      deepExtend_1(obj, fixed);
 
       delete obj.$ref;
       delete obj.id;
@@ -15951,7 +15945,7 @@ function copy(_, obj, refs, parent, resolve) {
   }
 
   for (var prop in obj) {
-    if (typeof obj[prop] === 'object' && obj[prop] !== null && !$.isKeyword(prop)) {
+    if (typeof obj[prop] === 'object' && obj[prop] !== null && !helpers.isKeyword(prop)) {
       target[prop] = copy(_, obj[prop], refs, parent, resolve);
     } else {
       target[prop] = obj[prop];
@@ -15962,13 +15956,13 @@ function copy(_, obj, refs, parent, resolve) {
 }
 
 var resolveSchema = function(obj, refs, resolve) {
-  var fixedId = $.resolveURL(obj.$schema, obj.id),
-      parent = $.getDocumentURI(fixedId);
+  var fixedId = helpers.resolveURL(obj.$schema, obj.id),
+      parent = helpers.getDocumentURI(fixedId);
 
   return copy({}, obj, refs, parent, resolve);
 };
 
-var cloneObj$1 = createCommonjsModule(function (module) {
+var cloneObj = createCommonjsModule(function (module) {
 'use strict';
 
 var clone = module.exports = function(obj, seen) {
@@ -16004,10 +15998,6 @@ var clone = module.exports = function(obj, seen) {
 };
 });
 
-var $$1 = helpers;
-
-var cloneObj = cloneObj$1;
-
 var SCHEMA_URI = [
   'http://json-schema.org/schema#',
   'http://json-schema.org/draft-04/schema#'
@@ -16017,12 +16007,12 @@ function expand(obj, parent, callback) {
   if (obj) {
     var id = typeof obj.id === 'string' ? obj.id : '#';
 
-    if (!$$1.isURL(id)) {
-      id = $$1.resolveURL(parent === id ? null : parent, id);
+    if (!helpers.isURL(id)) {
+      id = helpers.resolveURL(parent === id ? null : parent, id);
     }
 
-    if (typeof obj.$ref === 'string' && !$$1.isURL(obj.$ref)) {
-      obj.$ref = $$1.resolveURL(id, obj.$ref);
+    if (typeof obj.$ref === 'string' && !helpers.isURL(obj.$ref)) {
+      obj.$ref = helpers.resolveURL(id, obj.$ref);
     }
 
     if (typeof obj.id === 'string') {
@@ -16033,7 +16023,7 @@ function expand(obj, parent, callback) {
   for (var key in obj) {
     var value = obj[key];
 
-    if (typeof value === 'object' && value !== null && !$$1.isKeyword(key)) {
+    if (typeof value === 'object' && value !== null && !helpers.isKeyword(key)) {
       expand(value, parent, callback);
     }
   }
@@ -16057,9 +16047,9 @@ var normalizeSchema = function(fakeroot, schema, push) {
     throw new Error('Unsupported schema version (v4 only)');
   }
 
-  base = $$1.resolveURL(copy.$schema || SCHEMA_URI[0], base);
+  base = helpers.resolveURL(copy.$schema || SCHEMA_URI[0], base);
 
-  expand(copy, $$1.resolveURL(copy.id || '#', base), push);
+  expand(copy, helpers.resolveURL(copy.id || '#', base), push);
 
   copy.id = copy.id || base;
 
@@ -16069,11 +16059,11 @@ var normalizeSchema = function(fakeroot, schema, push) {
 var index$2 = createCommonjsModule(function (module) {
 'use strict';
 
-var $ = helpers;
 
-$.findByRef = findReference;
-$.resolveSchema = resolveSchema;
-$.normalizeSchema = normalizeSchema;
+
+helpers.findByRef = findReference;
+helpers.resolveSchema = resolveSchema;
+helpers.normalizeSchema = normalizeSchema;
 
 var instance = module.exports = function() {
   function $ref(fakeroot, schema, refs, ex) {
@@ -16106,7 +16096,7 @@ var instance = module.exports = function() {
 
     function push(ref) {
       if (typeof ref.id === 'string') {
-        var id = $.resolveURL(fakeroot, ref.id).replace(/\/#?$/, '');
+        var id = helpers.resolveURL(fakeroot, ref.id).replace(/\/#?$/, '');
 
         if (id.indexOf('#') > -1) {
           var parts = id.split('#');
@@ -16125,20 +16115,20 @@ var instance = module.exports = function() {
     }
 
     (refs || []).concat([schema]).forEach(function(ref) {
-      schema = $.normalizeSchema(fakeroot, ref, push);
+      schema = helpers.normalizeSchema(fakeroot, ref, push);
       push(schema);
     });
 
-    return $.resolveSchema(schema, $ref.refs, ex);
+    return helpers.resolveSchema(schema, $ref.refs, ex);
   }
 
   $ref.refs = {};
-  $ref.util = $;
+  $ref.util = helpers;
 
   return $ref;
 };
 
-instance.util = $;
+instance.util = helpers;
 });
 
 /*! *****************************************************************************
@@ -16156,8 +16146,13 @@ See the Apache Version 2.0 License for specific language governing permissions
 and limitations under the License.
 ***************************************************************************** */
 /* global Reflect, Promise */
+
+var extendStatics = Object.setPrototypeOf ||
+    ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+    function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+
 function __extends(d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    extendStatics(d, b);
     function __() { this.constructor = d; }
     d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
@@ -16205,8 +16200,8 @@ function __awaiter(thisArg, _arguments, P, generator) {
 }
 
 function __generator(thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t;
-    return { next: verb(0), "throw": verb(1), "return": verb(2) };
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g;
+    return g = { next: verb(0), "throw": verb(1), "return": verb(2) }, typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
     function verb(n) { return function (v) { return step([n, v]); }; }
     function step(op) {
         if (f) throw new TypeError("Generator is already executing.");
@@ -16232,6 +16227,72 @@ function __generator(thisArg, body) {
     }
 }
 
+function __exportStar(m, exports) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+
+function __values(o) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator], i = 0;
+    if (m) return m.call(o);
+    return {
+        next: function () {
+            if (o && i >= o.length) o = void 0;
+            return { value: o && o[i++], done: !o };
+        }
+    };
+}
+
+function __read(o, n) {
+    var m = typeof Symbol === "function" && o[Symbol.iterator];
+    if (!m) return o;
+    var i = m.call(o), r, ar = [], e;
+    try {
+        while ((n === void 0 || n-- > 0) && !(r = i.next()).done) ar.push(r.value);
+    }
+    catch (error) { e = { error: error }; }
+    finally {
+        try {
+            if (r && !r.done && (m = i["return"])) m.call(i);
+        }
+        finally { if (e) throw e.error; }
+    }
+    return ar;
+}
+
+function __spread() {
+    for (var ar = [], i = 0; i < arguments.length; i++)
+        ar = ar.concat(__read(arguments[i]));
+    return ar;
+}
+
+function __await(v) {
+    return this instanceof __await ? (this.v = v, this) : new __await(v);
+}
+
+function __asyncGenerator(thisArg, _arguments, generator) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var g = generator.apply(thisArg, _arguments || []), i, q = [];
+    return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
+    function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
+    function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
+    function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
+    function fulfill(value) { resume("next", value); }
+    function reject(value) { resume("throw", value); }
+    function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
+}
+
+function __asyncDelegator(o) {
+    var i, p;
+    return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
+    function verb(n, f) { if (o[n]) i[n] = function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; }; }
+}
+
+function __asyncValues(o) {
+    if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
+    var m = o[Symbol.asyncIterator];
+    return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
+}
+
 var tslib_es6 = Object.freeze({
 	__extends: __extends,
 	__assign: __assign,
@@ -16240,10 +16301,18 @@ var tslib_es6 = Object.freeze({
 	__param: __param,
 	__metadata: __metadata,
 	__awaiter: __awaiter,
-	__generator: __generator
+	__generator: __generator,
+	__exportStar: __exportStar,
+	__values: __values,
+	__read: __read,
+	__spread: __spread,
+	__await: __await,
+	__asyncGenerator: __asyncGenerator,
+	__asyncDelegator: __asyncDelegator,
+	__asyncValues: __asyncValues
 });
 
-var types$1 = {
+var types = {
   ROOT       : 0,
   GROUP      : 1,
   POSITION   : 2,
@@ -16254,90 +16323,88 @@ var types$1 = {
   CHAR       : 7,
 };
 
-var types$3 = types$1;
-
 var INTS = function() {
- return [{ type: types$3.RANGE , from: 48, to: 57 }];
+ return [{ type: types.RANGE , from: 48, to: 57 }];
 };
 
 var WORDS = function() {
  return [
-    { type: types$3.CHAR, value: 95 },
-    { type: types$3.RANGE, from: 97, to: 122 },
-    { type: types$3.RANGE, from: 65, to: 90 }
+    { type: types.CHAR, value: 95 },
+    { type: types.RANGE, from: 97, to: 122 },
+    { type: types.RANGE, from: 65, to: 90 }
   ].concat(INTS());
 };
 
 var WHITESPACE = function() {
  return [
-    { type: types$3.CHAR, value: 9 },
-    { type: types$3.CHAR, value: 10 },
-    { type: types$3.CHAR, value: 11 },
-    { type: types$3.CHAR, value: 12 },
-    { type: types$3.CHAR, value: 13 },
-    { type: types$3.CHAR, value: 32 },
-    { type: types$3.CHAR, value: 160 },
-    { type: types$3.CHAR, value: 5760 },
-    { type: types$3.CHAR, value: 6158 },
-    { type: types$3.CHAR, value: 8192 },
-    { type: types$3.CHAR, value: 8193 },
-    { type: types$3.CHAR, value: 8194 },
-    { type: types$3.CHAR, value: 8195 },
-    { type: types$3.CHAR, value: 8196 },
-    { type: types$3.CHAR, value: 8197 },
-    { type: types$3.CHAR, value: 8198 },
-    { type: types$3.CHAR, value: 8199 },
-    { type: types$3.CHAR, value: 8200 },
-    { type: types$3.CHAR, value: 8201 },
-    { type: types$3.CHAR, value: 8202 },
-    { type: types$3.CHAR, value: 8232 },
-    { type: types$3.CHAR, value: 8233 },
-    { type: types$3.CHAR, value: 8239 },
-    { type: types$3.CHAR, value: 8287 },
-    { type: types$3.CHAR, value: 12288 },
-    { type: types$3.CHAR, value: 65279 }
+    { type: types.CHAR, value: 9 },
+    { type: types.CHAR, value: 10 },
+    { type: types.CHAR, value: 11 },
+    { type: types.CHAR, value: 12 },
+    { type: types.CHAR, value: 13 },
+    { type: types.CHAR, value: 32 },
+    { type: types.CHAR, value: 160 },
+    { type: types.CHAR, value: 5760 },
+    { type: types.CHAR, value: 6158 },
+    { type: types.CHAR, value: 8192 },
+    { type: types.CHAR, value: 8193 },
+    { type: types.CHAR, value: 8194 },
+    { type: types.CHAR, value: 8195 },
+    { type: types.CHAR, value: 8196 },
+    { type: types.CHAR, value: 8197 },
+    { type: types.CHAR, value: 8198 },
+    { type: types.CHAR, value: 8199 },
+    { type: types.CHAR, value: 8200 },
+    { type: types.CHAR, value: 8201 },
+    { type: types.CHAR, value: 8202 },
+    { type: types.CHAR, value: 8232 },
+    { type: types.CHAR, value: 8233 },
+    { type: types.CHAR, value: 8239 },
+    { type: types.CHAR, value: 8287 },
+    { type: types.CHAR, value: 12288 },
+    { type: types.CHAR, value: 65279 }
   ];
 };
 
 var NOTANYCHAR = function() {
   return [
-    { type: types$3.CHAR, value: 10 },
-    { type: types$3.CHAR, value: 13 },
-    { type: types$3.CHAR, value: 8232 },
-    { type: types$3.CHAR, value: 8233 },
+    { type: types.CHAR, value: 10 },
+    { type: types.CHAR, value: 13 },
+    { type: types.CHAR, value: 8232 },
+    { type: types.CHAR, value: 8233 },
   ];
 };
 
 // Predefined class objects.
 var words = function() {
-  return { type: types$3.SET, set: WORDS(), not: false };
+  return { type: types.SET, set: WORDS(), not: false };
 };
 
 var notWords = function() {
-  return { type: types$3.SET, set: WORDS(), not: true };
+  return { type: types.SET, set: WORDS(), not: true };
 };
 
 var ints = function() {
-  return { type: types$3.SET, set: INTS(), not: false };
+  return { type: types.SET, set: INTS(), not: false };
 };
 
 var notInts = function() {
-  return { type: types$3.SET, set: INTS(), not: true };
+  return { type: types.SET, set: INTS(), not: true };
 };
 
 var whitespace = function() {
-  return { type: types$3.SET, set: WHITESPACE(), not: false };
+  return { type: types.SET, set: WHITESPACE(), not: false };
 };
 
 var notWhitespace = function() {
-  return { type: types$3.SET, set: WHITESPACE(), not: true };
+  return { type: types.SET, set: WHITESPACE(), not: true };
 };
 
 var anyChar = function() {
-  return { type: types$3.SET, set: NOTANYCHAR(), not: true };
+  return { type: types.SET, set: NOTANYCHAR(), not: true };
 };
 
-var sets$1 = {
+var sets = {
 	words: words,
 	notWords: notWords,
 	ints: ints,
@@ -16347,11 +16414,7 @@ var sets$1 = {
 	anyChar: anyChar
 };
 
-var util$1 = createCommonjsModule(function (module, exports) {
-var types = types$1;
-var sets  = sets$1;
-
-
+var util = createCommonjsModule(function (module, exports) {
 // All of these are private and only used by randexp.
 // It's assumed that they will always be called with the correct input.
 
@@ -16461,36 +16524,28 @@ exports.error = function(regexp, msg) {
 };
 });
 
-var types$4 = types$1;
-
 var wordBoundary = function() {
-  return { type: types$4.POSITION, value: 'b' };
+  return { type: types.POSITION, value: 'b' };
 };
 
 var nonWordBoundary = function() {
-  return { type: types$4.POSITION, value: 'B' };
+  return { type: types.POSITION, value: 'B' };
 };
 
 var begin = function() {
-  return { type: types$4.POSITION, value: '^' };
+  return { type: types.POSITION, value: '^' };
 };
 
 var end = function() {
-  return { type: types$4.POSITION, value: '$' };
+  return { type: types.POSITION, value: '$' };
 };
 
-var positions$1 = {
+var positions = {
 	wordBoundary: wordBoundary,
 	nonWordBoundary: nonWordBoundary,
 	begin: begin,
 	end: end
 };
-
-var util      = util$1;
-var types     = types$1;
-var sets      = sets$1;
-var positions = positions$1;
-
 
 var index$4 = function(regexpStr) {
   var i = 0, l, c,
@@ -16917,9 +16972,7 @@ DiscontinuousRange.prototype.clone = function () {
 var index$6 = DiscontinuousRange;
 
 var randexp = createCommonjsModule(function (module) {
-var ret = index$4;
-var DRange = index$6;
-var types = ret.types;
+var types = index$4.types;
 
 
 /**
@@ -16952,7 +17005,7 @@ function randBool() {
  * @return {Object}
  */
 function randSelect(arr) {
-  if (arr instanceof DRange) {
+  if (arr instanceof index$6) {
     return arr.index(this.randInt(0, arr.length - 1));
   }
   return arr[this.randInt(0, arr.length - 1)];
@@ -16967,12 +17020,12 @@ function randSelect(arr) {
  * @return {DiscontinuousRange}
  */
 function expand(token) {
-  if (token.type === ret.types.CHAR) {
-    return new DRange(token.value);
-  } else if (token.type === ret.types.RANGE) {
-    return new DRange(token.from, token.to);
+  if (token.type === index$4.types.CHAR) {
+    return new index$6(token.value);
+  } else if (token.type === index$4.types.RANGE) {
+    return new index$6(token.from, token.to);
   } else {
-    var drange = new DRange();
+    var drange = new index$6();
     for (var i = 0; i < token.set.length; i++) {
       var subrange = expand.call(this, token.set[i]);
       drange.add(subrange);
@@ -17005,7 +17058,7 @@ function checkCustom(randexp, regexp) {
   if (typeof regexp.max === 'number') {
     randexp.max = regexp.max;
   }
-  if (regexp.defaultRange instanceof DRange) {
+  if (regexp.defaultRange instanceof index$6) {
     randexp.defaultRange = regexp.defaultRange;
   }
   if (typeof regexp.randInt === 'function') {
@@ -17034,7 +17087,7 @@ var RandExp = module.exports = function(regexp, m) {
     throw new Error('Expected a regexp or string');
   }
 
-  this.tokens = ret(regexp);
+  this.tokens = index$4(regexp);
 };
 
 
@@ -17074,7 +17127,7 @@ RandExp.sugar = function() {
 
 // This allows expanding to include additional characters
 // for instance: RandExp.defaultRange.add(0, 65535);
-RandExp.prototype.defaultRange = new DRange(32, 126);
+RandExp.prototype.defaultRange = new index$6(32, 126);
 
 
 /**
@@ -17162,15 +17215,15 @@ function gen(token, groups) {
 }
 });
 
-var require$$0$4 = ( jsonSchemaRefParser$1 && jsonSchemaRefParser$1['default'] ) || jsonSchemaRefParser$1;
+var require$$0 = ( jsonSchemaRefParser$1 && jsonSchemaRefParser ) || jsonSchemaRefParser$1;
 
-var require$$2$2 = ( tslib_es6 && tslib_es6['default'] ) || tslib_es6;
+var tslib_1 = ( tslib_es6 && undefined ) || tslib_es6;
 
 function _interopDefault$1 (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
-var $RefParser = _interopDefault$1(require$$0$4);
+var $RefParser = _interopDefault$1(require$$0);
 var deref = _interopDefault$1(index$2);
-var tslib_1 = require$$2$2;
+
 
 // dynamic proxy for custom generators
 function proxy(gen) {
@@ -17384,11 +17437,11 @@ function optionAPI(nameOrOptionMap) {
     }
 }
 
-var RandExp = randexp;
+
 // set maximum default, see #193
-RandExp.prototype.max = 10;
+randexp.prototype.max = 10;
 function _randexp(value) {
-    var re = new RandExp(value);
+    var re = new randexp(value);
     // apply given setting
     re.max = optionAPI('defaultRandExpMax');
     return re.gen();
@@ -18246,7 +18299,8 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-jsf.version = '0.5.0-rc3';
+var VERSION="0.5.0-rc5";
+jsf.version = VERSION;
 
 var index = jsf;
 
