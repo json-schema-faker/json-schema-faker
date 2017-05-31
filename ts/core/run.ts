@@ -39,7 +39,12 @@ function run(schema: JsonSchema, container: Container) {
         // this is the only case where all sub-schemas
         // must be resolved before any merge
         schemas.forEach(function(subSchema: JsonSchema) {
-          utils.merge(sub, reduce(subSchema, maxReduceDepth + 1));
+          var _sub = reduce(subSchema, maxReduceDepth + 1);
+
+          // call given thunks if present
+          utils.merge(sub, typeof _sub.thunk === 'function'
+            ? _sub.thunk()
+            : _sub);
         });
       }
 
