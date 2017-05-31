@@ -6,8 +6,8 @@
   "main": "lib/index.js",
   "scripts": {
     "dist": "yarn build && yarn build:dist",
-    "build": "tarima -qfe dist",
-    "build:dist": "node build/dist.js",
+    "build": "tarima -qfe dist VERSION=`./build/VERSION`",
+    "build:dist": "yarn build && node build/dist.js",
     "test": "yarn test:lint && yarn build && yarn test:unit && yarn test:schema",
     "test:lint": "tslint ts/**/*.ts",
     "test:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",

@@ -1,0 +1,14 @@
+#!/bin/sh
+
+VERSION="$(cat package.json | grep '"version":')"
+VERSION=${VERSION##*:}
+VERSION=${VERSION%,*}
+VERSION=$(echo $VERSION | sed 's/"//g')
+
+SEARCH='("version":[[:space:]]*").+(")'
+REPLACE="\1${VERSION}\2"
+
+sed -i ".tmp" -E "s/${SEARCH}/${REPLACE}/g" bower.json
+rm *.tmp
+
+echo $VERSION
