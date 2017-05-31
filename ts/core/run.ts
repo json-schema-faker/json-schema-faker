@@ -26,7 +26,7 @@ function run(schema: JsonSchema, container: Container) {
 
       if (typeof sub.$ref === 'string') {
         if (sub.$ref.indexOf('#/') === -1) {
-          throw new Error('Only local references are allowed in sync mode.');
+          throw new Error('Reference not found: ' + sub.$ref);
         }
         // just remove the reference
         delete sub.$ref;
