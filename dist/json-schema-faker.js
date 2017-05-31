@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.5.0-rc3
+ * json-schema-faker library v0.5.0-rc4
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-15 06:05:25.329Z
+ * Date: 2017-05-31 01:03:58.568Z
  */
 
 (function (global, factory) {
@@ -17174,7 +17174,7 @@ var tslib_1 = require$$2$2;
 
 // dynamic proxy for custom generators
 function proxy(gen) {
-    return function (value) {
+    return function (value, schema, property) {
         var fn = value;
         var args = [];
         // support for nested object, first-key is the generator
@@ -17201,6 +17201,14 @@ function proxy(gen) {
         // invoke dynamic generators
         if (typeof value === 'function') {
             value = value.apply(ctx, args);
+        }
+        // test for pending callbacks
+        if (Object.prototype.toString.call(value) === '[object Object]') {
+            for (var key in value) {
+                if (typeof value[key] === 'function') {
+                    throw new Error('Cannot resolve value for "' + property + ': ' + fn + '", given: ' + value);
+                }
+            }
         }
         return value;
     };
@@ -17260,10 +17268,10 @@ var Container = (function () {
         var keys = Object.keys(schema);
         var length = keys.length;
         while (length--) {
-            var fn = keys[length];
+            var fn = keys[length].replace(/^x-/, '');
             var gen = this.support[fn];
             if (typeof gen === 'function') {
-                schema.generate = function () { return gen(schema[fn], schema); };
+                schema.generate = function () { return gen(schema[keys[length]], schema, keys[length]); };
                 break;
             }
         }
@@ -17475,17 +17483,28 @@ function merge(a, b) {
     }
     return a;
 }
-function clean(obj, isArray) {
+function clean(obj, isArray, requiredProps) {
     if (!obj || typeof obj !== 'object') {
         return obj;
     }
     if (Array.isArray(obj)) {
-        return obj
+        obj = obj
             .map(function (value) { return clean(value, true); })
-            .filter(function (value) { return value; });
+            .filter(function (value) { return typeof value !== 'undefined'; });
+        if (isArray && !obj.length) {
+            return undefined;
+        }
+        return obj;
     }
     Object.keys(obj).forEach(function (k) {
-        obj[k] = clean(obj[k]);
+        if (!requiredProps || requiredProps.indexOf(k) === -1) {
+            if (Array.isArray(obj[k]) && !obj[k].length) {
+                delete obj[k];
+            }
+        }
+        else {
+            obj[k] = clean(obj[k]);
+        }
     });
     if (!Object.keys(obj).length && isArray) {
         return undefined;
@@ -18047,6 +18066,9 @@ var typeMap = {
 // TODO provide types
 function traverse(schema, path, resolve) {
     schema = resolve(schema);
+    if (!schema) {
+        return;
+    }
     if (Array.isArray(schema.enum)) {
         return random.pick(schema.enum);
     }
@@ -18080,7 +18102,7 @@ function traverse(schema, path, resolve) {
         }
         else {
             try {
-                return typeMap[type](schema, path, resolve, traverse);
+                return utils.clean(typeMap[type](schema, path, resolve, traverse), null, schema.required);
             }
             catch (e) {
                 if (typeof e.path === 'undefined') {
@@ -18102,7 +18124,7 @@ function traverse(schema, path, resolve) {
             copy[prop] = schema[prop];
         }
     }
-    return utils.clean(copy);
+    return copy;
 }
 
 function isKey(prop) {
@@ -18119,10 +18141,15 @@ function run(schema, container) {
                 return null;
             }
             // cleanup
-            delete sub.id;
-            delete sub.$schema;
-            if (typeof sub.$ref === 'string' && sub.$ref.indexOf('#/') === -1) {
-                throw new Error('Only local references are allowed in sync mode.');
+            if (sub.id && typeof sub.id === 'string') {
+                delete sub.id;
+                delete sub.$schema;
+            }
+            if (typeof sub.$ref === 'string') {
+                if (sub.$ref.indexOf('#/') === -1) {
+                    throw new Error('Only local references are allowed in sync mode.');
+                }
+                return null;
             }
             if (Array.isArray(sub.allOf)) {
                 var schemas = sub.allOf;
@@ -18130,7 +18157,11 @@ function run(schema, container) {
                 // this is the only case where all sub-schemas
                 // must be resolved before any merge
                 schemas.forEach(function (subSchema) {
-                    utils.merge(sub, reduce(subSchema, maxReduceDepth + 1));
+                    var _sub = reduce(subSchema, maxReduceDepth + 1);
+                    // call given thunks if present
+                    utils.merge(sub, typeof _sub.thunk === 'function'
+                        ? _sub.thunk()
+                        : _sub);
                 });
             }
             if (Array.isArray(sub.oneOf || sub.anyOf)) {
