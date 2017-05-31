@@ -37,8 +37,12 @@ jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   cwd = cwd.replace(/\/+$/, '') + '/';
 
   return $RefParser
-    .bundle(schema, { path: cwd })
-    .then((sub) => jsf(sub, refs));
+    .dereference(schema, {
+      path: cwd,
+      dereference: {
+        circular: 'ignore',
+      },
+    }).then((sub) => jsf(sub, refs));
 };
 
 jsf.utils = utils;
