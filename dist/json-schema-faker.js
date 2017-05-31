@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.5.0-rc4
+ * json-schema-faker library v0.5.0-rc5
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-31 01:03:58.568Z
+ * Date: 2017-05-31 05:10:23.186Z
  */
 
 (function (global, factory) {
@@ -17511,6 +17511,11 @@ function clean(obj, isArray, requiredProps) {
     }
     return obj;
 }
+function short(schema) {
+    var s = JSON.stringify(schema);
+    var l = JSON.stringify(schema, null, 2);
+    return s.length > 400 ? l.substr(0, 400) + '...' : l;
+}
 var utils = {
     getSubAttribute: getSubAttribute,
     hasProperties: hasProperties,
@@ -17518,6 +17523,7 @@ var utils = {
     clone: clone,
     merge: merge,
     clean: clean,
+    short: short,
     randexp: _randexp
 };
 
@@ -17729,7 +17735,7 @@ var arrayType = function arrayType(value, path, resolve, traverseCallback) {
     var items = [];
     if (!(value.items || value.additionalItems)) {
         if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
-            throw new ParseError('missing items for ' + JSON.stringify(value), path);
+            throw new ParseError('missing items for ' + utils.short(value), path);
         }
         return items;
     }
@@ -17842,7 +17848,7 @@ var objectType = function objectType(value, path, resolve, traverseCallback) {
         propertyKeys.length === 0 &&
         patternPropertyKeys.length === 0 &&
         utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
-        throw new ParseError('missing properties for:\n' + JSON.stringify(value, null, '  '), path);
+        throw new ParseError('missing properties for:\n' + utils.short(value), path);
     }
     if (optionAPI('requiredOnly') === true) {
         requiredProperties.forEach(function (key) {
@@ -17911,7 +17917,7 @@ var objectType = function objectType(value, path, resolve, traverseCallback) {
     }
     if (!allowsAdditional && current < min) {
         throw new ParseError('properties constraints were too strong to successfully generate a valid object for:\n' +
-            JSON.stringify(value, null, '  '), path);
+            utils.short(value), path);
     }
     return traverseCallback(props, path.concat(['properties']), resolve);
 };
@@ -18012,7 +18018,7 @@ function generateFormat(value, invalid) {
         default:
             if (typeof callback === 'undefined') {
                 if (optionAPI('failOnInvalidFormat')) {
-                    throw new Error('unknown registry key ' + JSON.stringify(value.format));
+                    throw new Error('unknown registry key ' + utils.short(value.format));
                 }
                 else {
                     return invalid();
@@ -18094,7 +18100,7 @@ function traverse(schema, path, resolve) {
     if (typeof type === 'string') {
         if (!typeMap[type]) {
             if (optionAPI('failOnInvalidTypes')) {
-                throw new ParseError('unknown primitive ' + JSON.stringify(type), path.concat(['type']));
+                throw new ParseError('unknown primitive ' + utils.short(type), path.concat(['type']));
             }
             else {
                 return optionAPI('defaultInvalidTypeProduct');
@@ -18147,9 +18153,11 @@ function run(schema, container) {
             }
             if (typeof sub.$ref === 'string') {
                 if (sub.$ref.indexOf('#/') === -1) {
-                    throw new Error('Only local references are allowed in sync mode.');
+                    throw new Error('Reference not found: ' + sub.$ref);
                 }
-                return null;
+                // just remove the reference
+                delete sub.$ref;
+                return sub;
             }
             if (Array.isArray(sub.allOf)) {
                 var schemas = sub.allOf;
@@ -18210,26 +18218,16 @@ var jsf = function (schema, refs) {
     return run($(schema, $refs, true), container);
 };
 jsf.resolve = function (schema, refs, cwd) {
-    if (typeof refs === 'string') {
-        cwd = refs;
-        refs = [];
-    }
-    var $refs = getRefs(refs);
-    var fixedRefs = {
-        order: 300,
-        canRead: true,
-        read: function (file, callback) {
-            callback(null, $refs[file.url] || $refs[file.url.split('/').pop()]);
-        },
-    };
     // normalize basedir (browser aware)
     cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
     cwd = cwd.replace(/\/+$/, '') + '/';
-    return $RefParser.dereference(cwd, schema, {
-        resolve: {
-            fixedRefs: fixedRefs,
+    return $RefParser
+        .dereference(schema, {
+        path: cwd,
+        dereference: {
+            circular: 'ignore',
         },
-    }).then(function (schema) { return run(schema, container); });
+    }).then(function (sub) { return jsf(sub, refs); });
 };
 jsf.utils = utils;
 jsf.format = formatAPI;
