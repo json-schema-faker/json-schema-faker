@@ -28,7 +28,9 @@ function run(schema: JsonSchema, container: Container) {
         if (sub.$ref.indexOf('#/') === -1) {
           throw new Error('Only local references are allowed in sync mode.');
         }
-        return null;
+        // just remove the reference
+        delete sub.$ref;
+        return sub;
       }
 
       if (Array.isArray(sub.allOf)) {
