@@ -51,7 +51,7 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
   // so that value.items.map becomes recognized for typescript compiler
   var tmpItems = value.items;
   if (tmpItems instanceof Array) {
-    return Array.prototype.concat.apply(items, tmpItems.map(function(item, key) {
+    return Array.prototype.concat.call(items, tmpItems.map(function(item, key) {
       var itemSubpath: SchemaPath = path.concat(['items', key + '']);
       return traverseCallback(item, itemSubpath, resolve);
     }));

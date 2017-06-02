@@ -6,7 +6,7 @@
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-31 06:43:08.899Z
+ * Date: 2017-05-31 18:48:19.532Z
  */
 
 (function (global, factory) {
@@ -17544,9 +17544,6 @@ function clean(obj, isArray, requiredProps) {
         obj = obj
             .map(function (value) { return clean(value, true); })
             .filter(function (value) { return typeof value !== 'undefined'; });
-        if (isArray && !obj.length) {
-            return undefined;
-        }
         return obj;
     }
     Object.keys(obj).forEach(function (k) {
