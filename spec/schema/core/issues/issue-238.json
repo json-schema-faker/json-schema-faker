@@ -1,0 +1,64 @@
+[
+  {
+    "description": "allow empty arrays and null values as result",
+    "tests": [
+      {
+        "description": "should not filter out null elements from array",
+        "schema": {
+          "properties": {
+            "myArrayWithNullValue": {
+              "type": [
+                "array"
+              ],
+              "items": {
+                "type": [
+                  "null"
+                ]
+              },
+              "minimum": 1,
+              "minItems": 1,
+              "maxItems": 1
+            }
+          },
+          "required": [
+            "myArrayWithNullValue"
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should create array without elements",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": [
+              "null"
+            ]
+          },
+          "minimum": 1,
+          "maximum": 1,
+          "minItems": 0,
+          "maxItems": 0
+        },
+        "valid": true
+      },
+      {
+        "description": "should create null value",
+        "schema": {
+          "id": "fooNull",
+          "properties": {
+            "fooNull": {
+              "type": [
+                "null"
+              ]
+            }
+          },
+          "required": [
+            "fooNull"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]
