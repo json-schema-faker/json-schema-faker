@@ -116,9 +116,7 @@ function clean(obj, isArray, requiredProps) {
     obj = obj
       .map(function (value) { return clean(value, true); })
       .filter(function (value) { return typeof value !== 'undefined'; });
-    if (isArray && !obj.length) {
-      return undefined;
-    }
+
     return obj;
   }
   Object.keys(obj).forEach(function(k) {
