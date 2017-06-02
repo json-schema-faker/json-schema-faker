@@ -37,8 +37,7 @@ jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   cwd = cwd.replace(/\/+$/, '') + '/';
 
   return $RefParser
-    .dereference(schema, {
-      path: cwd,
+    .dereference(cwd, schema, {
       dereference: {
         circular: 'ignore',
       },
