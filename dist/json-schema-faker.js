@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.5.0-rc5
+ * json-schema-faker library v0.5.0-rc6
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-31 18:48:19.532Z
+ * Date: 2017-06-02 17:45:42.194Z
  */
 
 (function (global, factory) {
@@ -17794,7 +17794,7 @@ var arrayType = function arrayType(value, path, resolve, traverseCallback) {
     // so that value.items.map becomes recognized for typescript compiler
     var tmpItems = value.items;
     if (tmpItems instanceof Array) {
-        return Array.prototype.concat.apply(items, tmpItems.map(function (item, key) {
+        return Array.prototype.concat.call(items, tmpItems.map(function (item, key) {
             var itemSubpath = path.concat(['items', key + '']);
             return traverseCallback(item, itemSubpath, resolve);
         }));
@@ -18268,12 +18268,15 @@ var jsf = function (schema, refs) {
     return run($(schema, $refs, true), container);
 };
 jsf.resolve = function (schema, refs, cwd) {
+    if (typeof refs === 'string') {
+        cwd = refs;
+        refs = {};
+    }
     // normalize basedir (browser aware)
     cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
     cwd = cwd.replace(/\/+$/, '') + '/';
     return $RefParser
-        .dereference(schema, {
-        path: cwd,
+        .dereference(cwd, schema, {
         dereference: {
             circular: 'ignore',
         },
@@ -18296,7 +18299,7 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-var VERSION="0.5.0-rc5";
+var VERSION="0.5.0-rc6";
 jsf.version = VERSION;
 
 var index = jsf;
