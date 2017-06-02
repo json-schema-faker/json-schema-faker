@@ -32,6 +32,11 @@ var jsf = function(schema: JsonSchema, refs?: any) {
 };
 
 jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
+  if (typeof refs === 'string') {
+    cwd = refs;
+    refs = {};
+  }
+
   // normalize basedir (browser aware)
   cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
   cwd = cwd.replace(/\/+$/, '') + '/';
