@@ -77,7 +77,7 @@
     "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.1",
     "lodash.template": "^4.4.0",
-    "rollup": "^0.41.6",
+    "rollup": "^0.42.0",
     "rollup-plugin-commonjs": "^8.0.2",
     "rollup-plugin-node-resolve": "^3.0.0",
     "semver": "^5.3.0",
