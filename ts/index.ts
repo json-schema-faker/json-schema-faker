@@ -13,7 +13,7 @@ function getRefs(refs?: any) {
   var $refs = {};
 
   if (Array.isArray(refs)) {
-    refs.forEach(function(schema) {
+    refs.map(deref.util.normalizeSchema).forEach(function(schema) {
       $refs[schema.id] = schema;
     });
   } else {
@@ -28,7 +28,7 @@ var jsf = function(schema: JsonSchema, refs?: any) {
 
   var $refs = getRefs(refs);
 
-  return run($(schema, $refs, true), container);
+  return run($refs, $(schema, $refs, true), container);
 };
 
 jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {

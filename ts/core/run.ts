@@ -2,12 +2,14 @@ import traverse from './traverse';
 import random from './random';
 import utils from './utils';
 
+import deref from 'deref';
+
 function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 
 // TODO provide types
-function run(schema: JsonSchema, container: Container) {
+function run(refs: any, schema: JsonSchema, container: Container) {
   try {
     return traverse(schema, [], function reduce(sub, maxReduceDepth) {
       if (typeof maxReduceDepth === 'undefined') {
@@ -26,8 +28,15 @@ function run(schema: JsonSchema, container: Container) {
 
       if (typeof sub.$ref === 'string') {
         if (sub.$ref.indexOf('#/') === -1) {
-          throw new Error('Reference not found: ' + sub.$ref);
+          var ref = deref.util.findByRef(sub.$ref, refs);
+
+          if (!ref) {
+            throw new Error('Reference not found: ' + sub.$ref);
+          }
+
+          return ref;
         }
+
         // just remove the reference
         delete sub.$ref;
         return sub;
