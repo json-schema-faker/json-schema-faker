@@ -80,25 +80,18 @@ function typecast(value: any, schema: JsonSchema): any {
   }
 }
 
-function clone(arr: any[]): any[] {
-  var out: any[] = [];
-  arr.forEach(function(item: any, index: number) {
-    if (typeof item === 'object' && item !== null) {
-      out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
-    } else {
-      out[index] = item;
-    }
-  });
-  return out;
-}
-
-// TODO refactor merge function
 function merge(a: Object, b: Object): Object {
   for (var key in b) {
     if (typeof b[key] !== 'object' || b[key] === null) {
       a[key] = b[key];
     } else if (Array.isArray(b[key])) {
-      a[key] = (a[key] || []).concat(clone(b[key]));
+      a[key] = a[key] || [];
+      // fix #292 - skip duplicated values from merge object (b)
+      b[key].forEach(function(value) {
+        if (a[key].indexOf(value)) {
+          a[key].push(value);
+        }
+      });
     } else if (typeof a[key] !== 'object' || a[key] === null || Array.isArray(a[key])) {
       a[key] = merge({}, b[key]);
     } else {
@@ -145,7 +138,6 @@ export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
   typecast: typecast,
-  clone: clone,
   merge: merge,
   clean: clean,
   short: short,
