@@ -56,7 +56,13 @@ function run(schema: JsonSchema, container: Container) {
         delete sub.anyOf;
         delete sub.oneOf;
 
-        return () => random.pick(mix);
+        return () => {
+          var copy = utils.merge({}, sub);
+
+          utils.merge(copy, random.pick(mix));
+
+          return copy;
+        };
       }
 
       for (var prop in sub) {
