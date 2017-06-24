@@ -41,8 +41,22 @@ jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
   cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
   cwd = cwd.replace(/\/+$/, '') + '/';
 
+  var $refs = getRefs(refs);
+
+  // identical setup as json-schema-sequelizer
+  const fixedRefs = {
+    order: 300,
+    canRead: true,
+    read(file, callback) {
+      callback(null, deref.util.findByRef(cwd !== '/'
+        ? file.url.replace(cwd, '')
+        : file.url, $refs));
+    },
+  };
+
   return $RefParser
     .dereference(cwd, schema, {
+      resolve: { fixedRefs },
       dereference: {
         circular: 'ignore',
       },
