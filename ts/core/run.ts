@@ -44,22 +44,19 @@ function run(schema: JsonSchema, container: Container) {
           var _sub = reduce(subSchema, maxReduceDepth + 1);
 
           // call given thunks if present
-          utils.merge(sub, typeof _sub.thunk === 'function'
-            ? _sub.thunk()
+          utils.merge(sub, typeof _sub === 'function'
+            ? _sub()
             : _sub);
         });
       }
 
       if (Array.isArray(sub.oneOf || sub.anyOf)) {
-        var key = sub.oneOf ? 'oneOf' : 'anyOf';
         var mix = sub.oneOf || sub.anyOf;
 
         delete sub.anyOf;
         delete sub.oneOf;
 
-        return {
-          thunk: () => random.pick(mix)
-        };
+        return () => random.pick(mix);
       }
 
       for (var prop in sub) {
