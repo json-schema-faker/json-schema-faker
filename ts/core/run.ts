@@ -53,8 +53,8 @@ function run(refs: any, schema: JsonSchema, container: Container) {
           var _sub = reduce(subSchema, maxReduceDepth + 1);
 
           // call given thunks if present
-          utils.merge(sub, typeof _sub === 'function'
-            ? _sub()
+          utils.merge(sub, typeof _sub.thunk === 'function'
+            ? _sub.thunk()
             : _sub);
         });
       }
@@ -65,12 +65,14 @@ function run(refs: any, schema: JsonSchema, container: Container) {
         delete sub.anyOf;
         delete sub.oneOf;
 
-        return () => {
-          var copy = utils.merge({}, sub);
+        return {
+          thunk() {
+            var copy = utils.merge({}, sub);
 
-          utils.merge(copy, random.pick(mix));
+            utils.merge(copy, random.pick(mix));
 
-          return copy;
+            return copy;
+          },
         };
       }
 

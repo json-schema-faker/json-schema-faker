@@ -18,8 +18,8 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   }
 
   // thunks can return sub-schemas
-  if (typeof schema === 'function') {
-    return traverse(schema(), path, resolve);
+  if (typeof schema.thunk === 'function') {
+    return traverse(schema.thunk(), path, resolve);
   }
 
   if (typeof schema.generate === 'function') {
