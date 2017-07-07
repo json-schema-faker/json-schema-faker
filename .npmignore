@@ -16,6 +16,4 @@ tslint.json
 /coverage
 /generated
 /node_modules
-/ts
-/docs
 /logo
