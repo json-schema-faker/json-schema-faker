@@ -18,5 +18,4 @@ tslint.json
 /node_modules
 /ts
 /docs
-/dist
 /logo
