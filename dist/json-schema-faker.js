@@ -1,12 +1,11 @@
 /*!
- * json-schema-faker library v0.5.0-rc9
+ * json-schema-faker library v0.5.0-rc10
  * http://json-schema-faker.js.org
- * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-07-08 01:02:19.174Z
+ * Date: 2017-07-08 01:12:12.776Z
  */
 
 (function (global, factory) {
@@ -18310,7 +18309,7 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-var VERSION="0.5.0-rc9";
+var VERSION="0.5.0-rc10";
 jsf.version = VERSION;
 
 var index = jsf;
