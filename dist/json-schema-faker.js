@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.5.0-rc7
+ * json-schema-faker library v0.5.0-rc9
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-06-24 09:28:22.082Z
+ * Date: 2017-07-08 01:02:19.174Z
  */
 
 (function (global, factory) {
@@ -18121,8 +18121,8 @@ function traverse(schema, path, resolve) {
         return random.pick(schema.enum);
     }
     // thunks can return sub-schemas
-    if (typeof schema === 'function') {
-        return traverse(schema(), path, resolve);
+    if (typeof schema.thunk === 'function') {
+        return traverse(schema.thunk(), path, resolve);
     }
     if (typeof schema.generate === 'function') {
         return utils.typecast(schema.generate(), schema);
@@ -18213,8 +18213,8 @@ function run(refs, schema, container) {
                 schemas.forEach(function (subSchema) {
                     var _sub = reduce(subSchema, maxReduceDepth + 1);
                     // call given thunks if present
-                    utils.merge(sub, typeof _sub === 'function'
-                        ? _sub()
+                    utils.merge(sub, typeof _sub.thunk === 'function'
+                        ? _sub.thunk()
                         : _sub);
                 });
             }
@@ -18222,10 +18222,12 @@ function run(refs, schema, container) {
                 var mix = sub.oneOf || sub.anyOf;
                 delete sub.anyOf;
                 delete sub.oneOf;
-                return function () {
-                    var copy = utils.merge({}, sub);
-                    utils.merge(copy, random.pick(mix));
-                    return copy;
+                return {
+                    thunk: function () {
+                        var copy = utils.merge({}, sub);
+                        utils.merge(copy, random.pick(mix));
+                        return copy;
+                    },
                 };
             }
             for (var prop in sub) {
@@ -18308,7 +18310,7 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-var VERSION="0.5.0-rc7";
+var VERSION="0.5.0-rc9";
 jsf.version = VERSION;
 
 var index = jsf;
