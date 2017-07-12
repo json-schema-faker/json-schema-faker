@@ -66,7 +66,7 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   }
 
   while (output.length < minLength) {
-    output += Math.random() > 0.7 ? thunk() : utils.randexp('.+');
+    output += optionAPI('random')() > 0.7 ? thunk() : utils.randexp('.+');
   }
 
   if (output.length > maxLength) {
