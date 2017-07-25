@@ -1,6 +1,6 @@
 import Registry = require('./Registry');
 
-type Option = boolean|number;
+type Option = boolean|number|Function;
 
 /**
  * This class defines a registry for custom formats used within JSF.
@@ -18,6 +18,7 @@ class OptionRegistry extends Registry<Option> {
     this.data['defaultMinItems'] = 0;
     this.data['defaultRandExpMax'] = 10;
     this.data['alwaysFakeOptionals'] = false;
+    this.data['random'] = Math.random;
   }
 }
 

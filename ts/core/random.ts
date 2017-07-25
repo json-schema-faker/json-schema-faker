@@ -1,5 +1,7 @@
 /// <reference path="../index.d.ts" />
 
+var option = require('../api/option');
+
 /**
  * Returns random element of a collection
  *
@@ -7,7 +9,7 @@
  * @returns {T}
  */
 function pick<T>(collection: T[]): T {
-  return collection[Math.floor(Math.random() * collection.length)];
+  return collection[Math.floor(option('random')() * collection.length)];
 }
 
 /**
@@ -23,7 +25,7 @@ function shuffle<T>(collection: T[]): T[] {
     length: number = collection.length;
 
   for (; length > 0;) {
-    key = Math.floor(Math.random() * length);
+    key = Math.floor(option('random')() * length);
     // swap
     tmp = copy[--length];
     copy[length] = copy[key];
@@ -48,7 +50,7 @@ var MIN_NUMBER = -100,
  * @see http://stackoverflow.com/a/1527820/769384
  */
 function getRandomInt(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min + 1)) + min;
+  return Math.floor(option('random')() * (max - min + 1)) + min;
 }
 
 /**
