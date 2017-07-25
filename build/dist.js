@@ -4,9 +4,7 @@ var bundleName = 'JSONSchemaFaker';
 // boilerplate...
 var fs = require('fs-extra'),
     path = require('path'),
-    glob = require('glob'),
     rollup = require('rollup'),
-    uglifyjs = require('uglify-js'),
     commonJs = require('rollup-plugin-commonjs'),
     nodeResolve = require('rollup-plugin-node-resolve'),
     template = require('lodash.template');
@@ -73,18 +71,21 @@ function bundle(options, next) {
       }
     });
 
-    var min = uglifyjs.minify(_bundle, {
-      fromString: true,
-      compress: true,
-      mangle: true,
-      filename: options.src,
-      output: {
-        comments: /^!|^\*!|@preserve|@license|@cc_on/
-      },
-    });
+    var gcc = require('google-closure-compiler-js').compile;
+
+    var min = gcc({
+      jsCode: [{ src: _bundle }],
+      languageIn: 'ECMASCRIPT6',
+      languageOut: 'ECMASCRIPT5',
+      compilationLevel: 'ADVANCED',
+      warningLevel: 'VERBOSE',
+      env: 'CUSTOM',
+      createSourceMap: false,
+      applyInputSourceMaps: false,
+    }).compiledCode;
 
     // minified output
-    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), min.code);
+    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), min);
 
     // regular output
     fs.outputFileSync(destFile, _bundle);

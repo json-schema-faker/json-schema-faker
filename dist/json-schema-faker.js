@@ -1,12 +1,11 @@
 /*!
- * json-schema-faker library v0.5.0-rc6
+ * json-schema-faker library v0.5.0-rc10
  * http://json-schema-faker.js.org
- * @preserve
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-06-02 17:45:42.194Z
+ * Date: 2017-07-08 01:12:12.776Z
  */
 
 (function (global, factory) {
@@ -17506,26 +17505,19 @@ function typecast(value, schema) {
             return value;
     }
 }
-function clone(arr) {
-    var out = [];
-    arr.forEach(function (item, index) {
-        if (typeof item === 'object' && item !== null) {
-            out[index] = Array.isArray(item) ? clone(item) : merge({}, item);
-        }
-        else {
-            out[index] = item;
-        }
-    });
-    return out;
-}
-// TODO refactor merge function
 function merge(a, b) {
     for (var key in b) {
         if (typeof b[key] !== 'object' || b[key] === null) {
             a[key] = b[key];
         }
         else if (Array.isArray(b[key])) {
-            a[key] = (a[key] || []).concat(clone(b[key]));
+            a[key] = a[key] || [];
+            // fix #292 - skip duplicated values from merge object (b)
+            b[key].forEach(function (value) {
+                if (a[key].indexOf(value)) {
+                    a[key].push(value);
+                }
+            });
         }
         else if (typeof a[key] !== 'object' || a[key] === null || Array.isArray(a[key])) {
             a[key] = merge({}, b[key]);
@@ -17570,7 +17562,6 @@ var utils = {
     getSubAttribute: getSubAttribute,
     hasProperties: hasProperties,
     typecast: typecast,
-    clone: clone,
     merge: merge,
     clean: clean,
     short: short,
@@ -18187,7 +18178,7 @@ function isKey(prop) {
     return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 // TODO provide types
-function run(schema, container) {
+function run(refs, schema, container) {
     try {
         return traverse(schema, [], function reduce(sub, maxReduceDepth) {
             if (typeof maxReduceDepth === 'undefined') {
@@ -18203,7 +18194,11 @@ function run(schema, container) {
             }
             if (typeof sub.$ref === 'string') {
                 if (sub.$ref.indexOf('#/') === -1) {
-                    throw new Error('Reference not found: ' + sub.$ref);
+                    var ref = deref.util.findByRef(sub.$ref, refs);
+                    if (!ref) {
+                        throw new Error('Reference not found: ' + sub.$ref);
+                    }
+                    return ref;
                 }
                 // just remove the reference
                 delete sub.$ref;
@@ -18223,12 +18218,15 @@ function run(schema, container) {
                 });
             }
             if (Array.isArray(sub.oneOf || sub.anyOf)) {
-                var key = sub.oneOf ? 'oneOf' : 'anyOf';
                 var mix = sub.oneOf || sub.anyOf;
                 delete sub.anyOf;
                 delete sub.oneOf;
                 return {
-                    thunk: function () { return random.pick(mix); }
+                    thunk: function () {
+                        var copy = utils.merge({}, sub);
+                        utils.merge(copy, random.pick(mix));
+                        return copy;
+                    },
                 };
             }
             for (var prop in sub) {
@@ -18253,7 +18251,7 @@ var container = new Container();
 function getRefs(refs) {
     var $refs = {};
     if (Array.isArray(refs)) {
-        refs.forEach(function (schema) {
+        refs.map(deref.util.normalizeSchema).forEach(function (schema) {
             $refs[schema.id] = schema;
         });
     }
@@ -18265,7 +18263,7 @@ function getRefs(refs) {
 var jsf = function (schema, refs) {
     var $ = deref();
     var $refs = getRefs(refs);
-    return run($(schema, $refs, true), container);
+    return run($refs, $(schema, $refs, true), container);
 };
 jsf.resolve = function (schema, refs, cwd) {
     if (typeof refs === 'string') {
@@ -18275,8 +18273,20 @@ jsf.resolve = function (schema, refs, cwd) {
     // normalize basedir (browser aware)
     cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
     cwd = cwd.replace(/\/+$/, '') + '/';
+    var $refs = getRefs(refs);
+    // identical setup as json-schema-sequelizer
+    var fixedRefs = {
+        order: 300,
+        canRead: true,
+        read: function (file, callback) {
+            callback(null, deref.util.findByRef(cwd !== '/'
+                ? file.url.replace(cwd, '')
+                : file.url, $refs));
+        },
+    };
     return $RefParser
         .dereference(cwd, schema, {
+        resolve: { fixedRefs: fixedRefs },
         dereference: {
             circular: 'ignore',
         },
@@ -18299,7 +18309,7 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-var VERSION="0.5.0-rc6";
+var VERSION="0.5.0-rc10";
 jsf.version = VERSION;
 
 var index = jsf;
