@@ -4,6 +4,10 @@ import option = require('../api/option');
 // set maximum default, see #193
 RandExp.prototype.max = 10;
 
+// same implementation as the original except using our random
+RandExp.prototype.randInt = (a, b) =>
+  a + Math.floor(option('random')() * (1 + b - a));
+
 type Dependency = any;
 
 /**
