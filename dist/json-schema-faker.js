@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.4.2
+ * json-schema-faker library v0.4.3
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-05-30 22:01:35.922Z
+ * Date: 2017-07-25 21:53:13.096Z
  */
 (function(f){if(typeof exports==="object"&&typeof module!=="undefined"){module.exports=f()}else if(typeof define==="function"&&define.amd){define([],f)}else{var g;if(typeof window!=="undefined"){g=window}else if(typeof global!=="undefined"){g=global}else if(typeof self!=="undefined"){g=self}else{g=this}g.jsf = f()}})(function(){var define,module,exports;return (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 "use strict";
@@ -66,6 +66,10 @@ var RandExp = require("randexp");
 var option = require("../api/option");
 // set maximum default, see #193
 RandExp.prototype.max = 10;
+// same implementation as the original except using our random
+RandExp.prototype.randInt = function (a, b) {
+    return a + Math.floor(option('random')() * (1 + b - a));
+};
 /**
  * Container is used to wrap external libraries (faker, chance, casual, randexp) that are used among the whole codebase. These
  * libraries might be configured, customized, etc. and each internal JSF module needs to access those instances instead
@@ -159,6 +163,7 @@ var OptionRegistry = (function (_super) {
         _this.data['defaultMinItems'] = 0;
         _this.data['defaultRandExpMax'] = 10;
         _this.data['alwaysFakeOptionals'] = false;
+        _this.data['random'] = Math.random;
         return _this;
     }
     return OptionRegistry;
@@ -371,6 +376,7 @@ module.exports = inferType;
 },{}],9:[function(require,module,exports){
 /// <reference path="../index.d.ts" />
 "use strict";
+var option = require('../api/option');
 /**
  * Returns random element of a collection
  *
@@ -378,7 +384,7 @@ module.exports = inferType;
  * @returns {T}
  */
 function pick(collection) {
-    return collection[Math.floor(Math.random() * collection.length)];
+    return collection[Math.floor(option('random')() * collection.length)];
 }
 /**
  * Returns shuffled collection of elements
@@ -389,7 +395,7 @@ function pick(collection) {
 function shuffle(collection) {
     var tmp, key, copy = collection.slice(), length = collection.length;
     for (; length > 0;) {
-        key = Math.floor(Math.random() * length);
+        key = Math.floor(option('random')() * length);
         // swap
         tmp = copy[--length];
         copy[length] = copy[key];
@@ -409,7 +415,7 @@ var MIN_NUMBER = -100, MAX_NUMBER = 100;
  * @see http://stackoverflow.com/a/1527820/769384
  */
 function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
+    return Math.floor(option('random')() * (max - min + 1)) + min;
 }
 /**
  * Generates random number according to parameters passed
@@ -442,7 +448,7 @@ module.exports = {
     number: number
 };
 
-},{}],10:[function(require,module,exports){
+},{"../api/option":2}],10:[function(require,module,exports){
 "use strict";
 var deref = require("deref");
 var traverse = require("./traverse");
@@ -693,17 +699,18 @@ module.exports = {
 
 },{}],13:[function(require,module,exports){
 "use strict";
+var option = require('../api/option');
 /**
  * Generates randomized boolean value.
  *
  * @returns {boolean}
  */
 function booleanGenerator() {
-    return Math.random() > 0.5;
+    return option('random')() > 0.5;
 }
 module.exports = booleanGenerator;
 
-},{}],14:[function(require,module,exports){
+},{"../api/option":2}],14:[function(require,module,exports){
 "use strict";
 var container = require("../class/Container");
 var randexp = container.get('randexp');
@@ -840,7 +847,7 @@ jsf.extend = function (name, cb) {
     container.extend(name, cb);
     return jsf;
 };
-jsf.version = '0.4.2';
+jsf.version = '0.4.3';
 module.exports = jsf;
 
 },{"./api/format":1,"./api/option":2,"./class/Container":3,"./core/run":10}],21:[function(require,module,exports){
@@ -1194,7 +1201,7 @@ var stringType = function stringType(value) {
         output = thunk(minLength, maxLength);
     }
     while (output.length < minLength) {
-        output += Math.random() > 0.7 ? thunk() : randexp('.+');
+        output += option('random')() > 0.7 ? thunk() : randexp('.+');
     }
     if (output.length > maxLength) {
         output = output.substr(0, maxLength);
