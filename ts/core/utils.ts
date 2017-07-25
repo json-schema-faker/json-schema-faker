@@ -5,6 +5,10 @@ const RandExp = require('randexp');
 // set maximum default, see #193
 RandExp.prototype.max = 10;
 
+// same implementation as the original except using our random
+RandExp.prototype.randInt = (a, b) =>
+  a + Math.floor(optionAPI('random')() * (1 + b - a));
+
 function _randexp(value: string) {
   var re = new RandExp(value);
 
