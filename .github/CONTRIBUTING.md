@@ -1,24 +1,24 @@
-Contribution to the project is more than welcome! :beer:
+We welcome contributions to the project! :beer:
 
 ## Bug submission
 
-If you're submitting a bug, please clearly state what is:
+If you are submitting a bug report, please include the following:
 
-1. the JSON Schema content that fails: go to [the demo page](http://json-schema-faker.js.org/), paste your schema, click `generate` and grab the updated URL from browser address bar - and paste it here. It will make it easier for us to fix it, thanks in advance :beer: Otherwise please paste the schema inline.
-2. the result you get
+1. the JSON Schema content that fails: go to [the demo page](http://json-schema-faker.js.org/), paste the schema into the textarea on the left, click `Generate example`, and then copy the resulting URL from the browser address bar and paste it here. This will make it easier for us to reproduce and fix the bug. Thank you in advance! :beer: Otherwise please paste the schema inline in your bug report.
+2. the result you got
 3. the result you expected
 
 ## Issues & Pull-requests
 
-* When submitting *bugs* (or inappropriate behavior), do *paste your schema example* if only it's possible. This will prevent us from explicitly asking you to do this.
-* When submitting *PRs*, ship them under the `develop` branch.
-* The testing approach architecture is described in [spec/README.md](spec/README.md).
-* PR without specs will not be merged soon.
+* When submitting *bug reports*, *paste your schema example* whenever possible. This will save us from having to ask you for it later.
+* When submitting *Pull Requests (PRs)*, you should request to merge your changes into our `develop` branch.
+* Our approach to testing is described in [spec/README.md](spec/README.md).
+* PRs without specs will not be merged anytime soon!
 
 ## Releasing new versions
 
-* Include a new entry in [CHANGELOG.md](CHANGELOG.md) file,
-* Be followed by re-building and re-releasing online demo, see [`website-jsf` gh-pages branch](https://github.com/json-schema-faker/website-jsf/tree/gh-pages).
+* Create a new entry in the [CHANGELOG.md](CHANGELOG.md) file,
+* Re-build and re-release the online demo, see [`website-jsf` gh-pages branch](https://github.com/json-schema-faker/website-jsf/tree/gh-pages).
 
 ## Development tasks
 
