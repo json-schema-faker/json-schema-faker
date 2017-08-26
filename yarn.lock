@@ -2,9 +2,9 @@
 # yarn lockfile v1
 
 
-"@types/fs-extra@^3.0.0":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-3.0.2.tgz#00cbf48563f377f9ce5cf24237b21b3d9779e055"
+"@types/fs-extra@^4.0.0":
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/@types/fs-extra/-/fs-extra-4.0.0.tgz#1dd742ad5c9bce308f7a52d02ebc01421bc9102f"
   dependencies:
     "@types/node" "*"
 
@@ -417,6 +417,12 @@ ecc-jsbn@~0.1.1:
   dependencies:
     jsbn "~0.1.0"
 
+errno@^0.1.3:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/errno/-/errno-0.1.4.tgz#b896e23a9e5e8ba33871fc996abd3635fc9a1c7d"
+  dependencies:
+    prr "~0.0.0"
+
 es6-promise@^3.1.2:
   version "3.3.1"
   resolved "https://registry.yarnpkg.com/es6-promise/-/es6-promise-3.3.1.tgz#a08cdde84ccdbf34d027a1451bc91d4bcd28a613"
@@ -538,9 +544,9 @@ fs-extra@^1.0.0:
     jsonfile "^2.1.0"
     klaw "^1.0.0"
 
-fs-extra@^3.0.0, fs-extra@^3.0.1:
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-3.0.1.tgz#3794f378c58b342ea7dbbb23095109c4b3b62291"
+fs-extra@^4.0.0:
+  version "4.0.1"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.1.tgz#7fc0c6c8957f983f57f306a24e5b9ddd8d0dd880"
   dependencies:
     graceful-fs "^4.1.2"
     jsonfile "^3.0.0"
@@ -659,9 +665,9 @@ globule@~0.1.0:
     lodash "~1.0.1"
     minimatch "~0.2.11"
 
-google-closure-compiler-js@^20170626.0.0:
-  version "20170626.0.0"
-  resolved "https://registry.yarnpkg.com/google-closure-compiler-js/-/google-closure-compiler-js-20170626.0.0.tgz#5df265b277d1ec6fdea12eed131d1491cd8a8d71"
+google-closure-compiler-js@^20170806.0.0:
+  version "20170806.0.0"
+  resolved "https://registry.yarnpkg.com/google-closure-compiler-js/-/google-closure-compiler-js-20170806.0.0.tgz#e1ac2574ebbfb5d66d538e7d218cb91d0f482f89"
   dependencies:
     minimist "^1.2.0"
     vinyl "^2.0.1"
@@ -1065,9 +1071,9 @@ lodash@~1.0.1:
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-1.0.2.tgz#8f57560c83b59fc270bd3d561b690043430e2551"
 
-log-pose@^0.2.0:
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/log-pose/-/log-pose-0.2.2.tgz#906adaa98ddbd69eb7e0e23fc09867b8c1d6775c"
+log-pose@^0.2.4:
+  version "0.2.5"
+  resolved "https://registry.yarnpkg.com/log-pose/-/log-pose-0.2.5.tgz#b788f397c74361f66c06d80e7456874b39038867"
   dependencies:
     chalk "^1.1.3"
     cli-width "^2.1.0"
@@ -1094,6 +1100,13 @@ make-error@^1.1.1:
 marked@^0.3.5:
   version "0.3.6"
   resolved "https://registry.yarnpkg.com/marked/-/marked-0.3.6.tgz#b2c6c618fccece4ef86c4fc6cb8a7cbf5aeda8d7"
+
+memory-fs@^0.4.1:
+  version "0.4.1"
+  resolved "https://registry.yarnpkg.com/memory-fs/-/memory-fs-0.4.1.tgz#3a9a20b8462523e447cfbc7e8bb80ed667bfc552"
+  dependencies:
+    errno "^0.1.3"
+    readable-stream "^2.0.1"
 
 mersenne-twister@^1.0.1:
   version "1.1.0"
@@ -1337,6 +1350,10 @@ progress@^2.0.0:
   version "2.0.0"
   resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
 
+prr@~0.0.0:
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/prr/-/prr-0.0.0.tgz#1a84b85908325501411853d0081ee3fa86e2926a"
+
 punycode@^1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/punycode/-/punycode-1.4.1.tgz#c0d5a63b2718800ad8e1eb0fa5269c84dd41845e"
@@ -1372,7 +1389,7 @@ rc@^1.1.7:
     minimist "^1.2.0"
     strip-json-comments "~2.0.1"
 
-readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5:
+readable-stream@^2.0.1, readable-stream@^2.0.2, readable-stream@^2.0.6, readable-stream@^2.1.4, readable-stream@^2.1.5:
   version "2.3.2"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-2.3.2.tgz#5a04df05e4f57fe3f0dc68fdd11dc5c97c7e6f4d"
   dependencies:
@@ -1533,11 +1550,9 @@ rollup-pluginutils@^2.0.1:
     estree-walker "^0.3.0"
     micromatch "^2.3.11"
 
-rollup@^0.42.0:
-  version "0.42.0"
-  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.42.0.tgz#56e791b3a2f3dd7190bbb80a375675f2fe0f9b23"
-  dependencies:
-    source-map-support "^0.4.0"
+rollup@^0.48.0:
+  version "0.48.2"
+  resolved "https://registry.yarnpkg.com/rollup/-/rollup-0.48.2.tgz#dd9214eaf78d98a7771bf5583123cc80a0b5d6dc"
 
 safe-buffer@^5.0.1, safe-buffer@~5.1.0:
   version "5.1.1"
@@ -1693,9 +1708,9 @@ tar@^2.2.1:
     fstream "^1.0.2"
     inherits "2"
 
-tarima@^3.2.1:
-  version "3.2.1"
-  resolved "https://registry.yarnpkg.com/tarima/-/tarima-3.2.1.tgz#dbb2d403465135b3ef4d174b1ded31a7b179d082"
+tarima@^3.7.3:
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/tarima/-/tarima-3.7.3.tgz#4e9faea2a545a188954898e30846d58271695e35"
   dependencies:
     debug ">=2.2.0"
     deindent "^0.1.0"
@@ -1704,11 +1719,12 @@ tarima@^3.2.1:
     fs-extra "^1.0.0"
     glob "^7.1.1"
     js-yaml "^3.7.0"
-    log-pose "^0.2.0"
+    log-pose "^0.2.4"
+    memory-fs "^0.4.1"
     micromatch "^2.3.11"
     redent "^2.0.0"
     tosource ">=1.0.0"
-    wargs "^0.7.0"
+    wargs "^0.7.1"
 
 through2@^2.0.1:
   version "2.0.3"
@@ -1799,18 +1815,18 @@ typedoc-default-themes@^0.5.0:
   version "0.5.0"
   resolved "https://registry.yarnpkg.com/typedoc-default-themes/-/typedoc-default-themes-0.5.0.tgz#6dc2433e78ed8bea8e887a3acde2f31785bd6227"
 
-typedoc@^0.7.1:
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.7.1.tgz#b441bffe246bb3e0e598d9ae474e743594bda769"
+typedoc@^0.8.0:
+  version "0.8.0"
+  resolved "https://registry.yarnpkg.com/typedoc/-/typedoc-0.8.0.tgz#d7172bc6a29964f451b7609c005beadadefe2361"
   dependencies:
-    "@types/fs-extra" "^3.0.0"
+    "@types/fs-extra" "^4.0.0"
     "@types/handlebars" "^4.0.31"
     "@types/highlight.js" "^9.1.8"
     "@types/lodash" "^4.14.37"
     "@types/marked" "0.0.28"
     "@types/minimatch" "^2.0.29"
     "@types/shelljs" "^0.7.0"
-    fs-extra "^3.0.0"
+    fs-extra "^4.0.0"
     handlebars "^4.0.6"
     highlight.js "^9.0.0"
     lodash "^4.13.1"
@@ -1819,11 +1835,11 @@ typedoc@^0.7.1:
     progress "^2.0.0"
     shelljs "^0.7.0"
     typedoc-default-themes "^0.5.0"
-    typescript "2.3.2"
+    typescript "2.4.1"
 
-typescript@2.3.2:
-  version "2.3.2"
-  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.3.2.tgz#f0f045e196f69a72f06b25fd3bd39d01c3ce9984"
+typescript@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-2.4.1.tgz#c3ccb16ddaa0b2314de031e7e6fee89e5ba346bc"
 
 typescript@^2.3.4:
   version "2.3.4"
@@ -1905,9 +1921,9 @@ walkdir@~0.0.7:
   version "0.0.11"
   resolved "https://registry.yarnpkg.com/walkdir/-/walkdir-0.0.11.tgz#a16d025eb931bd03b52f308caed0f40fcebe9532"
 
-wargs@^0.7.0:
-  version "0.7.0"
-  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.7.0.tgz#5a7835d12fc0e756a278406c0a50e79a541c20e1"
+wargs@^0.7.1:
+  version "0.7.1"
+  resolved "https://registry.yarnpkg.com/wargs/-/wargs-0.7.1.tgz#1be35ff7e4294da0c239d0cac7449f90670cc0f9"
 
 webpack-core@^0.6.8:
   version "0.6.9"
