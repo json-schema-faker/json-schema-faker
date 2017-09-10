@@ -441,6 +441,7 @@ You may define following options for `jsf` that alter its behavior:
 - `maxItems`: number - Configure a maximum amount of items to generate in an array. This will override the maximum items found inside a JSON Schema.
 - `maxLength`: number - Configure a maximum length to allow generating strings for. This will override the maximum length found inside a JSON Schema.
 - `random`: Function - a replacement for `Math.random` to support pseudorandom number generation.
+- `alwaysFakeOptionals`: boolean - When true, all object-properties will be generated regardless they're `required` or not.
 
 Set options just as below:
 

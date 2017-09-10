@@ -53,19 +53,19 @@ function bundle(options, next) {
       }),
     ],
   }).then(function(_bundle) {
-    var result = _bundle.generate({
+    return _bundle.generate({
       banner,
       format: 'umd',
       moduleName: bundleName,
     });
-
+  }).then(function(result) {
     function dereq(file) {
       return 'createCommonjsModule(function(module, exports) {'
         + fs.readFileSync(file).toString().replace(/\brequire\b/g, '_dereq_')
         + '});';
     }
 
-    _bundle = result.code.replace(/__DEREQ__\("(.+?)"\);/g, (_, src) => {
+    var _bundle = result.code.replace(/__DEREQ__\("(.+?)"\);/g, (_, src) => {
       if (src === 'json-schema-ref-parser') {
         return dereq(require.resolve('json-schema-ref-parser/dist/ref-parser.js'));
       }
