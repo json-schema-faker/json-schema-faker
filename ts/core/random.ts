@@ -75,7 +75,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   var result: number = getRandom(min, max);
 
   if (!hasPrecision) {
-    return parseInt(result + '', 10);
+    return Math.round(result);
   }
 
   return result;
