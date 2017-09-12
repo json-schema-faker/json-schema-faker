@@ -1,11 +1,11 @@
 /*!
- * json-schema-faker library v0.5.0-rc10
+ * json-schema-faker library v0.5.0-rc11
  * http://json-schema-faker.js.org
  *
  * Copyright (c) 2014-2017 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-07-08 01:12:12.776Z
+ * Date: 2017-09-12 16:10:04.552Z
  */
 
 (function (global, factory) {
@@ -15617,6 +15617,8 @@ function createCommonjsModule(fn, module) {
 	return module = { exports: {} }, fn(module, module.exports), module.exports;
 }
 
+'use strict';
+
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
 
 function URLUtils(url, baseURL) {
@@ -15868,7 +15870,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 	// convert arguments to array and cut off target object
 	var args = Array.prototype.slice.call(arguments, 1);
 
-	var val, src, clone;
+	var val, src;
 
 	args.forEach(function (obj) {
 		// skip argument if isn't an object, is null, or is an array
@@ -15918,6 +15920,14 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 	return target;
 };
 });
+
+'use strict';
+
+
+
+
+
+
 
 function copy(_, obj, refs, parent, resolve) {
   var target =  Array.isArray(obj) ? [] : {};
@@ -15997,6 +16007,12 @@ var clone = module.exports = function(obj, seen) {
 };
 });
 
+'use strict';
+
+
+
+
+
 var SCHEMA_URI = [
   'http://json-schema.org/schema#',
   'http://json-schema.org/draft-04/schema#'
@@ -16055,7 +16071,7 @@ var normalizeSchema = function(fakeroot, schema, push) {
   return copy;
 };
 
-var index$2 = createCommonjsModule(function (module) {
+var lib$2 = createCommonjsModule(function (module) {
 'use strict';
 
 
@@ -16546,7 +16562,7 @@ var positions = {
 	end: end
 };
 
-var index$4 = function(regexpStr) {
+var lib$4 = function(regexpStr) {
   var i = 0, l, c,
       start = { type: types.ROOT, stack: []},
 
@@ -16823,7 +16839,7 @@ var index$4 = function(regexpStr) {
 
 var types_1 = types;
 
-index$4.types = types_1;
+lib$4.types = types_1;
 
 //protected helper class
 function _SubRange(low, high) {
@@ -16968,10 +16984,10 @@ DiscontinuousRange.prototype.clone = function () {
     return new DiscontinuousRange(this);
 };
 
-var index$6 = DiscontinuousRange;
+var discontinuousRange = DiscontinuousRange;
 
 var randexp = createCommonjsModule(function (module) {
-var types = index$4.types;
+var types = lib$4.types;
 
 
 /**
@@ -17004,7 +17020,7 @@ function randBool() {
  * @return {Object}
  */
 function randSelect(arr) {
-  if (arr instanceof index$6) {
+  if (arr instanceof discontinuousRange) {
     return arr.index(this.randInt(0, arr.length - 1));
   }
   return arr[this.randInt(0, arr.length - 1)];
@@ -17019,12 +17035,12 @@ function randSelect(arr) {
  * @return {DiscontinuousRange}
  */
 function expand(token) {
-  if (token.type === index$4.types.CHAR) {
-    return new index$6(token.value);
-  } else if (token.type === index$4.types.RANGE) {
-    return new index$6(token.from, token.to);
+  if (token.type === lib$4.types.CHAR) {
+    return new discontinuousRange(token.value);
+  } else if (token.type === lib$4.types.RANGE) {
+    return new discontinuousRange(token.from, token.to);
   } else {
-    var drange = new index$6();
+    var drange = new discontinuousRange();
     for (var i = 0; i < token.set.length; i++) {
       var subrange = expand.call(this, token.set[i]);
       drange.add(subrange);
@@ -17057,7 +17073,7 @@ function checkCustom(randexp, regexp) {
   if (typeof regexp.max === 'number') {
     randexp.max = regexp.max;
   }
-  if (regexp.defaultRange instanceof index$6) {
+  if (regexp.defaultRange instanceof discontinuousRange) {
     randexp.defaultRange = regexp.defaultRange;
   }
   if (typeof regexp.randInt === 'function') {
@@ -17086,7 +17102,7 @@ var RandExp = module.exports = function(regexp, m) {
     throw new Error('Expected a regexp or string');
   }
 
-  this.tokens = index$4(regexp);
+  this.tokens = lib$4(regexp);
 };
 
 
@@ -17126,7 +17142,7 @@ RandExp.sugar = function() {
 
 // This allows expanding to include additional characters
 // for instance: RandExp.defaultRange.add(0, 65535);
-RandExp.prototype.defaultRange = new index$6(32, 126);
+RandExp.prototype.defaultRange = new discontinuousRange(32, 126);
 
 
 /**
@@ -17221,7 +17237,7 @@ var tslib_1 = ( tslib_es6 && undefined ) || tslib_es6;
 function _interopDefault$1 (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
 var $RefParser = _interopDefault$1(require$$0);
-var deref = _interopDefault$1(index$2);
+var deref = _interopDefault$1(lib$2);
 
 
 // dynamic proxy for custom generators
@@ -17380,7 +17396,7 @@ var registry = new Registry();
  * @param callback
  * @returns {any}
  */
-function formatAPI(nameOrFormatMap, callback) {
+function formatAPI$1(nameOrFormatMap, callback) {
     if (typeof nameOrFormatMap === 'undefined') {
         return registry.list();
     }
@@ -17414,6 +17430,7 @@ var OptionRegistry = (function (_super) {
         _this.data['defaultMinItems'] = 0;
         _this.data['defaultRandExpMax'] = 10;
         _this.data['alwaysFakeOptionals'] = false;
+        _this.data['random'] = Math.random;
         return _this;
     }
     return OptionRegistry;
@@ -17439,6 +17456,10 @@ function optionAPI(nameOrOptionMap) {
 
 // set maximum default, see #193
 randexp.prototype.max = 10;
+// same implementation as the original except using our random
+randexp.prototype.randInt = function (a, b) {
+    return a + Math.floor(optionAPI('random')() * (1 + b - a));
+};
 function _randexp(value) {
     var re = new randexp(value);
     // apply given setting
@@ -17576,7 +17597,7 @@ var utils = {
  * @returns {T}
  */
 function pick(collection) {
-    return collection[Math.floor(Math.random() * collection.length)];
+    return collection[Math.floor(optionAPI('random')() * collection.length)];
 }
 /**
  * Returns shuffled collection of elements
@@ -17587,7 +17608,7 @@ function pick(collection) {
 function shuffle(collection) {
     var tmp, key, copy = collection.slice(), length = collection.length;
     for (; length > 0;) {
-        key = Math.floor(Math.random() * length);
+        key = Math.floor(optionAPI('random')() * length);
         // swap
         tmp = copy[--length];
         copy[length] = copy[key];
@@ -17608,7 +17629,7 @@ var MAX_NUMBER = 100;
  * @see http://stackoverflow.com/a/1527820/769384
  */
 function getRandom(min, max) {
-    return Math.random() * (max - min) + min;
+    return optionAPI('random')() * (max - min) + min;
 }
 /**
  * Generates random number according to parameters passed
@@ -17631,7 +17652,7 @@ function number(min, max, defMin, defMax, hasPrecision) {
     }
     var result = getRandom(min, max);
     if (!hasPrecision) {
-        return parseInt(result + '', 10);
+        return Math.round(result);
     }
     return result;
 }
@@ -17734,7 +17755,7 @@ function inferType(obj, schemaPath) {
  * @returns {boolean}
  */
 function booleanGenerator() {
-    return Math.random() > 0.5;
+    return optionAPI('random')() > 0.5;
 }
 
 var booleanType = booleanGenerator;
@@ -17808,7 +17829,8 @@ var arrayType = function arrayType(value, path, resolve, traverseCallback) {
             minItems = maxItems;
         }
     }
-    var length = random.number(minItems, maxItems, 1, 5), 
+    var length = (maxItems != null && optionAPI('alwaysFakeOptionals')) ?
+        maxItems : random.number(minItems, maxItems, 1, 5), 
     // TODO below looks bad. Should additionalItems be copied as-is?
     sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
     for (var current = items.length; current < length; current++) {
@@ -17824,7 +17846,7 @@ var arrayType = function arrayType(value, path, resolve, traverseCallback) {
 
 var MIN_INTEGER = -100000000;
 var MAX_INTEGER = 100000000;
-var numberType = function numberType(value) {
+var numberType$1 = function numberType(value) {
     var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum, max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum, multipleOf = value.multipleOf;
     if (multipleOf) {
         max = Math.floor(max / multipleOf) * multipleOf;
@@ -17849,7 +17871,7 @@ var numberType = function numberType(value) {
 // returns floating point numbers, and `integer` type truncates the fraction
 // part, leaving the result as an integer.
 var integerType = function integerType(value) {
-    var generated = numberType(value);
+    var generated = numberType$1(value);
     // whether the generated number is positive or negative, need to use either
     // floor (positive) or ceil (negative) function to get rid of the fraction
     return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
@@ -17866,7 +17888,7 @@ var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed
  * @param length
  * @returns {Array.<string>}
  */
-function wordsGenerator(length) {
+function wordsGenerator$1(length) {
     var words = random.shuffle(LIPSUM_WORDS);
     return words.slice(0, length);
 }
@@ -17942,7 +17964,7 @@ var objectType = function objectType(value, path, resolve, traverseCallback) {
             break;
         }
         if (allowsAdditional) {
-            var word = wordsGenerator(1) + utils.randexp('[a-f\\d]{1,3}');
+            var word = wordsGenerator$1(1) + utils.randexp('[a-f\\d]{1,3}');
             if (!props[word]) {
                 props[word] = additionalProperties || anyType;
                 current += 1;
@@ -17970,14 +17992,14 @@ var objectType = function objectType(value, path, resolve, traverseCallback) {
  */
 function produce() {
     var length = random.number(1, 5);
-    return wordsGenerator(length).join(' ');
+    return wordsGenerator$1(length).join(' ');
 }
 /**
  * Generates randomized concatenated string based on words generator.
  *
  * @returns {string}
  */
-function thunkGenerator(min, max) {
+function thunkGenerator$1(min, max) {
     if (min === void 0) { min = 0; }
     if (max === void 0) { max = 140; }
     var min = Math.max(0, min), max = random.number(min, max), result = produce();
@@ -18009,7 +18031,7 @@ var MOST_NEAR_DATETIME = 2524608000000;
  *
  * @returns {string}
  */
-function dateTimeGenerator() {
+function dateTimeGenerator$1() {
     var date = new Date();
     var days = random.number(-1000, MOST_NEAR_DATETIME);
     date.setTime(date.getTime() - days);
@@ -18039,13 +18061,13 @@ function coreFormatGenerator(coreFormat) {
 }
 
 function generateFormat(value, invalid) {
-    var callback = formatAPI(value.format);
+    var callback = formatAPI$1(value.format);
     if (typeof callback === 'function') {
         return callback(value);
     }
     switch (value.format) {
         case 'date-time':
-            return dateTimeGenerator();
+            return dateTimeGenerator$1();
         case 'ipv4':
             return ipv4Generator();
         case 'regex':
@@ -18083,16 +18105,16 @@ var stringType = function stringType(value) {
         }
     }
     if (value.format) {
-        output = generateFormat(value, function () { return thunkGenerator(minLength, maxLength); });
+        output = generateFormat(value, function () { return thunkGenerator$1(minLength, maxLength); });
     }
     else if (value.pattern) {
         output = utils.randexp(value.pattern);
     }
     else {
-        output = thunkGenerator(minLength, maxLength);
+        output = thunkGenerator$1(minLength, maxLength);
     }
     while (output.length < minLength) {
-        output += Math.random() > 0.7 ? thunkGenerator() : utils.randexp('.+');
+        output += optionAPI('random')() > 0.7 ? thunkGenerator$1() : utils.randexp('.+');
     }
     if (output.length > maxLength) {
         output = output.substr(0, maxLength);
@@ -18105,7 +18127,7 @@ var typeMap = {
     null: nullType,
     array: arrayType,
     integer: integerType,
-    number: numberType,
+    number: numberType$1,
     object: objectType,
     string: stringType
 };
@@ -18293,7 +18315,7 @@ jsf.resolve = function (schema, refs, cwd) {
     }).then(function (sub) { return jsf(sub, refs); });
 };
 jsf.utils = utils;
-jsf.format = formatAPI;
+jsf.format = formatAPI$1;
 jsf.option = optionAPI;
 // built-in support
 container.define('pattern', utils.randexp);
@@ -18309,11 +18331,11 @@ jsf.define = function (name, cb) {
 jsf.locate = function (name) {
     return container.get(name);
 };
-var VERSION="0.5.0-rc10";
+var VERSION="0.5.0-rc11";
 jsf.version = VERSION;
 
-var index = jsf;
+var lib = jsf;
 
-return index;
+return lib;
 
 })));
