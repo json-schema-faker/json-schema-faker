@@ -24,7 +24,7 @@ function bundle(options, next) {
   var destFile = path.join(projectDir, 'dist', options.dest || '', options.id + '.js');
 
   rollup.rollup({
-    entry: options.src,
+    input: options.src,
     plugins: [
       {
         resolveId(importee, importer) {
@@ -56,7 +56,7 @@ function bundle(options, next) {
     return _bundle.generate({
       banner,
       format: 'umd',
-      moduleName: bundleName,
+      name: bundleName,
     });
   }).then(function(result) {
     function dereq(file) {
@@ -96,7 +96,7 @@ function bundle(options, next) {
     next();
   })
   .catch(function(error) {
-    console.log(error);
+    console.log(error.stack);
   });
 }
 
