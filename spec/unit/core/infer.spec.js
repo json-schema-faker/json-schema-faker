@@ -1,4 +1,4 @@
-var infer = require('../../../lib/core/infer');
+var infer = require('../../../ts/core/infer').default;
 
 describe("Infer", function () {
 

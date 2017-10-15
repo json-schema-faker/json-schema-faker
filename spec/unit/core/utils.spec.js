@@ -1,4 +1,4 @@
-var utils = require('../../../lib/core/utils');
+var utils = require('../../../ts/core/utils').default;
 
 describe("Utils", function () {
 
