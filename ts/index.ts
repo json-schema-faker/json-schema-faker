@@ -1,7 +1,7 @@
-import container = require('./class/Container');
-import format = require('./api/format');
-import option = require('./api/option');
-import run = require('./core/run');
+import container from './class/Container';
+import format from './api/format';
+import option from './api/option';
+import run from './core/run';
 
 var jsf = <jsfAPI>function(schema: JsonSchema, refs?: any) {
   return run(schema, refs);
@@ -21,4 +21,4 @@ jsf.extend = function(name: string, cb: Function) {
 
 jsf.version = VERSION;
 
-export = jsf;
+export default jsf;

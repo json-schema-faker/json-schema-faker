@@ -52,4 +52,4 @@ class Registry<T> {
 
 }
 
-export = Registry;
+export default Registry;

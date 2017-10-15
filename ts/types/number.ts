@@ -1,4 +1,4 @@
-import random = require('../core/random');
+import random from '../core/random';
 
 var MIN_INTEGER = -100000000,
     MAX_INTEGER = 100000000;
@@ -32,4 +32,4 @@ var numberType: FTypeGenerator = function numberType(value: INumberSchema): numb
   return random.number(min, max, undefined, undefined, true);
 };
 
-export = numberType;
+export default numberType;

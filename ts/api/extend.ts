@@ -1,4 +1,4 @@
-import container = require('../class/Container');
+import container from '../class/Container';
 
 /**
  * Extending dependencies
@@ -11,4 +11,4 @@ function extendAPI(name: string, callback: Function): void {
   container.extend(name, callback);
 }
 
-export = extendAPI;
+export default extendAPI;

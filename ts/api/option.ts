@@ -1,4 +1,4 @@
-import OptionRegistry = require('../class/OptionRegistry');
+import OptionRegistry from '../class/OptionRegistry';
 
 // instantiate
 var registry = new OptionRegistry();
@@ -17,4 +17,4 @@ function optionAPI(nameOrOptionMap?: string|Object): any {
   }
 }
 
-export = optionAPI;
+export default optionAPI;

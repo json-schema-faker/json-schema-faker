@@ -1,11 +1,11 @@
-import thunk = require('../generators/thunk');
-import ipv4 = require('../generators/ipv4');
-import dateTime = require('../generators/dateTime');
-import coreFormat = require('../generators/coreFormat');
-import format = require('../api/format');
-import option = require('../api/option');
+import thunk from '../generators/thunk';
+import ipv4 from '../generators/ipv4';
+import dateTime from '../generators/dateTime';
+import coreFormat from '../generators/coreFormat';
+import format from '../api/format';
+import option from '../api/option';
 
-import container = require('../class/Container');
+import container from '../class/Container';
 var randexp = container.get('randexp');
 
 function generateFormat(value: IStringSchema): string {
@@ -65,4 +65,4 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
   return output;
 };
 
-export = stringType;
+export default stringType;

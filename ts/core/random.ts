@@ -1,6 +1,6 @@
 /// <reference path="../index.d.ts" />
 
-var option = require('../api/option');
+import option from '../api/option';
 
 /**
  * Returns random element of a collection
@@ -83,7 +83,7 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   return result;
 }
 
-export = {
+export default {
   pick: pick,
   shuffle: shuffle,
   number: number,

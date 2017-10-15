@@ -1,6 +1,5 @@
-import nullGenerator = require('../generators/null');
+import nullGenerator from '../generators/null';
 
 var nullType: FTypeGenerator = nullGenerator;
 
-export = nullType;
-
+export default nullType;

@@ -1,4 +1,4 @@
-var option = require('../api/option');
+import option from '../api/option';
 
 /**
  * Generates randomized boolean value.
@@ -9,4 +9,4 @@ function booleanGenerator(): boolean {
   return option('random')() > 0.5;
 }
 
-export = booleanGenerator;
+export default booleanGenerator;

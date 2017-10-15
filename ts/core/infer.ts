@@ -85,4 +85,4 @@ function inferType(obj: Object, schemaPath: SchemaPath): string {
   }
 }
 
-export = inferType;
+export default inferType;

@@ -1,9 +1,9 @@
-import deref = require('deref');
+import deref from 'deref';
 
-import container = require('../class/Container');
-import traverse = require('./traverse');
-import random = require('./random');
-import utils = require('./utils');
+import container from '../class/Container';
+import traverse from './traverse';
+import random from './random';
+import utils from './utils';
 
 function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
@@ -85,4 +85,4 @@ function run(schema, refs?, ex?) {
   }
 }
 
-export = run;
+export default run;

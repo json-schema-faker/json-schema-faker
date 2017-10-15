@@ -16,4 +16,4 @@ class ParseError extends Error {
   }
 }
 
-export = ParseError;
+export default ParseError;

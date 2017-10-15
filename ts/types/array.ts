@@ -1,7 +1,7 @@
-import random = require('../core/random');
-import utils = require('../core/utils');
-import ParseError = require('../core/error');
-import option = require('../api/option');
+import random from '../core/random';
+import utils from '../core/utils';
+import ParseError from '../core/error';
+import option from '../api/option';
 
 // TODO provide types
 function unique(path: SchemaPath, items, value, sample, resolve, traverseCallback: Function) {
@@ -96,4 +96,4 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
   return items;
 };
 
-export = arrayType;
+export default arrayType;

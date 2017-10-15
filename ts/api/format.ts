@@ -1,4 +1,4 @@
-import Registry = require('../class/Registry');
+import Registry from '../class/Registry';
 
 type Format = Function;
 
@@ -27,4 +27,4 @@ function formatAPI(nameOrFormatMap?: string|Object, callback?: Format): any {
   }
 }
 
-export = formatAPI;
+export default formatAPI;

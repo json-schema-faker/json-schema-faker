@@ -1,4 +1,4 @@
-import Registry = require('./Registry');
+import Registry from './Registry';
 
 type Option = boolean|number|Function;
 
@@ -22,4 +22,4 @@ class OptionRegistry extends Registry<Option> {
   }
 }
 
-export = OptionRegistry;
+export default OptionRegistry;
