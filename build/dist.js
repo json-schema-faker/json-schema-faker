@@ -63,22 +63,10 @@ function bundle(options) {
       name: bundleName,
     });
   }).then(function(result) {
-    function dereq(file) {
-      return 'createCommonjsModule(function(module, exports) {'
-        + fs.readFileSync(file).toString().replace(/\brequire\b/g, '_dereq_')
-        + '});';
-    }
-
-    var _bundle = result.code.replace(/__DEREQ__\("(.+?)"\);/g, (_, src) => {
-      if (src === 'json-schema-ref-parser') {
-        return dereq(require.resolve('json-schema-ref-parser/dist/ref-parser.js'));
-      }
-    });
-
     var gcc = require('google-closure-compiler-js').compile;
 
     var min = gcc({
-      jsCode: [{ src: _bundle }],
+      jsCode: [{ src: result.code }],
       languageIn: 'ECMASCRIPT6',
       languageOut: 'ECMASCRIPT5',
       compilationLevel: 'ADVANCED',
@@ -89,10 +77,10 @@ function bundle(options) {
     }).compiledCode;
 
     // minified output
-    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), min);
+    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), min.replace(/JSCOMPILER_PRESERVE\(.*?\)/g, ''));
 
     // regular output
-    fs.outputFileSync(destFile, _bundle);
+    fs.outputFileSync(destFile, result.code);
 
     // OK
     console.log('Bundle: ' + destFile);
@@ -122,7 +110,7 @@ Promise.resolve()
     tasks.push(() => {
       console.log('Building language ' + path.basename(lang, '.js') + '...');
 
-      return bundle({ id: path.basename(lang, '.js'), src: path.join(projectDir, 'locale/' + path.basename(lang)) });
+      return bundle({ id: path.basename(lang, '.js'), dest: 'locale', src: path.join(projectDir, 'locale/' + path.basename(lang)) });
     });
   });
 
