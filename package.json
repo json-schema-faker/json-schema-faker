@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "index.js",
@@ -15,8 +15,8 @@
     "dist": "node build/dist.js",
     "tsc": "bash build/tsc.sh",
     "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
-    "typedoc": "./node_modules/.bin/typedoc --out docs/html ts/ --module commonjs",
-    "graphviz": "./node_modules/.bin/madge lib --dot > structure.gv"
+    "typedoc": "typedoc --out docs/html ts/ --module commonjs",
+    "graphviz": "madge lib --dot > structure.gv"
   },
   "contributors": [
     {
@@ -36,10 +36,10 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "dependencies": {
-    "chance": "^1.0.4",
+    "chance": "^1.0.11",
     "deref": "^0.6.4",
-    "faker": "3.0.1",
-    "randexp": "^0.4.3"
+    "faker": "^4.1.0",
+    "randexp": "^0.4.6"
   },
   "devDependencies": {
     "browserify": "^13.1.1",
