@@ -7245,903 +7245,1117 @@ Faker.prototype.seed = function(value) {
 module['exports'] = Faker;
 });
 
-var first_name = createCommonjsModule(function (module) {
+var country = createCommonjsModule(function (module) {
 module["exports"] = [
-  "آبان دخت",
-  "آبتین",
-  "آتوسا",
-  "آفر",
-  "آفره دخت",
-  "آذرنوش‌",
-  "آذین",
-  "آراه",
-  "آرزو",
-  "آرش",
-  "آرتین",
-  "آرتام",
-  "آرتمن",
-  "آرشام",
-  "آرمان",
-  "آرمین",
-  "آرمیتا",
-  "آریا فر",
-  "آریا",
-  "آریا مهر",
-  "آرین",
-  "آزاده",
-  "آزرم",
-  "آزرمدخت",
-  "آزیتا",
-  "آناهیتا",
-  "آونگ",
-  "آهو",
-  "آیدا",
-  "اتسز",
-  "اختر",
-  "ارد",
-  "ارد شیر",
-  "اردوان",
-  "ارژن",
-  "ارژنگ",
-  "ارسلان",
-  "ارغوان",
-  "ارمغان",
-  "ارنواز",
-  "اروانه",
-  "استر",
-  "اسفندیار",
-  "اشکان",
-  "اشکبوس",
-  "افسانه",
-  "افسون",
-  "افشین",
-  "امید",
-  "انوش (‌ آنوشا )",
-  "انوشروان",
-  "اورنگ",
-  "اوژن",
-  "اوستا",
-  "اهورا",
-  "ایاز",
-  "ایران",
-  "ایراندخت",
-  "ایرج",
-  "ایزدیار",
-  "بابک",
-  "باپوک",
-  "باربد",
-  "بارمان",
-  "بامداد",
-  "بامشاد",
-  "بانو",
-  "بختیار",
-  "برانوش",
-  "بردیا",
-  "برزو",
-  "برزویه",
-  "برزین",
-  "برمک",
-  "بزرگمهر",
-  "بنفشه",
-  "بوژان",
-  "بویان",
-  "بهار",
-  "بهارک",
-  "بهاره",
-  "بهتاش",
-  "بهداد",
-  "بهرام",
-  "بهدیس",
-  "بهرخ",
-  "بهرنگ",
-  "بهروز",
-  "بهزاد",
-  "بهشاد",
-  "بهمن",
-  "بهناز",
-  "بهنام",
-  "بهنود",
-  "بهنوش",
-  "بیتا",
-  "بیژن",
-  "پارسا",
-  "پاکان",
-  "پاکتن",
-  "پاکدخت",
-  "پانته آ",
-  "پدرام",
-  "پرتو",
-  "پرشنگ",
-  "پرتو",
-  "پرستو",
-  "پرویز",
-  "پردیس",
-  "پرهام",
-  "پژمان",
-  "پژوا",
-  "پرنیا",
-  "پشنگ",
-  "پروانه",
-  "پروین",
-  "پری",
-  "پریچهر",
-  "پریدخت",
-  "پریسا",
-  "پرناز",
-  "پریوش",
-  "پریا",
-  "پوپک",
-  "پوران",
-  "پوراندخت",
-  "پوریا",
-  "پولاد",
-  "پویا",
-  "پونه",
-  "پیام",
-  "پیروز",
-  "پیمان",
-  "تابان",
-  "تاباندخت",
-  "تاجی",
-  "تارا",
-  "تاویار",
-  "ترانه",
-  "تناز",
-  "توران",
-  "توراندخت",
-  "تورج",
-  "تورتک",
-  "توفان",
-  "توژال",
-  "تیر داد",
-  "تینا",
-  "تینو",
-  "جابان",
-  "جامین",
-  "جاوید",
-  "جریره",
-  "جمشید",
-  "جوان",
-  "جویا",
-  "جهان",
-  "جهانبخت",
-  "جهانبخش",
-  "جهاندار",
-  "جهانگیر",
-  "جهان بانو",
-  "جهاندخت",
-  "جهان ناز",
-  "جیران",
-  "چابک",
-  "چالاک",
-  "چاوش",
-  "چترا",
-  "چوبین",
-  "چهرزاد",
-  "خاوردخت",
-  "خداداد",
-  "خدایار",
-  "خرم",
-  "خرمدخت",
-  "خسرو",
-  "خشایار",
-  "خورشید",
-  "دادمهر",
-  "دارا",
-  "داراب",
-  "داریا",
-  "داریوش",
-  "دانوش",
-  "داور‌",
-  "دایان",
-  "دریا",
-  "دل آرا",
-  "دل آویز",
-  "دلارام",
-  "دل انگیز",
-  "دلبر",
-  "دلبند",
-  "دلربا",
-  "دلشاد",
-  "دلکش",
-  "دلناز",
-  "دلنواز",
-  "دورشاسب",
-  "دنیا",
-  "دیااکو",
-  "دیانوش",
-  "دیبا",
-  "دیبا دخت",
-  "رابو",
-  "رابین",
-  "رادبانو",
-  "رادمان",
-  "رازبان",
-  "راژانه",
-  "راسا",
-  "رامتین",
-  "رامش",
-  "رامشگر",
-  "رامونا",
-  "رامیار",
-  "رامیلا",
-  "رامین",
-  "راویار",
-  "رژینا",
-  "رخپاک",
-  "رخسار",
-  "رخشانه",
-  "رخشنده",
-  "رزمیار",
-  "رستم",
-  "رکسانا",
-  "روبینا",
-  "رودابه",
-  "روزبه",
-  "روشنک",
-  "روناک",
-  "رهام",
-  "رهی",
-  "ریبار",
-  "راسپینا",
-  "زادبخت",
-  "زاد به",
-  "زاد چهر",
-  "زاد فر",
-  "زال",
-  "زادماسب",
-  "زاوا",
-  "زردشت",
-  "زرنگار",
-  "زری",
-  "زرین",
-  "زرینه",
-  "زمانه",
-  "زونا",
-  "زیبا",
-  "زیبار",
-  "زیما",
-  "زینو",
-  "ژاله",
-  "ژالان",
-  "ژیار",
-  "ژینا",
-  "ژیوار",
-  "سارا",
-  "سارک",
-  "سارنگ",
-  "ساره",
-  "ساسان",
-  "ساغر",
-  "سام",
-  "سامان",
-  "سانا",
-  "ساناز",
-  "سانیار",
-  "ساویز",
-  "ساهی",
-  "ساینا",
-  "سایه",
-  "سپنتا",
-  "سپند",
-  "سپهر",
-  "سپهرداد",
-  "سپیدار",
-  "سپید بانو",
-  "سپیده",
-  "ستاره",
-  "ستی",
-  "سرافراز",
-  "سرور",
-  "سروش",
-  "سرور",
-  "سوبا",
-  "سوبار",
-  "سنبله",
-  "سودابه",
-  "سوری",
-  "سورن",
-  "سورنا",
-  "سوزان",
-  "سوزه",
-  "سوسن",
-  "سومار",
-  "سولان",
-  "سولماز",
-  "سوگند",
-  "سهراب",
-  "سهره",
-  "سهند",
-  "سیامک",
-  "سیاوش",
-  "سیبوبه ‌",
-  "سیما",
-  "سیمدخت",
-  "سینا",
-  "سیمین",
-  "سیمین دخت",
-  "شاپرک",
-  "شادی",
-  "شادمهر",
-  "شاران",
-  "شاهپور",
-  "شاهدخت",
-  "شاهرخ",
-  "شاهین",
-  "شاهیندخت",
-  "شایسته",
-  "شباهنگ",
-  "شب بو",
-  "شبدیز",
-  "شبنم",
-  "شراره",
-  "شرمین",
-  "شروین",
-  "شکوفه",
-  "شکفته",
-  "شمشاد",
-  "شمین",
-  "شوان",
-  "شمیلا",
-  "شورانگیز",
-  "شوری",
-  "شهاب",
-  "شهبار",
-  "شهباز",
-  "شهبال",
-  "شهپر",
-  "شهداد",
-  "شهرآرا",
-  "شهرام",
-  "شهربانو",
-  "شهرزاد",
-  "شهرناز",
-  "شهرنوش",
-  "شهره",
-  "شهریار",
-  "شهرزاد",
-  "شهلا",
-  "شهنواز",
-  "شهین",
-  "شیبا",
-  "شیدا",
-  "شیده",
-  "شیردل",
-  "شیرزاد",
-  "شیرنگ",
-  "شیرو",
-  "شیرین دخت",
-  "شیما",
-  "شینا",
-  "شیرین",
-  "شیوا",
-  "طوس",
-  "طوطی",
-  "طهماسب",
-  "طهمورث",
-  "غوغا",
-  "غنچه",
-  "فتانه",
-  "فدا",
-  "فراز",
-  "فرامرز",
-  "فرانک",
-  "فراهان",
-  "فربد",
-  "فربغ",
-  "فرجاد",
-  "فرخ",
-  "فرخ پی",
-  "فرخ داد",
-  "فرخ رو",
-  "فرخ زاد",
-  "فرخ لقا",
-  "فرخ مهر",
-  "فرداد",
-  "فردیس",
-  "فرین",
-  "فرزاد",
-  "فرزام",
-  "فرزان",
-  "فرزانه",
-  "فرزین",
-  "فرشاد",
-  "فرشته",
-  "فرشید",
-  "فرمان",
-  "فرناز",
-  "فرنگیس",
-  "فرنود",
-  "فرنوش",
-  "فرنیا",
-  "فروتن",
-  "فرود",
-  "فروز",
-  "فروزان",
-  "فروزش",
-  "فروزنده",
-  "فروغ",
-  "فرهاد",
-  "فرهنگ",
-  "فرهود",
-  "فربار",
-  "فریبا",
-  "فرید",
-  "فریدخت",
-  "فریدون",
-  "فریمان",
-  "فریناز",
-  "فرینوش",
-  "فریوش",
-  "فیروز",
-  "فیروزه",
-  "قابوس",
-  "قباد",
-  "قدسی",
-  "کابان",
-  "کابوک",
-  "کارا",
-  "کارو",
-  "کاراکو",
-  "کامبخت",
-  "کامبخش",
-  "کامبیز",
-  "کامجو",
-  "کامدین",
-  "کامران",
-  "کامراوا",
-  "کامک",
-  "کامنوش",
-  "کامیار",
-  "کانیار",
-  "کاووس",
-  "کاوه",
-  "کتایون",
-  "کرشمه",
-  "کسری",
-  "کلاله",
-  "کمبوجیه",
-  "کوشا",
-  "کهبد",
-  "کهرام",
-  "کهزاد",
-  "کیارش",
-  "کیان",
-  "کیانا",
-  "کیانچهر",
-  "کیاندخت",
-  "کیانوش",
-  "کیاوش",
-  "کیخسرو",
-  "کیقباد",
-  "کیکاووس",
-  "کیوان",
-  "کیوان دخت",
-  "کیومرث",
-  "کیهان",
-  "کیاندخت",
-  "کیهانه",
-  "گرد آفرید",
-  "گردان",
-  "گرشا",
-  "گرشاسب",
-  "گرشین",
-  "گرگین",
-  "گزل",
-  "گشتاسب",
-  "گشسب",
-  "گشسب بانو",
-  "گل",
-  "گل آذین",
-  "گل آرا‌",
-  "گلاره",
-  "گل افروز",
-  "گلاله",
-  "گل اندام",
-  "گلاویز",
-  "گلباد",
-  "گلبار",
-  "گلبام",
-  "گلبان",
-  "گلبانو",
-  "گلبرگ",
-  "گلبو",
-  "گلبهار",
-  "گلبیز",
-  "گلپاره",
-  "گلپر",
-  "گلپری",
-  "گلپوش",
-  "گل پونه",
-  "گلچین",
-  "گلدخت",
-  "گلدیس",
-  "گلربا",
-  "گلرخ",
-  "گلرنگ",
-  "گلرو",
-  "گلشن",
-  "گلریز",
-  "گلزاد",
-  "گلزار",
-  "گلسا",
-  "گلشید",
-  "گلنار",
-  "گلناز",
-  "گلنسا",
-  "گلنواز",
-  "گلنوش",
-  "گلی",
-  "گودرز",
-  "گوماتو",
-  "گهر چهر",
-  "گوهر ناز",
-  "گیتی",
-  "گیسو",
-  "گیلدا",
-  "گیو",
-  "لادن",
-  "لاله",
-  "لاله رخ",
-  "لاله دخت",
-  "لبخند",
-  "لقاء",
-  "لومانا",
-  "لهراسب",
-  "مارال",
-  "ماری",
-  "مازیار",
-  "ماکان",
-  "مامک",
-  "مانا",
-  "ماندانا",
-  "مانوش",
-  "مانی",
-  "مانیا",
-  "ماهان",
-  "ماهاندخت",
-  "ماه برزین",
-  "ماه جهان",
-  "ماهچهر",
-  "ماهدخت",
-  "ماهور",
-  "ماهرخ",
-  "ماهزاد",
-  "مردآویز",
-  "مرداس",
-  "مرزبان",
-  "مرمر",
-  "مزدک",
-  "مژده",
-  "مژگان",
-  "مستان",
-  "مستانه",
-  "مشکاندخت",
-  "مشکناز",
-  "مشکین دخت",
-  "منیژه",
-  "منوچهر",
-  "مهبانو",
-  "مهبد",
-  "مه داد",
-  "مهتاب",
-  "مهدیس",
-  "مه جبین",
-  "مه دخت",
-  "مهر آذر",
-  "مهر آرا",
-  "مهر آسا",
-  "مهر آفاق",
-  "مهر افرین",
-  "مهرآب",
-  "مهرداد",
-  "مهر افزون",
-  "مهرام",
-  "مهران",
-  "مهراندخت",
-  "مهراندیش",
-  "مهرانفر",
-  "مهرانگیز",
-  "مهرداد",
-  "مهر دخت",
-  "مهرزاده ‌",
-  "مهرناز",
-  "مهرنوش",
-  "مهرنکار",
-  "مهرنیا",
-  "مهروز",
-  "مهری",
-  "مهریار",
-  "مهسا",
-  "مهستی",
-  "مه سیما",
-  "مهشاد",
-  "مهشید",
-  "مهنام",
-  "مهناز",
-  "مهنوش",
-  "مهوش",
-  "مهیار",
-  "مهین",
-  "مهین دخت",
-  "میترا",
-  "میخک",
-  "مینا",
-  "مینا دخت",
-  "مینو",
-  "مینودخت",
-  "مینو فر",
-  "نادر",
-  "ناز آفرین",
-  "نازبانو",
-  "نازپرور",
-  "نازچهر",
-  "نازفر",
-  "نازلی",
-  "نازی",
-  "نازیدخت",
-  "نامور",
-  "ناهید",
-  "ندا",
-  "نرسی",
-  "نرگس",
-  "نرمک",
-  "نرمین",
-  "نریمان",
-  "نسترن",
-  "نسرین",
-  "نسرین دخت",
-  "نسرین نوش",
-  "نکیسا",
-  "نگار",
-  "نگاره",
-  "نگارین",
-  "نگین",
-  "نوا",
-  "نوش",
-  "نوش آذر",
-  "نوش آور",
-  "نوشا",
-  "نوش آفرین",
-  "نوشدخت",
-  "نوشروان",
-  "نوشفر",
-  "نوشناز",
-  "نوشین",
-  "نوید",
-  "نوین",
-  "نوین دخت",
-  "نیش ا",
-  "نیک بین",
-  "نیک پی",
-  "نیک چهر",
-  "نیک خواه",
-  "نیکداد",
-  "نیکدخت",
-  "نیکدل",
-  "نیکزاد",
-  "نیلوفر",
-  "نیما",
-  "وامق",
-  "ورجاوند",
-  "وریا",
-  "وشمگیر",
-  "وهرز",
-  "وهسودان",
-  "ویدا",
-  "ویس",
-  "ویشتاسب",
-  "ویگن",
-  "هژیر",
-  "هخامنش",
-  "هربد( هیربد )",
-  "هرمز",
-  "همایون",
-  "هما",
-  "همادخت",
-  "همدم",
-  "همراز",
-  "همراه",
-  "هنگامه",
-  "هوتن",
-  "هور",
-  "هورتاش",
-  "هورچهر",
-  "هورداد",
-  "هوردخت",
-  "هورزاد",
-  "هورمند",
-  "هوروش",
-  "هوشنگ",
-  "هوشیار",
-  "هومان",
-  "هومن",
-  "هونام",
-  "هویدا",
-  "هیتاسب",
-  "هیرمند",
-  "هیما",
-  "هیوا",
-  "یادگار",
-  "یاسمن ( یاسمین )",
-  "یاشار",
-  "یاور",
-  "یزدان",
-  "یگانه",
-  "یوشیتا"
+  "Akrotiri və Dekeliya",
+  "Aland adaları",
+  "Albaniya",
+  "Almaniya",
+  "Amerika Samoası",
+  "Andorra",
+  "Angilya",
+  "Anqola",
+  "Antiqua və Barbuda",
+  "Argentina",
+  "Aruba",
+  "Avstraliya",
+  "Avstriya",
+  "Azərbaycan",
+  "Baham adaları",
+  "Banqladeş",
+  "Barbados",
+  "Belçika",
+  "Beliz",
+  "Belarus",
+  "Benin",
+  "Bermud adaları",
+  "BƏƏ",
+  "ABŞ",
+  "Boliviya",
+  "Bolqarıstan",
+  "Bosniya və Herseqovina",
+  "Botsvana",
+  "Böyük Britaniya",
+  "Braziliya",
+  "Bruney",
+  "Burkina-Faso",
+  "Burundi",
+  "Butan",
+  "Bəhreyn",
+  "Cersi",
+  "Cəbəli-Tariq",
+  "CAR",
+  "Cənubi Sudan",
+  "Cənubi Koreya",
+  "Cibuti",
+  "Çad",
+  "Çexiya",
+  "Monteneqro",
+  "Çili",
+  "ÇXR",
+  "Danimarka",
+  "Dominika",
+  "Dominikan Respublikası",
+  "Efiopiya",
+  "Ekvador",
+  "Ekvatorial Qvineya",
+  "Eritreya",
+  "Ermənistan",
+  "Estoniya",
+  "Əfqanıstan",
+  "Əlcəzair",
+  "Farer adaları",
+  "Fələstin Dövləti",
+  "Fici",
+  "Kot-d’İvuar",
+  "Filippin",
+  "Finlandiya",
+  "Folklend adaları",
+  "Fransa",
+  "Fransa Polineziyası",
+  "Gernsi",
+  "Gürcüstan",
+  "Haiti",
+  "Hindistan",
+  "Honduras",
+  "Honkonq",
+  "Xorvatiya",
+  "İndoneziya",
+  "İordaniya",
+  "İraq",
+  "İran",
+  "İrlandiya",
+  "İslandiya",
+  "İspaniya",
+  "İsrail",
+  "İsveç",
+  "İsveçrə",
+  "İtaliya",
+  "Kabo-Verde",
+  "Kamboca",
+  "Kamerun",
+  "Kanada",
+  "Kayman adaları",
+  "Keniya",
+  "Kipr",
+  "Kiribati",
+  "Kokos adaları",
+  "Kolumbiya",
+  "Komor adaları",
+  "Konqo Respublikası",
+  "KDR",
+  "Kosovo",
+  "Kosta-Rika",
+  "Kuba",
+  "Kuk adaları",
+  "Küveyt",
+  "Qabon",
+  "Qambiya",
+  "Qana",
+  "Qətər",
+  "Qayana",
+  "Qazaxıstan",
+  "Qərbi Sahara",
+  "Qırğızıstan",
+  "Qrenada",
+  "Qrenlandiya",
+  "Quam",
+  "Qvatemala",
+  "Qvineya",
+  "Qvineya-Bisau",
+  "Laos",
+  "Latviya",
+  "Lesoto",
+  "Liberiya",
+  "Litva",
+  "Livan",
+  "Liviya",
+  "Lixtenşteyn",
+  "Lüksemburq",
+  "Macarıstan",
+  "Madaqaskar",
+  "Makao",
+  "Makedoniya",
+  "Malavi",
+  "Malayziya",
+  "Maldiv adaları",
+  "Mali",
+  "Malta",
+  "Marşall adaları",
+  "Mavriki",
+  "Mavritaniya",
+  "Mayotta",
+  "Meksika",
+  "Men adası",
+  "Mərakeş",
+  "MAR",
+  "Mikroneziya",
+  "Milad adası",
+  "Misir",
+  "Myanma",
+  "Moldova",
+  "Monako",
+  "Monqolustan",
+  "Montserrat",
+  "Mozambik",
+  "Müqəddəs Yelena, Askenson və Tristan-da-Kunya adaları",
+  "Namibiya",
+  "Nauru",
+  "Nepal",
+  "Niderland",
+  "Niderland Antil adaları",
+  "Niger",
+  "Nigeriya",
+  "Nikaraqua",
+  "Niue",
+  "Norfolk adası",
+  "Norveç",
+  "Oman",
+  "Özbəkistan",
+  "Pakistan",
+  "Palau",
+  "Panama",
+  "Papua-Yeni Qvineya",
+  "Paraqvay",
+  "Peru",
+  "Pitkern adaları",
+  "Polşa",
+  "Portuqaliya",
+  "Prednestroviya",
+  "Puerto-Riko",
+  "Ruanda",
+  "Rumıniya",
+  "Rusiya",
+  "Salvador",
+  "Samoa",
+  "San-Marino",
+  "San-Tome və Prinsipi",
+  "Seneqal",
+  "Sen-Bartelemi",
+  "Sent-Kits və Nevis",
+  "Sent-Lüsiya",
+  "Sen-Marten",
+  "Sen-Pyer və Mikelon",
+  "Sent-Vinsent və Qrenadina",
+  "Serbiya",
+  "Seyşel adaları",
+  "Səudiyyə Ərəbistanı",
+  "Sinqapur",
+  "Slovakiya",
+  "Sloveniya",
+  "Solomon adaları",
+  "Somali",
+  "Somalilend",
+  "Sudan",
+  "Surinam",
+  "Suriya",
+  "Svazilend",
+  "Syerra-Leone",
+  "Şərqi Timor",
+  "Şimali Marian adaları",
+  "Şpisbergen və Yan-Mayen",
+  "Şri-Lanka",
+  "Tacikistan",
+  "Tanzaniya",
+  "Tailand",
+  "Çin Respublikası",
+  "Törks və Kaykos adaları",
+  "Tokelau",
+  "Tonqa",
+  "Toqo",
+  "Trinidad və Tobaqo",
+  "Tunis",
+  "Tuvalu",
+  "Türkiyə",
+  "Türkmənistan",
+  "Ukrayna",
+  "Uollis və Futuna",
+  "Uqanda",
+  "Uruqvay",
+  "Vanuatu",
+  "Vatikan",
+  "Venesuela",
+  "Amerika Virgin adaları",
+  "Britaniya Virgin adaları",
+  "Vyetnam",
+  "Yamayka",
+  "Yaponiya",
+  "Yeni Kaledoniya",
+  "Yeni Zelandiya",
+  "Yəmən",
+  "Yunanıstan",
+  "Zambiya",
+  "Zimbabve"
 ];
 });
 
-var last_name = createCommonjsModule(function (module) {
+var building_number = createCommonjsModule(function (module) {
 module["exports"] = [
-  "عارف",
-  "عاشوری",
-  "عالی",
-  "عبادی",
-  "عبدالکریمی",
-  "عبدالملکی",
-  "عراقی",
-  "عزیزی",
-  "عصار",
-  "عقیلی",
-  "علم",
-  "علم‌الهدی",
-  "علی عسگری",
-  "علی‌آبادی",
-  "علیا",
-  "علی‌پور",
-  "علی‌زمانی",
-  "عنایت",
-  "غضنفری",
-  "غنی",
-  "فارسی",
-  "فاطمی",
-  "فانی",
-  "فتاحی",
-  "فرامرزی",
-  "فرج",
-  "فرشیدورد",
-  "فرمانفرمائیان",
-  "فروتن",
-  "فرهنگ",
-  "فریاد",
-  "فنایی",
-  "فنی‌زاده",
-  "فولادوند",
-  "فهمیده",
-  "قاضی",
-  "قانعی",
-  "قانونی",
-  "قمیشی",
-  "قنبری",
-  "قهرمان",
-  "قهرمانی",
-  "قهرمانیان",
-  "قهستانی",
-  "کاشی",
-  "کاکاوند",
-  "کامکار",
-  "کاملی",
-  "کاویانی",
-  "کدیور",
-  "کردبچه",
-  "کرمانی",
-  "کریمی",
-  "کلباسی",
-  "کمالی",
-  "کوشکی",
-  "کهنمویی",
-  "کیان",
-  "کیانی (نام خانوادگی)",
-  "کیمیایی",
-  "گل محمدی",
-  "گلپایگانی",
-  "گنجی",
-  "لاجوردی",
-  "لاچینی",
-  "لاهوتی",
-  "لنکرانی",
-  "لوکس",
-  "مجاهد",
-  "مجتبایی",
-  "مجتبوی",
-  "مجتهد شبستری",
-  "مجتهدی",
-  "مجرد",
-  "محجوب",
-  "محجوبی",
-  "محدثی",
-  "محمدرضایی",
-  "محمدی",
-  "مددی",
-  "مرادخانی",
-  "مرتضوی",
-  "مستوفی",
-  "مشا",
-  "مصاحب",
-  "مصباح",
-  "مصباح‌زاده",
-  "مطهری",
-  "مظفر",
-  "معارف",
-  "معروف",
-  "معین",
-  "مفتاح",
-  "مفتح",
-  "مقدم",
-  "ملایری",
-  "ملک",
-  "ملکیان",
-  "منوچهری",
-  "موحد",
-  "موسوی",
-  "موسویان",
-  "مهاجرانی",
-  "مهدی‌پور",
-  "میرباقری",
-  "میردامادی",
-  "میرزاده",
-  "میرسپاسی",
-  "میزبانی",
-  "ناظری",
-  "نامور",
-  "نجفی",
-  "ندوشن",
-  "نراقی",
-  "نعمت‌زاده",
-  "نقدی",
-  "نقیب‌زاده",
-  "نواب",
-  "نوبخت",
-  "نوبختی",
-  "نهاوندی",
-  "نیشابوری",
-  "نیلوفری",
-  "واثقی",
-  "واعظ",
-  "واعظ‌زاده",
-  "واعظی",
-  "وکیلی",
-  "هاشمی",
-  "هاشمی رفسنجانی",
-  "هاشمیان",
-  "هامون",
-  "هدایت",
-  "هراتی",
-  "هروی",
-  "همایون",
-  "همت",
-  "همدانی",
-  "هوشیار",
-  "هومن",
-  "یاحقی",
-  "یادگار",
-  "یثربی",
-  "یلدا"
+  "###"
+];
+});
+
+var street_suffix = createCommonjsModule(function (module) {
+module["exports"] = [
+  "küç.",
+  "küçəsi",
+  "prospekti",
+  "pr.",
+  "sahəsi",
+  "sh."
+];
+});
+
+var secondary_address = createCommonjsModule(function (module) {
+module["exports"] = [
+  "m. ###"
+];
+});
+
+var postcode = createCommonjsModule(function (module) {
+module["exports"] = [
+  "AZ####"
+];
+});
+
+var state = createCommonjsModule(function (module) {
+module["exports"] = [
+
+];
+});
+
+var street_title = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Abbas Fətullayev",
+  "Abbas Mirzə Şərifzadə",
+  "Abbas Səhhət",
+  "Abdulla Şaiq",
+  "Afiyəddin Cəlilov",
+  "Axundov",
+  "Ağa Nemətulla",
+  "Ağadadaş Qurbanov",
+  "Akademik Həsən Əliyev",
+  "Akademik Lətif İmanov",
+  "Alı Mustafayev",
+  "Almas İldırım",
+  "Asəf Zeynallı",
+  "Asif Əsədullayev",
+  "Aşıq Alı",
+  "Aşıq Ələsgər",
+  "Azadlıq prospekti",
+  "Bakıxanov",
+  "Balababa Məcidov",
+  "Balaəmi Dadaşov",
+  "Behbud Şaxtantinski",
+  "Bəkir Çobanzadə",
+  "Bəsti Bağırova",
+  "Bəşir Səfəroğlu",
+  "Böyük Qala",
+  "Cabir Əliyev",
+  "Camal Hacıəliyev",
+  "Cavadxan",
+  "Cavanşir",
+  "Ceyhun Səlimov",
+  "Ceyhunbəy Hacıbəyli",
+  "Cəbiyev",
+  "Cəfər Xəndan",
+  "Cəfər Cabbarlı",
+  "Cəlal Qurbanov",
+  "Cəlil Məmmədquluzadə",
+  "Çingiz Mustafayev",
+  "Çobanzadə",
+  "Dadaş Bünyadzadə",
+  "Dağlı Yunus",
+  "Dilarə Əliyeva",
+  "Elçin Əzimov",
+  "Eldar və Abdulla Əlibəyovlar",
+  "Elxan Həsənov",
+  "Elşən Mehdiyev",
+  "Elşən Süleymanov",
+  "Etibar Bəkirov",
+  "Əbdüləzəl Dəmirçizadə",
+  "Əbdülhəsən Anaplı",
+  "Əbdülkərim Əlizadə",
+  "Əhməd bəy Ağaoğlu",
+  "Əhməd Cavad",
+  "Əhməd Cəmil",
+  "Əhməd Mehbalıyev",
+  "Əhməd Rəcəbli",
+  "Əjdər Xanbabayev",
+  "Əkrəm Cəfərov",
+  "Ələsgər Qayıbov",
+  "Əliağa Vahid",
+  "Əli Bəy Hüseynzadə",
+  "Əlimərdan bəy Topçubaşov",
+  "Əliyar Əliyev",
+  "Əlövsət Abdulrəhimov",
+  "Əlövsət Quliyev",
+  "Əmir Bağırov",
+  "Əsəd Əhmədov",
+  "Əşrəf Yunusov",
+  "Əzim Əzimzadə",
+  "Əziz Əliyev",
+  "Heybət Heybətov",
+  "Həqiqət Rzayeva",
+  "Həmid Araslı",
+  "Hənifə Ələsgərova",
+  "Hərbçilər",
+  "Həsənoğu",
+  "Həsən Seyidbəyli",
+  "Hətəm Allahverdiyev",
+  "Həzi Aslanov",
+  "Hüsü Hacıyev",
+  "Hüseynqulu Sarabski",
+  "Fətəli xan Xoyski",
+  "Fəzail Bayramov",
+  "Fikrət Əmirov",
+  "Fuad İbrahimbəyov",
+  "Fuad Yusifov",
+  "General Əliağa Şıxlinski",
+  "Gülayə Qədirbəyova",
+  "Gənclik",
+  "Xaqani",
+  "Xan Şuşinski",
+  "Xanlar",
+  "Xudu Məmmədov",
+  "İbrahimpaşa Dadaşov",
+  "İdris Süleymanov",
+  "İlqar Abbasov",
+  "İlqar İsmayılov",
+  "İmran Qasımov",
+  "İnqilab İsmayılov",
+  "İsfəndiyar Zülalov",
+  "İslam Abışov",
+  "İslam Səfərli",
+  "İsmayıl bəy Qutqaşınlı",
+  "İsmayıl Mirzəgülov",
+  "İstiqlaliyyət",
+  "28 May",
+  "İsgəndərov",
+  "İvan Turgenev",
+  "İzmir",
+  "İzzət Həmidov",
+  "İzzət Orucova",
+  "Kamal Rəhimov",
+  "Kazım Kazımzadə",
+  "Kazımağa Kərimov",
+  "Kərəm İsmayılov",
+  "Kiçik Qala",
+  "Koroğlu Rəhimov",
+  "Qaçaq Nəbi",
+  "Qarabağ",
+  "Qədirbəyov",
+  "Qəzənfər Musabəyov",
+  "Qəzənfər Vəliyev",
+  "Leyla Məmmədbəyova",
+  "Mahmud İbrahimov",
+  "Malik Məmmədov",
+  "Mehdi Abbasov",
+  "Mehdi Mehdizadə",
+  "Məhəmməd Əmin Rəsulzadə",
+  "Məhəmməd Hadi",
+  "Məhəmməd Xiyabani",
+  "Məhəmməd ibn Hinduşah Naxçıvani",
+  "Məhsəti Gəncəvi",
+  "Məmmədyarov",
+  "Mərdanov qardaşları",
+  "Mətləb Ağayev",
+  "Məşədi Hilal",
+  "Məzahir Rüstəmov",
+  "Mikayıl Müşviq",
+  "Mingəçevir",
+  "Mirəli Qaşqay",
+  "Mirəli Seyidov",
+  "Mirzağa Əliyev",
+  "Mirzə İbrahimov",
+  "Mirzə Mənsur",
+  "Mirzə Mustafayev",
+  "Murtuza Muxtarov",
+  "Mustafa Topçubaşov",
+  "Müqtədir Aydınbəyov",
+  "Müslüm Maqomayev",
+  "Müzəffər Həsənov",
+  "Nabat Aşurbəyova",
+  "Naxçıvani",
+  "Naximov",
+  "Nazim İsmaylov",
+  "Neapol",
+  "Neftçi Qurban Abbasov",
+  "Neftçilər prospekti",
+  "Nəcəfbəy Vəzirov",
+  "Nəcəfqulu Rəfiyev",
+  "Nəriman Nərimanov",
+  "Nəsirəddin Tusi",
+  "Nigar Rəfibəyli",
+  "Niyazi",
+  "Nizami",
+  "Nizami Abdullayev",
+  "Nobel prospekti",
+  "Novruz",
+  "Novruzov qardaşları",
+  "Oqtay Vəliyev",
+  "Parlament",
+  "Puşkin",
+  "Rafiq Ağayev",
+  "Ramiz Qəmbərov",
+  "Rəşid Behbudov",
+  "Rəşid Məcidov",
+  "Ruhulla Axundov",
+  "Ruslan Allahverdiyev",
+  "Rüstəm Rüstəmov",
+  "Tahir Bağırov",
+  "Tarzan Hacı Məmmədov",
+  "Tbilisi prospekti",
+  "Təbriz (Bakı)",
+  "Təbriz Xəlilbəyli",
+  "Tofiq Məmmədov",
+  "Tolstoy",
+  "Sabit Orucov",
+  "Sabit Rəhman",
+  "Sahib Hümmətov",
+  "Salatın Əsgərova",
+  "Sarayevo",
+  "Seyid Əzim Şirvani",
+  "Seyid Şuşinski",
+  "Seyidov",
+  "Səməd bəy Mehmandarov",
+  "Səməd Vurğun",
+  "Səttar Bəhlulzadə",
+  "Sona xanım Vəlixanlı",
+  "Sübhi Salayev",
+  "Süleyman Əhmədov",
+  "Süleyman Rəhimov",
+  "Süleyman Rüstəm",
+  "Süleyman Sani Axundov",
+  "Süleyman Vəzirov",
+  "Şahin Səmədov",
+  "Şamil Əzizbəyov",
+  "Şamil Kamilov",
+  "Şeyx Şamil",
+  "Şəfayət Mehdiyev",
+  "Şəmsi Bədəlbəyli",
+  "Şirin Mirzəyev",
+  "Şıxəli Qurbanov",
+  "Şövkət Ələkbərova",
+  "Ülvi Bünyadzadə",
+  "Üzeyir Hacıbəyov",
+  "Vasif Əliyev",
+  "Vəli Məmmədov",
+  "Vladislav Plotnikov",
+  "Vüqar Quliyev",
+  "Vunq Tau",
+  "Yaqub Əliyev",
+  "Yaşar Abdullayev",
+  "Yaşar Əliyev",
+  "Yavər Əliyev",
+  "Yesenin",
+  "Yəhya Hüseynov",
+  "Yılmaz Axundzadə",
+  "Yüsif Eyvazov",
+  "Yusif Qasımov",
+  "Yusif Məmmədəliyev",
+  "Yusif Səfərov",
+  "Yusif Vəzir Çəmənzəminli",
+  "Zahid Əliyev",
+  "Zahid Xəlilov",
+  "Zaur Kərimov",
+  "Zavod",
+  "Zərgərpalan"
+];
+});
+
+var city_name = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Ağcabədi",
+  "Ağdam",
+  "Ağdaş",
+  "Ağdərə",
+  "Ağstafa",
+  "Ağsu",
+  "Astara",
+  "Bakı",
+  "Balakən",
+  "Beyləqan",
+  "Bərdə",
+  "Biləsuvar",
+  "Cəbrayıl",
+  "Cəlilabad",
+  "Culfa",
+  "Daşkəsən",
+  "Dəliməmmədli",
+  "Füzuli",
+  "Gədəbəy",
+  "Gəncə",
+  "Goranboy",
+  "Göyçay",
+  "Göygöl",
+  "Göytəpə",
+  "Hacıqabul",
+  "Horadiz",
+  "Xaçmaz",
+  "Xankəndi",
+  "Xocalı",
+  "Xocavənd",
+  "Xırdalan",
+  "Xızı",
+  "Xudat",
+  "İmişli",
+  "İsmayıllı",
+  "Kəlbəcər",
+  "Kürdəmir",
+  "Qax",
+  "Qazax",
+  "Qəbələ",
+  "Qobustan",
+  "Qovlar",
+  "Quba",
+  "Qubadlı",
+  "Qusar",
+  "Laçın",
+  "Lerik",
+  "Lənkəran",
+  "Liman",
+  "Masallı",
+  "Mingəçevir",
+  "Naftalan",
+  "Naxçıvan (şəhər)",
+  "Neftçala",
+  "Oğuz",
+  "Ordubad",
+  "Saatlı",
+  "Sabirabad",
+  "Salyan",
+  "Samux",
+  "Siyəzən",
+  "Sumqayıt",
+  "Şabran",
+  "Şahbuz",
+  "Şamaxı",
+  "Şəki",
+  "Şəmkir",
+  "Şərur",
+  "Şirvan",
+  "Şuşa",
+  "Tərtər",
+  "Tovuz",
+  "Ucar",
+  "Yardımlı",
+  "Yevlax",
+  "Zaqatala",
+  "Zəngilan",
+  "Zərdab"
+];
+});
+
+var city = createCommonjsModule(function (module) {
+module["exports"] = [
+  "#{Address.city_name}"
+];
+});
+
+var street_name = createCommonjsModule(function (module) {
+module["exports"] = [
+  "#{street_suffix} #{Address.street_title}",
+  "#{Address.street_title} #{street_suffix}"
+];
+});
+
+var street_address = createCommonjsModule(function (module) {
+module["exports"] = [
+  "#{street_name}, #{building_number}"
+];
+});
+
+var default_country = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Azərbaycan"
+];
+});
+
+var address_1 = createCommonjsModule(function (module) {
+var address = {};
+module['exports'] = address;
+address.country = country;
+address.building_number = building_number;
+address.street_suffix = street_suffix;
+address.secondary_address = secondary_address;
+address.postcode = postcode;
+address.state = state;
+address.street_title = street_title;
+address.city_name = city_name;
+address.city = city;
+address.street_name = street_name;
+address.street_address = street_address;
+address.default_country = default_country;
+});
+
+var free_email = createCommonjsModule(function (module) {
+module["exports"] = [
+  "box.az",
+  "mail.az",
+  "gmail.com",
+  "yahoo.com",
+  "hotmail.com"
+];
+});
+
+var domain_suffix = createCommonjsModule(function (module) {
+module["exports"] = [
+  "com",
+  "az",
+  "com.az",
+  "info",
+  "net",
+  "org"
+];
+});
+
+var internet_1 = createCommonjsModule(function (module) {
+var internet = {};
+module['exports'] = internet;
+internet.free_email = free_email;
+internet.domain_suffix = domain_suffix;
+});
+
+var male_first_name = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Anar",
+  "Amid",
+  "Afəl",
+  "Abbas",
+  "Abdulla",
+  "Adil",
+  "Akif",
+  "Aqil",
+  "Bəhram",
+  "Nurlan",
+  "Rafiq",
+  "Tərlan",
+  "Zaur",
+  "Emin",
+  "Emil",
+  "Kamran",
+  "Elnur",
+  "Natiq",
+  "Rəşad",
+  "Rəşid",
+  "Tahir",
+  "Əhməd",
+  "Zahir",
+  "İlham",
+  "İlqar",
+  "Nahid",
+  "Nihad",
+  "Faiq",
+  "İxtiyar",
+  "Şəhriyar",
+  "Şaiq",
+  "Bəxtiyar",
+  "Bəhruz",
+  "Tunar",
+  "Nadir"
+];
+});
+
+var male_last_name = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Əhmədov",
+  "Ələkbərov",
+  "Əliyev",
+  "Vəliyev",
+  "Soltanov",
+  "Quliyev",
+  "Məmmədov",
+  "Xəlilov",
+  "Nəzərov",
+  "Rəhimov"
+];
+});
+
+var female_first_name = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Anna",
+  "Adeliya",
+  "Afaq",
+  "Afət",
+  "Afərim",
+  "Aidə",
+  "Aygün",
+  "Aynur",
+  "Alsu",
+  "Ayan",
+  "Aytən",
+  "Aygül",
+  "Aydan",
+  "Aylin",
+  "Bahar",
+  "Banu",
+  "Bəyaz",
+  "Billurə",
+  "Cansu",
+  "Ceyla",
+  "Damla",
+  "Dəniz",
+  "Diana",
+  "Dilarə",
+  "Ella",
+  "Elza",
+  "Elyanora",
+  "Ellada",
+  "Elvira",
+  "Elnarə",
+  "Esmira",
+  "Estella",
+  "Fatimə",
+  "Fəxriyyə",
+  "Fərəh",
+  "Fərqanə",
+  "Fidan",
+  "Firuzə",
+  "Gövhər",
+  "Günay",
+  "Gülay",
+  "Gülçin",
+  "Gülər",
+  "Gülsüm",
+  "Humay",
+  "Hüriyə",
+  "Hülya",
+  "Jalə",
+  "Jasmin",
+  "Kübra",
+  "Ləman",
+  "Lamiyə",
+  "Lalə",
+  "Liliya",
+  "Laura",
+  "Leyla",
+  "Maya",
+  "Mehriban",
+  "Mələk",
+  "Nuray",
+  "Nurgün",
+  "Nərgiz",
+  "Nigar",
+  "Ofelya",
+  "Pəri",
+  "Röya",
+  "Səbinə",
+  "Selcan",
+  "Tansu",
+  "Tuba",
+  "Ülviyyə",
+  "Ulduz",
+  "Ülkər"
+];
+});
+
+var female_last_name = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Qasımova",
+  "Əfəndiyeva",
+  "Soltanova",
+  "Abdullayeva",
+  "Rəşidova",
+  "Ələkbərova",
+  "Əliyeva",
+  "Tahirova",
+  "Seyidova",
+  "Vəsiyeva"
 ];
 });
 
 var prefix = createCommonjsModule(function (module) {
+module["exports"] = [];
+});
+
+var suffix = createCommonjsModule(function (module) {
+module["exports"] = [];
+});
+
+var name$2 = createCommonjsModule(function (module) {
 module["exports"] = [
-  "آقای",
-  "خانم",
-  "دکتر"
+  "#{male_first_name}",
+  "#{male_last_name} #{male_first_name}",
+  "#{male_first_name} #{male_last_name}",
+  "#{female_first_name}",
+  "#{female_first_name} #{female_last_name}",
+  "#{female_last_name} #{female_first_name}",
 ];
 });
 
 var name_1 = createCommonjsModule(function (module) {
 var name = {};
 module['exports'] = name;
-name.first_name = first_name;
-name.last_name = last_name;
+name.male_first_name = male_first_name;
+name.male_last_name = male_last_name;
+name.female_first_name = female_first_name;
+name.female_last_name = female_last_name;
 name.prefix = prefix;
+name.suffix = suffix;
+name.name = name$2;
 });
 
-var fa_1 = createCommonjsModule(function (module) {
-var fa = {};
-module['exports'] = fa;
-fa.title = "Farsi";
-fa.name = name_1;
+var formats = createCommonjsModule(function (module) {
+module["exports"] = [
+  "(9##)###-##-##"
+];
+});
+
+var phone_number_1 = createCommonjsModule(function (module) {
+var phone_number = {};
+module['exports'] = phone_number;
+phone_number.formats = formats;
+});
+
+var color = createCommonjsModule(function (module) {
+module["exports"] = [
+  "ala",
+  "açıq bənövşəyi",
+  "ağ",
+  "mavi",
+  "boz",
+  "bənövşəyi",
+  "göy rəng",
+  "gümüşü",
+  "kardinal",
+  "narıncı",
+  "qara",
+  "qırmızı",
+  "qəhvəyi",
+  "tünd göy",
+  "tünd qırmızı",
+  "xlorofil",
+  "yaşıl",
+  "çəhrayı"
+];
+});
+
+var department = createCommonjsModule(function (module) {
+module["exports"] = [
+  "Kitablar",
+  "Filmlər",
+  "musiqi",
+  "oyunlar",
+  "Elektronika",
+  "Kompyuterlər",
+  "Ev",
+  "садинструмент",
+  "Səhiyyə",
+  "gözəllik",
+  "Oyuncaqlar",
+  "uşaq üçün",
+  "Geyim",
+  "Ayyaqqabı",
+  "bəzək",
+  "İdman",
+  "turizm",
+  "Avtomobil",
+];
+});
+
+var product_name = createCommonjsModule(function (module) {
+module["exports"] = {
+  "adjective": [
+    "Balaca",
+    "Ergonomik",
+    "Kobud",
+    "İntellektual",
+    "Möhtəşəm",
+    "İnanılmaz",
+    "Fantastik",
+    "Əlverişli",
+    "Parlaq",
+    "Mükəmməl"
+  ],
+  "material": [
+    "Polad",
+    "Ağac",
+    "Beton",
+    "Plastik",
+    "Pambıq",
+    "Qranit",
+    "Rezin"
+  ],
+  "product": [
+    "Stul",
+    "Avtomobil",
+    "Kompyuter",
+    "Beret",
+    "Kulon",
+    "Stol",
+    "Sviter",
+    "Kəmər",
+  ]
+};
+});
+
+var commerce_1 = createCommonjsModule(function (module) {
+var commerce = {};
+module['exports'] = commerce;
+commerce.color = color;
+commerce.department = department;
+commerce.product_name = product_name;
+});
+
+var prefix$2 = createCommonjsModule(function (module) {
+module["exports"] = [
+  "ASC",
+  "MMC",
+  "QSC",
+];
+});
+
+var suffix$2 = createCommonjsModule(function (module) {
+module["exports"] = [
+
+];
+});
+
+var name$4 = createCommonjsModule(function (module) {
+module["exports"] = [
+  "#{prefix} #{Name.female_first_name}",
+  "#{prefix} #{Name.male_first_name}",
+  "#{prefix} #{Name.male_last_name}",
+  "#{prefix} #{suffix}#{suffix}",
+  "#{prefix} #{suffix}#{suffix}#{suffix}",
+  "#{prefix} #{Address.city_name}#{suffix}",
+  "#{prefix} #{Address.city_name}#{suffix}#{suffix}",
+  "#{prefix} #{Address.city_name}#{suffix}#{suffix}#{suffix}"
+];
+});
+
+var company_1 = createCommonjsModule(function (module) {
+var company = {};
+module['exports'] = company;
+company.prefix = prefix$2;
+company.suffix = suffix$2;
+company.name = name$4;
+});
+
+var month = createCommonjsModule(function (module) {
+// source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/ru.xml#L1734
+module["exports"] = {
+  wide: [
+    "yanvar",
+    "fevral",
+    "mart",
+    "aprel",
+    "may",
+    "iyun",
+    "iyul",
+    "avqust",
+    "sentyabr",
+    "oktyabr",
+    "noyabr",
+    "dekabr"
+  ],
+  wide_context: [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря"
+  ],
+  abbr: [
+    "янв.",
+    "февр.",
+    "март",
+    "апр.",
+    "май",
+    "июнь",
+    "июль",
+    "авг.",
+    "сент.",
+    "окт.",
+    "нояб.",
+    "дек."
+  ],
+  abbr_context: [
+    "янв.",
+    "февр.",
+    "марта",
+    "апр.",
+    "мая",
+    "июня",
+    "июля",
+    "авг.",
+    "сент.",
+    "окт.",
+    "нояб.",
+    "дек."
+  ]
+};
+});
+
+var weekday = createCommonjsModule(function (module) {
+// source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/ru.xml#L1825
+module["exports"] = {
+  wide: [
+    "Bazar",
+    "Bazar ertəsi",
+    "Çərşənbə axşamı",
+    "Çərşənbə",
+    "Cümə axşamı",
+    "Cümə",
+    "Şənbə"
+  ],
+  wide_context: [
+    "воскресенье",
+    "понедельник",
+    "вторник",
+    "среда",
+    "четверг",
+    "пятница",
+    "суббота"
+  ],
+  abbr: [
+    "Ba",
+    "BE",
+    "ÇA",
+    "Çə",
+    "CA",
+    "Cü",
+    "Şə"
+  ],
+  abbr_context: [
+    "вс",
+    "пн",
+    "вт",
+    "ср",
+    "чт",
+    "пт",
+    "сб"
+  ]
+};
+});
+
+var date_1 = createCommonjsModule(function (module) {
+var date = {};
+module["exports"] = date;
+date.month = month;
+date.weekday = weekday;
+});
+
+var az_1 = createCommonjsModule(function (module) {
+var az = {};
+module['exports'] = az;
+az.title = "Azerbaijani";
+az.separator = " və ";
+az.address = address_1;
+az.internet = internet_1;
+az.name = name_1;
+az.phone_number = phone_number_1;
+az.commerce = commerce_1;
+az.company = company_1;
+az.date = date_1;
 });
 
 var city_prefix = createCommonjsModule(function (module) {
@@ -8191,7 +8405,7 @@ module["exports"] = [
 ];
 });
 
-var country = createCommonjsModule(function (module) {
+var country$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Afghanistan",
   "Albania",
@@ -8695,7 +8909,7 @@ module["exports"] = [
 ];
 });
 
-var building_number = createCommonjsModule(function (module) {
+var building_number$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#####",
   "####",
@@ -8703,7 +8917,7 @@ module["exports"] = [
 ];
 });
 
-var street_suffix = createCommonjsModule(function (module) {
+var street_suffix$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Alley",
   "Avenue",
@@ -8933,14 +9147,14 @@ module["exports"] = [
 ];
 });
 
-var secondary_address = createCommonjsModule(function (module) {
+var secondary_address$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Apt. ###",
   "Suite ###"
 ];
 });
 
-var postcode = createCommonjsModule(function (module) {
+var postcode$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#####",
   "#####-####"
@@ -8954,7 +9168,7 @@ module["exports"] = [
 ];
 });
 
-var state = createCommonjsModule(function (module) {
+var state$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Alabama",
   "Alaska",
@@ -9212,7 +9426,7 @@ module["exports"] = [
 ];
 });
 
-var city = createCommonjsModule(function (module) {
+var city$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#{city_prefix} #{Name.first_name}#{city_suffix}",
   "#{city_prefix} #{Name.first_name}",
@@ -9221,45 +9435,45 @@ module["exports"] = [
 ];
 });
 
-var street_name = createCommonjsModule(function (module) {
+var street_name$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#{Name.first_name} #{street_suffix}",
   "#{Name.last_name} #{street_suffix}"
 ];
 });
 
-var street_address = createCommonjsModule(function (module) {
+var street_address$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#{building_number} #{street_name}"
 ];
 });
 
-var default_country = createCommonjsModule(function (module) {
+var default_country$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "United States of America"
 ];
 });
 
-var address_1 = createCommonjsModule(function (module) {
+var address_1$2 = createCommonjsModule(function (module) {
 var address = {};
 module['exports'] = address;
 address.city_prefix = city_prefix;
 address.city_suffix = city_suffix;
 address.county = county;
-address.country = country;
+address.country = country$2;
 address.country_code = country_code;
-address.building_number = building_number;
-address.street_suffix = street_suffix;
-address.secondary_address = secondary_address;
-address.postcode = postcode;
+address.building_number = building_number$2;
+address.street_suffix = street_suffix$2;
+address.secondary_address = secondary_address$2;
+address.postcode = postcode$2;
 address.postcode_by_state = postcode_by_state;
-address.state = state;
+address.state = state$2;
 address.state_abbr = state_abbr;
 address.time_zone = time_zone;
-address.city = city;
-address.street_name = street_name;
-address.street_address = street_address;
-address.default_country = default_country;
+address.city = city$2;
+address.street_name = street_name$2;
+address.street_address = street_address$2;
+address.default_country = default_country$2;
 });
 
 var visa = createCommonjsModule(function (module) {
@@ -9361,7 +9575,7 @@ credit_card.maestro = maestro;
 credit_card.laser = laser;
 });
 
-var suffix = createCommonjsModule(function (module) {
+var suffix$4 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Inc",
   "and Sons",
@@ -9874,7 +10088,7 @@ module["exports"] = [
 ];
 });
 
-var name$2 = createCommonjsModule(function (module) {
+var name$6 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#{Name.last_name} #{suffix}",
   "#{Name.last_name}-#{Name.last_name}",
@@ -9882,20 +10096,20 @@ module["exports"] = [
 ];
 });
 
-var company_1 = createCommonjsModule(function (module) {
+var company_1$2 = createCommonjsModule(function (module) {
 var company = {};
 module['exports'] = company;
-company.suffix = suffix;
+company.suffix = suffix$4;
 company.adjective = adjective;
 company.descriptor = descriptor;
 company.noun = noun;
 company.bs_verb = bs_verb;
 company.bs_adjective = bs_adjective;
 company.bs_noun = bs_noun;
-company.name = name$2;
+company.name = name$6;
 });
 
-var free_email = createCommonjsModule(function (module) {
+var free_email$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "gmail.com",
   "yahoo.com",
@@ -9911,7 +10125,7 @@ module["exports"] = [
 ];
 });
 
-var domain_suffix = createCommonjsModule(function (module) {
+var domain_suffix$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "com",
   "biz",
@@ -11184,12 +11398,12 @@ module["exports"] = [
 ];
 });
 
-var internet_1 = createCommonjsModule(function (module) {
+var internet_1$2 = createCommonjsModule(function (module) {
 var internet = {};
 module['exports'] = internet;
-internet.free_email = free_email;
+internet.free_email = free_email$2;
 internet.example_email = example_email;
-internet.domain_suffix = domain_suffix;
+internet.domain_suffix = domain_suffix$2;
 internet.avatar_uri = avatar_uri;
 });
 
@@ -12379,7 +12593,7 @@ lorem.words = words$1;
 lorem.supplemental = supplemental;
 });
 
-var first_name$2 = createCommonjsModule(function (module) {
+var first_name = createCommonjsModule(function (module) {
 module["exports"] = [
   "Aaliyah",
   "Aaron",
@@ -15391,7 +15605,7 @@ module["exports"] = [
 ];
 });
 
-var last_name$2 = createCommonjsModule(function (module) {
+var last_name = createCommonjsModule(function (module) {
 module["exports"] = [
   "Abbott",
   "Abernathy",
@@ -15870,7 +16084,7 @@ module["exports"] = [
 ];
 });
 
-var prefix$2 = createCommonjsModule(function (module) {
+var prefix$4 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Mr.",
   "Mrs.",
@@ -15880,7 +16094,7 @@ module["exports"] = [
 ];
 });
 
-var suffix$2 = createCommonjsModule(function (module) {
+var suffix$6 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Jr.",
   "Sr.",
@@ -15991,7 +16205,7 @@ module["exports"] = {
 };
 });
 
-var name$4 = createCommonjsModule(function (module) {
+var name$8 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#{prefix} #{first_name} #{last_name}",
   "#{first_name} #{last_name} #{suffix}",
@@ -16005,15 +16219,15 @@ module["exports"] = [
 var name_1$2 = createCommonjsModule(function (module) {
 var name = {};
 module['exports'] = name;
-name.first_name = first_name$2;
-name.last_name = last_name$2;
-name.prefix = prefix$2;
-name.suffix = suffix$2;
+name.first_name = first_name;
+name.last_name = last_name;
+name.prefix = prefix$4;
+name.suffix = suffix$6;
 name.title = title;
-name.name = name$4;
+name.name = name$8;
 });
 
-var formats = createCommonjsModule(function (module) {
+var formats$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "###-###-####",
   "(###) ###-####",
@@ -16038,13 +16252,13 @@ module["exports"] = [
 ];
 });
 
-var phone_number_1 = createCommonjsModule(function (module) {
+var phone_number_1$2 = createCommonjsModule(function (module) {
 var phone_number = {};
 module['exports'] = phone_number;
-phone_number.formats = formats;
+phone_number.formats = formats$2;
 });
 
-var formats$2 = createCommonjsModule(function (module) {
+var formats$4 = createCommonjsModule(function (module) {
 module["exports"] = [
   "###-###-####",
   "(###) ###-####",
@@ -16056,7 +16270,7 @@ module["exports"] = [
 var cell_phone_1 = createCommonjsModule(function (module) {
 var cell_phone = {};
 module['exports'] = cell_phone;
-cell_phone.formats = formats$2;
+cell_phone.formats = formats$4;
 });
 
 var credit_card_numbers = createCommonjsModule(function (module) {
@@ -16094,7 +16308,7 @@ business.credit_card_expiry_dates = credit_card_expiry_dates;
 business.credit_card_types = credit_card_types;
 });
 
-var color = createCommonjsModule(function (module) {
+var color$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "red",
   "green",
@@ -16130,7 +16344,7 @@ module["exports"] = [
 ];
 });
 
-var department = createCommonjsModule(function (module) {
+var department$2 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Books",
   "Movies",
@@ -16157,7 +16371,7 @@ module["exports"] = [
 ];
 });
 
-var product_name = createCommonjsModule(function (module) {
+var product_name$2 = createCommonjsModule(function (module) {
 module["exports"] = {
   "adjective": [
     "Small",
@@ -16220,12 +16434,12 @@ module["exports"] = {
 };
 });
 
-var commerce_1 = createCommonjsModule(function (module) {
+var commerce_1$2 = createCommonjsModule(function (module) {
 var commerce = {};
 module['exports'] = commerce;
-commerce.color = color;
-commerce.department = department;
-commerce.product_name = product_name;
+commerce.color = color$2;
+commerce.department = department$2;
+commerce.product_name = product_name$2;
 });
 
 var creature = createCommonjsModule(function (module) {
@@ -16300,7 +16514,7 @@ module["exports"] = [
 ];
 });
 
-var name$6 = createCommonjsModule(function (module) {
+var name$10 = createCommonjsModule(function (module) {
 module["exports"] = [
   "#{Address.state} #{creature}"
 ];
@@ -16310,7 +16524,7 @@ var team_1 = createCommonjsModule(function (module) {
 var team = {};
 module['exports'] = team;
 team.creature = creature;
-team.name = name$6;
+team.name = name$10;
 });
 
 var abbreviation = createCommonjsModule(function (module) {
@@ -16453,7 +16667,7 @@ hacker.verb = verb;
 hacker.ingverb = ingverb;
 });
 
-var name$8 = createCommonjsModule(function (module) {
+var name$12 = createCommonjsModule(function (module) {
 module["exports"] = [
   "Redhold",
   "Treeflex",
@@ -16540,7 +16754,7 @@ module["exports"] = [
 var app_1 = createCommonjsModule(function (module) {
 var app = {};
 module['exports'] = app;
-app.name = name$8;
+app.name = name$12;
 app.version = version;
 app.author = author;
 });
@@ -17256,7 +17470,7 @@ finance.transaction_type = transaction_type;
 finance.currency = currency;
 });
 
-var month = createCommonjsModule(function (module) {
+var month$2 = createCommonjsModule(function (module) {
 // Source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/en.xml#L1799
 module["exports"] = {
   wide: [
@@ -17322,7 +17536,7 @@ module["exports"] = {
 };
 });
 
-var weekday = createCommonjsModule(function (module) {
+var weekday$2 = createCommonjsModule(function (module) {
 // Source: http://unicode.org/cldr/trac/browser/tags/release-27/common/main/en.xml#L1847
 module["exports"] = {
   wide: [
@@ -17368,11 +17582,11 @@ module["exports"] = {
 };
 });
 
-var date_1 = createCommonjsModule(function (module) {
+var date_1$2 = createCommonjsModule(function (module) {
 var date = {};
 module["exports"] = date;
-date.month = month;
-date.weekday = weekday;
+date.month = month$2;
+date.weekday = weekday$2;
 });
 
 var mimeTypes = createCommonjsModule(function (module) {
@@ -23970,41 +24184,41 @@ var en = {};
 module['exports'] = en;
 en.title = "English";
 en.separator = " & ";
-en.address = address_1;
+en.address = address_1$2;
 en.credit_card = credit_card_1;
-en.company = company_1;
-en.internet = internet_1;
+en.company = company_1$2;
+en.internet = internet_1$2;
 en.database = database_1;
 en.lorem = lorem_1;
 en.name = name_1$2;
-en.phone_number = phone_number_1;
+en.phone_number = phone_number_1$2;
 en.cell_phone = cell_phone_1;
 en.business = business_1;
-en.commerce = commerce_1;
+en.commerce = commerce_1$2;
 en.team = team_1;
 en.hacker = hacker_1;
 en.app = app_1;
 en.finance = finance_1;
-en.date = date_1;
+en.date = date_1$2;
 en.system = system_1;
 });
 
-var fa$2 = createCommonjsModule(function (module) {
-var faker = new lib$6({ locale: 'fa', localeFallback: 'en' });
-faker.locales['fa'] = fa_1;
+var az$2 = createCommonjsModule(function (module) {
+var faker = new lib$6({ locale: 'az', localeFallback: 'en' });
+faker.locales['az'] = az_1;
 faker.locales['en'] = en_1;
 module['exports'] = faker;
 });
 
-var fa = lib
+var az = lib
   .extend('faker', function() {
     try {
-      return fa$2;
+      return az$2;
     } catch (e) {
       return null;
     }
   });
 
-return fa;
+return az;
 
 })));
