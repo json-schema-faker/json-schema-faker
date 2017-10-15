@@ -15,8 +15,6 @@
     "dist": "yarn build && yarn build:dist",
     "build": "tarima -qfe dist VERSION=`./build/VERSION`",
     "build:dist": "yarn build && node build/dist.js",
-    "tsc": "bash build/tsc.sh",
-    "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
     "typedoc": "typedoc --out docs/html ts/ --module commonjs",
     "graphviz": "madge lib --dot > structure.gv"
   },
@@ -81,6 +79,7 @@
     "seedrandom": "^2.4.3",
     "semver": "^5.3.0",
     "tarima": "^3.8.1",
+    "tslib": "^1.8.0",
     "tslint": "^4.0.2",
     "tv4": "^1.2.7",
     "typedoc": "^0.5.1",

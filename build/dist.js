@@ -14,18 +14,21 @@ var buildDir = __dirname,
     projectDir = path.join(__dirname, '..');
 
 var BANNER_TEXT = fs.readFileSync(path.join(buildDir, '.banner.txt')).toString();
+var LOCALE_TEXT = fs.readFileSync(path.join(buildDir, '.locale.js')).toString();
 
 var pkg = require(path.join(projectDir, 'package.json')),
-    bannerTemplate = template(BANNER_TEXT);
+    bannerTemplate = template(BANNER_TEXT),
+    localeTemplate = template(LOCALE_TEXT);
 
 var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace('T', ' ') });
 
 // custom bundler
-function bundle(options, next) {
+function bundle(options) {
   var destFile = path.join(projectDir, 'dist', options.dest || '', options.id + '.js');
 
-  rollup.rollup({
+  return rollup.rollup({
     input: options.src,
+    onwarn() {},
     plugins: [
       {
         resolveId(importee, importer) {
@@ -93,44 +96,41 @@ function bundle(options, next) {
 
     // OK
     console.log('Bundle: ' + destFile);
-
-    next();
   })
   .catch(function(error) {
     console.log(error.stack);
   });
 }
 
-console.log('Building...');
+Promise.resolve()
+.then(() => {
+  console.log('Building main library...');
 
-bundle({ id: pkg.name, src: path.join(projectDir, 'lib/index.js') }, function(err) {
-  if (err) {
-    throw err;
-    return;
-  }
+  return bundle({ id: pkg.name, src: path.join(projectDir, 'lib/index.js') });
+})
+.then(() => {
+  // proxied versions from faker's locales
+  var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
+
+  console.log('Preparing all sources...');
+
+  const tasks = [];
+
+  languages.forEach(function(lang) {
+    fs.outputFileSync(path.join(projectDir, 'locale/' + path.basename(lang)), localeTemplate({ lang: path.basename(lang, '.js') }));
+
+    tasks.push(() => {
+      console.log('Building language ' + path.basename(lang, '.js') + '...');
+
+      return bundle({ id: path.basename(lang, '.js'), src: path.join(projectDir, 'locale/' + path.basename(lang)) });
+    });
+  });
+
+  return tasks.reduce((prev, cur) => prev.then(() => cur()), Promise.resolve());
+})
+.then(() => {
+  console.log('Done.');
+})
+.catch(e => {
+  console.log(e.stack);
 });
-
-var outputs = [
-  { id: pkg.name, src: projectDir }
-];
-
-// proxied versions from faker's locales
-var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
-
-languages.forEach(function(lang) {
-  outputs.push({ id: path.basename(lang, '.js'), dest: 'locale' });
-});
-
-console.log('Preparing all sources...');
-
-(function next(err) {
-  if (err) {
-    throw err;
-  }
-
-  var opts = outputs.shift();
-
-  if (opts) {
-    bundle(opts, next);
-  }
-})();
