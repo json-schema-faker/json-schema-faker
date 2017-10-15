@@ -17,6 +17,8 @@ jsf.extend = function(name: string, cb: Function) {
   return jsf;
 };
 
-jsf.version = '0.4.3';
+/* global VERSION */
+
+jsf.version = VERSION;
 
 export = jsf;

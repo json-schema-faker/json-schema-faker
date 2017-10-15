@@ -12,7 +12,9 @@
     "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
     "cover": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec",
     "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "dist": "node build/dist.js",
+    "dist": "yarn build && yarn build:dist",
+    "build": "tarima -qfe dist VERSION=`./build/VERSION`",
+    "build:dist": "yarn build && node build/dist.js",
     "tsc": "bash build/tsc.sh",
     "tsify": "browserify ts/index.ts -p [ tsify ] > dist/temp-bundle.js",
     "typedoc": "typedoc --out docs/html ts/ --module commonjs",
@@ -35,26 +37,50 @@
   },
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
+  "tarima": {
+    "src": "ts",
+    "dest": "lib",
+    "bundle": true,
+    "ignore": [
+      "**/*.d.ts"
+    ],
+    "filter": [
+      "!*/*/**"
+    ],
+    "rename": [
+      "ts/**:{filepath/1}/{filename}.{extname}"
+    ],
+    "bundleOptions": {
+      "rollup": {
+        "bundle": "JSONSchemaFaker",
+        "format": "cjs",
+        "interop": false
+      }
+    }
+  },
   "dependencies": {
     "chance": "^1.0.11",
-    "deref": "^0.6.4",
+    "deref": "^0.7.0",
     "faker": "^4.1.0",
     "randexp": "^0.4.6"
   },
   "devDependencies": {
-    "browserify": "^13.1.1",
-    "casual": "^1.5.8",
     "clone": "^2.1.0",
     "codecov": "^1.0.1",
     "eslint": "^3.11.1",
     "fs-extra": "^1.0.0",
     "glob": "^7.1.1",
+    "google-closure-compiler-js": "^20170910.0.0",
     "istanbul": "^0.4.5",
     "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.1",
     "lodash.template": "^4.4.0",
+    "rollup": "^0.50.0",
+    "rollup-plugin-commonjs": "^8.2.1",
+    "rollup-plugin-node-resolve": "^3.0.0",
     "seedrandom": "^2.4.3",
     "semver": "^5.3.0",
+    "tarima": "^3.8.1",
     "tslint": "^4.0.2",
     "tv4": "^1.2.7",
     "typedoc": "^0.5.1",

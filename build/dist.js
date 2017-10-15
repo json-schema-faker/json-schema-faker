@@ -1,79 +1,114 @@
 // discuss
-var bundleName = 'jsf';
+var bundleName = 'JSONSchemaFaker';
 
 // boilerplate...
 var fs = require('fs-extra'),
     path = require('path'),
     glob = require('glob'),
-    uglifyjs = require('uglify-js'),
-    browserify = require('browserify'),
+    rollup = require('rollup'),
+    commonJs = require('rollup-plugin-commonjs'),
+    nodeResolve = require('rollup-plugin-node-resolve'),
     template = require('lodash.template');
 
 var buildDir = __dirname,
     projectDir = path.join(__dirname, '..');
 
-var BANNER_TEXT = fs.readFileSync(path.join(buildDir, '.banner.txt')).toString(),
-    LOCALE_TEXT = fs.readFileSync(path.join(buildDir, '.locale.js')).toString();
+var BANNER_TEXT = fs.readFileSync(path.join(buildDir, '.banner.txt')).toString();
 
 var pkg = require(path.join(projectDir, 'package.json')),
-    bannerTemplate = template(BANNER_TEXT),
-    localeTemplate = template(LOCALE_TEXT);
+    bannerTemplate = template(BANNER_TEXT);
 
 var banner = bannerTemplate({ pkg: pkg, now: (new Date()).toISOString().replace('T', ' ') });
 
-// reuse instance later
-var b = browserify({
-  detectGlobals: false,
-  insertGlobals: false,
-  builtins: false,
-  standalone: bundleName
-});
-
 // custom bundler
 function bundle(options, next) {
-  b.reset();
-
   var destFile = path.join(projectDir, 'dist', options.dest || '', options.id + '.js');
 
-  if (!options.src) {
-    // bundle from generated source
-    options.src = path.join(projectDir, options.dest, options.id + '.js');
+  rollup.rollup({
+    input: options.src,
+    plugins: [
+      {
+        resolveId(importee, importer) {
+          if (!importer) {
+            return importee;
+          }
 
-    fs.outputFileSync(options.src, localeTemplate({ lang: options.id }));
-  }
-
-  b.add(path.resolve(options.src), { expose: pkg.name, entry: true });
-
-  b.bundle(function(err, buffer) {
-    if (err) {
-      return next(err);
+          switch (importee) {
+            case 'json-schema-ref-parser':
+              return importee;
+          }
+        },
+        load(importee) {
+          switch (importee) {
+            case 'json-schema-ref-parser':
+              return 'export default __DEREQ__("' + importee + '");';
+          }
+        },
+      },
+      commonJs(),
+      nodeResolve({
+        module: true,
+        jsnext: true,
+        main: true,
+        browser: true,
+      }),
+    ],
+  }).then(function(_bundle) {
+    return _bundle.generate({
+      banner,
+      format: 'umd',
+      name: bundleName,
+    });
+  }).then(function(result) {
+    function dereq(file) {
+      return 'createCommonjsModule(function(module, exports) {'
+        + fs.readFileSync(file).toString().replace(/\brequire\b/g, '_dereq_')
+        + '});';
     }
 
-    // write out the generated bundle!
-    var code = buffer.toString();
-
-    var min = uglifyjs.minify(code, {
-      fromString: true,
-      compress: true,
-      mangle: true,
-      filename: options.src,
-      output: {
-        comments: /^!|^\*!|@preserve|@license|@cc_on/
+    var _bundle = result.code.replace(/__DEREQ__\("(.+?)"\);/g, (_, src) => {
+      if (src === 'json-schema-ref-parser') {
+        return dereq(require.resolve('json-schema-ref-parser/dist/ref-parser.js'));
       }
     });
 
+    var gcc = require('google-closure-compiler-js').compile;
+
+    var min = gcc({
+      jsCode: [{ src: _bundle }],
+      languageIn: 'ECMASCRIPT6',
+      languageOut: 'ECMASCRIPT5',
+      compilationLevel: 'ADVANCED',
+      warningLevel: 'VERBOSE',
+      env: 'CUSTOM',
+      createSourceMap: false,
+      applyInputSourceMaps: false,
+    }).compiledCode;
+
     // minified output
-    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), banner + min.code);
+    fs.outputFileSync(destFile.replace(/\.js$/, '.min.js'), min);
 
     // regular output
-    fs.outputFileSync(destFile, banner + code);
+    fs.outputFileSync(destFile, _bundle);
 
     // OK
     console.log('Bundle: ' + destFile);
 
     next();
+  })
+  .catch(function(error) {
+    console.log(error.stack);
   });
 }
+
+console.log('Building...');
+
+bundle({ id: pkg.name, src: path.join(projectDir, 'lib/index.js') }, function(err) {
+  if (err) {
+    throw err;
+    return;
+  }
+});
 
 var outputs = [
   { id: pkg.name, src: projectDir }
