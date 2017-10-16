@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.4.5
+ * json-schema-faker library v0.4.6
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-10-15 21:00:53.301Z
+ * Date: 2017-10-16 05:19:43.620Z
  */
 
 (function (global, factory) {
@@ -2697,7 +2697,7 @@ jsf.extend = function (name, cb) {
     container.extend(name, cb);
     return jsf;
 };
-var VERSION="0.4.5";
+var VERSION="0.4.6";
 jsf.version = VERSION;
 
 var lib = jsf;
