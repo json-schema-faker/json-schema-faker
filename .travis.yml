@@ -5,13 +5,12 @@ branches:
 node_js:
   - 4
   - 6
-  - 7
   - 8
 before_script:
-  - yarn build
+  - npm run build
 script:
-  - yarn cover:schema
+  - npm run cover:schema
 after_success:
-  - yarn cover:up
+  - npm run cover:up
 notifications:
   email: false
