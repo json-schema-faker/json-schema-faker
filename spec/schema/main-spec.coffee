@@ -8,6 +8,8 @@ pick = (obj, key) ->
   obj
 
 tryTest = (test, refs, schema) ->
+  return if test.skip
+
   (if test.async
     jsf.resolve(schema, refs)
   else
