@@ -56,6 +56,8 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     var _props = optionAPI('alwaysFakeOptionals') ? requiredProperties
       : requiredProperties.slice(0, random.number(min, max));
 
+    var missing = [];
+
     _props.forEach(function(key) {
         // first ones are the required properies
         if (properties[key]) {
@@ -75,9 +77,13 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
                 // try patternProperties again,
                 var subschema = patternProperties[key] || additionalProperties;
 
+                // FIXME: allow anyType as fallback when no subschema is given?
+
                 if (subschema) {
                     // otherwise we can use additionalProperties?
                     props[patternProperties[key] ? utils.randexp(key) : key] = subschema;
+                } else {
+                    missing.push(key);
                 }
             }
         }
@@ -114,6 +120,14 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     }
 
     if (!allowsAdditional && current < min) {
+        if (missing.length) {
+            throw new ParseError(
+                'properties "' + missing.join(', ') + '" were not found while additionalProperties is false:\n' +
+                utils.short(value),
+                path
+            );
+        }
+
         throw new ParseError(
             'properties constraints were too strong to successfully generate a valid object for:\n' +
             utils.short(value),
