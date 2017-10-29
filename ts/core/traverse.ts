@@ -13,6 +13,11 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     return;
   }
 
+  // default values has higher precedence
+  if (optionAPI('useDefaultValue') && 'default' in schema) {
+    return schema.default;
+  }
+
   if (Array.isArray(schema.enum)) {
     return random.pick(schema.enum);
   }
@@ -24,10 +29,6 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
 
   if (typeof schema.generate === 'function') {
     return utils.typecast(schema.generate(), schema);
-  }
-
-  if (optionAPI('useDefaultValue') && 'default' in schema) {
-    return schema.default;
   }
 
   // TODO remove the ugly overcome
