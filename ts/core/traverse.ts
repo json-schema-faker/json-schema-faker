@@ -13,6 +13,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
     return;
   }
 
+  // default values has higher precedence
   if (optionAPI('useDefaultValue') && 'default' in schema) {
     return schema.default;
   }
