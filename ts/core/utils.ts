@@ -106,12 +106,12 @@ function typecast(schema: JsonSchema, callback: Function): any {
 
       if (optionAPI('maxLength')) {
         // Don't allow user to set max length above our maximum
-        if (maxLength && maxLength > optionAPI('maxLength')) {
+        if (params.maxLength && params.maxLength > optionAPI('maxLength')) {
           params.maxLength = optionAPI('maxLength');
         }
 
         // Don't allow user to set min length above our maximum
-        if (minLength && minLength > optionAPI('maxLength')) {
+        if (params.minLength && params.minLength > optionAPI('maxLength')) {
           params.minLength = optionAPI('maxLength');
         }
       }
