@@ -24,7 +24,15 @@ function getRefs(refs?: any) {
 }
 
 var jsf = function(schema: JsonSchema, refs?: any) {
-  const $ = deref();
+  var ignore = option('ignoreMissingRefs');
+
+  const $ = deref((id, refs) => {
+    // FIXME: allow custom callback?
+
+    if (ignore) {
+      return {};
+    }
+  });
 
   var $refs = getRefs(refs);
 

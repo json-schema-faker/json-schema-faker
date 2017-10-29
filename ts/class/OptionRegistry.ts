@@ -12,6 +12,7 @@ class OptionRegistry extends Registry<Option> {
     this.data['defaultInvalidTypeProduct'] = null;
     this.data['defaultRandExpMax'] = 10;
 
+    this.data['ignoreMissingRefs'] = false;
     this.data['failOnInvalidTypes'] = true;
     this.data['failOnInvalidFormat'] = true;
 
