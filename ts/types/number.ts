@@ -26,7 +26,13 @@ var numberType: FTypeGenerator = function numberType(value: INumberSchema): numb
   }
 
   if (multipleOf) {
-    return Math.floor(random.number(min, max) / multipleOf) * multipleOf;
+    var base = random.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
+
+    while (base < min) {
+      base += value.multipleOf;
+    }
+
+    return base;
   }
 
   return random.number(min, max, undefined, undefined, true);
