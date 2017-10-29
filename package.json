@@ -6,7 +6,7 @@
   "main": "lib/index.js",
   "scripts": {
     "dist": "npm run build && npm run build:dist",
-    "watch": "tarima -ed VERSION=`./build/VERSION` -- npm run test:schema",
+    "watch": "tarima -ed VERSION=`./build/VERSION` --",
     "build": "tarima -qfe dist VERSION=`./build/VERSION`",
     "build:dist": "npm run build && node build/dist.js",
     "test": "npm run test:lint && npm run build && npm run test:unit && npm run test:schema",
