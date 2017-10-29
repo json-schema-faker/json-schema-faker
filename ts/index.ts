@@ -60,7 +60,7 @@ jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
       dereference: {
         circular: 'ignore',
       },
-    }).then((sub) => jsf(sub, refs));
+    }).then((sub) => run($refs, sub, container));
 };
 
 jsf.utils = utils;
