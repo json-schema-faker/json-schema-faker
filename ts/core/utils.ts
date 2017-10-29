@@ -111,7 +111,7 @@ function clean(obj, isArray, requiredProps) {
   }
   if (Array.isArray(obj)) {
     obj = obj
-      .map(function (value) { return clean(value, true); })
+      .map(function (value) { return clean(value, true, requiredProps); })
       .filter(function (value) { return typeof value !== 'undefined'; });
 
     return obj;

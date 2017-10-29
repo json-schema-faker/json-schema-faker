@@ -49,7 +49,9 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
       }
     } else {
       try {
-        return utils.clean(types[type](schema, path, resolve, traverse), null, schema.required);
+        const value = types[type](schema, path, resolve, traverse);
+
+        return utils.clean(value, null, schema.items ? schema.items.required : schema.required);
       } catch (e) {
         if (typeof e.path === 'undefined') {
           throw new ParseError(e.message, path);
