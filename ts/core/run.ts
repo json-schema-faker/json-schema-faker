@@ -27,6 +27,11 @@ function run(refs: any, schema: JsonSchema, container: Container) {
       }
 
       if (typeof sub.$ref === 'string') {
+        if (sub.$ref === '#') {
+          delete sub.$ref;
+          return sub;
+        }
+
         if (sub.$ref.indexOf('#/') === -1) {
           var ref = deref.util.findByRef(sub.$ref, refs);
 
