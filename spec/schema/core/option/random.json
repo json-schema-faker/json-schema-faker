@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 51,
-          "b": "cupidatat eiusmod",
-          "c": "vg373"
+          "a": 70,
+          "b": "do cupidatat aute",
+          "c": "wj382"
         },
         "repeat": 1,
         "require": "core/option/random"
