@@ -39,6 +39,10 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   } else if (typeof type === 'undefined') {
     // Attempt to infer the type
     type = inferType(schema, path) || type;
+
+    if (type) {
+      schema.type = type;
+    }
   }
 
   if (typeof type === 'string') {
