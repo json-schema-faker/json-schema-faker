@@ -1,5 +1,7 @@
 import optionAPI from '../api/option';
 
+const ALL_TYPES = ['array', 'object', 'integer', 'number', 'string', 'boolean', 'null'];
+
 const RandExp = require('randexp');
 
 // set maximum default, see #193
@@ -73,6 +75,14 @@ function typecast(schema: JsonSchema, callback: Function): any {
       if (schema.enum) {
         var min = Math.max(params.minimum || 0, 0);
         var max = Math.min(params.maximum || Infinity, Infinity);
+
+        if (schema.exclusiveMinimum && min === schema.minimum) {
+          min += schema.multipleOf || 1;
+        }
+
+        if (schema.exclusiveMaximum && max === schema.maximum) {
+          max -= schema.multipleOf || 1;
+        }
 
         // discard out-of-bounds enumerations
         schema.enum = schema.enum.filter(x => {
@@ -198,6 +208,62 @@ function short(schema) {
   return s.length > 400 ? l.substr(0, 400) + '...' : l;
 }
 
+function anyValue() {
+  return random.pick([
+    false,
+    true,
+    null,
+    -1,
+    NaN,
+    Math.PI,
+    Infinity,
+    undefined,
+    [],
+    {},
+    Math.random(),
+    Math.random().toString(36).substr(2),
+ ]);
+}
+
+// TODO: improve this behavior
+function notValue(schema: JsonSchema) {
+  const copy = {};
+
+  if (typeof schema.minimum !== 'undefined') {
+    copy.maximum = schema.minimum;
+    copy.exclusiveMaximum = true;
+  }
+
+  if (typeof schema.maximum !== 'undefined') {
+    copy.minimum = schema.maximum > copy.maximum ? 0 : schema.maximum;
+    copy.exclusiveMinimum = true;
+  }
+
+  if (typeof schema.minLength !== 'undefined') {
+    copy.maxLength = schema.minLength;
+  }
+
+  if (typeof schema.maxLength !== 'undefined') {
+    copy.minLength = schema.maxLength > copy.maxLength ? 0 : schema.maxLength;
+  }
+
+  if (schema.type) {
+    copy.type = random.pick(ALL_TYPES.filter(x => x !== schema.type));
+  } else if (schema.enum) {
+    do {
+      var value = anyValue();
+    } while (schema.enum.indexOf(value) !== -1);
+
+    copy.enum = [value];
+  }
+
+  return copy;
+}
+
+function isKey(prop: string): boolean {
+  return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
+}
+
 export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
@@ -205,5 +271,8 @@ export default {
   merge: merge,
   clean: clean,
   short: short,
-  randexp: _randexp
+  randexp: _randexp,
+  notValue: notValue,
+  anyValue: anyValue,
+  isKey: isKey,
 };

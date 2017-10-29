@@ -4,10 +4,6 @@ import utils from './utils';
 
 import deref from 'deref';
 
-function isKey(prop: string): boolean {
-  return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
-}
-
 // TODO provide types
 function run(refs: any, schema: JsonSchema, container: Container) {
   try {
@@ -67,6 +63,11 @@ function run(refs: any, schema: JsonSchema, container: Container) {
       if (Array.isArray(sub.oneOf || sub.anyOf)) {
         var mix = sub.oneOf || sub.anyOf;
 
+        // FIXME: probably this just works for numbers?
+        if (sub.enum && sub.oneOf) {
+          mix = sub.oneOf.map(x => utils.notValue(x));
+        }
+
         delete sub.anyOf;
         delete sub.oneOf;
 
@@ -82,9 +83,13 @@ function run(refs: any, schema: JsonSchema, container: Container) {
       }
 
       for (var prop in sub) {
-        if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !isKey(prop)) {
+        if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
           sub[prop] = reduce(sub[prop], maxReduceDepth);
         }
+      }
+
+      if (sub.not) {
+        sub = utils.notValue(sub.not);
       }
 
       return container.wrap(sub);
