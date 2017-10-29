@@ -96,7 +96,7 @@
     "z-schema": "^3.18.4"
   },
   "dependencies": {
-    "deref": "^0.7.0",
+    "deref": "^0.7.1",
     "json-schema-ref-parser": "^4.0.0",
     "randexp": "^0.4.5",
     "tslib": "^1.7.1"
