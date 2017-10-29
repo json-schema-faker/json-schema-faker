@@ -90,8 +90,10 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     });
 
     var current = Object.keys(props).length;
+    var fillProps = optionAPI('fillProperties');
+    var reuseProps = optionAPI('reuseProperties');
 
-    while (true) {
+    while (fillProps) {
         if (!(patternPropertyKeys.length || allowsAdditional)) {
             break;
         }
@@ -101,11 +103,31 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
 
         if (allowsAdditional) {
-            var word = words(1) + utils.randexp('[a-f\\d]{1,3}');
+            if (reuseProps && ((propertyKeys.length - current) > min)) {
+                var count = 0;
 
-            if (!props[word]) {
-                props[word] = additionalProperties || anyType;
-                current += 1;
+                do {
+                    count += 1;
+
+                    // skip large objects
+                    if (count > 1000) {
+                      break;
+                    }
+
+                    var key = random.pick(propertyKeys);
+                } while (typeof props[key] !== 'undefined');
+
+                if (typeof props[key] === 'undefined') {
+                  props[key] = properties[key];
+                  current += 1;
+                }
+            } else {
+                var word = words(1) + utils.randexp('[a-f\\d]{1,3}');
+
+                if (!props[word]) {
+                    props[word] = additionalProperties || anyType;
+                    current += 1;
+                }
             }
         }
 
