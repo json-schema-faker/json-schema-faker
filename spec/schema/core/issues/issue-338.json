@@ -1,0 +1,19 @@
+[
+  {
+    "description": "regression for decimal numbers and multiples",
+    "tests": [
+      {
+        "description": "should apply multipleOf correctly",
+        "schema": {
+          "title": "Resource 217 - default_representation",
+          "type": "object",
+          "properties": {},
+          "additionalProperties": false,
+          "id": "http://json-schema.org/schema#"
+        },
+        "equal": {},
+        "valid": true
+      }
+    ]
+  }
+]
