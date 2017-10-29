@@ -92,7 +92,7 @@ function merge(a: Object, b: Object): Object {
       a[key] = a[key] || [];
       // fix #292 - skip duplicated values from merge object (b)
       b[key].forEach(function(value) {
-        if (a[key].indexOf(value)) {
+        if (a[key].indexOf(value) === -1) {
           a[key].push(value);
         }
       });
