@@ -70,7 +70,6 @@
     "mocks"
   ],
   "devDependencies": {
-    "casual-cjs": "^1.5.10",
     "chance": "^1.0.9",
     "chokidar": "^1.7.0",
     "clone": "^2.1.1",
@@ -81,7 +80,7 @@
     "glob": "^7.1.2",
     "istanbul": "^0.4.5",
     "jasmine-node": "2.0.0-beta4",
-    "jayschema": "^0.3.1",
+    "jayschema": "^0.3.2",
     "lodash.template": "^4.4.0",
     "rollup": "^0.52.0",
     "rollup-plugin-commonjs": "^8.2.1",
@@ -94,7 +93,7 @@
     "tv4": "^1.3.0",
     "typedoc": "^0.9.0",
     "typescript": "^2.3.4",
-    "z-schema": "^3.18.2"
+    "z-schema": "^3.18.4"
   },
   "dependencies": {
     "deref": "^0.7.0",
