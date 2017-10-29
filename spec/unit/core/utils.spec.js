@@ -1,4 +1,5 @@
 var utils = require('../../../ts/core/utils').default;
+var optionAPI = require('../../../ts/api/option').default;
 
 describe("Utils", function () {
 
@@ -72,6 +73,19 @@ describe("Utils", function () {
       typecast(schema, opts => {
         expect(schema.enum).toEqual([2, 3]);
         expect(opts).toEqual({ minimum: 2 });
+      });
+    });
+
+    it('should normalize constraints with global options', () => {
+      optionAPI({
+        maxLength: 4,
+      });
+
+      typecast({
+        type: 'string',
+        maxLength: 10,
+      }, opts => {
+        expect(opts).toEqual({ maxLength: 4 });
       });
     });
 
