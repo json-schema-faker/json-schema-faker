@@ -49,24 +49,86 @@ function hasProperties(obj: Object, ...properties: string[]): boolean {
 /**
  * Returns typecasted value.
  * External generators (faker, chance, casual) may return data in non-expected formats, such as string, when you might expect an
- * integer. This function is used to force the typecast.
+ * integer. This function is used to force the typecast. This is the base formatter for all result values.
  *
- * @param value
- * @param targetType
+ * @param schema
+ * @param callback
  * @returns {any}
  */
-function typecast(value: any, schema: JsonSchema): any {
-  // FIXME this function should cover most cases and should be reused within generators
+function typecast(schema: JsonSchema, callback: Function): any {
+  const params = {};
+
+  // normalize constraints
   switch (schema.type) {
     case 'integer':
-      return parseInt(value, 10);
     case 'number':
-      return parseFloat(value);
+      if (typeof schema.minimum !== 'undefined') {
+        params.minimum = schema.minimum;
+      }
+
+      if (typeof schema.maximum !== 'undefined') {
+        params.maximum = schema.maximum;
+      }
+
+      if (schema.enum) {
+        var min = Math.max(params.minimum || 0, 0);
+        var max = Math.min(params.maximum || Infinity, Infinity);
+
+        schema.enum = schema.enum.filter(value => {
+          if (value >= min && value <= max) {
+            return true;
+          }
+
+          return false;
+        });
+      }
+      break;
+
+    case 'string':
+      if (typeof schema.minLength !== 'undefined') {
+        params.minLength = schema.minLength;
+      }
+
+      if (typeof schema.maxLength !== 'undefined') {
+        params.maxLength = schema.maxLength;
+      }
+
+      if (optionAPI('maxLength')) {
+        // Don't allow user to set max length above our maximum
+        if (maxLength && maxLength > optionAPI('maxLength')) {
+          params.maxLength = optionAPI('maxLength');
+        }
+
+        // Don't allow user to set min length above our maximum
+        if (minLength && minLength > optionAPI('maxLength')) {
+          params.minLength = optionAPI('maxLength');
+        }
+      }
+      break;
+  }
+
+  // execute generator
+  var value = callback(params);
+
+  // normalize output value
+  switch (schema.type) {
+    case 'number':
+      value = parseFloat(value);
+      break;
+
+    case 'integer':
+      value = parseInt(value, 10);
+      break;
+
+    case 'boolean':
+      value = !!value;
+      break;
+
     case 'string':
       value = String(value);
 
-      var min = Math.max(schema.minLength || 0, 0);
-      var max = Math.min(schema.maxLength || Infinity, Infinity);
+      var min = Math.max(params.minLength || 0, 0);
+      var max = Math.min(params.maxLength || Infinity, Infinity);
 
       while (value.length < min) {
         value += ' ' + value;
@@ -75,13 +137,10 @@ function typecast(value: any, schema: JsonSchema): any {
       if (value.length > max) {
         value = value.substr(0, max);
       }
-
-      return value;
-    case 'boolean':
-      return !!value;
-    default:
-      return value;
+      break;
   }
+
+  return value;
 }
 
 function merge(a: Object, b: Object): Object {

@@ -19,7 +19,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   }
 
   if (Array.isArray(schema.enum)) {
-    return random.pick(schema.enum);
+    return utils.typecast(schema, () => random.pick(schema.enum));
   }
 
   // thunks can return sub-schemas
@@ -28,7 +28,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   }
 
   if (typeof schema.generate === 'function') {
-    return utils.typecast(schema.generate(), schema);
+    return utils.typecast(schema, () => schema.generate());
   }
 
   // TODO remove the ugly overcome
@@ -50,9 +50,13 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
       }
     } else {
       try {
-        const value = types[type](schema, path, resolve, traverse);
+        const result = types[type](schema, path, resolve, traverse);
 
-        return utils.clean(value, null, schema.items ? schema.items.required : schema.required);
+        const required = schema.items
+          ? schema.items.required
+          : schema.required;
+
+        return utils.clean(result, null, required);
       } catch (e) {
         if (typeof e.path === 'undefined') {
           throw new ParseError(e.message, path);
