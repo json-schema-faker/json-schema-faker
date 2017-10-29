@@ -13,11 +13,11 @@ var numberType: FTypeGenerator = function numberType(value: INumberSchema): numb
     min = Math.ceil(min / multipleOf) * multipleOf;
   }
 
-  if (value.exclusiveMinimum && value.minimum && min === value.minimum) {
+  if (value.exclusiveMinimum && min === value.minimum) {
     min += multipleOf || 1;
   }
 
-  if (value.exclusiveMaximum && value.maximum && max === value.maximum) {
+  if (value.exclusiveMaximum && max === value.maximum) {
     max -= multipleOf || 1;
   }
 

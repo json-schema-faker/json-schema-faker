@@ -74,8 +74,9 @@ function typecast(schema: JsonSchema, callback: Function): any {
         var min = Math.max(params.minimum || 0, 0);
         var max = Math.min(params.maximum || Infinity, Infinity);
 
-        schema.enum = schema.enum.filter(value => {
-          if (value >= min && value <= max) {
+        // discard out-of-bounds enumerations
+        schema.enum = schema.enum.filter(x => {
+          if (x >= min && x <= max) {
             return true;
           }
 
