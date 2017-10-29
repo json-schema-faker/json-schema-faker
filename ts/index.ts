@@ -23,6 +23,24 @@ function getRefs(refs?: any) {
   return $refs;
 }
 
+function walk(obj, cb) {
+  var keys = Object.keys(obj);
+
+  var retval;
+
+  for (var i = 0; i < keys.length; i += 1) {
+    retval = cb(obj[keys[i]], keys[i], obj);
+
+    if (!retval && obj[keys[i]] && !Array.isArray(obj[keys[i]]) && typeof obj[keys[i]] === 'object') {
+      retval = walk(obj[keys[i]], cb);
+    }
+
+    if (typeof retval !== 'undefined') {
+      return retval;
+    }
+  }
+}
+
 var jsf = function(schema: JsonSchema, refs?: any) {
   var ignore = option('ignoreMissingRefs');
 
@@ -56,9 +74,25 @@ jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
     order: 300,
     canRead: true,
     read(file, callback) {
-      callback(null, deref.util.findByRef(cwd !== '/'
+      const id = cwd !== '/'
         ? file.url.replace(cwd, '')
-        : file.url, $refs));
+        : file.url;
+
+      try {
+        callback(null, deref.util.findByRef(id, $refs));
+      } catch (e) {
+        const result = walk(schema, (v, k, sub) => {
+          if (k === 'id' && v === id) {
+            return sub;
+          }
+        });
+
+        if (!result) {
+          return callback(e);
+        }
+
+        callback(null, result);
+      }
     },
   };
 
