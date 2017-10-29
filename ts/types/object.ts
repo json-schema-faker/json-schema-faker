@@ -59,22 +59,6 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     var _props = fakeOptionals ? propertyKeys
       : requiredProperties.slice(0, random.number(min, max));
 
-    var extra = random.number(0, propertyKeys.length);
-
-    while (!fakeOptionals && extra < requiredProperties) {
-        var key = random.pick(propertyKeys);
-
-        if (_props.indexOf(key) === -1) {
-            _props.push(key);
-        }
-
-        extra -= 1;
-    }
-
-    // reorder
-    _props.sort((a, b) =>
-      propertyKeys.indexOf(a) - propertyKeys.indexOf(b));
-
     var missing = [];
 
     _props.forEach(function(key) {
