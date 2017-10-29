@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 70,
-          "b": "do cupidatat aute",
-          "c": "wj382"
+          "a": 22,
+          "b": "do consectetur Excepteur",
+          "c": "jp828"
         },
         "repeat": 1,
         "require": "core/option/random"
