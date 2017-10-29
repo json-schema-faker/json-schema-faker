@@ -58,37 +58,21 @@ describe("Utils", function () {
   describe("typecast function", function() {
     var typecast = utils.typecast;
 
-    it("should cast boolean to string", function() {
-      expect(typecast(true, { type: "string" })).toEqual("true");
-      expect(typecast(false, { type: "string" })).toEqual("false");
-    });
+    it('should normalize constraints and format final values', () => {
+      typecast({}, opts => {
+        expect(opts).toEqual({});
+      });
 
-    it("should cast number to string", function() {
-      expect(typecast(8935768925789, { type: "string" })).toEqual("8935768925789");
-      expect(typecast(234.76, { type: "string" })).toEqual("234.76");
-    });
+      var schema = {
+        type: 'integer',
+        enum: [1, 2, 3],
+        minimum: 2,
+      };
 
-    it("should cast number to boolean", function() {
-      expect(typecast(123, { type: "boolean" })).toBe(true);
-      expect(typecast(0, { type: "boolean" })).toBe(false);
-    });
-
-    it("should cast string to number", function() {
-      expect(typecast("8482", { type: "number" })).toEqual(8482);
-      expect(typecast("827502.73", { type: "number" })).toEqual(827502.73);
-      expect(typecast("-8.482", { type: "number" })).toEqual(-8.482);
-    });
-
-    it("should cast string to integer", function() {
-      expect(typecast("8482", { type: "integer" })).toEqual(8482);
-      expect(typecast("827502.73", { type: "integer" })).toEqual(827502);
-      expect(typecast("-8.482", { type: "integer" })).toEqual(-8);
-    });
-
-    it("should cast string to boolean", function() {
-      expect(typecast("", { type: "boolean" })).toBe(false);
-      expect(typecast("1", { type: "boolean" })).toBe(true);
-      expect(typecast(" ", { type: "boolean" })).toBe(true);
+      typecast(schema, opts => {
+        expect(schema.enum).toEqual([2, 3]);
+        expect(opts).toEqual({ minimum: 2 });
+      });
     });
 
   });
