@@ -29,7 +29,8 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         patternPropertyKeys.length === 0 &&
         utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
     ) {
-        throw new ParseError('missing properties for:\n' + utils.short(value), path);
+        // just nothing
+        return {};
     }
 
     if (optionAPI('requiredOnly') === true) {
