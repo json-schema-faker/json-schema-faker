@@ -43,6 +43,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         return traverseCallback(props, path.concat(['properties']), resolve);
     }
 
+
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
     var max = Math.max(value.maxProperties || random.number(min, min + 5));
 
@@ -52,9 +53,23 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
     });
 
+    var fakeOptionals = optionAPI('alwaysFakeOptionals');
+
     // properties are read from right-to-left
-    var _props = optionAPI('alwaysFakeOptionals') ? requiredProperties
+    var _props = fakeOptionals ? propertyKeys
       : requiredProperties.slice(0, random.number(min, max));
+
+    var extra = random.number(0, propertyKeys.length);
+
+    while (!fakeOptionals && extra) {
+        var key = random.pick(propertyKeys);
+
+        if (_props.indexOf(key) === -1) {
+            _props.push(key);
+        }
+
+        extra -= 1;
+    }
 
     var missing = [];
 
@@ -118,8 +133,8 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
                 } while (typeof props[key] !== 'undefined');
 
                 if (typeof props[key] === 'undefined') {
-                  props[key] = properties[key];
-                  current += 1;
+                    props[key] = properties[key];
+                    current += 1;
                 }
             } else {
                 var word = words(1) + utils.randexp('[a-f\\d]{1,3}');
