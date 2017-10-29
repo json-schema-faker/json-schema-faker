@@ -46,7 +46,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
     var max = Math.max(value.maxProperties || random.number(min, min + 5));
 
-    random.shuffle(patternPropertyKeys.concat(propertyKeys)).forEach(function(_key) {
+    random.shuffle(patternPropertyKeys).forEach(function(_key) {
         if (requiredProperties.indexOf(_key) === -1) {
             requiredProperties.push(_key);
         }

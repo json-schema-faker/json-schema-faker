@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 38,
-          "b": "dolore et qui",
-          "c": "hv837"
+          "a": 70,
+          "b": "do cupidatat aute",
+          "c": "wj382"
         },
         "repeat": 1,
         "require": "core/option/random"
