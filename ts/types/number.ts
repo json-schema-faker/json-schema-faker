@@ -1,11 +1,9 @@
 import random from '../core/random';
-
-var MIN_INTEGER = -100000000,
-    MAX_INTEGER = 100000000;
+import env from '../core/constants';
 
 var numberType: FTypeGenerator = function numberType(value: INumberSchema): number {
-  var min = typeof value.minimum === 'undefined' ? MIN_INTEGER : value.minimum,
-      max = typeof value.maximum === 'undefined' ? MAX_INTEGER : value.maximum,
+  var min = typeof value.minimum === 'undefined' ? env.MIN_INTEGER : value.minimum,
+      max = typeof value.maximum === 'undefined' ? env.MAX_INTEGER : value.maximum,
       multipleOf = value.multipleOf;
 
   if (multipleOf) {

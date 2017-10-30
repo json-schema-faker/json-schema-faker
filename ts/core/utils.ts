@@ -1,8 +1,7 @@
 import optionAPI from '../api/option';
+import env from '../core/constants';
 
 import RandExp from 'randexp';
-
-const ALL_TYPES = ['array', 'object', 'integer', 'number', 'string', 'boolean', 'null'];
 
 function _randexp(value: string) {
   // set maximum default, see #193
@@ -246,7 +245,7 @@ function notValue(schema: JsonSchema) {
   }
 
   if (schema.type) {
-    copy.type = random.pick(ALL_TYPES.filter(x => x !== schema.type));
+    copy.type = random.pick(env.ALL_TYPES.filter(x => x !== schema.type));
   } else if (schema.enum) {
     do {
       var value = anyValue();
