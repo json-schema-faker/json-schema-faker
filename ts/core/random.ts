@@ -76,8 +76,47 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
   return result;
 }
 
+function by(type) {
+  switch (type) {
+    case 'seconds':
+      return number(0, 60) * 60;
+
+    case 'minutes':
+      return number(15, 50) * 612;
+
+    case 'hours':
+      return number(12, 72) * 36123;
+
+    case 'days':
+      return number(7, 30) * 86412345;
+
+    case 'weeks':
+      return number(4, 52) * 604812345;
+
+    case 'months':
+      return number(2, 13) * 2592012345;
+
+    case 'years':
+      return number(1, 20) * 31104012345;
+  }
+}
+
+function date(step) {
+  if (step) {
+    return by(step);
+  }
+
+  var now = new Date();
+  var days = number(-1000, env.MOST_NEAR_DATETIME);
+
+  now.setTime(now.getTime() - days);
+
+  return now;
+}
+
 export default {
   pick: pick,
+  date: date,
   shuffle: shuffle,
   number: number,
 };
