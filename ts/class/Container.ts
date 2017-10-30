@@ -136,7 +136,12 @@ class Container {
       var gen = this.support[fn];
 
       if (typeof gen === 'function') {
-        schema.generate = rootSchema => gen(schema[keys[length]], schema, keys[length], rootSchema);
+        Object.defineProperty(schema, 'generate', {
+          configurable: false,
+          enumerable: false,
+          writable: false,
+          value: rootSchema => gen(schema[keys[length]], schema, keys[length], rootSchema),
+        });
         break;
       }
     }
