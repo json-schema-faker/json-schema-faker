@@ -67,9 +67,10 @@ function run(refs: any, schema: JsonSchema, container: Container) {
       if (Array.isArray(sub.oneOf || sub.anyOf)) {
         var mix = sub.oneOf || sub.anyOf;
 
-        // FIXME: probably this just works for numbers?
+        // test every value from the enum against each-oneOf
+        // schema, only values that validate once are kept
         if (sub.enum && sub.oneOf) {
-          mix = mix.map(utils.notValue);
+          sub.enum = sub.enum.filter(x => utils.validate(x, mix));
         }
 
         delete sub.anyOf;
