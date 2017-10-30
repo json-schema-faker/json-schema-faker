@@ -130,6 +130,7 @@ class Container {
   public wrap(schema: JsonSchema): any {
     var keys = Object.keys(schema);
     var length = keys.length;
+    var context = {};
 
     while (length--) {
       var fn = keys[length].replace(/^x-/, '');
@@ -140,7 +141,7 @@ class Container {
           configurable: false,
           enumerable: false,
           writable: false,
-          value: rootSchema => gen(schema[keys[length]], schema, keys[length], rootSchema),
+          value: rootSchema => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema),
         });
         break;
       }
