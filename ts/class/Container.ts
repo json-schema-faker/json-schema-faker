@@ -127,7 +127,7 @@ class Container {
    * Apply a custom keyword
    * @param schema
    */
-  public wrap(schema: JsonSchema, rootSchema: JsonSchema): any {
+  public wrap(schema: JsonSchema): any {
     var keys = Object.keys(schema);
     var length = keys.length;
 
