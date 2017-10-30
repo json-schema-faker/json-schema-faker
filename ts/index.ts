@@ -4,6 +4,7 @@ import deref from 'deref';
 import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';
+import env from './core/constants';
 import random from './core/random';
 import utils from './core/utils';
 import run from './core/run';
@@ -122,7 +123,10 @@ container.define('jsonPath', (value, schema) => {
 // safe auto-increment values
 container.define('autoIncrement', function(value, schema) {
   if (!this.offset) {
-    this.offset = schema.minimum || 1;
+    const min = schema.minimum || 1;
+    const max = min + env.MAX_NUMBER;
+
+    this.offset = random.number(min, max);
   }
 
   if (value === true) {
