@@ -1,6 +1,5 @@
 import random from '../core/random';
-
-const MOST_NEAR_DATETIME = 2524608000000;
+import env from '../core/constants';
 
 /**
  * Generates randomized date time ISO format string.
@@ -9,7 +8,7 @@ const MOST_NEAR_DATETIME = 2524608000000;
  */
 function dateTimeGenerator(): string {
   var date = new Date();
-  var days = random.number(-1000, MOST_NEAR_DATETIME);
+  var days = random.number(-1000, env.MOST_NEAR_DATETIME);
 
   date.setTime(date.getTime() - days);
 

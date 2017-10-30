@@ -1,6 +1,7 @@
 /// <reference path="../index.d.ts" />
 
 import optionAPI from '../api/option';
+import env from '../core/constants';
 
 /**
  * Returns random element of a collection
@@ -35,14 +36,6 @@ function shuffle<T>(collection: T[]): T[] {
   return copy;
 }
 
-/**
- * These values determine default range for random.number function
- *
- * @type {number}
- */
-var MIN_NUMBER = -100,
-    MAX_NUMBER = 100;
-
 
 /**
  * Returns a random integer between min (inclusive) and max (inclusive)
@@ -64,8 +57,8 @@ function getRandom(min: number, max: number): number {
  * @returns {number}
  */
 function number(min?: number, max?: number, defMin?: number, defMax?: number, hasPrecision: boolean = false): number {
-  defMin = typeof defMin === 'undefined' ? MIN_NUMBER : defMin;
-  defMax = typeof defMax === 'undefined' ? MAX_NUMBER : defMax;
+  defMin = typeof defMin === 'undefined' ? env.MIN_NUMBER : defMin;
+  defMax = typeof defMax === 'undefined' ? env.MAX_NUMBER : defMax;
 
   min = typeof min === 'undefined' ? defMin : min;
   max = typeof max === 'undefined' ? defMax : max;
