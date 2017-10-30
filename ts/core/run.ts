@@ -47,10 +47,10 @@ function resolve(obj, data, values, property) {
     return obj.map(x => resolve(x, data, values, property));
   }
 
-  if (obj['json-path']) {
-    const params = typeof obj['json-path'] !== 'object'
-      ? { path: obj['json-path'] }
-      : obj['json-path'];
+  if (obj.jsonPath) {
+    const params = typeof obj.jsonPath !== 'object'
+      ? { path: obj.jsonPath }
+      : obj.jsonPath;
 
     params.group = obj.group || params.group || property;
     params.cycle = obj.cycle || params.cycle || false;

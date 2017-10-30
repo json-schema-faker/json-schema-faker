@@ -115,7 +115,7 @@ jsf.option = option;
 container.define('pattern', utils.randexp);
 
 // skip default generators
-container.define('json-path', (value, schema) => {
+container.define('jsonPath', (value, schema) => {
   delete schema.type;
   return schema;
 });
