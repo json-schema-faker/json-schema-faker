@@ -261,6 +261,19 @@ function notValue(schema: JsonSchema) {
   return copy;
 }
 
+// FIXME: evaluate more constraints?
+function validate(value, schemas) {
+  return !schemas.every(x => {
+    if (typeof x.minimum !== 'undefined' && value >= x.minimum) {
+      return true;
+    }
+
+    if (typeof x.maximum !== 'undefined' && value <= x.maximum) {
+      return true;
+    }
+  });
+}
+
 function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
@@ -275,5 +288,6 @@ export default {
   randexp: _randexp,
   notValue: notValue,
   anyValue: anyValue,
+  validate: validate,
   isKey: isKey,
 };
