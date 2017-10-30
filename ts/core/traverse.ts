@@ -6,7 +6,7 @@ import types from '../types/index';
 import optionAPI from '../api/option';
 
 // TODO provide types
-function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
+function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function, rootSchema?: JsonSchema) {
   schema = resolve(schema);
 
   if (!schema) {
@@ -28,7 +28,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
   }
 
   if (typeof schema.generate === 'function') {
-    return utils.typecast(schema, () => schema.generate());
+    return utils.typecast(schema, () => schema.generate(rootSchema));
   }
 
   // TODO remove the ugly overcome
@@ -78,7 +78,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function) {
 
   for (var prop in schema) {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
-      copy[prop] = traverse(schema[prop], path.concat([prop]), resolve);
+      copy[prop] = traverse(schema[prop], path.concat([prop]), resolve, copy);
     } else {
       copy[prop] = schema[prop];
     }
