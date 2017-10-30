@@ -114,6 +114,12 @@ jsf.option = option;
 // built-in support
 container.define('pattern', utils.randexp);
 
+// skip default generators
+container.define('json-path', (value, schema) => {
+  delete schema.type;
+  return schema;
+});
+
 // returns itself for chaining
 jsf.extend = function(name: string, cb: Function) {
   container.extend(name, cb);
