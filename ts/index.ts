@@ -120,6 +120,19 @@ container.define('jsonPath', (value, schema) => {
   return schema;
 });
 
+// safe auto-increment values
+container.define('autoIncrement', function(value, schema) {
+  if (!this.offset) {
+    this.offset = schema.minimum || 1;
+  }
+
+  if (value === true) {
+    return this.offset++;
+  }
+
+  return schema;
+});
+
 // returns itself for chaining
 jsf.extend = function(name: string, cb: Function) {
   container.extend(name, cb);
