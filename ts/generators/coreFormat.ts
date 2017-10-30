@@ -1,4 +1,4 @@
-import utils from '../core/utils';
+import random from '../core/random';
 
 /**
  * Predefined core formats
@@ -19,8 +19,8 @@ var regexps: IStringMap = {
  * @returns {string}
  */
 function coreFormatGenerator(coreFormat: string): string {
-  return utils.randexp(regexps[coreFormat]).replace(/\{(\w+)\}/, function(match: string, key: string) {
-    return utils.randexp(regexps[key]);
+  return random.randexp(regexps[coreFormat]).replace(/\{(\w+)\}/, function(match: string, key: string) {
+    return random.randexp(regexps[key]);
   });
 }
 

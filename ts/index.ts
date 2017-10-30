@@ -106,14 +106,12 @@ jsf.resolve = <jsfAPI>function(schema: JsonSchema, refs?: any, cwd?: string) {
     }).then((sub) => run($refs, sub, container));
 };
 
-jsf.utils = utils;
-
 jsf.format = format;
-
 jsf.option = option;
+jsf.random = random;
 
 // built-in support
-container.define('pattern', utils.randexp);
+container.define('pattern', random.randexp);
 
 // skip default generators
 container.define('jsonPath', (value, schema) => {

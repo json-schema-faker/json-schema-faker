@@ -405,7 +405,7 @@ Additionally, you can add custom generators for those:
 
 ```javascript
 jsf.format('semver', function() {
-  return jsf.utils.randexp('\\d\\.\\d\\.[1-9]\\d?');
+  return jsf.random.randexp('\\d\\.\\d\\.[1-9]\\d?');
 });
 ```
 
