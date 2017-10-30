@@ -4,6 +4,7 @@ import dateTime from '../generators/dateTime';
 import coreFormat from '../generators/coreFormat';
 import optionAPI from '../api/option';
 import format from '../api/format';
+import random from '../core/random';
 import utils from '../core/utils';
 
 function generateFormat(value: IStringSchema, invalid: () => string): string {
@@ -15,6 +16,7 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
 
   switch (value.format) {
     case 'date-time':
+    case 'datetime':
       return dateTime();
     case 'ipv4':
       return ipv4();
@@ -48,7 +50,7 @@ var stringType: FTypeGenerator = function stringType(value: IStringSchema): stri
     }
 
     if (value.pattern) {
-      return utils.randexp(value.pattern);
+      return random.randexp(value.pattern);
     }
 
     return thunk(opts.minLength, opts.maxLength);

@@ -75,7 +75,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
             patternPropertyKeys.forEach(function (_key) {
                 if (key.match(new RegExp(_key))) {
                     found = true;
-                    props[utils.randexp(key)] = patternProperties[_key];
+                    props[random.randexp(key)] = patternProperties[_key];
                 }
             });
 
@@ -87,7 +87,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
                 if (subschema) {
                     // otherwise we can use additionalProperties?
-                    props[patternProperties[key] ? utils.randexp(key) : key] = subschema;
+                    props[patternProperties[key] ? random.randexp(key) : key] = subschema;
                 } else {
                     missing.push(key);
                 }
@@ -128,7 +128,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
                     current += 1;
                 }
             } else {
-                var word = words(1) + utils.randexp('[a-f\\d]{1,3}');
+                var word = words(1) + random.randexp('[a-f\\d]{1,3}');
 
                 if (!props[word]) {
                     props[word] = additionalProperties || anyType;
@@ -138,7 +138,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
 
         patternPropertyKeys.forEach(function (_key) {
-            var word = utils.randexp(_key);
+            var word = random.randexp(_key);
 
             if (!props[word]) {
                 props[word] = patternProperties[_key];

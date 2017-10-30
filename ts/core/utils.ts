@@ -1,21 +1,6 @@
 import optionAPI from '../api/option';
 import env from '../core/constants';
 
-import RandExp from 'randexp';
-
-function _randexp(value: string) {
-  // set maximum default, see #193
-  RandExp.prototype.max = optionAPI('defaultRandExpMax');
-
-  // same implementation as the original except using our random
-  RandExp.prototype.randInt = (a, b) =>
-    a + Math.floor(optionAPI('random')() * (1 + b - a));
-
-  var re = new RandExp(value);
-
-  return re.gen();
-}
-
 function getSubAttribute(obj: any, dotSeparatedKey: string): any {
   var keyElements: string[] = dotSeparatedKey.split('.');
 
@@ -281,7 +266,6 @@ export default {
   merge: merge,
   clean: clean,
   short: short,
-  randexp: _randexp,
   notValue: notValue,
   anyValue: anyValue,
   validate: validate,
