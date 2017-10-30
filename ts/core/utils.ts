@@ -1,21 +1,18 @@
 import optionAPI from '../api/option';
 
+import RandExp from 'randexp';
+
 const ALL_TYPES = ['array', 'object', 'integer', 'number', 'string', 'boolean', 'null'];
 
-const RandExp = require('randexp');
-
-// set maximum default, see #193
-RandExp.prototype.max = 10;
-
-// same implementation as the original except using our random
-RandExp.prototype.randInt = (a, b) =>
-  a + Math.floor(optionAPI('random')() * (1 + b - a));
-
 function _randexp(value: string) {
-  var re = new RandExp(value);
+  // set maximum default, see #193
+  RandExp.prototype.max = optionAPI('defaultRandExpMax');
 
-  // apply given setting
-  re.max = optionAPI('defaultRandExpMax');
+  // same implementation as the original except using our random
+  RandExp.prototype.randInt = (a, b) =>
+    a + Math.floor(optionAPI('random')() * (1 + b - a));
+
+  var re = new RandExp(value);
 
   return re.gen();
 }
