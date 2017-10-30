@@ -57,7 +57,10 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     // properties are read from right-to-left
     var _props = fakeOptionals ? propertyKeys
-      : requiredProperties.slice(0, random.number(min, max));
+      : (requiredProperties.length
+          ? requiredProperties
+          : propertyKeys
+        ).slice(0, random.number(min, max));
 
     var missing = [];
 
