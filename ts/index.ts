@@ -4,6 +4,7 @@ import deref from 'deref';
 import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';
+import random from './core/random';
 import utils from './core/utils';
 import run from './core/run';
 
@@ -128,6 +129,28 @@ container.define('autoIncrement', function(value, schema) {
 
   if (value === true) {
     return this.offset++;
+  }
+
+  return schema;
+});
+
+// safe-and-sequential dates
+container.define('sequentialDate', function(value, schema) {
+  if (!this.now) {
+    this.now = random.date();
+  }
+
+  if (value) {
+    schema = this.now.toISOString();
+    value = value === true
+      ? 'days'
+      : value;
+
+    if (['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'].indexOf(value) === -1) {
+      throw new Error(`Unsupported increment by ${utils.short(value)}`);
+    }
+
+    this.now.setTime(this.now.getTime() + random.date(value));
   }
 
   return schema;
