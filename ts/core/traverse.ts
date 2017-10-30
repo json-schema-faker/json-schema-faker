@@ -18,6 +18,10 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function, rootS
     return schema.default;
   }
 
+  if (schema.not && typeof schema.not === 'object') {
+    schema = utils.notValue(sub.not);
+  }
+
   if (Array.isArray(schema.enum)) {
     return utils.typecast(schema, () => random.pick(schema.enum));
   }

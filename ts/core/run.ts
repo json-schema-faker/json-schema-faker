@@ -16,6 +16,10 @@ function run(refs: any, schema: JsonSchema, container: Container) {
         return null;
       }
 
+      if (typeof sub.generate === 'function') {
+        return sub;
+      }
+
       // cleanup
       if (sub.id && typeof sub.id === 'string') {
         delete sub.id;
@@ -65,7 +69,7 @@ function run(refs: any, schema: JsonSchema, container: Container) {
 
         // FIXME: probably this just works for numbers?
         if (sub.enum && sub.oneOf) {
-          mix = sub.oneOf.map(x => utils.notValue(x));
+          mix = mix.map(utils.notValue);
         }
 
         delete sub.anyOf;
@@ -86,10 +90,6 @@ function run(refs: any, schema: JsonSchema, container: Container) {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
           sub[prop] = reduce(sub[prop], maxReduceDepth);
         }
-      }
-
-      if (sub.not) {
-        sub = utils.notValue(sub.not);
       }
 
       return container.wrap(sub);
