@@ -27,6 +27,7 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
     case 'hostname':
     case 'ipv6':
     case 'uri':
+    case 'uri-reference':
       return coreFormat(value.format);
     default:
       if (typeof callback === 'undefined') {
