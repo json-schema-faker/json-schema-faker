@@ -73,7 +73,7 @@
     "codecov": "^3.0.0",
     "faker": "^4.1.0",
     "fs-extra": "^4.0.0",
-    "google-closure-compiler-js": "^20170910.0.0",
+    "google-closure-compiler-js": "^20171203.0.0",
     "istanbul": "^0.4.5",
     "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.1",
