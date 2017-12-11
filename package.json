@@ -75,7 +75,7 @@
     "clone": "^2.1.1",
     "codecov": "^3.0.0",
     "faker": "^4.1.0",
-    "fs-extra": "^4.0.0",
+    "fs-extra": "^5.0.0",
     "google-closure-compiler-js": "^20171203.0.0",
     "glob": "^7.1.2",
     "istanbul": "^0.4.5",
