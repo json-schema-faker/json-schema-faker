@@ -1,4 +1,4 @@
-lib/** -diff
-dist/** -diff
-locale/* -diff
-yarn.lock -diff
+lib/** binary
+dist/** binary
+locale/* binary
+package-lock.json binary
