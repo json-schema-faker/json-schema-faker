@@ -40,9 +40,9 @@
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
   "tarima": {
-    "src": "ts",
-    "dest": "lib",
-    "watch": [
+    "from": "ts",
+    "output": "lib",
+    "watching": [
       "spec"
     ],
     "bundle": true,
@@ -71,7 +71,6 @@
   ],
   "devDependencies": {
     "chance": "^1.0.9",
-    "chokidar": "^1.7.0",
     "clone": "^2.1.1",
     "codecov": "^3.0.0",
     "faker": "^4.1.0",
