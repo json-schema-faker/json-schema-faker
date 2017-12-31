@@ -71,7 +71,7 @@
   ],
   "devDependencies": {
     "chance": "^1.0.9",
-    "chokidar": "^1.7.0",
+    "chokidar": "^2.0.0",
     "clone": "^2.1.1",
     "codecov": "^3.0.0",
     "faker": "^4.1.0",
