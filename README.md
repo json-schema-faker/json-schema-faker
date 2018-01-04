@@ -11,9 +11,13 @@
 [![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
 [![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
 
-Use [JSON Schema](http://json-schema.org/) along with fake generators to provide consistent and meaningful fake data for your system.
+Use [JSON Schema](http://json-schema.org/draft-04/) along with fake generators to provide consistent and meaningful fake data for your system.
 
 We are looking for **contributors**! If you wanna help us make `jsf` more awesome, simply write us so!
+
+## Join us!
+
+We've recently setup a [gitter room](https://gitter.im/json-schema-faker) for this project, if you want contribute, talk about specific issues from the library, or you need help on json-schema topics just reach us!
 
 ## What's new?
 
@@ -120,7 +124,7 @@ You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfi
 
 JSON-Schema-faker (or `jsf` for short) combines two things:
 
- * The [JSON-schema specification](http://json-schema.org/), that defines what is the allowed content of a JSON document
+ * The [JSON-schema specification](http://json-schema.org/draft-04/), that defines what is the allowed content of a JSON document
  * Fake data generators, that are used to generate basic or complex data, conforming to the schema.
 
 Since `v0.5.x` external generators are not longer bundled with jsf, however built-in defaults are shipped for all basic types and formats.
@@ -232,13 +236,13 @@ Below is the list of supported keywords:
 - `$ref` &mdash; Resolve internal references only, and/or external if provided.
 - `required` &mdash; All required properties are guaranteed, if not can be omitted.
 - `pattern` &mdash; Generate samples based on RegExp values.
-- `format` &mdash; Core formats only:
-  [`date-time`](http://json-schema.org/latest/json-schema-validation.html#anchor108),
-  [`email`](http://json-schema.org/latest/json-schema-validation.html#anchor111),
-  [`hostname`](http://json-schema.org/latest/json-schema-validation.html#anchor114),
-  [`ipv4`](http://json-schema.org/latest/json-schema-validation.html#anchor117),
-  [`ipv6`](http://json-schema.org/latest/json-schema-validation.html#anchor120)
-  and [`uri`](http://json-schema.org/latest/json-schema-validation.html#anchor123)
+- `format` &mdash; Core formats **v4-draft only**:
+  [`date-time`](http://json-schema.org/draft-04/json-schema-validation.html#anchor108),
+  [`email`](http://json-schema.org/draft-04/json-schema-validation.html#anchor111),
+  [`hostname`](http://json-schema.org/draft-04/json-schema-validation.html#anchor114),
+  [`ipv4`](http://json-schema.org/draft-04/json-schema-validation.html#anchor117),
+  [`ipv6`](http://json-schema.org/draft-04/json-schema-validation.html#anchor120)
+  and [`uri`](http://json-schema.org/draft-04/json-schema-validation.html#anchor123)
     -- [demo »](http://json-schema-faker.js.org/#gist/f58db80cbf52c12c623166090240d964)
 - `enum` &mdash; Returns any of these enumerated values.
 - `minLength`, `maxLength` &mdash; Applies length constraints to string values.
