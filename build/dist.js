@@ -94,7 +94,7 @@ Promise.resolve()
 .then(() => {
   console.log('Building main library...');
 
-  return bundle({ id: pkg.name, src: path.join(projectDir, 'lib/index.js') });
+  return bundle({ id: pkg.name, src: path.join(projectDir, 'index.js') });
 })
 .then(() => {
   // proxied versions from faker's locales

@@ -6,7 +6,7 @@
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2017-10-16 05:19:43.620Z
+ * Date: 2018-02-08 04:56:34.981Z
  */
 
 (function (global, factory) {
@@ -230,6 +230,10 @@ exports.error = function(regexp, msg) {
   throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
 };
 });
+
+var util_1 = util.strToChars;
+var util_2 = util.tokenizeClass;
+var util_3 = util.error;
 
 var wordBoundary = function() {
   return { type: types.POSITION, value: 'b' };
@@ -1110,8 +1114,6 @@ var tslib_es6 = Object.freeze({
 	__makeTemplateObject: __makeTemplateObject
 });
 
-'use strict';
-
 // https://gist.github.com/pjt33/efb2f1134bab986113fd
 
 function URLUtils(url, baseURL) {
@@ -1219,10 +1221,6 @@ var helpers = {
 };
 
 var findReference = createCommonjsModule(function (module) {
-'use strict';
-
-
-
 function get(obj, path) {
   var hash = path.split('#')[1];
 
@@ -1294,8 +1292,6 @@ var deepExtend_1 = createCommonjsModule(function (module) {
  * IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
-'use strict';
 
 function isSpecificValue(val) {
 	return (
@@ -1414,14 +1410,6 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 };
 });
 
-'use strict';
-
-
-
-
-
-
-
 function copy(_, obj, refs, parent, resolve) {
   var target =  Array.isArray(obj) ? [] : {};
 
@@ -1465,8 +1453,6 @@ var resolveSchema = function(obj, refs, resolve) {
 };
 
 var cloneObj = createCommonjsModule(function (module) {
-'use strict';
-
 var clone = module.exports = function(obj, seen) {
   seen = seen || [];
 
@@ -1499,12 +1485,6 @@ var clone = module.exports = function(obj, seen) {
   return target;
 };
 });
-
-'use strict';
-
-
-
-
 
 var SCHEMA_URI = [
   'http://json-schema.org/schema#',
@@ -1565,10 +1545,6 @@ var normalizeSchema = function(fakeroot, schema, push) {
 };
 
 var lib$4 = createCommonjsModule(function (module) {
-'use strict';
-
-
-
 helpers.findByRef = findReference;
 helpers.resolveSchema = resolveSchema;
 helpers.normalizeSchema = normalizeSchema;
@@ -2273,10 +2249,10 @@ function removeProps(obj, key, parent, required) {
         removeProps(obj);
     }
 }
-var clean = function (obj, required) {
+function clean (obj, required) {
     removeProps(obj, undefined, undefined, required);
     return obj;
-};
+}
 
 var randexp = container.get('randexp');
 // fallback generator

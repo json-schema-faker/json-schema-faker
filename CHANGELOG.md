@@ -1,8 +1,28 @@
 UPCOMING:
   changes:
     - faker and chance are not longer required as dependencies
-v0.4.0
+v0.4.7
+  date: 2018-02-?
+  changes:
+    - restore faker/chance dependencies for browser usage
+v0.4.4 - v0.4.6
   date: ?
+  changes:
+    - broken browser package (missing deps)
+v0.4.3
+  date: 2017-07-25
+  changes:
+    - enable `random` option
+v0.4.2
+  date: 2017-05-30
+  changes:
+    - fix faker's version on package.json
+v0.4.1
+  date: 2017-02-17
+  changes:
+    - fix faker's version on package.json
+v0.4.0
+  date: 2016-11-29
   changes:
     - dropped support for node.js: 0.10, 0.12, io.js
     - added support for node.js: 5, 6, 7

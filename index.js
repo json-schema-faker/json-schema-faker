@@ -8,7 +8,7 @@ module.exports = require('./lib')
   })
   .extend('faker', function() {
     try {
-      return require('faker');
+      return require('faker/lib');
     } catch (e) {
       return null;
     }
