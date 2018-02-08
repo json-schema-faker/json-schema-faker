@@ -1,12 +1,12 @@
 /*!
- * json-schema-faker library v0.4.6
+ * json-schema-faker library v0.4.7
  * http://json-schema-faker.js.org
  * @preserve
  *
  * Copyright (c) 2014-2016 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2018-02-08 04:56:34.981Z
+ * Date: 2018-02-08 05:26:09.380Z
  */
 
 (function (global, factory) {
@@ -1239,17 +1239,25 @@ function get(obj, path) {
   return obj;
 }
 
-var find = module.exports = function(id, refs) {
+var find = module.exports = function(id, refs, filter) {
   var target = refs[id] || refs[id.split('#')[1]] || refs[helpers.getDocumentURI(id)];
 
-  if (target) {
-    target = id.indexOf('#/') > -1 ? get(target, id) : target;
-  } else {
-    for (var key in refs) {
-      if (helpers.resolveURL(refs[key].id, id) === refs[key].id) {
-        target = refs[key];
-        break;
+  try {
+    if (target) {
+      target = id.indexOf('#/') > -1 ? get(target, id) : target;
+    } else {
+      for (var key in refs) {
+        if (helpers.resolveURL(refs[key].id, id) === refs[key].id) {
+          target = refs[key];
+          break;
+        }
       }
+    }
+  } catch (e) {
+    if (typeof filter === 'function') {
+      target = filter(id, refs);
+    } else {
+      throw e;
     }
   }
 
@@ -1410,7 +1418,7 @@ var deepExtend = module.exports = function (/*obj_1, [obj_2], [obj_N]*/) {
 };
 });
 
-function copy(_, obj, refs, parent, resolve) {
+function copy(_, obj, refs, parent, resolve, callback) {
   var target =  Array.isArray(obj) ? [] : {};
 
   if (typeof obj.$ref === 'string') {
@@ -1419,7 +1427,7 @@ function copy(_, obj, refs, parent, resolve) {
     var local = id.indexOf('#/') > -1;
 
     if (local || (resolve && base !== parent)) {
-      var fixed = findReference(id, refs);
+      var fixed = findReference(id, refs, callback);
 
       deepExtend_1(obj, fixed);
 
@@ -1436,7 +1444,7 @@ function copy(_, obj, refs, parent, resolve) {
 
   for (var prop in obj) {
     if (typeof obj[prop] === 'object' && obj[prop] !== null && !helpers.isKeyword(prop)) {
-      target[prop] = copy(_, obj[prop], refs, parent, resolve);
+      target[prop] = copy(_, obj[prop], refs, parent, resolve, callback);
     } else {
       target[prop] = obj[prop];
     }
@@ -1445,11 +1453,11 @@ function copy(_, obj, refs, parent, resolve) {
   return target;
 }
 
-var resolveSchema = function(obj, refs, resolve) {
+var resolveSchema = function(obj, refs, resolve, callback) {
   var fixedId = helpers.resolveURL(obj.$schema, obj.id),
       parent = helpers.getDocumentURI(fixedId);
 
-  return copy({}, obj, refs, parent, resolve);
+  return copy({}, obj, refs, parent, resolve, callback);
 };
 
 var cloneObj = createCommonjsModule(function (module) {
@@ -1549,7 +1557,7 @@ helpers.findByRef = findReference;
 helpers.resolveSchema = resolveSchema;
 helpers.normalizeSchema = normalizeSchema;
 
-var instance = module.exports = function() {
+var instance = module.exports = function(f) {
   function $ref(fakeroot, schema, refs, ex) {
     if (typeof fakeroot === 'object') {
       ex = refs;
@@ -1603,7 +1611,7 @@ var instance = module.exports = function() {
       push(schema);
     });
 
-    return helpers.resolveSchema(schema, $ref.refs, ex);
+    return helpers.resolveSchema(schema, $ref.refs, ex, f);
   }
 
   $ref.refs = {};
@@ -1614,8 +1622,6 @@ var instance = module.exports = function() {
 
 instance.util = helpers;
 });
-
-var tslib_1 = ( tslib_es6 && undefined ) || tslib_es6;
 
 function _interopDefault$1 (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
 
@@ -1668,7 +1674,7 @@ var Registry = /** @class */ (function () {
  * This class defines a registry for custom formats used within JSF.
  */
 var OptionRegistry = /** @class */ (function (_super) {
-    tslib_1.__extends(OptionRegistry, _super);
+    tslib_es6.__extends(OptionRegistry, _super);
     function OptionRegistry() {
         var _this = _super.call(this) || this;
         _this.data['failOnInvalidTypes'] = true;
@@ -1878,7 +1884,7 @@ var random = {
 };
 
 var ParseError = /** @class */ (function (_super) {
-    tslib_1.__extends(ParseError, _super);
+    tslib_es6.__extends(ParseError, _super);
     function ParseError(message, path) {
         var _this = _super.call(this) || this;
         _this.path = path;
@@ -2673,7 +2679,7 @@ jsf.extend = function (name, cb) {
     container.extend(name, cb);
     return jsf;
 };
-var VERSION="0.4.6";
+var VERSION="0.4.7";
 jsf.version = VERSION;
 
 var lib = jsf;
