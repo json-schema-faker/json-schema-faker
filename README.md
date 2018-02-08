@@ -11,7 +11,7 @@
 [![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
 [![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
 
-Use [JSON Schema](http://json-schema.org/draft-04/) along with fake generators to provide consistent and meaningful fake data for your system.
+Use [JSON Schema](http://json-schema.org/draft-04/json-schema-core.html) along with fake generators to provide consistent and meaningful fake data for your system.
 
 We are looking for **contributors**! If you wanna help us make `jsf` more awesome, simply write us so!
 
@@ -124,7 +124,7 @@ You can see [an example JS fiddle based on `jsf` loaded from cdnjs](https://jsfi
 
 JSON-Schema-faker (or `jsf` for short) combines two things:
 
- * The [JSON-schema specification](http://json-schema.org/draft-04/), that defines what is the allowed content of a JSON document
+ * The [JSON-schema specification](http://json-schema.org/draft-04/json-schema-core.html), that defines what is the allowed content of a JSON document
  * Fake data generators, that are used to generate basic or complex data, conforming to the schema.
 
 Since `v0.5.x` external generators are not longer bundled with jsf, however built-in defaults are shipped for all basic types and formats.
