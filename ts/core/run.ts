@@ -4,7 +4,7 @@ import random from './random';
 import utils from './utils';
 
 import deref from 'deref';
-import jsonpath from 'jsonpath-plus';
+import jsonpath from 'jsonpath';
 
 function pick(data) {
   return Array.isArray(data)
@@ -55,17 +55,16 @@ function resolve(obj, data, values, property) {
     params.group = obj.group || params.group || property;
     params.cycle = obj.cycle || params.cycle || false;
     params.reverse = obj.reverse || params.reverse || false;
+    params.count = obj.count || params.count || 1;
 
     const key = `${params.group}__${params.path}`;
 
     if (!values[key]) {
-      values[key] = jsonpath({
-        path: params.path,
-        json: data,
-        wrap: false,
-        flatten: true,
-        preventEval: true,
-      });
+      if (params.count > 1) {
+        values[key] = jsonpath.query(data, params.path, params.count);
+      } else {
+        values[key] = jsonpath.value(data, params.path);
+      }
     }
 
     if (params.cycle || params.reverse) {
