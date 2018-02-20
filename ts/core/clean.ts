@@ -70,4 +70,4 @@ function removeProps(obj, key?, parent?, required?) {
 export default function(obj: any, required?: Array<string>) {
   removeProps(obj, undefined, undefined, required);
   return obj;
-};
+}
