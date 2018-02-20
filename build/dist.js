@@ -37,6 +37,9 @@ function bundle(options) {
           }
 
           switch (importee) {
+            case 'faker':
+              return require.resolve('faker/locale/en_US');
+
             case 'json-schema-ref-parser':
               return importee;
           }
@@ -97,6 +100,11 @@ Promise.resolve()
   return bundle({ id: pkg.name, src: path.join(projectDir, 'index.js') });
 })
 .then(() => {
+  if (process.argv.slice(2).indexOf('--all') === -1) {
+    console.log('Skipping languages...');
+    return;
+  }
+
   // proxied versions from faker's locales
   var languages = glob.sync(path.join(require.resolve('faker'), '../locale/*.js'));
 
