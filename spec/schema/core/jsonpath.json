@@ -1,0 +1,36 @@
+[
+  {
+    "description": "jsonpath support",
+    "tests": [
+      {
+        "description": "should enable jsonPath queries",
+        "schema": {
+          "test": {
+            "type": "object",
+            "properties": {
+              "value": {
+                "jsonPath": "$.foo.bar.baz"
+              }
+            },
+            "required": ["value"]
+          },
+          "foo": {
+            "bar": {
+              "baz": "buzz"
+            }
+          }
+        },
+        "equal": {
+          "test": {
+            "value": "buzz"
+          },
+          "foo": {
+            "bar": {
+              "baz": "buzz"
+            }
+          }
+        }
+      }
+    ]
+  }
+]

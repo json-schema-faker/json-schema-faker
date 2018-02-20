@@ -97,7 +97,7 @@
   "dependencies": {
     "deref": "^0.7.1",
     "json-schema-ref-parser": "^4.0.0",
-    "jsonpath-plus": "^0.16.0",
+    "jsonpath": "^1.0.0",
     "randexp": "^0.4.5",
     "tslib": "^1.7.1"
   }

@@ -2,6 +2,9 @@ fs = require('fs')
 glob = require('glob')
 jsf = require('../../')
 
+jsf.option
+  resolveJsonPath: true
+
 pick = (obj, key) ->
   parts = key.split('.')
   obj = obj[parts.shift()] while parts.length
