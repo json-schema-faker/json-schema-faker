@@ -48,7 +48,13 @@ tryTest = (test, refs, schema) ->
       expect(sample).toEqual test.equal
 
 glob.sync("#{__dirname}/**/*.json").forEach (file) ->
-  suite = JSON.parse(fs.readFileSync(file))
+  suite = try
+    JSON.parse(fs.readFileSync(file))
+  catch e
+    console.log "Invalid JSON: #{file}"
+    console.log e.message
+    process.exit 1
+    null
 
   (if Array.isArray(suite) then suite else [suite]).forEach (suite) ->
     return if suite.xdescription
