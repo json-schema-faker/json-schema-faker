@@ -1,6 +1,8 @@
 import thunk from '../generators/thunk';
 import ipv4 from '../generators/ipv4';
 import dateTime from '../generators/dateTime';
+import date from '../generators/date';
+import time from '../generators/time';
 import coreFormat from '../generators/coreFormat';
 import optionAPI from '../api/option';
 import format from '../api/format';
@@ -18,6 +20,10 @@ function generateFormat(value: IStringSchema, invalid: () => string): string {
     case 'date-time':
     case 'datetime':
       return dateTime();
+    case 'date':
+      return date();
+    case 'time':
+      return time();
     case 'ipv4':
       return ipv4();
     case 'regex':
