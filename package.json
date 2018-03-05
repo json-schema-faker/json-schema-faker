@@ -82,7 +82,7 @@
     "jayschema": "^0.3.2",
     "lodash.template": "^4.4.0",
     "rollup": "^0.56.2",
-    "rollup-plugin-commonjs": "^8.2.1",
+    "rollup-plugin-commonjs": "^9.0.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "seedrandom": "^2.4.3",
     "semver": "^5.3.0",
