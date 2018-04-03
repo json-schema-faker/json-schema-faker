@@ -54,6 +54,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
     });
 
     var fakeOptionals = optionAPI('alwaysFakeOptionals');
+    var ignoreProperties = optionAPI('ignoreProperties') || [];
 
     // properties are read from right-to-left
     var _props = fakeOptionals ? propertyKeys
@@ -62,9 +63,19 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
           : propertyKeys
         ).slice(0, random.number(min, max));
 
+    var skipped = [];
     var missing = [];
 
     _props.forEach(function(key) {
+        for (let i = 0; i < ignoreProperties.length; i += 1) {
+          if ((ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key))
+              || (typeof ignoreProperties[i] === 'string' && ignoreProperties[i] === key)
+              || (typeof ignoreProperties[i] === 'function' && ignoreProperties[i](properties[key], key))) {
+            skipped.push(key);
+            return;
+          }
+        }
+
         // first ones are the required properies
         if (properties[key]) {
             props[key] = properties[key];
@@ -95,9 +106,11 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         }
     });
 
-    var current = Object.keys(props).length;
     var fillProps = optionAPI('fillProperties');
     var reuseProps = optionAPI('reuseProperties');
+
+    // discard already ignored props if they're not required to be filled...
+    var current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
 
     while (fillProps) {
         if (!(patternPropertyKeys.length || allowsAdditional)) {

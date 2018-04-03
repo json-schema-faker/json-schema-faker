@@ -2,9 +2,6 @@ fs = require('fs')
 glob = require('glob')
 jsf = require('../../')
 
-jsf.option
-  resolveJsonPath: true
-
 pick = (obj, key) ->
   parts = key.split('.')
   obj = obj[parts.shift()] while parts.length
@@ -38,6 +35,9 @@ tryTest = (test, refs, schema) ->
         else
           expect(sample[prop]).not.toBeUndefined()
 
+    if test.onlyProps
+      expect(Object.keys(sample)).toEqual test.onlyProps
+
     if test.hasNot
       expect(JSON.stringify sample).not.toContain test.hasNot
 
@@ -70,6 +70,12 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
         return if test.xdescription
 
         it test.description, (done) ->
+          jsf.option
+            alwaysFakeOptionals: false
+            resolveJsonPath: true
+            ignoreProperties: []
+            fillProperties: true
+
           if test.require
             wrapper = require('./' + test.require)
             wrapper.register(jsf)
