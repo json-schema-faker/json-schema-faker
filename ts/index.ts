@@ -125,8 +125,9 @@ container.define('autoIncrement', function(value, schema) {
   if (!this.offset) {
     const min = schema.minimum || 1;
     const max = min + env.MAX_NUMBER;
+    const offset = value.initialOffset || schema.initialOffset;
 
-    this.offset = random.number(min, max);
+    this.offset = offset || random.number(min, max);
   }
 
   if (value === true) {
