@@ -19,7 +19,7 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function, rootS
   }
 
   if (schema.not && typeof schema.not === 'object') {
-    schema = utils.notValue(sub.not);
+    schema = utils.notValue(schema.not);
   }
 
   if (Array.isArray(schema.enum)) {
