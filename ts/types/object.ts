@@ -18,6 +18,11 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var propertyKeys = Object.keys(properties);
     var patternPropertyKeys = Object.keys(patternProperties);
+    var allProperties = propertyKeys.concat(patternPropertyKeys);
+    var optionalProperties = random.shuffle(allProperties.reduce(function(_response, _key) {
+        if (requiredProperties.indexOf(_key) === -1) _response.push(_key);
+        return _response;
+    }, []));
 
     var additionalProperties = allowsAdditional
       ? (value.additionalProperties === true ? {} : value.additionalProperties)
@@ -43,22 +48,18 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         return traverseCallback(props, path.concat(['properties']), resolve);
     }
 
-
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
-    var max = Math.max(value.maxProperties || random.number(min, propertyKeys.length));
-
-    random.shuffle(patternPropertyKeys).forEach(function(_key) {
-        if (requiredProperties.indexOf(_key) === -1) {
-            requiredProperties.push(_key);
-        }
-    });
+    var max = Math.max(value.maxProperties || random.number(min, allProperties.length));
 
     var fakeOptionals = optionAPI('alwaysFakeOptionals');
     var ignoreProperties = optionAPI('ignoreProperties') || [];
 
     // properties are read from right-to-left
-    var _props = fakeOptionals ? propertyKeys
-      : requiredProperties.slice(0, max);
+    var _props = fakeOptionals
+        ? propertyKeys
+        : (allowsAdditional === false
+            ? requiredProperties
+            : requiredProperties.concat(optionalProperties).slice(0, max));
 
     var skipped = [];
     var missing = [];
