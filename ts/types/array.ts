@@ -79,8 +79,10 @@ var arrayType: FTypeGenerator = function arrayType(value: IArraySchema, path: Sc
     }
   }
 
-  var length: number = (maxItems != null && optionAPI('alwaysFakeOptionals')) ?
-    maxItems : random.number(minItems, maxItems, 1, 5),
+  var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
+  var length: number = (maxItems != null && optionalsProbability)
+    ? Math.round(maxItems * optionalsProbability)
+    : random.number(minItems, maxItems, 1, 5),
     // TODO below looks bad. Should additionalItems be copied as-is?
     sample: Object = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 

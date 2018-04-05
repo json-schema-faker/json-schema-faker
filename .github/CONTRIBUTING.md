@@ -12,12 +12,12 @@ If you are submitting a bug report, please include the following:
 
 * When submitting *bug reports*, *paste your schema example* whenever possible. This will save us from having to ask you for it later.
 * When submitting *Pull Requests (PRs)*, you should request to merge your changes into our `develop` branch.
-* Our approach to testing is described in [spec/README.md](spec/README.md).
+* Our approach to testing is described in [spec/README.md](/spec/README.md).
 * PRs without specs will not be merged anytime soon!
 
 ## Releasing new versions
 
-* Create a new entry in the [CHANGELOG.md](CHANGELOG.md) file,
+* Create a new entry in the [CHANGELOG](/CHANGELOG) file,
 * Re-build and re-release the online demo, see [`website-jsf` gh-pages branch](https://github.com/json-schema-faker/website-jsf/tree/gh-pages).
 
 ## Development tasks

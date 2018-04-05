@@ -23,6 +23,7 @@ class OptionRegistry extends Registry<Option> {
     data['failOnInvalidFormat'] = true;
 
     data['alwaysFakeOptionals'] = false;
+    data['optionalsProbability'] = 0.0;
     data['useDefaultValue'] = false;
     data['requiredOnly'] = false;
 

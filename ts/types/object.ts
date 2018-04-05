@@ -18,6 +18,11 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     var propertyKeys = Object.keys(properties);
     var patternPropertyKeys = Object.keys(patternProperties);
+    var optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce(function(_response, _key) {
+        if (requiredProperties.indexOf(_key) === -1) _response.push(_key);
+        return _response;
+    }, []);
+    var allProperties = requiredProperties.concat(optionalProperties);
 
     var additionalProperties = allowsAdditional
       ? (value.additionalProperties === true ? {} : value.additionalProperties)
@@ -43,22 +48,20 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
         return traverseCallback(props, path.concat(['properties']), resolve);
     }
 
-
-    var min = Math.max(value.minProperties || 0, requiredProperties.length);
-    var max = Math.max(value.maxProperties || random.number(min, propertyKeys.length));
-
-    random.shuffle(patternPropertyKeys).forEach(function(_key) {
-        if (requiredProperties.indexOf(_key) === -1) {
-            requiredProperties.push(_key);
-        }
-    });
-
-    var fakeOptionals = optionAPI('alwaysFakeOptionals');
+    var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
     var ignoreProperties = optionAPI('ignoreProperties') || [];
 
+    var min = Math.max(value.minProperties || 0, requiredProperties.length);
+    var max = Math.max(value.maxProperties || allProperties.length);
+
+    var neededExtras = Math.round((min - requiredProperties.length) + optionalsProbability * (max - min));
+    var extraPropertiesRandomOrder = random.shuffle(optionalProperties).slice(0, neededExtras);
+    var extraProperties = optionalProperties.filter(function(_item) {
+        return extraPropertiesRandomOrder.indexOf(_item) !== -1;
+    });
+
     // properties are read from right-to-left
-    var _props = fakeOptionals ? propertyKeys
-      : requiredProperties.slice(0, max);
+    var _props = requiredProperties.concat(extraProperties).slice(0, max);
 
     var skipped = [];
     var missing = [];
