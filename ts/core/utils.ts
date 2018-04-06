@@ -1,5 +1,6 @@
 import optionAPI from '../api/option';
 import env from '../core/constants';
+import random from './random';
 
 function getSubAttribute(obj: any, dotSeparatedKey: string): any {
   var keyElements: string[] = dotSeparatedKey.split('.');
