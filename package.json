@@ -5,7 +5,7 @@
   "homepage": "http://json-schema-faker.js.org",
   "main": "lib/index.js",
   "scripts": {
-    "dist": "npm run build && npm run build:dist",
+    "dist": "npm run build:dist",
     "watch": "tarima watch -d VERSION=`./build/VERSION`",
     "build": "tarima -qf VERSION=`./build/VERSION`",
     "build:dist": "npm run build && node build/dist.js",
@@ -76,7 +76,7 @@
     "faker": "^4.1.0",
     "fs-extra": "^5.0.0",
     "glob": "^7.1.2",
-    "google-closure-compiler-js": "^20180319.0.0",
+    "google-closure-compiler-js": "^20180402.0.0",
     "istanbul": "^0.4.5",
     "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.2",
