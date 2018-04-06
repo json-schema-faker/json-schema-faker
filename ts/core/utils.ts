@@ -208,9 +208,8 @@ function anyValue() {
  ]);
 }
 
-// TODO: improve this behavior
-function notValue(schema: JsonSchema) {
-  const copy = {};
+function notValue(schema: JsonSchema, parent: Function) {
+  const copy = merge({}, parent);
 
   if (typeof schema.minimum !== 'undefined') {
     copy.maximum = schema.minimum;
@@ -240,6 +239,14 @@ function notValue(schema: JsonSchema) {
     copy.enum = [value];
   }
 
+  if (schema.required && copy.properties) {
+    schema.required.forEach(prop => {
+      delete copy.properties[prop];
+    });
+  }
+
+  // TODO: explore more scenarios
+
   return copy;
 }
 
@@ -260,9 +267,28 @@ function isKey(prop: string): boolean {
   return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
 }
 
+function omitProps(obj, props) {
+  const copy = {};
+
+  Object.keys(obj).forEach(k => {
+    if (props.indexOf(k) === -1) {
+      if (Array.isArray(obj[k])) {
+        copy[k] = obj[k].slice();
+      } else {
+        copy[k] = typeof obj[k] === 'object'
+          ? merge({}, obj[k])
+          : obj[k];
+      }
+    }
+  });
+
+  return copy;
+}
+
 export default {
   getSubAttribute: getSubAttribute,
   hasProperties: hasProperties,
+  omitProps: omitProps,
   typecast: typecast,
   merge: merge,
   clean: clean,
