@@ -33,6 +33,9 @@ function bundle(options, next) {
           }
 
           switch (importee) {
+            case 'jsonpath':
+              return require.resolve('jsonpath/jsonpath');
+
             case 'json-schema-ref-parser':
               return importee;
           }
@@ -53,6 +56,8 @@ function bundle(options, next) {
       }),
     ],
   }).then(function(_bundle) {
+    console.log('Bundling...');
+
     return _bundle.generate({
       banner,
       format: 'umd',
