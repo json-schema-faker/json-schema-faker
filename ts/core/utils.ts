@@ -230,7 +230,13 @@ function notValue(schema: JsonSchema, parent: Function) {
   }
 
   if (schema.type) {
-    copy.type = random.pick(env.ALL_TYPES.filter(x => x !== schema.type));
+    copy.type = random.pick(env.ALL_TYPES.filter(x => {
+      // treat both types as _similar enough_ to be skipped equal
+      if (x === 'number' || x === 'integer') {
+        return schema.type !== 'number' && schema.type !== 'integer';
+      }
+      return x !== schema.type;
+    }));
   } else if (schema.enum) {
     do {
       var value = anyValue();
