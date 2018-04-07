@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 70,
-          "b": "do cupidatat aute",
-          "c": "wj382"
+          "a": 62,
+          "b": "amet voluptate qui reprehenderi",
+          "c": "fw538"
         },
         "repeat": 1,
         "require": "core/option/random"

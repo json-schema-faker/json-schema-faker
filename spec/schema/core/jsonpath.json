@@ -30,7 +30,7 @@
             }
           }
         },
-        "require": "core/extend/enable-jsonpath"
+        "require": "core/option/enable-jsonpath"
       }
     ]
   }
