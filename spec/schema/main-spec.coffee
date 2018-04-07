@@ -50,6 +50,9 @@ tryTest = (test, refs, schema) ->
     if "equal" of test
       expect(sample).toEqual test.equal
 
+only = []
+all = []
+
 glob.sync("#{__dirname}/**/*.json").forEach (file) ->
   suite = try
     JSON.parse(fs.readFileSync(file))
@@ -59,43 +62,59 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
     process.exit 1
     null
 
-  (if Array.isArray(suite) then suite else [suite]).forEach (suite) ->
-    return if suite.xdescription
+  (if Array.isArray(suite) then suite else [suite]).forEach (x) ->
+    return if x.xdescription?
+    _only = false
+    suite = { file }
+    suite[k] = v for k, v of x
+    suite.tests = suite.tests.sort (a, b) ->
+      return -1 if a.only?
+      return 1 if b.only?
+      return 0
+    .filter (y) ->
+      if (_only and !y.only?) or y.xdescription?
+        return false
+      _only = true if y.only
+      true
+    only.push(suite) if x.only? or _only
+    all.push(suite)
 
-    describe "#{suite.description} (#{file.replace(__dirname + '/', '')})", ->
-      beforeEach ->
-        jasmine.addMatchers(customMatchers)
+(if only.length then only else all).forEach (suite) ->
+  describe "#{suite.description} (#{suite.file.replace(__dirname + '/', '')})", ->
+    beforeEach ->
+      jasmine.addMatchers(customMatchers)
 
-      suite.tests.forEach (test) ->
-        return if test.xdescription
+    suite.tests.forEach (test) ->
+      it test.description, (done) ->
+        jsf.option
+          alwaysFakeOptionals: false
+          failOnInvalidTypes: true
+          useDefaultValue: false
+          fillProperties: false
+          resolveJsonPath: true
+          ignoreProperties: []
+          random: Math.random
 
-        it test.description, (done) ->
-          jsf.option
-            alwaysFakeOptionals: false
-            resolveJsonPath: true
-            ignoreProperties: []
-            fillProperties: true
+        if test.require
+          wrapper = require('./' + test.require)
+          wrapper.register(jsf)
 
-          if test.require
-            wrapper = require('./' + test.require)
-            wrapper.register(jsf)
+        schema = if typeof test.schema is 'string'
+          pick(suite, test.schema)
+        else
+          test.schema
 
-          schema = if typeof test.schema is 'string'
-            pick(suite, test.schema)
+        refs = test.refs?.map (ref) ->
+          if typeof ref is 'string'
+            pick(suite, ref)
           else
-            test.schema
+            ref
 
-          refs = test.refs?.map (ref) ->
-            if typeof ref is 'string'
-              pick(suite, ref)
-            else
-              ref
+        # support for "exhaustive" testing, increase or set in .json spec
+        # for detecting more bugs quickly by executing the same test N-times
+        nth = test.repeat or (if process.CI then 100 else 10)
 
-          # support for "exhaustive" testing, increase or set in .json spec
-          # for detecting more bugs quickly by executing the same test N-times
-          nth = test.repeat or (if process.CI then 100 else 10)
+        tasks = []
+        tasks.push(tryTest(test, refs, schema)) while nth--
 
-          tasks = []
-          tasks.push(tryTest(test, refs, schema)) while nth--
-
-          Promise.all(tasks).then(done)
+        Promise.all(tasks).then(done)
