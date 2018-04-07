@@ -6,29 +6,37 @@ type Option = boolean|number|Function;
  * This class defines a registry for custom settings used within JSF.
  */
 class OptionRegistry extends Registry<Option> {
-
   constructor() {
     super();
-    this.data['defaultInvalidTypeProduct'] = null;
-    this.data['defaultRandExpMax'] = 10;
+    this.data = this.defaults;
+  }
 
-    this.data['ignoreProperties'] = [];
-    this.data['ignoreMissingRefs'] = false;
-    this.data['failOnInvalidTypes'] = true;
-    this.data['failOnInvalidFormat'] = true;
+  get defaults() {
+    const data = {};
 
-    this.data['alwaysFakeOptionals'] = false;
-    this.data['useDefaultValue'] = false;
-    this.data['requiredOnly'] = false;
+    data['defaultInvalidTypeProduct'] = null;
+    data['defaultRandExpMax'] = 10;
 
-    this.data['minItems'] = 0;
-    this.data['maxItems'] = null;
-    this.data['maxLength'] = null;
+    data['ignoreProperties'] = [];
+    data['ignoreMissingRefs'] = false;
+    data['failOnInvalidTypes'] = true;
+    data['failOnInvalidFormat'] = true;
 
-    this.data['reuseProperties'] = false;
-    this.data['fillProperties'] = true;
+    data['alwaysFakeOptionals'] = false;
+    data['useDefaultValue'] = false;
+    data['requiredOnly'] = false;
 
-    this.data['random'] = Math.random;
+    data['minItems'] = 0;
+    data['maxItems'] = null;
+    data['maxLength'] = null;
+
+    data['resolveJsonPath'] = false;
+    data['reuseProperties'] = false;
+    data['fillProperties'] = true;
+
+    data['random'] = Math.random;
+
+    return data;
   }
 }
 

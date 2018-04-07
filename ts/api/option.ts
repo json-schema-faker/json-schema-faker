@@ -17,4 +17,6 @@ function optionAPI(nameOrOptionMap?: string|Object): any {
   }
 }
 
+optionAPI.getDefaults = () => registry.defaults;
+
 export default optionAPI;

@@ -77,8 +77,9 @@ global.customMatchers =
           "Invalid schema #{JSON.stringify actual}"
 
       pass: !fail.length
-      message: """
-        #{fail.join('\n') if fail.length}
+      message: fail.join('\n') if fail.length
+      message: fail.length and """
+        #{fail.join('\n')}
         ---
         #{JSON.stringify(actual, null, 2)}
         ---

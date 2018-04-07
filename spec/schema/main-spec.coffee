@@ -86,14 +86,7 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
 
     suite.tests.forEach (test) ->
       it test.description, (done) ->
-        jsf.option
-          alwaysFakeOptionals: false
-          failOnInvalidTypes: true
-          useDefaultValue: false
-          fillProperties: false
-          resolveJsonPath: true
-          ignoreProperties: []
-          random: Math.random
+        jsf.option(jsf.option.getDefaults())
 
         if test.require
           wrapper = require('./' + test.require)
