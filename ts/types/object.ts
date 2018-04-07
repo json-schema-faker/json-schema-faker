@@ -45,7 +45,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
 
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
-    var max = Math.max(value.maxProperties || random.number(min, min + 5));
+    var max = Math.max(value.maxProperties || random.number(min, propertyKeys.length));
 
     random.shuffle(patternPropertyKeys).forEach(function(_key) {
         if (requiredProperties.indexOf(_key) === -1) {
@@ -58,10 +58,7 @@ var objectType: FTypeGenerator = function objectType(value: IObjectSchema, path,
 
     // properties are read from right-to-left
     var _props = fakeOptionals ? propertyKeys
-      : (requiredProperties.length
-          ? requiredProperties
-          : propertyKeys
-        ).slice(0, random.number(min, max));
+      : requiredProperties.slice(0, max);
 
     var skipped = [];
     var missing = [];
