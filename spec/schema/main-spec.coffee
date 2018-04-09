@@ -38,6 +38,10 @@ tryTest = (test, refs, schema) ->
     if test.onlyProps
       expect(Object.keys(sample)).toEqual test.onlyProps
 
+    if test.count
+      expect((if Array.isArray(sample) then sample
+      else Object.keys(sample)).length).toEqual test.count
+
     if test.hasNot
       expect(JSON.stringify sample).not.toContain test.hasNot
 
@@ -87,6 +91,9 @@ glob.sync("#{__dirname}/**/*.json").forEach (file) ->
     suite.tests.forEach (test) ->
       it test.description, (done) ->
         jsf.option(jsf.option.getDefaults())
+
+        if test.set
+          jsf.option(test.set)
 
         if test.require
           wrapper = require('./' + test.require)
