@@ -5,7 +5,7 @@
  * Copyright (c) 2014-2018 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2018-04-09 14:19:12.546Z
+ * Date: 2018-04-09 17:23:23.954Z
  */
 
 (function (global, factory) {
