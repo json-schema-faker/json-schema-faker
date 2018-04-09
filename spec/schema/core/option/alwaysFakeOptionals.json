@@ -1,0 +1,44 @@
+[
+  {
+    "description": "alwaysFakeOptionals option",
+    "tests": [
+      {
+        "description": "should handle alwaysFakeOptionals option (= true) for objects",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "optionalProperty1": { "type": "number", "default": 1 },
+            "optionalProperty2": { "type": "number", "default": 1 },
+            "optionalProperty3": { "type": "number", "default": 1 },
+            "optionalProperty4": { "type": "number", "default": 1 },
+            "optionalProperty5": { "type": "number", "default": 1 }
+          }
+        },
+        "valid": true,
+        "equal": {
+          "optionalProperty1": 1,
+          "optionalProperty2": 1,
+          "optionalProperty3": 1,
+          "optionalProperty4": 1,
+          "optionalProperty5": 1
+        },
+        "require": "core/option/alwaysFakeOptionals"
+      },
+      {
+        "description": "should handle alwaysFakeOptionals option (= true) for arrays",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["a"]
+          },
+          "maxItems": 5,
+          "minItems": 0
+        },
+        "valid": true,
+        "equal": ["a", "a", "a", "a", "a"],
+        "require": "core/option/alwaysFakeOptionals"
+      }
+    ]
+  }
+]

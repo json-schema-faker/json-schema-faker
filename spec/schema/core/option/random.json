@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 62,
-          "b": "amet voluptate qui reprehenderi",
-          "c": "fw538"
+          "a": 92,
+          "b": "enim veniam",
+          "c": "ff353"
         },
         "repeat": 1,
         "require": "core/option/random"

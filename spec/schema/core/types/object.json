@@ -2,81 +2,81 @@
   {
     "description": "object generator",
     "tests": [
-        {
-          "description": "addP === false && !props && !patternProps",
-          "schema": {
-            "type": "object",
-            "additionalProperties": false
-          },
-          "valid": true
+      {
+        "description": "addP === false && !props && !patternProps",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false
         },
-        {
-          "description": "addP === false && props && !patternProps",
-          "schema": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                }
-            },
-            "additionalProperties": false
+        "valid": true
+      },
+      {
+        "description": "addP === false && props && !patternProps",
+        "schema": {
+          "type": "object",
+          "properties": {
+              "count": {
+                  "type": "integer"
+              }
           },
-          "valid": true
+          "additionalProperties": false
         },
-        {
-          "description": "addP === false && !props && patternProps",
-          "schema": {
-            "type": "object",
-            "patternProperties": {
-                "count": {
-                    "type": "integer"
-                }
-            },
-            "additionalProperties": false
+        "valid": true
+      },
+      {
+        "description": "addP === false && !props && patternProps",
+        "schema": {
+          "type": "object",
+          "patternProperties": {
+              "count": {
+                  "type": "integer"
+              }
           },
-          "valid": true
+          "additionalProperties": false
         },
-        {
-          "description": "addP === false && props && patternProps",
-          "schema": {
-            "type": "object",
-            "properties": {
-                "count": {
-                    "type": "integer"
-                }
-            },
-            "patternProperties": {
-                "v-[0-3]": {
-                    "type": "integer"
-                }
-            },
-            "additionalProperties": false
+        "valid": true
+      },
+      {
+        "description": "addP === false && props && patternProps",
+        "schema": {
+          "type": "object",
+          "properties": {
+              "count": {
+                  "type": "integer"
+              }
           },
-          "valid": true
-        },
-        {
-          "description": "addP === false && !props && !patternProps && minProperties",
-          "schema": {
-            "type": "object",
-            "minProperties": 2,
-            "additionalProperties": false
+          "patternProperties": {
+              "v-[0-3]": {
+                  "type": "integer"
+              }
           },
-          "throws": "missing properties for:\n[\\s\\S]+? in \\/"
+          "additionalProperties": false
         },
-        {
-          "description": "addP === undef || props",
-          "schema": {
-            "type": "object",
-            "minProperties": 2,
-            "properties": {
-                "count": {
-                    "type": "integer"
-                }
-            }
-          },
-          "valid": true
+        "valid": true
+      },
+      {
+        "description": "addP === false && !props && !patternProps && minProperties",
+        "schema": {
+          "type": "object",
+          "minProperties": 2,
+          "additionalProperties": false
         },
-        {
+        "throws": "missing properties for:\n[\\s\\S]+? in \\/"
+      },
+      {
+        "description": "addP === undef || props",
+        "schema": {
+          "type": "object",
+          "minProperties": 2,
+          "properties": {
+              "count": {
+                  "type": "integer"
+              }
+          }
+        },
+        "valid": true
+      },
+      {
         "description": "should skip some non-required properties",
         "schema": {
           "type": "object",
