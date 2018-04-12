@@ -55,16 +55,11 @@ function resolve(obj, data, values, property) {
     params.group = obj.group || params.group || property;
     params.cycle = obj.cycle || params.cycle || false;
     params.reverse = obj.reverse || params.reverse || false;
-    params.count = obj.count || params.count || 1;
 
     const key = `${params.group}__${params.path}`;
 
     if (!values[key]) {
-      if (params.count > 1) {
-        values[key] = jsonpath.query(data, params.path, params.count);
-      } else {
-        values[key] = jsonpath.value(data, params.path);
-      }
+      values[key] = jsonpath.query(data, params.path);
     }
 
     if (params.cycle || params.reverse) {
