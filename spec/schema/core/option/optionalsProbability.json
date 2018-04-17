@@ -34,21 +34,6 @@
         "require": "core/option/optionalsProbabilityEquals1"
       },
       {
-        "description": "should handle optionalsProbability option (= 1) for arrays",
-        "schema": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["a"]
-          },
-          "maxItems": 5,
-          "minItems": 0
-        },
-        "valid": true,
-        "equal": ["a", "a", "a", "a", "a"],
-        "require": "core/option/optionalsProbabilityEquals1"
-      },
-      {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
         "schema": "schemas.0",
         "valid": true,
@@ -59,21 +44,6 @@
           "optionalProperty4": 1,
           "optionalProperty5": 1
         },
-        "require": "core/option/optionalsProbabilityOverwritten"
-      },
-      {
-        "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
-        "schema": {
-          "type": "array",
-          "items": {
-            "type": "string",
-            "enum": ["a"]
-          },
-          "maxItems": 5,
-          "minItems": 0
-        },
-        "valid": true,
-        "equal": ["a", "a", "a", "a", "a"],
         "require": "core/option/optionalsProbabilityOverwritten"
       },
       {

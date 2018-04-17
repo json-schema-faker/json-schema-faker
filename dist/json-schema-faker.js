@@ -5,7 +5,7 @@
  * Copyright (c) 2014-2018 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2018-04-09 17:23:23.954Z
+ * Date: 2018-04-11 16:58:08.047Z
  */
 
 (function (global, factory) {
@@ -24146,9 +24146,8 @@ function extend() {
                 minItems = maxItems;
             }
         }
-        var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-        var length = (maxItems != null && optionalsProbability)
-            ? Math.round(maxItems * optionalsProbability)
+        var length = (maxItems != null && optionAPI('alwaysFakeOptionals'))
+            ? maxItems
             : random.number(minItems, maxItems, 1, 5), 
         // TODO below looks bad. Should additionalItems be copied as-is?
         sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
