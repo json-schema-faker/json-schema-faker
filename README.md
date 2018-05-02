@@ -21,6 +21,11 @@ We are looking for **contributors**! If you wanna help us make `jsf` more awesom
 
 We've recently setup a [gitter room](https://gitter.im/json-schema-faker) for this project, if you want contribute, talk about specific issues from the library, or you need help on json-schema topics just reach us!
 
+Have some ❤ for JSON-Schema-Faker? You can support the project via:
+
+- [Open Collective](https://opencollective.com/json-schema-faker/donate)
+- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8MXLRJ7QQXGYY)
+
 ## What's new?
 
 A release candidate for `v0.5.x` series was released in order to support local/remote reference downloading thanks to `json-schema-ref-parser`, this change forced `jsf` to be completely async.
