@@ -5,7 +5,7 @@
  * Copyright (c) 2014-2018 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2018-04-09 17:23:23.954Z
+ * Date: 2018-05-15 19:49:40.072Z
  */
 
 (function (global, factory) {
@@ -23914,11 +23914,14 @@ function extend() {
         }
         if (schema.type) {
             copy.type = random.pick(env.ALL_TYPES.filter(function (x) {
-                // treat both types as _similar enough_ to be skipped equal
-                if (x === 'number' || x === 'integer') {
-                    return schema.type !== 'number' && schema.type !== 'integer';
-                }
-                return x !== schema.type;
+                var types = Array.isArray(schema.type) ? schema.type : [schema.type];
+                return types.every(function (type) {
+                    // treat both types as _similar enough_ to be skipped equal
+                    if (x === 'number' || x === 'integer') {
+                        return type !== 'number' && type !== 'integer';
+                    }
+                    return x !== type;
+                });
             }));
         }
         else if (schema.enum) {

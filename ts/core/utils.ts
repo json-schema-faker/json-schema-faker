@@ -230,12 +230,15 @@ function notValue(schema: JsonSchema, parent: Function) {
   }
 
   if (schema.type) {
-    copy.type = random.pick(env.ALL_TYPES.filter(x => {
-      // treat both types as _similar enough_ to be skipped equal
-      if (x === 'number' || x === 'integer') {
-        return schema.type !== 'number' && schema.type !== 'integer';
-      }
-      return x !== schema.type;
+    copy.type = random.pick(env.ALL_TYPES.filter(function (x) {
+      const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+      return types.every(type => {
+        // treat both types as _similar enough_ to be skipped equal
+        if (x === 'number' || x === 'integer') {
+            return type !== 'number' && type !== 'integer';
+        }
+        return x !== type;
+      });
     }));
   } else if (schema.enum) {
     do {
