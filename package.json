@@ -81,7 +81,7 @@
     "jasmine-node": "2.0.0-beta4",
     "jayschema": "^0.3.2",
     "lodash.template": "^4.4.0",
-    "rollup": "^0.57.1",
+    "rollup": "^0.59.1",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "seedrandom": "^2.4.3",
