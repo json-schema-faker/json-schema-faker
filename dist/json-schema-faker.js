@@ -5,7 +5,7 @@
  * Copyright (c) 2014-2018 Alvaro Cabrera & Tomasz Ducin
  * Released under the MIT license
  *
- * Date: 2018-05-15 19:49:40.072Z
+ * Date: 2018-05-31 07:35:24.188Z
  */
 
 (function (global, factory) {
@@ -89,8 +89,8 @@
         function step(op) {
             if (f) throw new TypeError("Generator is already executing.");
             while (_) try {
-                if (f = 1, y && (t = y[op[0] & 2 ? "return" : op[0] ? "throw" : "next"]) && !(t = t.call(y, op[1])).done) return t;
-                if (y = 0, t) op = [0, t.value];
+                if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+                if (y = 0, t) op = [op[0] & 2, t.value];
                 switch (op[0]) {
                     case 0: case 1: t = op; break;
                     case 4: _.label++; return { value: op[1], done: false };
@@ -158,7 +158,7 @@
         return i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i;
         function verb(n) { if (g[n]) i[n] = function (v) { return new Promise(function (a, b) { q.push([n, v, a, b]) > 1 || resume(n, v); }); }; }
         function resume(n, v) { try { step(g[n](v)); } catch (e) { settle(q[0][3], e); } }
-        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r);  }
+        function step(r) { r.value instanceof __await ? Promise.resolve(r.value.v).then(fulfill, reject) : settle(q[0][2], r); }
         function fulfill(value) { resume("next", value); }
         function reject(value) { resume("throw", value); }
         function settle(f, v) { if (f(v), q.shift(), q.length) resume(q[0][0], q[0][1]); }
@@ -167,18 +167,31 @@
     function __asyncDelegator(o) {
         var i, p;
         return i = {}, verb("next"), verb("throw", function (e) { throw e; }), verb("return"), i[Symbol.iterator] = function () { return this; }, i;
-        function verb(n, f) { if (o[n]) i[n] = function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; }; }
+        function verb(n, f) { i[n] = o[n] ? function (v) { return (p = !p) ? { value: __await(o[n](v)), done: n === "return" } : f ? f(v) : v; } : f; }
     }
 
     function __asyncValues(o) {
         if (!Symbol.asyncIterator) throw new TypeError("Symbol.asyncIterator is not defined.");
-        var m = o[Symbol.asyncIterator];
-        return m ? m.call(o) : typeof __values === "function" ? __values(o) : o[Symbol.iterator]();
+        var m = o[Symbol.asyncIterator], i;
+        return m ? m.call(o) : (o = typeof __values === "function" ? __values(o) : o[Symbol.iterator](), i = {}, verb("next"), verb("throw"), verb("return"), i[Symbol.asyncIterator] = function () { return this; }, i);
+        function verb(n) { i[n] = o[n] && function (v) { return new Promise(function (resolve, reject) { v = o[n](v), settle(resolve, reject, v.done, v.value); }); }; }
+        function settle(resolve, reject, d, v) { Promise.resolve(v).then(function(v) { resolve({ value: v, done: d }); }, reject); }
     }
 
     function __makeTemplateObject(cooked, raw) {
         if (Object.defineProperty) { Object.defineProperty(cooked, "raw", { value: raw }); } else { cooked.raw = raw; }
         return cooked;
+    }
+    function __importStar(mod) {
+        if (mod && mod.__esModule) return mod;
+        var result = {};
+        if (mod != null) for (var k in mod) if (Object.hasOwnProperty.call(mod, k)) result[k] = mod[k];
+        result.default = mod;
+        return result;
+    }
+
+    function __importDefault(mod) {
+        return (mod && mod.__esModule) ? mod : { default: mod };
     }
 
     var tslib_es6 = /*#__PURE__*/Object.freeze({
@@ -198,7 +211,9 @@
         __asyncGenerator: __asyncGenerator,
         __asyncDelegator: __asyncDelegator,
         __asyncValues: __asyncValues,
-        __makeTemplateObject: __makeTemplateObject
+        __makeTemplateObject: __makeTemplateObject,
+        __importStar: __importStar,
+        __importDefault: __importDefault
     });
 
     var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
@@ -222,20 +237,18 @@
       CHAR       : 7,
     };
 
-    var INTS = function() {
-     return [{ type: types.RANGE , from: 48, to: 57 }];
-    };
+    const INTS = () => [{ type: types.RANGE , from: 48, to: 57 }];
 
-    var WORDS = function() {
-     return [
+    const WORDS = () => {
+      return [
         { type: types.CHAR, value: 95 },
         { type: types.RANGE, from: 97, to: 122 },
         { type: types.RANGE, from: 65, to: 90 }
       ].concat(INTS());
     };
 
-    var WHITESPACE = function() {
-     return [
+    const WHITESPACE = () => {
+      return [
         { type: types.CHAR, value: 9 },
         { type: types.CHAR, value: 10 },
         { type: types.CHAR, value: 11 },
@@ -244,18 +257,7 @@
         { type: types.CHAR, value: 32 },
         { type: types.CHAR, value: 160 },
         { type: types.CHAR, value: 5760 },
-        { type: types.CHAR, value: 6158 },
-        { type: types.CHAR, value: 8192 },
-        { type: types.CHAR, value: 8193 },
-        { type: types.CHAR, value: 8194 },
-        { type: types.CHAR, value: 8195 },
-        { type: types.CHAR, value: 8196 },
-        { type: types.CHAR, value: 8197 },
-        { type: types.CHAR, value: 8198 },
-        { type: types.CHAR, value: 8199 },
-        { type: types.CHAR, value: 8200 },
-        { type: types.CHAR, value: 8201 },
-        { type: types.CHAR, value: 8202 },
+        { type: types.RANGE, from: 8192, to: 8202 },
         { type: types.CHAR, value: 8232 },
         { type: types.CHAR, value: 8233 },
         { type: types.CHAR, value: 8239 },
@@ -265,7 +267,7 @@
       ];
     };
 
-    var NOTANYCHAR = function() {
+    const NOTANYCHAR = () => {
       return [
         { type: types.CHAR, value: 10 },
         { type: types.CHAR, value: 13 },
@@ -275,33 +277,13 @@
     };
 
     // Predefined class objects.
-    var words = function() {
-      return { type: types.SET, set: WORDS(), not: false };
-    };
-
-    var notWords = function() {
-      return { type: types.SET, set: WORDS(), not: true };
-    };
-
-    var ints = function() {
-      return { type: types.SET, set: INTS(), not: false };
-    };
-
-    var notInts = function() {
-      return { type: types.SET, set: INTS(), not: true };
-    };
-
-    var whitespace = function() {
-      return { type: types.SET, set: WHITESPACE(), not: false };
-    };
-
-    var notWhitespace = function() {
-      return { type: types.SET, set: WHITESPACE(), not: true };
-    };
-
-    var anyChar = function() {
-      return { type: types.SET, set: NOTANYCHAR(), not: true };
-    };
+    var words = () => ({ type: types.SET, set: WORDS(), not: false });
+    var notWords = () => ({ type: types.SET, set: WORDS(), not: true });
+    var ints = () => ({ type: types.SET, set: INTS(), not: false });
+    var notInts = () => ({ type: types.SET, set: INTS(), not: true });
+    var whitespace = () => ({ type: types.SET, set: WHITESPACE(), not: false });
+    var notWhitespace = () => ({ type: types.SET, set: WHITESPACE(), not: true });
+    var anyChar = () => ({ type: types.SET, set: NOTANYCHAR(), not: true });
 
     var sets = {
     	words: words,
@@ -314,11 +296,8 @@
     };
 
     var util = createCommonjsModule(function (module, exports) {
-    // All of these are private and only used by randexp.
-    // It's assumed that they will always be called with the correct input.
-
-    var CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
-    var SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
+    const CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
+    const SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
 
     /**
      * Finds character representations in str and convert all to
@@ -329,23 +308,23 @@
      */
     exports.strToChars = function(str) {
       /* jshint maxlen: false */
-      var chars_regex = /(\[\\b\])|(\\)?\\(?:u([A-F0-9]{4})|x([A-F0-9]{2})|(0?[0-7]{2})|c([@A-Z\[\\\]\^?])|([0tnvfr]))/g;
+      var chars_regex = /(\[\\b\])|(\\)?\\(?:u([A-F0-9]{4})|x([A-F0-9]{2})|(0?[0-7]{2})|c([@A-Z[\\\]^?])|([0tnvfr]))/g;
       str = str.replace(chars_regex, function(s, b, lbs, a16, b16, c8, dctrl, eslsh) {
         if (lbs) {
           return s;
         }
 
-        var code = b     ? 8 :
-                   a16   ? parseInt(a16, 16) :
-                   b16   ? parseInt(b16, 16) :
-                   c8    ? parseInt(c8,   8) :
-                   dctrl ? CTRL.indexOf(dctrl) :
-                   SLSH[eslsh];
+        var code = b ? 8 :
+          a16   ? parseInt(a16, 16) :
+          b16   ? parseInt(b16, 16) :
+          c8    ? parseInt(c8,   8) :
+          dctrl ? CTRL.indexOf(dctrl) :
+          SLSH[eslsh];
 
         var c = String.fromCharCode(code);
 
         // Escape special regex characters.
-        if (/[\[\]{}\^$.|?*+()]/.test(c)) {
+        if (/[[\]{}^$.|?*+()]/.test(c)) {
           c = '\\' + c;
         }
 
@@ -364,10 +343,10 @@
      * @param {String} regexpStr
      * @return {Array.<Array.<Object>, Number>}
      */
-    exports.tokenizeClass = function(str, regexpStr) {
+    exports.tokenizeClass = (str, regexpStr) => {
       /* jshint maxlen: false */
       var tokens = [];
-      var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?(.)/g;
+      var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?([^])/g;
       var rs, c;
 
 
@@ -394,10 +373,10 @@
           tokens.push({
             type: types.RANGE,
             from: (rs[8] || rs[9]).charCodeAt(0),
-              to: rs[10].charCodeAt(0),
+            to: rs[10].charCodeAt(0),
           });
 
-        } else if (c = rs[12]) {
+        } else if ((c = rs[12])) {
           tokens.push({
             type: types.CHAR,
             value: c.charCodeAt(0),
@@ -418,7 +397,7 @@
      * @param {String} regexp
      * @param {String} msg
      */
-    exports.error = function(regexp, msg) {
+    exports.error = (regexp, msg) => {
       throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
     };
     });
@@ -426,21 +405,10 @@
     var util_2 = util.tokenizeClass;
     var util_3 = util.error;
 
-    var wordBoundary = function() {
-      return { type: types.POSITION, value: 'b' };
-    };
-
-    var nonWordBoundary = function() {
-      return { type: types.POSITION, value: 'B' };
-    };
-
-    var begin = function() {
-      return { type: types.POSITION, value: '^' };
-    };
-
-    var end = function() {
-      return { type: types.POSITION, value: '$' };
-    };
+    var wordBoundary = () => ({ type: types.POSITION, value: 'b' });
+    var nonWordBoundary = () => ({ type: types.POSITION, value: 'B' });
+    var begin = () => ({ type: types.POSITION, value: '^' });
+    var end = () => ({ type: types.POSITION, value: '$' });
 
     var positions = {
     	wordBoundary: wordBoundary,
@@ -449,18 +417,18 @@
     	end: end
     };
 
-    var lib = function(regexpStr) {
+    var lib = (regexpStr) => {
       var i = 0, l, c,
-          start = { type: types.ROOT, stack: []},
+        start = { type: types.ROOT, stack: []},
 
-          // Keep track of last clause/group and stack.
-          lastGroup = start,
-          last = start.stack,
-          groupStack = [];
+        // Keep track of last clause/group and stack.
+        lastGroup = start,
+        last = start.stack,
+        groupStack = [];
 
 
-      var repeatErr = function(i) {
-        util.error(regexpStr, 'Nothing to repeat at column ' + (i - 1));
+      var repeatErr = (i) => {
+        util.error(regexpStr, `Nothing to repeat at column ${i - 1}`);
       };
 
       // Decode a few escaped characters.
@@ -526,11 +494,11 @@
 
           // Positionals.
           case '^':
-              last.push(positions.begin());
+            last.push(positions.begin());
             break;
 
           case '$':
-              last.push(positions.end());
+            last.push(positions.end());
             break;
 
 
@@ -553,7 +521,7 @@
             last.push({
               type: types.SET,
               set: classTokens[0],
-              not: not,
+              not,
             });
 
             break;
@@ -591,8 +559,8 @@
 
               } else if (c !== ':') {
                 util.error(regexpStr,
-                  'Invalid group, character \'' + c +
-                  '\' after \'?\' at column ' + (i - 1));
+                  `Invalid group, character '${c}'` +
+                  ` after '?' at column ${i - 1}`);
               }
 
               group.remember = false;
@@ -613,7 +581,7 @@
           // Pop group out of stack.
           case ')':
             if (groupStack.length === 0) {
-              util.error(regexpStr, 'Unmatched ) at column ' + (i - 1));
+              util.error(regexpStr, `Unmatched ) at column ${i - 1}`);
             }
             lastGroup = groupStack.pop();
 
@@ -657,8 +625,8 @@
 
               last.push({
                 type: types.REPETITION,
-                min: min,
-                max: max,
+                min,
+                max,
                 value: last.pop(),
               });
             } else {
@@ -727,394 +695,424 @@
     var types_1$1 = types;
     lib.types = types_1$1;
 
-    //protected helper class
-    function _SubRange(low, high) {
-        this.low = low;
-        this.high = high;
-        this.length = 1 + high - low;
+    /* eslint indent: 4 */
+
+
+    // Private helper class
+    class SubRange {
+        constructor(low, high) {
+            this.low = low;
+            this.high = high;
+            this.length = 1 + high - low;
+        }
+
+        overlaps(range) {
+            return !(this.high < range.low || this.low > range.high);
+        }
+
+        touches(range) {
+            return !(this.high + 1 < range.low || this.low - 1 > range.high);
+        }
+
+        // Returns inclusive combination of SubRanges as a SubRange.
+        add(range) {
+            return new SubRange(
+                Math.min(this.low, range.low),
+                Math.max(this.high, range.high)
+            );
+        }
+
+        // Returns subtraction of SubRanges as an array of SubRanges.
+        // (There's a case where subtraction divides it in 2)
+        subtract(range) {
+            if (range.low <= this.low && range.high >= this.high) {
+                return [];
+            } else if (range.low > this.low && range.high < this.high) {
+                return [
+                    new SubRange(this.low, range.low - 1),
+                    new SubRange(range.high + 1, this.high)
+                ];
+            } else if (range.low <= this.low) {
+                return [new SubRange(range.high + 1, this.high)];
+            } else {
+                return [new SubRange(this.low, range.low - 1)];
+            }
+        }
+
+        toString() {
+            return this.low == this.high ?
+                this.low.toString() : this.low + '-' + this.high;
+        }
     }
 
-    _SubRange.prototype.overlaps = function (range) {
-        return !(this.high < range.low || this.low > range.high);
-    };
 
-    _SubRange.prototype.touches = function (range) {
-        return !(this.high + 1 < range.low || this.low - 1 > range.high);
-    };
-
-    //returns inclusive combination of _SubRanges as a _SubRange
-    _SubRange.prototype.add = function (range) {
-        return this.touches(range) && new _SubRange(Math.min(this.low, range.low), Math.max(this.high, range.high));
-    };
-
-    //returns subtraction of _SubRanges as an array of _SubRanges (there's a case where subtraction divides it in 2)
-    _SubRange.prototype.subtract = function (range) {
-        if (!this.overlaps(range)) return false;
-        if (range.low <= this.low && range.high >= this.high) return [];
-        if (range.low > this.low && range.high < this.high) return [new _SubRange(this.low, range.low - 1), new _SubRange(range.high + 1, this.high)];
-        if (range.low <= this.low) return [new _SubRange(range.high + 1, this.high)];
-        return [new _SubRange(this.low, range.low - 1)];
-    };
-
-    _SubRange.prototype.toString = function () {
-        if (this.low == this.high) return this.low.toString();
-        return this.low + '-' + this.high;
-    };
-
-    _SubRange.prototype.clone = function () {
-        return new _SubRange(this.low, this.high);
-    };
-
-
-
-
-    function DiscontinuousRange(a, b) {
-        if (this instanceof DiscontinuousRange) {
+    class DRange {
+        constructor(a, b) {
             this.ranges = [];
             this.length = 0;
-            if (a !== undefined) this.add(a, b);
-        } else {
-            return new DiscontinuousRange(a, b);
-        }
-    }
-
-    function _update_length(self) {
-        self.length = self.ranges.reduce(function (previous, range) {return previous + range.length}, 0);
-    }
-
-    DiscontinuousRange.prototype.add = function (a, b) {
-        var self = this;
-        function _add(subrange) {
-            var new_ranges = [];
-            var i = 0;
-            while (i < self.ranges.length && !subrange.touches(self.ranges[i])) {
-                new_ranges.push(self.ranges[i].clone());
-                i++;
-            }
-            while (i < self.ranges.length && subrange.touches(self.ranges[i])) {
-                subrange = subrange.add(self.ranges[i]);
-                i++;
-            }
-            new_ranges.push(subrange);
-            while (i < self.ranges.length) {
-                new_ranges.push(self.ranges[i].clone());
-                i++;
-            }
-            self.ranges = new_ranges;
-            _update_length(self);
+            if (a != null) this.add(a, b);
         }
 
-        if (a instanceof DiscontinuousRange) {
-            a.ranges.forEach(_add);
-        } else {
-            if (a instanceof _SubRange) {
-                _add(a);
+        _update_length() {
+            this.length = this.ranges.reduce((previous, range) => {
+                return previous + range.length;
+            }, 0);
+        }
+
+        add(a, b) {
+            var _add = (subrange) => {
+                var i = 0;
+                while (i < this.ranges.length && !subrange.touches(this.ranges[i])) {
+                    i++;
+                }
+                var newRanges = this.ranges.slice(0, i);
+                while (i < this.ranges.length && subrange.touches(this.ranges[i])) {
+                    subrange = subrange.add(this.ranges[i]);
+                    i++;
+                }
+                newRanges.push(subrange);
+                this.ranges = newRanges.concat(this.ranges.slice(i));
+                this._update_length();
+            };
+
+            if (a instanceof DRange) {
+                a.ranges.forEach(_add);
             } else {
-                if (b === undefined) b = a;
-                _add(new _SubRange(a, b));
+                if (b == null) b = a;
+                _add(new SubRange(a, b));
             }
+            return this;
         }
-        return this;
-    };
 
-    DiscontinuousRange.prototype.subtract = function (a, b) {
-        var self = this;
-        function _subtract(subrange) {
-            var new_ranges = [];
-            var i = 0;
-            while (i < self.ranges.length && !subrange.overlaps(self.ranges[i])) {
-                new_ranges.push(self.ranges[i].clone());
-                i++;
-            }
-            while (i < self.ranges.length && subrange.overlaps(self.ranges[i])) {
-                new_ranges = new_ranges.concat(self.ranges[i].subtract(subrange));
-                i++;
-            }
-            while (i < self.ranges.length) {
-                new_ranges.push(self.ranges[i].clone());
-                i++;
-            }
-            self.ranges = new_ranges;
-            _update_length(self);
-        }
-        if (a instanceof DiscontinuousRange) {
-            a.ranges.forEach(_subtract);
-        } else {
-            if (a instanceof _SubRange) {
-                _subtract(a);
+        subtract(a, b) {
+            var _subtract = (subrange) => {
+                var i = 0;
+                while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
+                    i++;
+                }
+                var newRanges = this.ranges.slice(0, i);
+                while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
+                    newRanges = newRanges.concat(this.ranges[i].subtract(subrange));
+                    i++;
+                }
+                this.ranges = newRanges.concat(this.ranges.slice(i));
+                this._update_length();
+            };
+
+            if (a instanceof DRange) {
+                a.ranges.forEach(_subtract);
             } else {
-                if (b === undefined) b = a;
-                _subtract(new _SubRange(a, b));
+                if (b == null) b = a;
+                _subtract(new SubRange(a, b));
             }
+            return this;
         }
-        return this;
-    };
 
+        intersect(a, b) {
+            var newRanges = [];
+            var _intersect = (subrange) => {
+                var i = 0;
+                while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
+                    i++;
+                }
+                while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
+                    var low = Math.max(this.ranges[i].low, subrange.low);
+                    var high = Math.min(this.ranges[i].high, subrange.high);
+                    newRanges.push(new SubRange(low, high));
+                    i++;
+                }
+            };
 
-    DiscontinuousRange.prototype.index = function (index) {
-        var i = 0;
-        while (i < this.ranges.length && this.ranges[i].length <= index) {
-            index -= this.ranges[i].length;
-            i++;
+            if (a instanceof DRange) {
+                a.ranges.forEach(_intersect);
+            } else {
+                if (b == null) b = a;
+                _intersect(new SubRange(a, b));
+            }
+            this.ranges = newRanges;
+            this._update_length();
+            return this;
         }
-        if (i >= this.ranges.length) return null;
-        return this.ranges[i].low + index;
-    };
 
+        index(index) {
+            var i = 0;
+            while (i < this.ranges.length && this.ranges[i].length <= index) {
+                index -= this.ranges[i].length;
+                i++;
+            }
+            return this.ranges[i].low + index;
+        }
 
-    DiscontinuousRange.prototype.toString = function () {
-        return '[ ' + this.ranges.join(', ') + ' ]'
-    };
+        toString() {
+            return '[ ' + this.ranges.join(', ') + ' ]';
+        }
 
-    DiscontinuousRange.prototype.clone = function () {
-        return new DiscontinuousRange(this);
-    };
-
-    var discontinuousRange = DiscontinuousRange;
-
-    var randexp = createCommonjsModule(function (module) {
-    var types = lib.types;
-
-
-    /**
-     * If code is alphabetic, converts to other case.
-     * If not alphabetic, returns back code.
-     *
-     * @param {Number} code
-     * @return {Number}
-     */
-    function toOtherCase(code) {
-      return code + (97 <= code && code <= 122 ? -32 :
-                     65 <= code && code <= 90  ?  32 : 0);
+        clone() {
+            return new DRange(this);
+        }
     }
 
+    var lib$1 = DRange;
 
-    /**
-     * Randomly returns a true or false value.
-     *
-     * @return {Boolean}
-     */
-    function randBool() {
-      return !this.randInt(0, 1);
-    }
+    const types$1  = lib.types;
 
 
-    /**
-     * Randomly selects and returns a value from the array.
-     *
-     * @param {Array.<Object>} arr
-     * @return {Object}
-     */
-    function randSelect(arr) {
-      if (arr instanceof discontinuousRange) {
-        return arr.index(this.randInt(0, arr.length - 1));
+    var randexp = class RandExp {
+      /**
+       * @constructor
+       * @param {RegExp|String} regexp
+       * @param {String} m
+       */
+      constructor(regexp, m) {
+        this._setDefaults(regexp);
+        if (regexp instanceof RegExp) {
+          this.ignoreCase = regexp.ignoreCase;
+          this.multiline = regexp.multiline;
+          regexp = regexp.source;
+
+        } else if (typeof regexp === 'string') {
+          this.ignoreCase = m && m.indexOf('i') !== -1;
+          this.multiline = m && m.indexOf('m') !== -1;
+        } else {
+          throw new Error('Expected a regexp or string');
+        }
+
+        this.tokens = lib(regexp);
       }
-      return arr[this.randInt(0, arr.length - 1)];
-    }
 
 
-    /**
-     * expands a token to a DiscontinuousRange of characters which has a
-     * length and an index function (for random selecting)
-     *
-     * @param {Object} token
-     * @return {DiscontinuousRange}
-     */
-    function expand(token) {
-      if (token.type === lib.types.CHAR) {
-        return new discontinuousRange(token.value);
-      } else if (token.type === lib.types.RANGE) {
-        return new discontinuousRange(token.from, token.to);
-      } else {
-        var drange = new discontinuousRange();
-        for (var i = 0; i < token.set.length; i++) {
-          var subrange = expand.call(this, token.set[i]);
-          drange.add(subrange);
-          if (this.ignoreCase) {
-            for (var j = 0; j < subrange.length; j++) {
-              var code = subrange.index(j);
-              var otherCaseCode = toOtherCase(code);
-              if (code !== otherCaseCode) {
-                drange.add(otherCaseCode);
+      /**
+       * Checks if some custom properties have been set for this regexp.
+       *
+       * @param {RandExp} randexp
+       * @param {RegExp} regexp
+       */
+      _setDefaults(regexp) {
+        // When a repetitional token has its max set to Infinite,
+        // randexp won't actually generate a random amount between min and Infinite
+        // instead it will see Infinite as min + 100.
+        this.max = regexp.max != null ? regexp.max :
+          RandExp.prototype.max != null ? RandExp.prototype.max : 100;
+
+        // This allows expanding to include additional characters
+        // for instance: RandExp.defaultRange.add(0, 65535);
+        this.defaultRange = regexp.defaultRange ?
+          regexp.defaultRange : this.defaultRange.clone();
+
+        if (regexp.randInt) {
+          this.randInt = regexp.randInt;
+        }
+      }
+
+
+      /**
+       * Generates the random string.
+       *
+       * @return {String}
+       */
+      gen() {
+        return this._gen(this.tokens, []);
+      }
+
+
+      /**
+       * Generate random string modeled after given tokens.
+       *
+       * @param {Object} token
+       * @param {Array.<String>} groups
+       * @return {String}
+       */
+      _gen(token, groups) {
+        var stack, str, n, i, l;
+
+        switch (token.type) {
+          case types$1.ROOT:
+          case types$1.GROUP:
+            // Ignore lookaheads for now.
+            if (token.followedBy || token.notFollowedBy) { return ''; }
+
+            // Insert placeholder until group string is generated.
+            if (token.remember && token.groupNumber === undefined) {
+              token.groupNumber = groups.push(null) - 1;
+            }
+
+            stack = token.options ?
+              this._randSelect(token.options) : token.stack;
+
+            str = '';
+            for (i = 0, l = stack.length; i < l; i++) {
+              str += this._gen(stack[i], groups);
+            }
+
+            if (token.remember) {
+              groups[token.groupNumber] = str;
+            }
+            return str;
+
+          case types$1.POSITION:
+            // Do nothing for now.
+            return '';
+
+          case types$1.SET:
+            var expandedSet = this._expand(token);
+            if (!expandedSet.length) { return ''; }
+            return String.fromCharCode(this._randSelect(expandedSet));
+
+          case types$1.REPETITION:
+            // Randomly generate number between min and max.
+            n = this.randInt(token.min,
+              token.max === Infinity ? token.min + this.max : token.max);
+
+            str = '';
+            for (i = 0; i < n; i++) {
+              str += this._gen(token.value, groups);
+            }
+
+            return str;
+
+          case types$1.REFERENCE:
+            return groups[token.value - 1] || '';
+
+          case types$1.CHAR:
+            var code = this.ignoreCase && this._randBool() ?
+              this._toOtherCase(token.value) : token.value;
+            return String.fromCharCode(code);
+        }
+      }
+
+
+      /**
+       * If code is alphabetic, converts to other case.
+       * If not alphabetic, returns back code.
+       *
+       * @param {Number} code
+       * @return {Number}
+       */
+      _toOtherCase(code) {
+        return code + (97 <= code && code <= 122 ? -32 :
+          65 <= code && code <= 90  ?  32 : 0);
+      }
+
+
+      /**
+       * Randomly returns a true or false value.
+       *
+       * @return {Boolean}
+       */
+      _randBool() {
+        return !this.randInt(0, 1);
+      }
+
+
+      /**
+       * Randomly selects and returns a value from the array.
+       *
+       * @param {Array.<Object>} arr
+       * @return {Object}
+       */
+      _randSelect(arr) {
+        if (arr instanceof lib$1) {
+          return arr.index(this.randInt(0, arr.length - 1));
+        }
+        return arr[this.randInt(0, arr.length - 1)];
+      }
+
+
+      /**
+       * expands a token to a DiscontinuousRange of characters which has a
+       * length and an index function (for random selecting)
+       *
+       * @param {Object} token
+       * @return {DiscontinuousRange}
+       */
+      _expand(token) {
+        if (token.type === lib.types.CHAR) {
+          return new lib$1(token.value);
+        } else if (token.type === lib.types.RANGE) {
+          return new lib$1(token.from, token.to);
+        } else {
+          let drange = new lib$1();
+          for (let i = 0; i < token.set.length; i++) {
+            let subrange = this._expand(token.set[i]);
+            drange.add(subrange);
+            if (this.ignoreCase) {
+              for (let j = 0; j < subrange.length; j++) {
+                let code = subrange.index(j);
+                let otherCaseCode = this._toOtherCase(code);
+                if (code !== otherCaseCode) {
+                  drange.add(otherCaseCode);
+                }
               }
             }
           }
+          if (token.not) {
+            return this.defaultRange.clone().subtract(drange);
+          } else {
+            return this.defaultRange.clone().intersect(drange);
+          }
         }
-        if (token.not) {
-          return this.defaultRange.clone().subtract(drange);
+      }
+
+
+      /**
+       * Randomly generates and returns a number between a and b (inclusive).
+       *
+       * @param {Number} a
+       * @param {Number} b
+       * @return {Number}
+       */
+      randInt(a, b) {
+        return a + Math.floor(Math.random() * (1 + b - a));
+      }
+
+
+      /**
+       * Default range of characters to generate from.
+       */
+      get defaultRange() {
+        return this._range = this._range || new lib$1(32, 126);
+      }
+
+      set defaultRange(range) {
+        this._range = range;
+      }
+
+
+      /**
+       *
+       * Enables use of randexp with a shorter call.
+       *
+       * @param {RegExp|String| regexp}
+       * @param {String} m
+       * @return {String}
+       */
+      static randexp(regexp, m) {
+        var randexp;
+        if(typeof regexp === 'string') {
+          regexp = new RegExp(regexp, m);
+        }
+
+        if (regexp._randexp === undefined) {
+          randexp = new RandExp(regexp, m);
+          regexp._randexp = randexp;
         } else {
-          return drange;
+          randexp = regexp._randexp;
+          randexp._setDefaults(regexp);
         }
-      }
-    }
-
-
-    /**
-     * Checks if some custom properties have been set for this regexp.
-     *
-     * @param {RandExp} randexp
-     * @param {RegExp} regexp
-     */
-    function checkCustom(randexp, regexp) {
-      if (typeof regexp.max === 'number') {
-        randexp.max = regexp.max;
-      }
-      if (regexp.defaultRange instanceof discontinuousRange) {
-        randexp.defaultRange = regexp.defaultRange;
-      }
-      if (typeof regexp.randInt === 'function') {
-        randexp.randInt = regexp.randInt;
-      }
-    }
-
-
-    /**
-     * @constructor
-     * @param {RegExp|String} regexp
-     * @param {String} m
-     */
-    var RandExp = module.exports = function(regexp, m) {
-      this.defaultRange = this.defaultRange.clone();
-      if (regexp instanceof RegExp) {
-        this.ignoreCase = regexp.ignoreCase;
-        this.multiline = regexp.multiline;
-        checkCustom(this, regexp);
-        regexp = regexp.source;
-
-      } else if (typeof regexp === 'string') {
-        this.ignoreCase = m && m.indexOf('i') !== -1;
-        this.multiline = m && m.indexOf('m') !== -1;
-      } else {
-        throw new Error('Expected a regexp or string');
+        return randexp.gen();
       }
 
-      this.tokens = lib(regexp);
+
+      /**
+       * Enables sugary /regexp/.gen syntax.
+       */
+      static sugar() {
+        /* eshint freeze:false */
+        RegExp.prototype.gen = function() {
+          return RandExp.randexp(this);
+        };
+      }
     };
-
-
-    // When a repetitional token has its max set to Infinite,
-    // randexp won't actually generate a random amount between min and Infinite
-    // instead it will see Infinite as min + 100.
-    RandExp.prototype.max = 100;
-
-
-    // Generates the random string.
-    RandExp.prototype.gen = function() {
-      return gen.call(this, this.tokens, []);
-    };
-
-
-    // Enables use of randexp with a shorter call.
-    RandExp.randexp = function(regexp, m) {
-      var randexp;
-      if (regexp._randexp === undefined) {
-        randexp = new RandExp(regexp, m);
-        regexp._randexp = randexp;
-      } else {
-        randexp = regexp._randexp;
-      }
-      checkCustom(randexp, regexp);
-      return randexp.gen();
-    };
-
-
-    // This enables sugary /regexp/.gen syntax.
-    RandExp.sugar = function() {
-      /* jshint freeze:false */
-      RegExp.prototype.gen = function() {
-        return RandExp.randexp(this);
-      };
-    };
-
-    // This allows expanding to include additional characters
-    // for instance: RandExp.defaultRange.add(0, 65535);
-    RandExp.prototype.defaultRange = new discontinuousRange(32, 126);
-
-
-    /**
-     * Randomly generates and returns a number between a and b (inclusive).
-     *
-     * @param {Number} a
-     * @param {Number} b
-     * @return {Number}
-     */
-    RandExp.prototype.randInt = function(a, b) {
-      return a + Math.floor(Math.random() * (1 + b - a));
-    };
-
-
-    /**
-     * Generate random string modeled after given tokens.
-     *
-     * @param {Object} token
-     * @param {Array.<String>} groups
-     * @return {String}
-     */
-    function gen(token, groups) {
-      var stack, str, n, i, l;
-
-      switch (token.type) {
-
-
-        case types.ROOT:
-        case types.GROUP:
-          // Ignore lookaheads for now.
-          if (token.followedBy || token.notFollowedBy) { return ''; }
-
-          // Insert placeholder until group string is generated.
-          if (token.remember && token.groupNumber === undefined) {
-            token.groupNumber = groups.push(null) - 1;
-          }
-
-          stack = token.options ?
-            randSelect.call(this, token.options) : token.stack;
-
-          str = '';
-          for (i = 0, l = stack.length; i < l; i++) {
-            str += gen.call(this, stack[i], groups);
-          }
-
-          if (token.remember) {
-            groups[token.groupNumber] = str;
-          }
-          return str;
-
-
-        case types.POSITION:
-          // Do nothing for now.
-          return '';
-
-
-        case types.SET:
-          var expandedSet = expand.call(this, token);
-          if (!expandedSet.length) { return ''; }
-          return String.fromCharCode(randSelect.call(this, expandedSet));
-
-
-        case types.REPETITION:
-          // Randomly generate number between min and max.
-          n = this.randInt(token.min,
-                  token.max === Infinity ? token.min + this.max : token.max);
-
-          str = '';
-          for (i = 0; i < n; i++) {
-            str += gen.call(this, token.value, groups);
-          }
-
-          return str;
-
-
-        case types.REFERENCE:
-          return groups[token.value - 1] || '';
-
-
-        case types.CHAR:
-          var code = this.ignoreCase && randBool.call(this) ?
-            toOtherCase(token.value) : token.value;
-          return String.fromCharCode(code);
-      }
-    }
-    });
 
     // https://gist.github.com/pjt33/efb2f1134bab986113fd
 
@@ -1290,7 +1288,9 @@
 
     function cloneSpecificValue(val) {
     	if (val instanceof Buffer) {
-    		var x = new Buffer(val.length);
+    		var x = Buffer.alloc
+    			? Buffer.alloc(val.length)
+    			: new Buffer(val.length);
     		val.copy(x);
     		return x;
     	} else if (val instanceof Date) {
@@ -1321,6 +1321,10 @@
     		}
     	});
     	return clone;
+    }
+
+    function safeGetProperty(object, property) {
+    	return property === '__proto__' ? undefined : object[property];
     }
 
     /**
@@ -1355,8 +1359,8 @@
     		}
 
     		Object.keys(obj).forEach(function (key) {
-    			src = target[key]; // source value
-    			val = obj[key]; // new value
+    			src = safeGetProperty(target, key); // source value
+    			val = safeGetProperty(obj, key); // new value
 
     			// recursion prevention
     			if (val === target) {
@@ -1414,14 +1418,20 @@
           delete obj.id;
         }
 
-        if (_[id]) {
+        if (_[id] > 10) {
           return obj;
         }
 
-        _[id] = 1;
+        if (_[id]) {
+          _[id] += 1;
+        } else {
+          _[id] = 1;
+        }
       }
 
+
       for (var prop in obj) {
+
         if (typeof obj[prop] === 'object' && obj[prop] !== null && !helpers.isKeyword(prop)) {
           target[prop] = copy(_, obj[prop], refs, parent, resolve, callback);
         } else {
@@ -1476,7 +1486,9 @@
 
     var SCHEMA_URI = [
       'http://json-schema.org/schema#',
-      'http://json-schema.org/draft-04/schema#'
+      'http://json-schema.org/schema',
+      'http://json-schema.org/draft-04/schema#',
+      'http://json-schema.org/draft-04/schema'
     ];
 
     function expand(obj, parent, callback) {
@@ -1532,7 +1544,7 @@
       return copy;
     };
 
-    var lib$1 = createCommonjsModule(function (module) {
+    var lib$2 = createCommonjsModule(function (module) {
 
 
 
@@ -8204,7 +8216,7 @@
     });
 
     var jsonSchemaRefParser = createCommonjsModule(function(module, exports) {/*!
- * JSON Schema $Ref Parser v5.0.0 (March 18th 2018)
+ * JSON Schema $Ref Parser v5.0.3 (April 9th 2018)
  * 
  * https://github.com/BigstickCarpet/json-schema-ref-parser
  * 
@@ -8592,7 +8604,7 @@ function foundCircularReference (keyPath, $refs, options) {
   return true;
 }
 
-},{"./pointer":11,"./ref":12,"./util/debug":17,"./util/url":19,"ono":67}],3:[function(_dereq_,module,exports){
+},{"./pointer":11,"./ref":12,"./util/debug":17,"./util/url":19,"ono":66}],3:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -8851,7 +8863,7 @@ $RefParser.prototype.dereference = function (path, schema, options, callback) {
 
 }).call(this,{"isBuffer":_dereq_("../node_modules/is-buffer/index.js")})
 
-},{"../node_modules/is-buffer/index.js":34,"./bundle":1,"./dereference":2,"./normalize-args":4,"./options":5,"./parse":6,"./refs":13,"./resolve-external":14,"./util/url":19,"./util/yaml":20,"call-me-maybe":25,"ono":67}],4:[function(_dereq_,module,exports){
+},{"../node_modules/is-buffer/index.js":33,"./bundle":1,"./dereference":2,"./normalize-args":4,"./options":5,"./parse":6,"./refs":13,"./resolve-external":14,"./util/url":19,"./util/yaml":20,"call-me-maybe":25,"ono":66}],4:[function(_dereq_,module,exports){
 'use strict';
 
 var Options = _dereq_('./options');
@@ -9176,7 +9188,7 @@ function isEmpty (value) {
 
 }).call(this,{"isBuffer":_dereq_("../node_modules/is-buffer/index.js")})
 
-},{"../node_modules/is-buffer/index.js":34,"./util/debug":17,"./util/plugins":18,"./util/url":19,"ono":67}],7:[function(_dereq_,module,exports){
+},{"../node_modules/is-buffer/index.js":33,"./util/debug":17,"./util/plugins":18,"./util/url":19,"ono":66}],7:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -9299,7 +9311,7 @@ module.exports = {
 
 }).call(this,{"isBuffer":_dereq_("../../node_modules/is-buffer/index.js")})
 
-},{"../../node_modules/is-buffer/index.js":34}],9:[function(_dereq_,module,exports){
+},{"../../node_modules/is-buffer/index.js":33}],9:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -9368,7 +9380,7 @@ module.exports = {
 
 }).call(this,{"isBuffer":_dereq_("../../node_modules/is-buffer/index.js")})
 
-},{"../../node_modules/is-buffer/index.js":34}],10:[function(_dereq_,module,exports){
+},{"../../node_modules/is-buffer/index.js":33}],10:[function(_dereq_,module,exports){
 (function (Buffer){
 'use strict';
 
@@ -9428,7 +9440,7 @@ module.exports = {
 
 }).call(this,{"isBuffer":_dereq_("../../node_modules/is-buffer/index.js")})
 
-},{"../../node_modules/is-buffer/index.js":34,"../util/yaml":20}],11:[function(_dereq_,module,exports){
+},{"../../node_modules/is-buffer/index.js":33,"../util/yaml":20}],11:[function(_dereq_,module,exports){
 'use strict';
 
 module.exports = Pointer;
@@ -9700,7 +9712,7 @@ function setValue (pointer, token, value) {
   return value;
 }
 
-},{"./ref":12,"./util/url":19,"ono":67}],12:[function(_dereq_,module,exports){
+},{"./ref":12,"./util/url":19,"ono":66}],12:[function(_dereq_,module,exports){
 'use strict';
 
 module.exports = $Ref;
@@ -10132,7 +10144,7 @@ function getPaths ($refs, types) {
   });
 }
 
-},{"./ref":12,"./util/url":19,"ono":67}],14:[function(_dereq_,module,exports){
+},{"./ref":12,"./util/url":19,"ono":66}],14:[function(_dereq_,module,exports){
 'use strict';
 
 var $Ref = _dereq_('./ref'),
@@ -10312,7 +10324,7 @@ module.exports = {
   }
 };
 
-},{"../util/debug":17,"../util/url":19,"fs":22,"ono":67}],16:[function(_dereq_,module,exports){
+},{"../util/debug":17,"../util/url":19,"fs":22,"ono":66}],16:[function(_dereq_,module,exports){
 (function (process,Buffer){
 'use strict';
 
@@ -10497,7 +10509,7 @@ function get (u, httpOptions) {
 
 }).call(this,_dereq_('_process'),_dereq_("buffer").Buffer)
 
-},{"../util/debug":17,"../util/url":19,"_process":69,"buffer":23,"http":84,"https":31,"ono":67}],17:[function(_dereq_,module,exports){
+},{"../util/debug":17,"../util/url":19,"_process":68,"buffer":23,"http":84,"https":30,"ono":66}],17:[function(_dereq_,module,exports){
 'use strict';
 
 var debug = _dereq_('debug');
@@ -10889,7 +10901,7 @@ exports.toFileSystemPath = function toFileSystemPath (path, keepFileProtocol) {
 
 }).call(this,_dereq_('_process'))
 
-},{"_process":69,"url":90}],20:[function(_dereq_,module,exports){
+},{"_process":68,"url":90}],20:[function(_dereq_,module,exports){
 /* eslint lines-around-comment: [2, {beforeBlockComment: false}] */
 'use strict';
 
@@ -10947,7 +10959,7 @@ module.exports = {
   }
 };
 
-},{"js-yaml":36,"ono":67}],21:[function(_dereq_,module,exports){
+},{"js-yaml":35,"ono":66}],21:[function(_dereq_,module,exports){
 'use strict'
 
 exports.byteLength = byteLength
@@ -12781,7 +12793,7 @@ function numberIsNaN (obj) {
   return obj !== obj // eslint-disable-line no-self-compare
 }
 
-},{"base64-js":21,"ieee754":32}],24:[function(_dereq_,module,exports){
+},{"base64-js":21,"ieee754":31}],24:[function(_dereq_,module,exports){
 module.exports = {
   "100": "Continue",
   "101": "Switching Protocols",
@@ -12872,7 +12884,7 @@ module.exports = function maybe (cb, promise) {
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"_process":69}],26:[function(_dereq_,module,exports){
+},{"_process":68}],26:[function(_dereq_,module,exports){
 (function (Buffer){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -12984,7 +12996,7 @@ function objectToString(o) {
 
 }).call(this,{"isBuffer":_dereq_("../../is-buffer/index.js")})
 
-},{"../../is-buffer/index.js":34}],27:[function(_dereq_,module,exports){
+},{"../../is-buffer/index.js":33}],27:[function(_dereq_,module,exports){
 (function (process){
 /**
  * This is the web browser implementation of `debug()`.
@@ -13184,7 +13196,7 @@ function localstorage() {
 
 }).call(this,_dereq_('_process'))
 
-},{"./debug":28,"_process":69}],28:[function(_dereq_,module,exports){
+},{"./debug":28,"_process":68}],28:[function(_dereq_,module,exports){
 
 /**
  * This is the common logic for both the Node.js and web browser
@@ -13411,311 +13423,7 @@ function coerce(val) {
   return val;
 }
 
-},{"ms":66}],29:[function(_dereq_,module,exports){
-// Copyright Joyent, Inc. and other Node contributors.
-//
-// Permission is hereby granted, free of charge, to any person obtaining a
-// copy of this software and associated documentation files (the
-// "Software"), to deal in the Software without restriction, including
-// without limitation the rights to use, copy, modify, merge, publish,
-// distribute, sublicense, and/or sell copies of the Software, and to permit
-// persons to whom the Software is furnished to do so, subject to the
-// following conditions:
-//
-// The above copyright notice and this permission notice shall be included
-// in all copies or substantial portions of the Software.
-//
-// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
-// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
-// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
-// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
-// USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-function EventEmitter() {
-  this._events = this._events || {};
-  this._maxListeners = this._maxListeners || undefined;
-}
-module.exports = EventEmitter;
-
-// Backwards-compat with node 0.10.x
-EventEmitter.EventEmitter = EventEmitter;
-
-EventEmitter.prototype._events = undefined;
-EventEmitter.prototype._maxListeners = undefined;
-
-// By default EventEmitters will print a warning if more than 10 listeners are
-// added to it. This is a useful default which helps finding memory leaks.
-EventEmitter.defaultMaxListeners = 10;
-
-// Obviously not all Emitters should be limited to 10. This function allows
-// that to be increased. Set to zero for unlimited.
-EventEmitter.prototype.setMaxListeners = function(n) {
-  if (!isNumber(n) || n < 0 || isNaN(n))
-    throw TypeError('n must be a positive number');
-  this._maxListeners = n;
-  return this;
-};
-
-EventEmitter.prototype.emit = function(type) {
-  var er, handler, len, args, i, listeners;
-
-  if (!this._events)
-    this._events = {};
-
-  // If there is no 'error' event listener then throw.
-  if (type === 'error') {
-    if (!this._events.error ||
-        (isObject(this._events.error) && !this._events.error.length)) {
-      er = arguments[1];
-      if (er instanceof Error) {
-        throw er; // Unhandled 'error' event
-      } else {
-        // At least give some kind of context to the user
-        var err = new Error('Uncaught, unspecified "error" event. (' + er + ')');
-        err.context = er;
-        throw err;
-      }
-    }
-  }
-
-  handler = this._events[type];
-
-  if (isUndefined(handler))
-    return false;
-
-  if (isFunction(handler)) {
-    switch (arguments.length) {
-      // fast cases
-      case 1:
-        handler.call(this);
-        break;
-      case 2:
-        handler.call(this, arguments[1]);
-        break;
-      case 3:
-        handler.call(this, arguments[1], arguments[2]);
-        break;
-      // slower
-      default:
-        args = Array.prototype.slice.call(arguments, 1);
-        handler.apply(this, args);
-    }
-  } else if (isObject(handler)) {
-    args = Array.prototype.slice.call(arguments, 1);
-    listeners = handler.slice();
-    len = listeners.length;
-    for (i = 0; i < len; i++)
-      listeners[i].apply(this, args);
-  }
-
-  return true;
-};
-
-EventEmitter.prototype.addListener = function(type, listener) {
-  var m;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events)
-    this._events = {};
-
-  // To avoid recursion in the case that type === "newListener"! Before
-  // adding it to the listeners, first emit "newListener".
-  if (this._events.newListener)
-    this.emit('newListener', type,
-              isFunction(listener.listener) ?
-              listener.listener : listener);
-
-  if (!this._events[type])
-    // Optimize the case of one listener. Don't need the extra array object.
-    this._events[type] = listener;
-  else if (isObject(this._events[type]))
-    // If we've already got an array, just append.
-    this._events[type].push(listener);
-  else
-    // Adding the second element, need to change to array.
-    this._events[type] = [this._events[type], listener];
-
-  // Check for listener leak
-  if (isObject(this._events[type]) && !this._events[type].warned) {
-    if (!isUndefined(this._maxListeners)) {
-      m = this._maxListeners;
-    } else {
-      m = EventEmitter.defaultMaxListeners;
-    }
-
-    if (m && m > 0 && this._events[type].length > m) {
-      this._events[type].warned = true;
-      console.error('(node) warning: possible EventEmitter memory ' +
-                    'leak detected. %d listeners added. ' +
-                    'Use emitter.setMaxListeners() to increase limit.',
-                    this._events[type].length);
-      if (typeof console.trace === 'function') {
-        // not supported in IE 10
-        console.trace();
-      }
-    }
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.on = EventEmitter.prototype.addListener;
-
-EventEmitter.prototype.once = function(type, listener) {
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  var fired = false;
-
-  function g() {
-    this.removeListener(type, g);
-
-    if (!fired) {
-      fired = true;
-      listener.apply(this, arguments);
-    }
-  }
-
-  g.listener = listener;
-  this.on(type, g);
-
-  return this;
-};
-
-// emits a 'removeListener' event iff the listener was removed
-EventEmitter.prototype.removeListener = function(type, listener) {
-  var list, position, length, i;
-
-  if (!isFunction(listener))
-    throw TypeError('listener must be a function');
-
-  if (!this._events || !this._events[type])
-    return this;
-
-  list = this._events[type];
-  length = list.length;
-  position = -1;
-
-  if (list === listener ||
-      (isFunction(list.listener) && list.listener === listener)) {
-    delete this._events[type];
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-
-  } else if (isObject(list)) {
-    for (i = length; i-- > 0;) {
-      if (list[i] === listener ||
-          (list[i].listener && list[i].listener === listener)) {
-        position = i;
-        break;
-      }
-    }
-
-    if (position < 0)
-      return this;
-
-    if (list.length === 1) {
-      list.length = 0;
-      delete this._events[type];
-    } else {
-      list.splice(position, 1);
-    }
-
-    if (this._events.removeListener)
-      this.emit('removeListener', type, listener);
-  }
-
-  return this;
-};
-
-EventEmitter.prototype.removeAllListeners = function(type) {
-  var key, listeners;
-
-  if (!this._events)
-    return this;
-
-  // not listening for removeListener, no need to emit
-  if (!this._events.removeListener) {
-    if (arguments.length === 0)
-      this._events = {};
-    else if (this._events[type])
-      delete this._events[type];
-    return this;
-  }
-
-  // emit removeListener for all listeners on all events
-  if (arguments.length === 0) {
-    for (key in this._events) {
-      if (key === 'removeListener') continue;
-      this.removeAllListeners(key);
-    }
-    this.removeAllListeners('removeListener');
-    this._events = {};
-    return this;
-  }
-
-  listeners = this._events[type];
-
-  if (isFunction(listeners)) {
-    this.removeListener(type, listeners);
-  } else if (listeners) {
-    // LIFO order
-    while (listeners.length)
-      this.removeListener(type, listeners[listeners.length - 1]);
-  }
-  delete this._events[type];
-
-  return this;
-};
-
-EventEmitter.prototype.listeners = function(type) {
-  var ret;
-  if (!this._events || !this._events[type])
-    ret = [];
-  else if (isFunction(this._events[type]))
-    ret = [this._events[type]];
-  else
-    ret = this._events[type].slice();
-  return ret;
-};
-
-EventEmitter.prototype.listenerCount = function(type) {
-  if (this._events) {
-    var evlistener = this._events[type];
-
-    if (isFunction(evlistener))
-      return 1;
-    else if (evlistener)
-      return evlistener.length;
-  }
-  return 0;
-};
-
-EventEmitter.listenerCount = function(emitter, type) {
-  return emitter.listenerCount(type);
-};
-
-function isFunction(arg) {
-  return typeof arg === 'function';
-}
-
-function isNumber(arg) {
-  return typeof arg === 'number';
-}
-
-function isObject(arg) {
-  return typeof arg === 'object' && arg !== null;
-}
-
-function isUndefined(arg) {
-  return arg === void 0;
-}
-
-},{}],30:[function(_dereq_,module,exports){
+},{"ms":65}],29:[function(_dereq_,module,exports){
 function format(fmt) {
   var re = /(%?)(%([jds]))/g
     , args = Array.prototype.slice.call(arguments, 1);
@@ -13754,7 +13462,7 @@ function format(fmt) {
 
 module.exports = format;
 
-},{}],31:[function(_dereq_,module,exports){
+},{}],30:[function(_dereq_,module,exports){
 var http = _dereq_('http')
 var url = _dereq_('url')
 
@@ -13787,7 +13495,7 @@ function validateParams (params) {
   return params
 }
 
-},{"http":84,"url":90}],32:[function(_dereq_,module,exports){
+},{"http":84,"url":90}],31:[function(_dereq_,module,exports){
 exports.read = function (buffer, offset, isLE, mLen, nBytes) {
   var e, m
   var eLen = nBytes * 8 - mLen - 1
@@ -13873,7 +13581,7 @@ exports.write = function (buffer, value, offset, isLE, mLen, nBytes) {
   buffer[offset + i - d] |= s * 128
 }
 
-},{}],33:[function(_dereq_,module,exports){
+},{}],32:[function(_dereq_,module,exports){
 if (typeof Object.create === 'function') {
   // implementation from standard node.js 'util' module
   module.exports = function inherits(ctor, superCtor) {
@@ -13898,7 +13606,7 @@ if (typeof Object.create === 'function') {
   }
 }
 
-},{}],34:[function(_dereq_,module,exports){
+},{}],33:[function(_dereq_,module,exports){
 /*!
  * Determine if an object is a Buffer
  *
@@ -13921,14 +13629,14 @@ function isSlowBuffer (obj) {
   return typeof obj.readFloatLE === 'function' && typeof obj.slice === 'function' && isBuffer(obj.slice(0, 0))
 }
 
-},{}],35:[function(_dereq_,module,exports){
+},{}],34:[function(_dereq_,module,exports){
 var toString = {}.toString;
 
 module.exports = Array.isArray || function (arr) {
   return toString.call(arr) == '[object Array]';
 };
 
-},{}],36:[function(_dereq_,module,exports){
+},{}],35:[function(_dereq_,module,exports){
 'use strict';
 
 
@@ -13937,7 +13645,7 @@ var yaml = _dereq_('./lib/js-yaml.js');
 
 module.exports = yaml;
 
-},{"./lib/js-yaml.js":37}],37:[function(_dereq_,module,exports){
+},{"./lib/js-yaml.js":36}],36:[function(_dereq_,module,exports){
 'use strict';
 
 
@@ -13978,7 +13686,7 @@ module.exports.parse          = deprecated('parse');
 module.exports.compose        = deprecated('compose');
 module.exports.addConstructor = deprecated('addConstructor');
 
-},{"./js-yaml/dumper":39,"./js-yaml/exception":40,"./js-yaml/loader":41,"./js-yaml/schema":43,"./js-yaml/schema/core":44,"./js-yaml/schema/default_full":45,"./js-yaml/schema/default_safe":46,"./js-yaml/schema/failsafe":47,"./js-yaml/schema/json":48,"./js-yaml/type":49}],38:[function(_dereq_,module,exports){
+},{"./js-yaml/dumper":38,"./js-yaml/exception":39,"./js-yaml/loader":40,"./js-yaml/schema":42,"./js-yaml/schema/core":43,"./js-yaml/schema/default_full":44,"./js-yaml/schema/default_safe":45,"./js-yaml/schema/failsafe":46,"./js-yaml/schema/json":47,"./js-yaml/type":48}],37:[function(_dereq_,module,exports){
 'use strict';
 
 
@@ -14039,7 +13747,7 @@ module.exports.repeat         = repeat;
 module.exports.isNegativeZero = isNegativeZero;
 module.exports.extend         = extend;
 
-},{}],39:[function(_dereq_,module,exports){
+},{}],38:[function(_dereq_,module,exports){
 'use strict';
 
 /*eslint-disable no-use-before-define*/
@@ -14860,7 +14568,7 @@ function safeDump(input, options) {
 module.exports.dump     = dump;
 module.exports.safeDump = safeDump;
 
-},{"./common":38,"./exception":40,"./schema/default_full":45,"./schema/default_safe":46}],40:[function(_dereq_,module,exports){
+},{"./common":37,"./exception":39,"./schema/default_full":44,"./schema/default_safe":45}],39:[function(_dereq_,module,exports){
 // YAML error class. http://stackoverflow.com/questions/8458984
 //
 'use strict';
@@ -14905,7 +14613,7 @@ YAMLException.prototype.toString = function toString(compact) {
 
 module.exports = YAMLException;
 
-},{}],41:[function(_dereq_,module,exports){
+},{}],40:[function(_dereq_,module,exports){
 'use strict';
 
 /*eslint-disable max-len,no-use-before-define*/
@@ -16505,7 +16213,7 @@ module.exports.load        = load;
 module.exports.safeLoadAll = safeLoadAll;
 module.exports.safeLoad    = safeLoad;
 
-},{"./common":38,"./exception":40,"./mark":42,"./schema/default_full":45,"./schema/default_safe":46}],42:[function(_dereq_,module,exports){
+},{"./common":37,"./exception":39,"./mark":41,"./schema/default_full":44,"./schema/default_safe":45}],41:[function(_dereq_,module,exports){
 'use strict';
 
 
@@ -16583,7 +16291,7 @@ Mark.prototype.toString = function toString(compact) {
 
 module.exports = Mark;
 
-},{"./common":38}],43:[function(_dereq_,module,exports){
+},{"./common":37}],42:[function(_dereq_,module,exports){
 'use strict';
 
 /*eslint-disable max-len*/
@@ -16693,7 +16401,7 @@ Schema.create = function createSchema() {
 
 module.exports = Schema;
 
-},{"./common":38,"./exception":40,"./type":49}],44:[function(_dereq_,module,exports){
+},{"./common":37,"./exception":39,"./type":48}],43:[function(_dereq_,module,exports){
 // Standard YAML's Core schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2804923
 //
@@ -16713,7 +16421,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":43,"./json":48}],45:[function(_dereq_,module,exports){
+},{"../schema":42,"./json":47}],44:[function(_dereq_,module,exports){
 // JS-YAML's default schema for `load` function.
 // It is not described in the YAML specification.
 //
@@ -16740,7 +16448,7 @@ module.exports = Schema.DEFAULT = new Schema({
   ]
 });
 
-},{"../schema":43,"../type/js/function":54,"../type/js/regexp":55,"../type/js/undefined":56,"./default_safe":46}],46:[function(_dereq_,module,exports){
+},{"../schema":42,"../type/js/function":53,"../type/js/regexp":54,"../type/js/undefined":55,"./default_safe":45}],45:[function(_dereq_,module,exports){
 // JS-YAML's default schema for `safeLoad` function.
 // It is not described in the YAML specification.
 //
@@ -16770,7 +16478,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":43,"../type/binary":50,"../type/merge":58,"../type/omap":60,"../type/pairs":61,"../type/set":63,"../type/timestamp":65,"./core":44}],47:[function(_dereq_,module,exports){
+},{"../schema":42,"../type/binary":49,"../type/merge":57,"../type/omap":59,"../type/pairs":60,"../type/set":62,"../type/timestamp":64,"./core":43}],46:[function(_dereq_,module,exports){
 // Standard YAML's Failsafe schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2802346
 
@@ -16789,7 +16497,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":43,"../type/map":57,"../type/seq":62,"../type/str":64}],48:[function(_dereq_,module,exports){
+},{"../schema":42,"../type/map":56,"../type/seq":61,"../type/str":63}],47:[function(_dereq_,module,exports){
 // Standard YAML's JSON schema.
 // http://www.yaml.org/spec/1.2/spec.html#id2803231
 //
@@ -16816,7 +16524,7 @@ module.exports = new Schema({
   ]
 });
 
-},{"../schema":43,"../type/bool":51,"../type/float":52,"../type/int":53,"../type/null":59,"./failsafe":47}],49:[function(_dereq_,module,exports){
+},{"../schema":42,"../type/bool":50,"../type/float":51,"../type/int":52,"../type/null":58,"./failsafe":46}],48:[function(_dereq_,module,exports){
 'use strict';
 
 var YAMLException = _dereq_('./exception');
@@ -16879,7 +16587,7 @@ function Type(tag, options) {
 
 module.exports = Type;
 
-},{"./exception":40}],50:[function(_dereq_,module,exports){
+},{"./exception":39}],49:[function(_dereq_,module,exports){
 'use strict';
 
 /*eslint-disable no-bitwise*/
@@ -17019,7 +16727,7 @@ module.exports = new Type('tag:yaml.org,2002:binary', {
   represent: representYamlBinary
 });
 
-},{"../type":49}],51:[function(_dereq_,module,exports){
+},{"../type":48}],50:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17056,7 +16764,7 @@ module.exports = new Type('tag:yaml.org,2002:bool', {
   defaultStyle: 'lowercase'
 });
 
-},{"../type":49}],52:[function(_dereq_,module,exports){
+},{"../type":48}],51:[function(_dereq_,module,exports){
 'use strict';
 
 var common = _dereq_('../common');
@@ -17174,7 +16882,7 @@ module.exports = new Type('tag:yaml.org,2002:float', {
   defaultStyle: 'lowercase'
 });
 
-},{"../common":38,"../type":49}],53:[function(_dereq_,module,exports){
+},{"../common":37,"../type":48}],52:[function(_dereq_,module,exports){
 'use strict';
 
 var common = _dereq_('../common');
@@ -17349,7 +17057,7 @@ module.exports = new Type('tag:yaml.org,2002:int', {
   }
 });
 
-},{"../common":38,"../type":49}],54:[function(_dereq_,module,exports){
+},{"../common":37,"../type":48}],53:[function(_dereq_,module,exports){
 'use strict';
 
 var esprima;
@@ -17437,7 +17145,7 @@ module.exports = new Type('tag:yaml.org,2002:js/function', {
   represent: representJavascriptFunction
 });
 
-},{"../../type":49}],55:[function(_dereq_,module,exports){
+},{"../../type":48}],54:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../../type');
@@ -17499,7 +17207,7 @@ module.exports = new Type('tag:yaml.org,2002:js/regexp', {
   represent: representJavascriptRegExp
 });
 
-},{"../../type":49}],56:[function(_dereq_,module,exports){
+},{"../../type":48}],55:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../../type');
@@ -17529,7 +17237,7 @@ module.exports = new Type('tag:yaml.org,2002:js/undefined', {
   represent: representJavascriptUndefined
 });
 
-},{"../../type":49}],57:[function(_dereq_,module,exports){
+},{"../../type":48}],56:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17539,7 +17247,7 @@ module.exports = new Type('tag:yaml.org,2002:map', {
   construct: function (data) { return data !== null ? data : {}; }
 });
 
-},{"../type":49}],58:[function(_dereq_,module,exports){
+},{"../type":48}],57:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17553,7 +17261,7 @@ module.exports = new Type('tag:yaml.org,2002:merge', {
   resolve: resolveYamlMerge
 });
 
-},{"../type":49}],59:[function(_dereq_,module,exports){
+},{"../type":48}],58:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17589,7 +17297,7 @@ module.exports = new Type('tag:yaml.org,2002:null', {
   defaultStyle: 'lowercase'
 });
 
-},{"../type":49}],60:[function(_dereq_,module,exports){
+},{"../type":48}],59:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17635,7 +17343,7 @@ module.exports = new Type('tag:yaml.org,2002:omap', {
   construct: constructYamlOmap
 });
 
-},{"../type":49}],61:[function(_dereq_,module,exports){
+},{"../type":48}],60:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17690,7 +17398,7 @@ module.exports = new Type('tag:yaml.org,2002:pairs', {
   construct: constructYamlPairs
 });
 
-},{"../type":49}],62:[function(_dereq_,module,exports){
+},{"../type":48}],61:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17700,7 +17408,7 @@ module.exports = new Type('tag:yaml.org,2002:seq', {
   construct: function (data) { return data !== null ? data : []; }
 });
 
-},{"../type":49}],63:[function(_dereq_,module,exports){
+},{"../type":48}],62:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17731,7 +17439,7 @@ module.exports = new Type('tag:yaml.org,2002:set', {
   construct: constructYamlSet
 });
 
-},{"../type":49}],64:[function(_dereq_,module,exports){
+},{"../type":48}],63:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17741,7 +17449,7 @@ module.exports = new Type('tag:yaml.org,2002:str', {
   construct: function (data) { return data !== null ? data : ''; }
 });
 
-},{"../type":49}],65:[function(_dereq_,module,exports){
+},{"../type":48}],64:[function(_dereq_,module,exports){
 'use strict';
 
 var Type = _dereq_('../type');
@@ -17831,7 +17539,7 @@ module.exports = new Type('tag:yaml.org,2002:timestamp', {
   represent: representYamlTimestamp
 });
 
-},{"../type":49}],66:[function(_dereq_,module,exports){
+},{"../type":48}],65:[function(_dereq_,module,exports){
 /**
  * Helpers.
  */
@@ -17985,7 +17693,7 @@ function plural(ms, n, name) {
   return Math.ceil(ms / n) + ' ' + name + 's';
 }
 
-},{}],67:[function(_dereq_,module,exports){
+},{}],66:[function(_dereq_,module,exports){
 'use strict';
 
 var format = _dereq_('format-util');
@@ -18288,7 +17996,7 @@ function lazyPopStack (error) {
   });
 }
 
-},{"format-util":30}],68:[function(_dereq_,module,exports){
+},{"format-util":29}],67:[function(_dereq_,module,exports){
 (function (process){
 'use strict';
 
@@ -18336,7 +18044,7 @@ function nextTick(fn, arg1, arg2, arg3) {
 
 }).call(this,_dereq_('_process'))
 
-},{"_process":69}],69:[function(_dereq_,module,exports){
+},{"_process":68}],68:[function(_dereq_,module,exports){
 // shim for using process in browser
 var process = module.exports = {};
 
@@ -18522,7 +18230,7 @@ process.chdir = function (dir) {
 };
 process.umask = function() { return 0; };
 
-},{}],70:[function(_dereq_,module,exports){
+},{}],69:[function(_dereq_,module,exports){
 (function (global){
 /*! https://mths.be/punycode v1.4.1 by @mathias */
 ;(function(root) {
@@ -19060,7 +18768,7 @@ process.umask = function() { return 0; };
 
 }).call(this,typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{}],71:[function(_dereq_,module,exports){
+},{}],70:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19146,7 +18854,7 @@ var isArray = Array.isArray || function (xs) {
   return Object.prototype.toString.call(xs) === '[object Array]';
 };
 
-},{}],72:[function(_dereq_,module,exports){
+},{}],71:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19233,13 +18941,13 @@ var objectKeys = Object.keys || function (obj) {
   return res;
 };
 
-},{}],73:[function(_dereq_,module,exports){
+},{}],72:[function(_dereq_,module,exports){
 'use strict';
 
 exports.decode = exports.parse = _dereq_('./decode');
 exports.encode = exports.stringify = _dereq_('./encode');
 
-},{"./decode":71,"./encode":72}],74:[function(_dereq_,module,exports){
+},{"./decode":70,"./encode":71}],73:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19364,7 +19072,7 @@ function forEach(xs, f) {
     f(xs[i], i);
   }
 }
-},{"./_stream_readable":76,"./_stream_writable":78,"core-util-is":26,"inherits":33,"process-nextick-args":68}],75:[function(_dereq_,module,exports){
+},{"./_stream_readable":75,"./_stream_writable":77,"core-util-is":26,"inherits":32,"process-nextick-args":67}],74:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -19412,7 +19120,7 @@ function PassThrough(options) {
 PassThrough.prototype._transform = function (chunk, encoding, cb) {
   cb(null, chunk);
 };
-},{"./_stream_transform":77,"core-util-is":26,"inherits":33}],76:[function(_dereq_,module,exports){
+},{"./_stream_transform":76,"core-util-is":26,"inherits":32}],75:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -20423,7 +20131,7 @@ function indexOf(xs, x) {
 }
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./_stream_duplex":74,"./internal/streams/BufferList":79,"./internal/streams/destroy":80,"./internal/streams/stream":81,"_process":69,"core-util-is":26,"events":29,"inherits":33,"isarray":35,"process-nextick-args":68,"safe-buffer":83,"string_decoder/":88,"util":22}],77:[function(_dereq_,module,exports){
+},{"./_stream_duplex":73,"./internal/streams/BufferList":78,"./internal/streams/destroy":79,"./internal/streams/stream":80,"_process":68,"core-util-is":26,"events":83,"inherits":32,"isarray":34,"process-nextick-args":67,"safe-buffer":82,"string_decoder/":88,"util":22}],76:[function(_dereq_,module,exports){
 // Copyright Joyent, Inc. and other Node contributors.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a
@@ -20638,7 +20346,7 @@ function done(stream, er, data) {
 
   return stream.push(null);
 }
-},{"./_stream_duplex":74,"core-util-is":26,"inherits":33}],78:[function(_dereq_,module,exports){
+},{"./_stream_duplex":73,"core-util-is":26,"inherits":32}],77:[function(_dereq_,module,exports){
 (function (process,global){
 // Copyright Joyent, Inc. and other Node contributors.
 //
@@ -21306,7 +21014,7 @@ Writable.prototype._destroy = function (err, cb) {
 };
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {})
 
-},{"./_stream_duplex":74,"./internal/streams/destroy":80,"./internal/streams/stream":81,"_process":69,"core-util-is":26,"inherits":33,"process-nextick-args":68,"safe-buffer":83,"util-deprecate":92}],79:[function(_dereq_,module,exports){
+},{"./_stream_duplex":73,"./internal/streams/destroy":79,"./internal/streams/stream":80,"_process":68,"core-util-is":26,"inherits":32,"process-nextick-args":67,"safe-buffer":82,"util-deprecate":92}],78:[function(_dereq_,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -21381,7 +21089,7 @@ module.exports = function () {
 
   return BufferList;
 }();
-},{"safe-buffer":83}],80:[function(_dereq_,module,exports){
+},{"safe-buffer":82}],79:[function(_dereq_,module,exports){
 'use strict';
 
 /*<replacement>*/
@@ -21454,10 +21162,10 @@ module.exports = {
   destroy: destroy,
   undestroy: undestroy
 };
-},{"process-nextick-args":68}],81:[function(_dereq_,module,exports){
+},{"process-nextick-args":67}],80:[function(_dereq_,module,exports){
 module.exports = _dereq_('events').EventEmitter;
 
-},{"events":29}],82:[function(_dereq_,module,exports){
+},{"events":83}],81:[function(_dereq_,module,exports){
 exports = module.exports = _dereq_('./lib/_stream_readable.js');
 exports.Stream = exports;
 exports.Readable = exports;
@@ -21466,7 +21174,7 @@ exports.Duplex = _dereq_('./lib/_stream_duplex.js');
 exports.Transform = _dereq_('./lib/_stream_transform.js');
 exports.PassThrough = _dereq_('./lib/_stream_passthrough.js');
 
-},{"./lib/_stream_duplex.js":74,"./lib/_stream_passthrough.js":75,"./lib/_stream_readable.js":76,"./lib/_stream_transform.js":77,"./lib/_stream_writable.js":78}],83:[function(_dereq_,module,exports){
+},{"./lib/_stream_duplex.js":73,"./lib/_stream_passthrough.js":74,"./lib/_stream_readable.js":75,"./lib/_stream_transform.js":76,"./lib/_stream_writable.js":77}],82:[function(_dereq_,module,exports){
 /* eslint-disable node/no-deprecated-api */
 var buffer = _dereq_('buffer')
 var Buffer = buffer.Buffer
@@ -21530,7 +21238,528 @@ SafeBuffer.allocUnsafeSlow = function (size) {
   return buffer.SlowBuffer(size)
 }
 
-},{"buffer":23}],84:[function(_dereq_,module,exports){
+},{"buffer":23}],83:[function(_dereq_,module,exports){
+// Copyright Joyent, Inc. and other Node contributors.
+//
+// Permission is hereby granted, free of charge, to any person obtaining a
+// copy of this software and associated documentation files (the
+// "Software"), to deal in the Software without restriction, including
+// without limitation the rights to use, copy, modify, merge, publish,
+// distribute, sublicense, and/or sell copies of the Software, and to permit
+// persons to whom the Software is furnished to do so, subject to the
+// following conditions:
+//
+// The above copyright notice and this permission notice shall be included
+// in all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+// OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+// MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN
+// NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+// DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
+// OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
+// USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+var objectCreate = Object.create || objectCreatePolyfill
+var objectKeys = Object.keys || objectKeysPolyfill
+var bind = Function.prototype.bind || functionBindPolyfill
+
+function EventEmitter() {
+  if (!this._events || !Object.prototype.hasOwnProperty.call(this, '_events')) {
+    this._events = objectCreate(null);
+    this._eventsCount = 0;
+  }
+
+  this._maxListeners = this._maxListeners || undefined;
+}
+module.exports = EventEmitter;
+
+// Backwards-compat with node 0.10.x
+EventEmitter.EventEmitter = EventEmitter;
+
+EventEmitter.prototype._events = undefined;
+EventEmitter.prototype._maxListeners = undefined;
+
+// By default EventEmitters will print a warning if more than 10 listeners are
+// added to it. This is a useful default which helps finding memory leaks.
+var defaultMaxListeners = 10;
+
+var hasDefineProperty;
+try {
+  var o = {};
+  if (Object.defineProperty) Object.defineProperty(o, 'x', { value: 0 });
+  hasDefineProperty = o.x === 0;
+} catch (err) { hasDefineProperty = false }
+if (hasDefineProperty) {
+  Object.defineProperty(EventEmitter, 'defaultMaxListeners', {
+    enumerable: true,
+    get: function() {
+      return defaultMaxListeners;
+    },
+    set: function(arg) {
+      // check whether the input is a positive number (whose value is zero or
+      // greater and not a NaN).
+      if (typeof arg !== 'number' || arg < 0 || arg !== arg)
+        throw new TypeError('"defaultMaxListeners" must be a positive number');
+      defaultMaxListeners = arg;
+    }
+  });
+} else {
+  EventEmitter.defaultMaxListeners = defaultMaxListeners;
+}
+
+// Obviously not all Emitters should be limited to 10. This function allows
+// that to be increased. Set to zero for unlimited.
+EventEmitter.prototype.setMaxListeners = function setMaxListeners(n) {
+  if (typeof n !== 'number' || n < 0 || isNaN(n))
+    throw new TypeError('"n" argument must be a positive number');
+  this._maxListeners = n;
+  return this;
+};
+
+function $getMaxListeners(that) {
+  if (that._maxListeners === undefined)
+    return EventEmitter.defaultMaxListeners;
+  return that._maxListeners;
+}
+
+EventEmitter.prototype.getMaxListeners = function getMaxListeners() {
+  return $getMaxListeners(this);
+};
+
+// These standalone emit* functions are used to optimize calling of event
+// handlers for fast cases because emit() itself often has a variable number of
+// arguments and can be deoptimized because of that. These functions always have
+// the same number of arguments and thus do not get deoptimized, so the code
+// inside them can execute faster.
+function emitNone(handler, isFn, self) {
+  if (isFn)
+    handler.call(self);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self);
+  }
+}
+function emitOne(handler, isFn, self, arg1) {
+  if (isFn)
+    handler.call(self, arg1);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1);
+  }
+}
+function emitTwo(handler, isFn, self, arg1, arg2) {
+  if (isFn)
+    handler.call(self, arg1, arg2);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1, arg2);
+  }
+}
+function emitThree(handler, isFn, self, arg1, arg2, arg3) {
+  if (isFn)
+    handler.call(self, arg1, arg2, arg3);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].call(self, arg1, arg2, arg3);
+  }
+}
+
+function emitMany(handler, isFn, self, args) {
+  if (isFn)
+    handler.apply(self, args);
+  else {
+    var len = handler.length;
+    var listeners = arrayClone(handler, len);
+    for (var i = 0; i < len; ++i)
+      listeners[i].apply(self, args);
+  }
+}
+
+EventEmitter.prototype.emit = function emit(type) {
+  var er, handler, len, args, i, events;
+  var doError = (type === 'error');
+
+  events = this._events;
+  if (events)
+    doError = (doError && events.error == null);
+  else if (!doError)
+    return false;
+
+  // If there is no 'error' event listener then throw.
+  if (doError) {
+    if (arguments.length > 1)
+      er = arguments[1];
+    if (er instanceof Error) {
+      throw er; // Unhandled 'error' event
+    } else {
+      // At least give some kind of context to the user
+      var err = new Error('Unhandled "error" event. (' + er + ')');
+      err.context = er;
+      throw err;
+    }
+    return false;
+  }
+
+  handler = events[type];
+
+  if (!handler)
+    return false;
+
+  var isFn = typeof handler === 'function';
+  len = arguments.length;
+  switch (len) {
+      // fast cases
+    case 1:
+      emitNone(handler, isFn, this);
+      break;
+    case 2:
+      emitOne(handler, isFn, this, arguments[1]);
+      break;
+    case 3:
+      emitTwo(handler, isFn, this, arguments[1], arguments[2]);
+      break;
+    case 4:
+      emitThree(handler, isFn, this, arguments[1], arguments[2], arguments[3]);
+      break;
+      // slower
+    default:
+      args = new Array(len - 1);
+      for (i = 1; i < len; i++)
+        args[i - 1] = arguments[i];
+      emitMany(handler, isFn, this, args);
+  }
+
+  return true;
+};
+
+function _addListener(target, type, listener, prepend) {
+  var m;
+  var events;
+  var existing;
+
+  if (typeof listener !== 'function')
+    throw new TypeError('"listener" argument must be a function');
+
+  events = target._events;
+  if (!events) {
+    events = target._events = objectCreate(null);
+    target._eventsCount = 0;
+  } else {
+    // To avoid recursion in the case that type === "newListener"! Before
+    // adding it to the listeners, first emit "newListener".
+    if (events.newListener) {
+      target.emit('newListener', type,
+          listener.listener ? listener.listener : listener);
+
+      // Re-assign `events` because a newListener handler could have caused the
+      // this._events to be assigned to a new object
+      events = target._events;
+    }
+    existing = events[type];
+  }
+
+  if (!existing) {
+    // Optimize the case of one listener. Don't need the extra array object.
+    existing = events[type] = listener;
+    ++target._eventsCount;
+  } else {
+    if (typeof existing === 'function') {
+      // Adding the second element, need to change to array.
+      existing = events[type] =
+          prepend ? [listener, existing] : [existing, listener];
+    } else {
+      // If we've already got an array, just append.
+      if (prepend) {
+        existing.unshift(listener);
+      } else {
+        existing.push(listener);
+      }
+    }
+
+    // Check for listener leak
+    if (!existing.warned) {
+      m = $getMaxListeners(target);
+      if (m && m > 0 && existing.length > m) {
+        existing.warned = true;
+        var w = new Error('Possible EventEmitter memory leak detected. ' +
+            existing.length + ' "' + String(type) + '" listeners ' +
+            'added. Use emitter.setMaxListeners() to ' +
+            'increase limit.');
+        w.name = 'MaxListenersExceededWarning';
+        w.emitter = target;
+        w.type = type;
+        w.count = existing.length;
+        if (typeof console === 'object' && console.warn) {
+          console.warn('%s: %s', w.name, w.message);
+        }
+      }
+    }
+  }
+
+  return target;
+}
+
+EventEmitter.prototype.addListener = function addListener(type, listener) {
+  return _addListener(this, type, listener, false);
+};
+
+EventEmitter.prototype.on = EventEmitter.prototype.addListener;
+
+EventEmitter.prototype.prependListener =
+    function prependListener(type, listener) {
+      return _addListener(this, type, listener, true);
+    };
+
+function onceWrapper() {
+  if (!this.fired) {
+    this.target.removeListener(this.type, this.wrapFn);
+    this.fired = true;
+    switch (arguments.length) {
+      case 0:
+        return this.listener.call(this.target);
+      case 1:
+        return this.listener.call(this.target, arguments[0]);
+      case 2:
+        return this.listener.call(this.target, arguments[0], arguments[1]);
+      case 3:
+        return this.listener.call(this.target, arguments[0], arguments[1],
+            arguments[2]);
+      default:
+        var args = new Array(arguments.length);
+        for (var i = 0; i < args.length; ++i)
+          args[i] = arguments[i];
+        this.listener.apply(this.target, args);
+    }
+  }
+}
+
+function _onceWrap(target, type, listener) {
+  var state = { fired: false, wrapFn: undefined, target: target, type: type, listener: listener };
+  var wrapped = bind.call(onceWrapper, state);
+  wrapped.listener = listener;
+  state.wrapFn = wrapped;
+  return wrapped;
+}
+
+EventEmitter.prototype.once = function once(type, listener) {
+  if (typeof listener !== 'function')
+    throw new TypeError('"listener" argument must be a function');
+  this.on(type, _onceWrap(this, type, listener));
+  return this;
+};
+
+EventEmitter.prototype.prependOnceListener =
+    function prependOnceListener(type, listener) {
+      if (typeof listener !== 'function')
+        throw new TypeError('"listener" argument must be a function');
+      this.prependListener(type, _onceWrap(this, type, listener));
+      return this;
+    };
+
+// Emits a 'removeListener' event if and only if the listener was removed.
+EventEmitter.prototype.removeListener =
+    function removeListener(type, listener) {
+      var list, events, position, i, originalListener;
+
+      if (typeof listener !== 'function')
+        throw new TypeError('"listener" argument must be a function');
+
+      events = this._events;
+      if (!events)
+        return this;
+
+      list = events[type];
+      if (!list)
+        return this;
+
+      if (list === listener || list.listener === listener) {
+        if (--this._eventsCount === 0)
+          this._events = objectCreate(null);
+        else {
+          delete events[type];
+          if (events.removeListener)
+            this.emit('removeListener', type, list.listener || listener);
+        }
+      } else if (typeof list !== 'function') {
+        position = -1;
+
+        for (i = list.length - 1; i >= 0; i--) {
+          if (list[i] === listener || list[i].listener === listener) {
+            originalListener = list[i].listener;
+            position = i;
+            break;
+          }
+        }
+
+        if (position < 0)
+          return this;
+
+        if (position === 0)
+          list.shift();
+        else
+          spliceOne(list, position);
+
+        if (list.length === 1)
+          events[type] = list[0];
+
+        if (events.removeListener)
+          this.emit('removeListener', type, originalListener || listener);
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.removeAllListeners =
+    function removeAllListeners(type) {
+      var listeners, events, i;
+
+      events = this._events;
+      if (!events)
+        return this;
+
+      // not listening for removeListener, no need to emit
+      if (!events.removeListener) {
+        if (arguments.length === 0) {
+          this._events = objectCreate(null);
+          this._eventsCount = 0;
+        } else if (events[type]) {
+          if (--this._eventsCount === 0)
+            this._events = objectCreate(null);
+          else
+            delete events[type];
+        }
+        return this;
+      }
+
+      // emit removeListener for all listeners on all events
+      if (arguments.length === 0) {
+        var keys = objectKeys(events);
+        var key;
+        for (i = 0; i < keys.length; ++i) {
+          key = keys[i];
+          if (key === 'removeListener') continue;
+          this.removeAllListeners(key);
+        }
+        this.removeAllListeners('removeListener');
+        this._events = objectCreate(null);
+        this._eventsCount = 0;
+        return this;
+      }
+
+      listeners = events[type];
+
+      if (typeof listeners === 'function') {
+        this.removeListener(type, listeners);
+      } else if (listeners) {
+        // LIFO order
+        for (i = listeners.length - 1; i >= 0; i--) {
+          this.removeListener(type, listeners[i]);
+        }
+      }
+
+      return this;
+    };
+
+EventEmitter.prototype.listeners = function listeners(type) {
+  var evlistener;
+  var ret;
+  var events = this._events;
+
+  if (!events)
+    ret = [];
+  else {
+    evlistener = events[type];
+    if (!evlistener)
+      ret = [];
+    else if (typeof evlistener === 'function')
+      ret = [evlistener.listener || evlistener];
+    else
+      ret = unwrapListeners(evlistener);
+  }
+
+  return ret;
+};
+
+EventEmitter.listenerCount = function(emitter, type) {
+  if (typeof emitter.listenerCount === 'function') {
+    return emitter.listenerCount(type);
+  } else {
+    return listenerCount.call(emitter, type);
+  }
+};
+
+EventEmitter.prototype.listenerCount = listenerCount;
+function listenerCount(type) {
+  var events = this._events;
+
+  if (events) {
+    var evlistener = events[type];
+
+    if (typeof evlistener === 'function') {
+      return 1;
+    } else if (evlistener) {
+      return evlistener.length;
+    }
+  }
+
+  return 0;
+}
+
+EventEmitter.prototype.eventNames = function eventNames() {
+  return this._eventsCount > 0 ? Reflect.ownKeys(this._events) : [];
+};
+
+// About 1.5x faster than the two-arg version of Array#splice().
+function spliceOne(list, index) {
+  for (var i = index, k = i + 1, n = list.length; k < n; i += 1, k += 1)
+    list[i] = list[k];
+  list.pop();
+}
+
+function arrayClone(arr, n) {
+  var copy = new Array(n);
+  for (var i = 0; i < n; ++i)
+    copy[i] = arr[i];
+  return copy;
+}
+
+function unwrapListeners(arr) {
+  var ret = new Array(arr.length);
+  for (var i = 0; i < ret.length; ++i) {
+    ret[i] = arr[i].listener || arr[i];
+  }
+  return ret;
+}
+
+function objectCreatePolyfill(proto) {
+  var F = function() {};
+  F.prototype = proto;
+  return new F;
+}
+function objectKeysPolyfill(obj) {
+  var keys = [];
+  for (var k in obj) if (Object.prototype.hasOwnProperty.call(obj, k)) {
+    keys.push(k);
+  }
+  return k;
+}
+function functionBindPolyfill(context) {
+  var fn = this;
+  return function () {
+    return fn.apply(context, arguments);
+  };
+}
+
+},{}],84:[function(_dereq_,module,exports){
 (function (global){
 var ClientRequest = _dereq_('./lib/request')
 var extend = _dereq_('xtend')
@@ -21998,7 +22227,7 @@ var unsafeHeaders = [
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
 
-},{"./capability":85,"./response":87,"_process":69,"buffer":23,"inherits":33,"readable-stream":82,"to-arraybuffer":89}],87:[function(_dereq_,module,exports){
+},{"./capability":85,"./response":87,"_process":68,"buffer":23,"inherits":32,"readable-stream":81,"to-arraybuffer":89}],87:[function(_dereq_,module,exports){
 (function (process,global,Buffer){
 var capability = _dereq_('./capability')
 var inherits = _dereq_('inherits')
@@ -22185,7 +22414,7 @@ IncomingMessage.prototype._onXHRProgress = function () {
 
 }).call(this,_dereq_('_process'),typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : typeof window !== "undefined" ? window : {},_dereq_("buffer").Buffer)
 
-},{"./capability":85,"_process":69,"buffer":23,"inherits":33,"readable-stream":82}],88:[function(_dereq_,module,exports){
+},{"./capability":85,"_process":68,"buffer":23,"inherits":32,"readable-stream":81}],88:[function(_dereq_,module,exports){
 'use strict';
 
 var Buffer = _dereq_('safe-buffer').Buffer;
@@ -22458,7 +22687,7 @@ function simpleWrite(buf) {
 function simpleEnd(buf) {
   return buf && buf.length ? this.write(buf) : '';
 }
-},{"safe-buffer":83}],89:[function(_dereq_,module,exports){
+},{"safe-buffer":82}],89:[function(_dereq_,module,exports){
 var Buffer = _dereq_('buffer').Buffer
 
 module.exports = function (buf) {
@@ -23221,7 +23450,7 @@ Url.prototype.parseHost = function() {
   if (host) this.hostname = host;
 };
 
-},{"./util":91,"punycode":70,"querystring":73}],91:[function(_dereq_,module,exports){
+},{"./util":91,"punycode":69,"querystring":72}],91:[function(_dereq_,module,exports){
 'use strict';
 
 module.exports = {
@@ -23347,7 +23576,7 @@ function extend() {
 
 
     var RandExp = _interopDefault$1(randexp);
-    var deref = _interopDefault$1(lib$1);
+    var deref = _interopDefault$1(lib$2);
     var jsonpath$1 = _interopDefault$1(jsonpath);
     var $RefParser = _interopDefault$1(require$$3);
 
@@ -23655,6 +23884,11 @@ function extend() {
     function getRandom(min, max) {
         return optionAPI('random')() * (max - min) + min;
     }
+    function getRandomInteger(min, max) {
+        min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
+        max = typeof max === 'undefined' ? env.MAX_INTEGER : max;
+        return Math.floor(optionAPI('random')() * (max - min + 1)) + min;
+    }
     /**
      * Generates random number according to parameters passed
      *
@@ -23674,11 +23908,12 @@ function extend() {
         if (max < min) {
             max += min;
         }
-        var result = getRandom(min, max);
-        if (!hasPrecision) {
-            return Math.round(result);
+        if (hasPrecision) {
+            return getRandom(min, max);
         }
-        return result;
+        else {
+            return getRandomInteger(min, max);
+        }
     }
     function by(type) {
         switch (type) {
@@ -24203,10 +24438,7 @@ function extend() {
     // returns floating point numbers, and `integer` type truncates the fraction
     // part, leaving the result as an integer.
     var integerType = function integerType(value) {
-        var generated = numberType(value);
-        // whether the generated number is positive or negative, need to use either
-        // floor (positive) or ceil (negative) function to get rid of the fraction
-        return generated > 0 ? Math.floor(generated) : Math.ceil(generated);
+        return numberType(Object.assign({}, { multipleOf: 1 }, value));
     };
 
     var LIPSUM_WORDS = ('Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore'
@@ -24867,8 +25099,8 @@ function extend() {
     var VERSION="0.5.0-rc15";
     jsf.version = VERSION;
 
-    var lib$2 = jsf;
+    var lib$3 = jsf;
 
-    return lib$2;
+    return lib$3;
 
 })));
