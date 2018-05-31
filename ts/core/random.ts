@@ -61,6 +61,13 @@ function getRandom(min: number, max: number): number {
   return optionAPI('random')() * (max - min) + min;
 }
 
+function getRandomInteger(min?: number, max?: number) {
+  min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
+  max = typeof max === 'undefined' ? env.MAX_INTEGER : max;
+
+  return Math.floor(optionAPI('random')() * (max - min + 1)) + min;
+}
+
 /**
  * Generates random number according to parameters passed
  *
@@ -82,13 +89,11 @@ function number(min?: number, max?: number, defMin?: number, defMax?: number, ha
     max += min;
   }
 
-  var result: number = getRandom(min, max);
-
-  if (!hasPrecision) {
-    return Math.round(result);
+  if (hasPrecision) {
+    return getRandom(min, max);
+  } else {
+    return getRandomInteger(min, max);
   }
-
-  return result;
 }
 
 function by(type) {
