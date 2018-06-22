@@ -1,0 +1,19 @@
+[
+  {
+    "description": "useExampleValue option",
+    "tests": [
+      {
+        "description": "should handle useExampleValue option",
+        "schema": {
+          "type": "string",
+          "default": "Hello",
+          "examples": [
+            "World"
+          ]
+        },
+        "equal": "World",
+        "require": "core/option/useExampleValue"
+      }
+    ]
+  }
+]

@@ -13,6 +13,11 @@ function traverse(schema: JsonSchema, path: SchemaPath, resolve: Function, rootS
     return;
   }
 
+  // example values have highest precedence
+  if (optionAPI('useExampleValue') && Array.isArray(schema.examples)) {
+    return utils.typecast(schema, () => random.pick(schema.examples));
+  }
+
   // default values has higher precedence
   if (optionAPI('useDefaultValue') && 'default' in schema) {
     return schema.default;

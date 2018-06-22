@@ -25,6 +25,7 @@ class OptionRegistry extends Registry<Option> {
     data['alwaysFakeOptionals'] = false;
     data['optionalsProbability'] = 0.0;
     data['useDefaultValue'] = false;
+    data['useExampleValue'] = false;
     data['requiredOnly'] = false;
 
     data['minItems'] = 0;
