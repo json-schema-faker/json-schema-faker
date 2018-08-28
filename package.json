@@ -78,7 +78,7 @@
     "glob": "^7.1.2",
     "google-closure-compiler-js": "^20180610.0.0",
     "istanbul": "^0.4.5",
-    "jasmine-node": "2.0.0-beta4",
+    "jasmine-node": "^2.0.1",
     "jayschema": "^0.3.2",
     "lodash.template": "^4.4.0",
     "rollup": "^0.65.0",
