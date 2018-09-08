@@ -1,9 +1,0 @@
-/*!
- * <%= pkg.name %> library v<%= pkg.version %>
- * <%= pkg.homepage %>
- *
- * Copyright (c) 2014-<%= now.substr(0, 4) %> Alvaro Cabrera & Tomasz Ducin
- * Released under the <%= pkg.license %> license
- *
- * Date: <%= now %>
- */
