@@ -21,17 +21,9 @@
     "typedoc": "typedoc --out docs/html ts/ --module commonjs",
     "graphviz": "madge lib --dot > structure.gv"
   },
-  "author": {
-    "name": "Alvaro Cabrera",
-    "email": "pateketrueke@gmail.com",
-    "url": "https://soypache.co"
-  },
+  "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
-    {
-      "name": "Tomasz Ducin",
-      "email": "tomasz@ducin.it",
-      "url": "http://ducin.it"
-    }
+    "Tomasz Ducin <tomasz@ducin.it> (http://ducin.it)"
   ],
   "repository": {
     "type": "git",
@@ -65,6 +57,7 @@
     "z-schema": "^3.18.4"
   },
   "dependencies": {
+    "deref": "^0.7.5",
     "json-schema-ref-parser": "^5.0.0",
     "jsonpath": "^1.0.0",
     "randexp": "^0.5.3"
