@@ -5,6 +5,12 @@ import env from '../core/constants';
 
 import RandExp from 'randexp';
 
+function getRandomInteger(min, max) {
+  min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
+  max = typeof max === 'undefined' ? env.MAX_INTEGER : max;
+  return Math.floor(optionAPI('random')() * (max - min + 1)) + min;
+}
+
 function _randexp(value) {
   // set maximum default, see #193
   RandExp.prototype.max = optionAPI('defaultRandExpMax');
@@ -82,13 +88,11 @@ function number(min, max, defMin, defMax, hasPrecision = false) {
     max += min;
   }
 
-  var result = getRandom(min, max);
-
-  if (!hasPrecision) {
-    return Math.round(result);
+  if (hasPrecision) {
+    return getRandom(min, max);
   }
 
-  return result;
+  return getRandomInteger(min, max);
 }
 
 function by(type) {
