@@ -1,0 +1,23 @@
+[
+  {
+    "description": "use faker or chance as object properties",
+    "tests": [
+      {
+        "description": "should allow both keywords",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "faker": {
+              "type": "string",
+              "format": "email"
+            }
+          },
+          "required": [
+            "faker"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]
