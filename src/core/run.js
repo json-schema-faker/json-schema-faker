@@ -84,7 +84,7 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   try {
-    const result = traverse(schema, [], function reduce(sub, maxReduceDepth) {
+    const result = traverse(schema, [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
       if (typeof maxReduceDepth === 'undefined') {
         maxReduceDepth = random.number(1, 3);
       }
@@ -132,7 +132,7 @@ function run(refs, schema, container) {
         // this is the only case where all sub-schemas
         // must be resolved before any merge
         schemas.forEach(function(subSchema) {
-          var _sub = reduce(subSchema, maxReduceDepth + 1);
+          var _sub = reduce(subSchema, maxReduceDepth + 1, parentSchemaPath);
 
           // call given thunks if present
           utils.merge(sub, typeof _sub.thunk === 'function'
@@ -166,7 +166,16 @@ function run(refs, schema, container) {
 
       for (var prop in sub) {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-          sub[prop] = reduce(sub[prop], maxReduceDepth);
+          sub[prop] = reduce(sub[prop], maxReduceDepth, parentSchemaPath.concat(prop));
+        }
+      }
+
+      // avoid extra calls on sub-schemas, fixes #458
+      if (parentSchemaPath) {
+        const lastProp = parentSchemaPath[parentSchemaPath.length - 1];
+
+        if (lastProp === 'properties' || lastProp === 'items') {
+          return sub;
         }
       }
 
