@@ -13,7 +13,7 @@
     "dev": "npm test -- -w",
     "test": "npm run test:unit --",
     "test:ci": "npm run coverage:unit && npm run report -- -r lcov",
-    "test:run": "NODE_ENV=test _mocha --exit --recursive -r esm -bR spec --",
+    "test:run": "NODE_ENV=test _mocha --exit --recursive --watch-extensions js,json -r esm -bR spec",
     "test:unit": "npm run test:run tests/unit",
     "test:schema": "npm run test:run tests/schema",
     "coverage": "nyc -x '**/core/**' -x '**/*.spec.js'",
