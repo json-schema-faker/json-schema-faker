@@ -1,3 +1,4 @@
+import is from 'is-my-json-valid';
 import tv4 from 'tv4';
 import clone from 'clone';
 import semver from 'semver';
@@ -47,6 +48,18 @@ export function checkSchema(sample, schema, refs) {
     });
   }
 
+  // is-my-json-valid
+  const v = is(schema, {
+    formats: {
+      semver: semver.valid,
+    },
+    schemas: fixed,
+  });
+
+  if (!v(sample)) {
+    console.log(v.errors);
+  }
+
   // z-schema
   const validator = new ZSchema({
     ignoreUnresolvableReferences: false,
@@ -61,7 +74,7 @@ export function checkSchema(sample, schema, refs) {
   try {
     valid = validator.validate(clone(sample), clone(schema));
   } catch (e) {
-    fail.push(e.message);
+    fail.push(`[z-schema] ${e.message}`);
   }
 
   const errors = validator.getLastErrors();
@@ -69,11 +82,11 @@ export function checkSchema(sample, schema, refs) {
   if (errors || !valid) {
     fail.push(errors.map(e => {
       if (e.code === 'PARENT_SCHEMA_VALIDATION_FAILED') {
-        return e.inner.map(x => x.message).join('\n');
+        return e.inner.map(x => `[z-schema] ${x.message}`).join('\n');
       }
 
-      return e.message;
-    }).join('\n') || `Invalid schema ${JSON.stringify(sample)}`);
+      return `[z-schema] ${e.message}`;
+    }).join('\n') || `[z-schema] Invalid schema ${JSON.stringify(sample)}`);
   }
 
   // tv4
@@ -89,11 +102,11 @@ export function checkSchema(sample, schema, refs) {
   let result = api.validateResult(sample, clone(schema), api.cyclicCheck, api.banUnknown);
 
   if (result.missing.length) {
-    fail.push(`Missing ${result.missing.join(', ')}`);
+    fail.push(`[tv4] Missing ${result.missing.join(', ')}`);
   }
 
   if (result.error) {
-    fail.push(result.error);
+    fail.push(`[tv4] ${result.error}`);
   }
 
   // jayschema
@@ -108,7 +121,7 @@ export function checkSchema(sample, schema, refs) {
   result = jay.validate(sample, clone(schema));
 
   if (result.length) {
-    fail.push(result.map(e => e.desc || e.message).join('\n') || 'Invalid sample');
+    fail.push(result.map(e => `[jayschema] ${e.kind} ${e.testedValue} <${e.constraintName}> ${e.constraintValue}`).join('\n') || 'Invalid sample');
   }
 
   if (fail.length) {

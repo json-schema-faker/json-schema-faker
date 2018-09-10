@@ -1,8 +1,8 @@
 module.exports = {
-    register: function(jsf) {
-        return jsf.option({
-            'failOnInvalidTypes': false
-        });
-    }
+  register(jsf) {
+    return jsf.option({
+      failOnInvalidTypes: false,
+    });
+  },
 };
 

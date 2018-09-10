@@ -13,7 +13,7 @@ const typeMap = {
   integer: _integer,
   number: _number,
   object: _object,
-  string: _string
+  string: _string,
 };
 
 export default typeMap;

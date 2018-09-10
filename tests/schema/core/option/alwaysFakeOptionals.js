@@ -1,8 +1,8 @@
 module.exports = {
-    register: function(jsf) {
-        return jsf.option({
-            'useDefaultValue': true,
-            'alwaysFakeOptionals': true
-        });
-    }
+  register(jsf) {
+    return jsf.option({
+      useDefaultValue: true,
+      alwaysFakeOptionals: true,
+    });
+  },
 };
