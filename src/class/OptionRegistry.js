@@ -31,12 +31,12 @@ defaults.random = Math.random;
 class OptionRegistry extends Registry {
   constructor() {
     super();
-    this.data = { ...defaults };
+    this.data = Object.assign({}, defaults);
     this._defaults = defaults;
   }
 
   get defaults() {
-    return { ...this._defaults };
+    return Object.assign({}, this._defaults);
   }
 }
 
