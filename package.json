@@ -52,6 +52,7 @@
     "faker": "^4.1.0",
     "fs-extra": "^7.0.0",
     "glob": "^7.1.2",
+    "is-my-json-valid": "^2.19.0",
     "jayschema": "^0.3.2",
     "mocha": "^5.2.0",
     "nyc": "^13.0.1",

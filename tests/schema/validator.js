@@ -57,7 +57,12 @@ export function checkSchema(sample, schema, refs) {
   });
 
   if (!v(sample)) {
-    console.log(v.errors);
+    // FIXME: https://github.com/mafintosh/is-my-json-valid/issues/172
+    if (v.errors[0].field !== 'data.num') {
+      v.errors.forEach(e => {
+        fail.push(`${e.field.replace('data.', '')} ${e.message}`);
+      });
+    }
   }
 
   // z-schema
