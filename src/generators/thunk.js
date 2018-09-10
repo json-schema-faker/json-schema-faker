@@ -7,7 +7,8 @@ import random from '../core/random';
  * @returns {string}
  */
 function produce() {
-  var length = random.number(1, 5);
+  const length = random.number(1, 5);
+
   return words(length).join(' ');
 }
 
@@ -17,9 +18,10 @@ function produce() {
  * @returns {string}
  */
 function thunkGenerator(min = 0, max = 140) {
-  var _min = Math.max(0, min),
-    _max = random.number(_min, max),
-    result = produce();
+  const _min = Math.max(0, min);
+  const _max = random.number(_min, max);
+
+  let result = produce();
 
   // append until length is reached
   while (result.length < _min) {

@@ -9,13 +9,13 @@ import random from './core/random';
 import utils from './core/utils';
 import run from './core/run';
 
-var container = new Container();
+const container = new Container();
 
 function getRefs(refs) {
-  var $refs = {};
+  let $refs = {};
 
   if (Array.isArray(refs)) {
-    refs.map(deref.util.normalizeSchema).forEach(function(schema) {
+    refs.map(deref.util.normalizeSchema).forEach(schema => {
       $refs[schema.id] = schema;
     });
   } else {
@@ -26,11 +26,11 @@ function getRefs(refs) {
 }
 
 function walk(obj, cb) {
-  var keys = Object.keys(obj);
+  const keys = Object.keys(obj);
 
-  var retval;
+  let retval;
 
-  for (var i = 0; i < keys.length; i += 1) {
+  for (let i = 0; i < keys.length; i += 1) {
     retval = cb(obj[keys[i]], keys[i], obj);
 
     if (!retval && obj[keys[i]] && !Array.isArray(obj[keys[i]]) && typeof obj[keys[i]] === 'object') {
@@ -43,10 +43,10 @@ function walk(obj, cb) {
   }
 }
 
-var jsf = function(schema, refs) {
-  var ignore = option('ignoreMissingRefs');
+const jsf = (schema, refs) => {
+  const ignore = option('ignoreMissingRefs');
 
-  const $ = deref((id, refs) => {
+  const $ = deref(() => {
     // FIXME: allow custom callback?
 
     if (ignore) {
@@ -54,12 +54,12 @@ var jsf = function(schema, refs) {
     }
   });
 
-  var $refs = getRefs(refs);
+  const $refs = getRefs(refs);
 
   return run($refs, $(schema, $refs, true), container);
 };
 
-jsf.resolve = function(schema, refs, cwd) {
+jsf.resolve = (schema, refs, cwd) => {
   if (typeof refs === 'string') {
     cwd = refs;
     refs = {};
@@ -67,9 +67,9 @@ jsf.resolve = function(schema, refs, cwd) {
 
   // normalize basedir (browser aware)
   cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
-  cwd = cwd.replace(/\/+$/, '') + '/';
+  cwd = `${cwd.replace(/\/+$/, '')}/`;
 
-  var $refs = getRefs(refs);
+  const $refs = getRefs(refs);
 
   // identical setup as json-schema-sequelizer
   const fixedRefs = {
@@ -104,7 +104,7 @@ jsf.resolve = function(schema, refs, cwd) {
       dereference: {
         circular: 'ignore',
       },
-    }).then((sub) => run($refs, sub, container));
+    }).then(sub => run($refs, sub, container));
 };
 
 jsf.format = format;
@@ -121,7 +121,7 @@ container.define('jsonPath', (value, schema) => {
 });
 
 // safe auto-increment values
-container.define('autoIncrement', function(value, schema) {
+container.define('autoIncrement', function autoIncrement(value, schema) {
   if (!this.offset) {
     const min = schema.minimum || 1;
     const max = min + env.MAX_NUMBER;
@@ -131,14 +131,14 @@ container.define('autoIncrement', function(value, schema) {
   }
 
   if (value === true) {
-    return this.offset++;
+    return this.offset++; // eslint-disable-line
   }
 
   return schema;
 });
 
 // safe-and-sequential dates
-container.define('sequentialDate', function(value, schema) {
+container.define('sequentialDate', function sequentialDate(value, schema) {
   if (!this.now) {
     this.now = random.date();
   }
@@ -160,17 +160,17 @@ container.define('sequentialDate', function(value, schema) {
 });
 
 // returns itself for chaining
-jsf.extend = function(name, cb) {
+jsf.extend = (name, cb) => {
   container.extend(name, cb);
   return jsf;
 };
 
-jsf.define = function(name, cb) {
+jsf.define = (name, cb) => {
   container.define(name, cb);
   return jsf;
 };
 
-jsf.locate = function(name) {
+jsf.locate = name => {
   return container.get(name);
 };
 

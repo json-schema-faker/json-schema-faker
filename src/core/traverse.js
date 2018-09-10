@@ -36,7 +36,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   // TODO remove the ugly overcome
-  var type = schema.type;
+  let type = schema.type;
 
   if (Array.isArray(type)) {
     type = random.pick(type);
@@ -52,7 +52,7 @@ function traverse(schema, path, resolve, rootSchema) {
   if (typeof type === 'string') {
     if (!types[type]) {
       if (optionAPI('failOnInvalidTypes')) {
-        throw new ParseError('unknown primitive ' + utils.short(type), path.concat(['type']));
+        throw new ParseError(`unknown primitive ${utils.short(type)}`, path.concat(['type']));
       } else {
         return optionAPI('defaultInvalidTypeProduct');
       }
@@ -74,19 +74,19 @@ function traverse(schema, path, resolve, rootSchema) {
     }
   }
 
-  var copy = {};
+  let copy = {};
 
   if (Array.isArray(schema)) {
     copy = [];
   }
 
-  for (var prop in schema) {
+  Object.keys(schema).forEach(prop => {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
       copy[prop] = traverse(schema[prop], path.concat([prop]), resolve, copy);
     } else {
       copy[prop] = schema[prop];
     }
-  }
+  });
 
   return copy;
 }

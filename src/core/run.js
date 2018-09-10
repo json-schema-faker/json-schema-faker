@@ -1,10 +1,10 @@
+import deref from 'deref';
+import jsonpath from 'jsonpath';
+
 import optionAPI from '../api/option';
 import traverse from './traverse';
 import random from './random';
 import utils from './utils';
-
-import deref from 'deref';
-import jsonpath from 'jsonpath';
 
 function pick(data) {
   return Array.isArray(data)
@@ -110,10 +110,10 @@ function run(refs, schema, container) {
         }
 
         if (sub.$ref.indexOf('#/') === -1) {
-          var ref = deref.util.findByRef(sub.$ref, refs);
+          const ref = deref.util.findByRef(sub.$ref, refs);
 
           if (!ref) {
-            throw new Error('Reference not found: ' + sub.$ref);
+            throw new Error(`Reference not found: ${sub.$ref}`);
           }
 
           return ref;
@@ -125,14 +125,14 @@ function run(refs, schema, container) {
       }
 
       if (Array.isArray(sub.allOf)) {
-        var schemas = sub.allOf;
+        const schemas = sub.allOf;
 
         delete sub.allOf;
 
         // this is the only case where all sub-schemas
         // must be resolved before any merge
-        schemas.forEach(function(subSchema) {
-          var _sub = reduce(subSchema, maxReduceDepth + 1, parentSchemaPath);
+        schemas.forEach(subSchema => {
+          const _sub = reduce(subSchema, maxReduceDepth + 1, parentSchemaPath);
 
           // call given thunks if present
           utils.merge(sub, typeof _sub.thunk === 'function'
@@ -142,7 +142,7 @@ function run(refs, schema, container) {
       }
 
       if (Array.isArray(sub.oneOf || sub.anyOf)) {
-        var mix = sub.oneOf || sub.anyOf;
+        const mix = sub.oneOf || sub.anyOf;
 
         // test every value from the enum against each-oneOf
         // schema, only values that validate once are kept
@@ -155,7 +155,7 @@ function run(refs, schema, container) {
 
         return {
           thunk() {
-            var copy = utils.merge({}, sub);
+            const copy = utils.merge({}, sub);
 
             utils.merge(copy, random.pick(mix));
 
@@ -164,11 +164,11 @@ function run(refs, schema, container) {
         };
       }
 
-      for (var prop in sub) {
+      Object.keys(sub).forEach(prop => {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
           sub[prop] = reduce(sub[prop], maxReduceDepth, parentSchemaPath.concat(prop));
         }
-      }
+      });
 
       // avoid extra calls on sub-schemas, fixes #458
       if (parentSchemaPath) {
@@ -189,7 +189,7 @@ function run(refs, schema, container) {
     return result;
   } catch (e) {
     if (e.path) {
-      throw new Error(e.message + ' in ' + '/' + e.path.join('/'));
+      throw new Error(`${e.message} in /${e.path.join('/')}`);
     } else {
       throw e;
     }

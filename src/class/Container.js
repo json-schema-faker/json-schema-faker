@@ -13,8 +13,8 @@ function template(value, schema) {
 // dynamic proxy for custom generators
 function proxy(gen) {
   return (value, schema, property, rootSchema) => {
-    var fn = value;
-    var args = [];
+    let fn = value;
+    let args = [];
 
     // support for nested object, first-key is the generator
     if (typeof value === 'object') {
@@ -30,10 +30,10 @@ function proxy(gen) {
     }
 
     // support for keypaths, e.g. "internet.email"
-    var props = fn.split('.');
+    const props = fn.split('.');
 
     // retrieve a fresh dependency
-    var ctx = gen();
+    let ctx = gen();
 
     while (props.length > 1) {
       ctx = ctx[props.shift()];
@@ -49,11 +49,11 @@ function proxy(gen) {
 
     // test for pending callbacks
     if (Object.prototype.toString.call(value) === '[object Object]') {
-      for (var key in value) {
+      Object.keys(value).forEach(key => {
         if (typeof value[key] === 'function') {
-          throw new Error('Cannot resolve value for "' + property + ': ' + fn + '", given: ' + value);
+          throw new Error(`Cannot resolve value for '${property}: ${fn}', given: ${value}`);
         }
-      }
+      });
     }
 
     return value;
@@ -106,7 +106,7 @@ class Container {
    */
   get(name) {
     if (typeof this.registry[name] === 'undefined') {
-      throw new ReferenceError('"' + name + '" dependency doesn\'t exist.');
+      throw new ReferenceError(`'${name}' dependency doesn't exist.`);
     }
     return this.registry[name];
   }
@@ -116,20 +116,21 @@ class Container {
    * @param schema
    */
   wrap(schema) {
-    var keys = Object.keys(schema);
-    var length = keys.length;
-    var context = {};
+    const keys = Object.keys(schema);
+    const context = {};
 
-    while (length--) {
-      var fn = keys[length].replace(/^x-/, '');
-      var gen = this.support[fn];
+    let length = keys.length;
+
+    while (length--) { // eslint-disable-line
+      const fn = keys[length].replace(/^x-/, '');
+      const gen = this.support[fn];
 
       if (typeof gen === 'function') {
         Object.defineProperty(schema, 'generate', {
           configurable: false,
           enumerable: false,
           writable: false,
-          value: rootSchema => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema),
+          value: rootSchema => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema), // eslint-disable-line
         });
         break;
       }

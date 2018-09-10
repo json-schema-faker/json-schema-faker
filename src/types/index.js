@@ -6,7 +6,7 @@ import _number from './number';
 import _object from './object';
 import _string from './string';
 
-var typeMap = {
+const typeMap = {
   boolean: _boolean,
   null: _null,
   array: _array,

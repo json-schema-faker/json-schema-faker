@@ -1,17 +1,17 @@
-var inferredProperties = {
+const inferredProperties = {
   array: [
     'additionalItems',
     'items',
     'maxItems',
     'minItems',
-    'uniqueItems'
+    'uniqueItems',
   ],
   integer: [
     'exclusiveMaximum',
     'exclusiveMinimum',
     'maximum',
     'minimum',
-    'multipleOf'
+    'multipleOf',
   ],
   object: [
     'additionalProperties',
@@ -20,24 +20,24 @@ var inferredProperties = {
     'minProperties',
     'patternProperties',
     'properties',
-    'required'
+    'required',
   ],
   string: [
     'maxLength',
     'minLength',
-    'pattern'
-  ]
+    'pattern',
+  ],
 };
 
 inferredProperties.number = inferredProperties.integer;
 
-var subschemaProperties = [
+const subschemaProperties = [
   'additionalItems',
   'items',
   'additionalProperties',
   'dependencies',
   'patternProperties',
-  'properties'
+  'properties',
 ];
 
 /**
@@ -50,12 +50,15 @@ var subschemaProperties = [
  * @returns {boolean}
  */
 function matchesType(obj, lastElementInPath, inferredTypeProperties) {
-  return Object.keys(obj).filter(function(prop) {
-    var isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1,
-      inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+  return Object.keys(obj).filter(prop => {
+    const isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1;
+    const inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+
     if (inferredPropertyFound && !isSubschema) {
       return true;
     }
+
+    return false;
   }).length > 0;
 }
 
@@ -66,8 +69,12 @@ function matchesType(obj, lastElementInPath, inferredTypeProperties) {
  * @returns {string|null}
  */
 function inferType(obj, schemaPath) {
-  for (var typeName in inferredProperties) {
-    var lastElementInPath = schemaPath[schemaPath.length - 1];
+  const keys = Object.keys(inferredProperties);
+
+  for (let i = 0; i < keys.length; i += 1) {
+    const typeName = keys[i];
+    const lastElementInPath = schemaPath[schemaPath.length - 1];
+
     if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
       return typeName;
     }

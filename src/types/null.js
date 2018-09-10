@@ -1,6 +1,6 @@
 import nullGenerator from '../generators/null';
 
-var nullType = nullGenerator;
+const nullType = nullGenerator;
 
 export default nullType;
 

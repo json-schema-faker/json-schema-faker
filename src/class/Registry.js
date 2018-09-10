@@ -18,16 +18,17 @@ class Registry {
    * Register many formats at one shot
    */
   registerMany(formats) {
-    for (var name in formats) {
+    Object.keys(formats).forEach(name => {
       this.data[name] = formats[name];
-    }
+    });
   }
 
   /**
    * Returns element by registry key
    */
   get(name) {
-    var format = this.data[name];
+    const format = this.data[name];
+
     return format;
   }
 
@@ -37,7 +38,6 @@ class Registry {
   list() {
     return this.data;
   }
-
 }
 
 export default Registry;

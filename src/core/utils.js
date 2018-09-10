@@ -3,10 +3,10 @@ import env from '../core/constants';
 import random from './random';
 
 function getSubAttribute(obj, dotSeparatedKey) {
-  var keyElements = dotSeparatedKey.split('.');
+  const keyElements = dotSeparatedKey.split('.');
 
   while (keyElements.length) {
-    var prop = keyElements.shift();
+    const prop = keyElements.shift();
 
     if (!obj[prop]) {
       break;
@@ -25,7 +25,7 @@ function getSubAttribute(obj, dotSeparatedKey) {
  * @returns {boolean}
  */
 function hasProperties(obj, ...properties) {
-  return properties.filter(function(key) {
+  return properties.filter(key => {
     return typeof obj[key] !== 'undefined';
   }).length > 0;
 }
@@ -55,8 +55,8 @@ function typecast(schema, callback) {
       }
 
       if (schema.enum) {
-        var min = Math.max(params.minimum || 0, 0);
-        var max = Math.min(params.maximum || Infinity, Infinity);
+        let min = Math.max(params.minimum || 0, 0);
+        let max = Math.min(params.maximum || Infinity, Infinity);
 
         if (schema.exclusiveMinimum && min === schema.minimum) {
           min += schema.multipleOf || 1;
@@ -77,7 +77,7 @@ function typecast(schema, callback) {
       }
       break;
 
-    case 'string':
+    case 'string': {
       if (typeof schema.minLength !== 'undefined') {
         params.minLength = schema.minLength;
       }
@@ -99,10 +99,13 @@ function typecast(schema, callback) {
         params.minLength = _minLength;
       }
       break;
+    }
+
+    default: break;
   }
 
   // execute generator
-  var value = callback(params);
+  let value = callback(params);
 
   // normalize output value
   switch (schema.type) {
@@ -118,33 +121,36 @@ function typecast(schema, callback) {
       value = !!value;
       break;
 
-    case 'string':
+    case 'string': {
       value = String(value);
 
-      var min = Math.max(params.minLength || 0, 0);
-      var max = Math.min(params.maxLength || Infinity, Infinity);
+      const min = Math.max(params.minLength || 0, 0);
+      const max = Math.min(params.maxLength || Infinity, Infinity);
 
       while (value.length < min) {
-        value += ' ' + value;
+        value += ` ${value}`;
       }
 
       if (value.length > max) {
         value = value.substr(0, max);
       }
       break;
+    }
+
+    default: break;
   }
 
   return value;
 }
 
 function merge(a, b) {
-  for (var key in b) {
+  Object.keys(b).forEach(key => {
     if (typeof b[key] !== 'object' || b[key] === null) {
       a[key] = b[key];
     } else if (Array.isArray(b[key])) {
       a[key] = a[key] || [];
       // fix #292 - skip duplicated values from merge object (b)
-      b[key].forEach(function(value) {
+      b[key].forEach(value => {
         if (a[key].indexOf(value) === -1) {
           a[key].push(value);
         }
@@ -154,22 +160,25 @@ function merge(a, b) {
     } else {
       a[key] = merge(a[key], b[key]);
     }
-  }
+  });
+
   return a;
 }
 
 function clean(obj, isArray, requiredProps) {
   if (!obj || typeof obj !== 'object') {
-      return obj;
+    return obj;
   }
+
   if (Array.isArray(obj)) {
     obj = obj
-      .map(function (value) { return clean(value, true, requiredProps); })
-      .filter(function (value) { return typeof value !== 'undefined'; });
+      .map(value => clean(value, true, requiredProps))
+      .filter(value => typeof value !== 'undefined');
 
     return obj;
   }
-  Object.keys(obj).forEach(function(k) {
+
+  Object.keys(obj).forEach(k => {
     if (!requiredProps || requiredProps.indexOf(k) === -1) {
       if (Array.isArray(obj[k]) && !obj[k].length) {
         delete obj[k];
@@ -178,17 +187,19 @@ function clean(obj, isArray, requiredProps) {
       obj[k] = clean(obj[k]);
     }
   });
+
   if (!Object.keys(obj).length && isArray) {
     return undefined;
   }
+
   return obj;
 }
 
 function short(schema) {
-  var s = JSON.stringify(schema);
-  var l = JSON.stringify(schema, null, 2);
+  const s = JSON.stringify(schema);
+  const l = JSON.stringify(schema, null, 2);
 
-  return s.length > 400 ? l.substr(0, 400) + '...' : l;
+  return s.length > 400 ? `${l.substr(0, 400)}...` : l;
 }
 
 function anyValue() {
@@ -205,7 +216,7 @@ function anyValue() {
     {},
     Math.random(),
     Math.random().toString(36).substr(2),
- ]);
+  ]);
 }
 
 function notValue(schema, parent) {
@@ -230,19 +241,23 @@ function notValue(schema, parent) {
   }
 
   if (schema.type) {
-    copy.type = random.pick(env.ALL_TYPES.filter(function (x) {
+    copy.type = random.pick(env.ALL_TYPES.filter(x => {
       const types = Array.isArray(schema.type) ? schema.type : [schema.type];
+
       return types.every(type => {
         // treat both types as _similar enough_ to be skipped equal
         if (x === 'number' || x === 'integer') {
-            return type !== 'number' && type !== 'integer';
+          return type !== 'number' && type !== 'integer';
         }
+
         return x !== type;
       });
     }));
   } else if (schema.enum) {
+    let value;
+
     do {
-      var value = anyValue();
+      value = anyValue();
     } while (schema.enum.indexOf(value) !== -1);
 
     copy.enum = [value];
@@ -269,6 +284,8 @@ function validate(value, schemas) {
     if (typeof x.maximum !== 'undefined' && value <= x.maximum) {
       return true;
     }
+
+    return false;
   });
 }
 
@@ -295,15 +312,15 @@ function omitProps(obj, props) {
 }
 
 export default {
-  getSubAttribute: getSubAttribute,
-  hasProperties: hasProperties,
-  omitProps: omitProps,
-  typecast: typecast,
-  merge: merge,
-  clean: clean,
-  short: short,
-  notValue: notValue,
-  anyValue: anyValue,
-  validate: validate,
-  isKey: isKey,
+  getSubAttribute,
+  hasProperties,
+  omitProps,
+  typecast,
+  merge,
+  clean,
+  short,
+  notValue,
+  anyValue,
+  validate,
+  isKey,
 };

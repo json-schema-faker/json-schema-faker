@@ -1,7 +1,7 @@
 import OptionRegistry from '../class/OptionRegistry';
 
 // instantiate
-var registry = new OptionRegistry();
+const registry = new OptionRegistry();
 
 /**
  * Custom option API
@@ -12,9 +12,9 @@ var registry = new OptionRegistry();
 function optionAPI(nameOrOptionMap) {
   if (typeof nameOrOptionMap === 'string') {
     return registry.get(nameOrOptionMap);
-  } else {
-    return registry.registerMany(nameOrOptionMap);
   }
+
+  return registry.registerMany(nameOrOptionMap);
 }
 
 optionAPI.getDefaults = () => registry.defaults;

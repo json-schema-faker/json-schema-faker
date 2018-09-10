@@ -6,7 +6,7 @@ import random from '../core/random';
  * @returns {string}
  */
 function ipv4Generator() {
-  return [0, 0, 0, 0].map(function() {
+  return [0, 0, 0, 0].map(() => {
     return random.number(0, 255);
   }).join('.');
 }

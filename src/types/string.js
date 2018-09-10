@@ -10,7 +10,7 @@ import random from '../core/random';
 import utils from '../core/utils';
 
 function generateFormat(value, invalid) {
-  var callback = format(value.format);
+  const callback = format(value.format);
 
   if (typeof callback === 'function') {
     return callback(value);
@@ -38,22 +38,20 @@ function generateFormat(value, invalid) {
     default:
       if (typeof callback === 'undefined') {
         if (optionAPI('failOnInvalidFormat')) {
-          throw new Error('unknown registry key ' + utils.short(value.format));
+          throw new Error(`unknown registry key ${utils.short(value.format)}`);
         } else {
           return invalid();
         }
       }
 
-      throw new Error('unsupported format "' + value.format + '"');
+      throw new Error(`unsupported format '${value.format}'`);
   }
 }
 
-var stringType = function stringType(value) {
-  var output;
-
-  output = utils.typecast(value, opts => {
+function stringType(value) {
+  const output = utils.typecast(value, opts => {
     if (value.format) {
-      return generateFormat(value, () => thunk(opts.minLength, opts.maxLength) );
+      return generateFormat(value, () => thunk(opts.minLength, opts.maxLength));
     }
 
     if (value.pattern) {
@@ -64,6 +62,6 @@ var stringType = function stringType(value) {
   });
 
   return output;
-};
+}
 
 export default stringType;

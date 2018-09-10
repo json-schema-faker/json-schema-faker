@@ -1,14 +1,13 @@
-/// <reference path="../index.d.ts" />
+import RandExp from 'randexp';
 
 import optionAPI from '../api/option';
 import env from '../core/constants';
 
-import RandExp from 'randexp';
-
 function getRandomInteger(min, max) {
   min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
   max = typeof max === 'undefined' ? env.MAX_INTEGER : max;
-  return Math.floor(optionAPI('random')() * (max - min + 1)) + min;
+
+  return Math.floor(optionAPI('random')() * ((max - min) + 1)) + min;
 }
 
 function _randexp(value) {
@@ -17,9 +16,9 @@ function _randexp(value) {
 
   // same implementation as the original except using our random
   RandExp.prototype.randInt = (a, b) =>
-    a + Math.floor(optionAPI('random')() * (1 + b - a));
+    a + Math.floor(optionAPI('random')() * (1 + (b - a)));
 
-  var re = new RandExp(value);
+  const re = new RandExp(value);
 
   return re.gen();
 }
@@ -41,15 +40,17 @@ function pick(collection) {
  * @returns {T[]}
  */
 function shuffle(collection) {
-  var tmp,
-    key,
-    copy = collection.slice(),
-    length = collection.length;
+  let tmp;
+  let key;
+  let length = collection.length;
+
+  const copy = collection.slice();
 
   for (; length > 0;) {
     key = Math.floor(optionAPI('random')() * length);
     // swap
-    tmp = copy[--length];
+    length -= 1;
+    tmp = copy[length];
     copy[length] = copy[key];
     copy[key] = tmp;
   }
@@ -64,7 +65,7 @@ function shuffle(collection) {
  * @see http://stackoverflow.com/a/1527820/769384
  */
 function getRandom(min, max) {
-  return optionAPI('random')() * (max - min) + min;
+  return (optionAPI('random')() * (max - min)) + min;
 }
 
 /**
@@ -117,6 +118,8 @@ function by(type) {
 
     case 'years':
       return number(1, 20) * 31104012345;
+
+    default: break;
   }
 }
 
@@ -125,8 +128,8 @@ function date(step) {
     return by(step);
   }
 
-  var now = new Date();
-  var days = number(-1000, env.MOST_NEAR_DATETIME);
+  const now = new Date();
+  const days = number(-1000, env.MOST_NEAR_DATETIME);
 
   now.setTime(now.getTime() - days);
 
@@ -134,9 +137,9 @@ function date(step) {
 }
 
 export default {
-  pick: pick,
-  date: date,
+  pick,
+  date,
+  shuffle,
+  number,
   randexp: _randexp,
-  shuffle: shuffle,
-  number: number,
 };

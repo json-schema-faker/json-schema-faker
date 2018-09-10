@@ -4,8 +4,8 @@ import number from './number';
 // returns floating point numbers, and `integer` type truncates the fraction
 // part, leaving the result as an integer.
 
-var integerType = function integerType(value) {
+function integerType(value) {
   return number(Object.assign({ multipleOf: 1 }, value));
-};
+}
 
 export default integerType;

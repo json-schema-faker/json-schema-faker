@@ -1,7 +1,7 @@
 import Registry from '../class/Registry';
 
 // instantiate
-var registry = new Registry();
+const registry = new Registry();
 
 /**
  * Custom format API

@@ -1,10 +1,11 @@
 import random from '../core/random';
 import env from '../core/constants';
 
-var numberType = function numberType(value) {
-  var min = typeof value.minimum === 'undefined' ? env.MIN_INTEGER : value.minimum,
-      max = typeof value.maximum === 'undefined' ? env.MAX_INTEGER : value.maximum,
-      multipleOf = value.multipleOf;
+function numberType(value) {
+  let min = typeof value.minimum === 'undefined' ? env.MIN_INTEGER : value.minimum;
+  let max = typeof value.maximum === 'undefined' ? env.MAX_INTEGER : value.maximum;
+
+  const multipleOf = value.multipleOf;
 
   if (multipleOf) {
     max = Math.floor(max / multipleOf) * multipleOf;
@@ -25,7 +26,7 @@ var numberType = function numberType(value) {
 
   if (multipleOf) {
     if (String(multipleOf).indexOf('.') === -1) {
-      var base = random.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
+      let base = random.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
 
       while (base < min) {
         base += value.multipleOf;
@@ -34,17 +35,20 @@ var numberType = function numberType(value) {
       return base;
     }
 
-    var boundary = (max - min) / multipleOf;
+    const boundary = (max - min) / multipleOf;
+
+    let num;
+    let fix;
 
     do {
-      var num = random.number(0, boundary) * multipleOf;
-      var fix = (num / multipleOf) % 1;
+      num = random.number(0, boundary) * multipleOf;
+      fix = (num / multipleOf) % 1;
     } while (fix !== 0);
 
     return num;
   }
 
   return random.number(min, max, undefined, undefined, true);
-};
+}
 
 export default numberType;

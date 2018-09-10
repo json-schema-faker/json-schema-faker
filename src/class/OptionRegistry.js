@@ -1,41 +1,42 @@
 import Registry from './Registry';
 
+const defaults = {};
+
+defaults.defaultInvalidTypeProduct = null;
+defaults.defaultRandExpMax = 10;
+
+defaults.ignoreProperties = [];
+defaults.ignoreMissingRefs = false;
+defaults.failOnInvalidTypes = true;
+defaults.failOnInvalidFormat = true;
+
+defaults.alwaysFakeOptionals = false;
+defaults.optionalsProbability = 0.0;
+defaults.useDefaultValue = false;
+defaults.requiredOnly = false;
+
+defaults.minItems = 0;
+defaults.maxItems = null;
+defaults.maxLength = null;
+
+defaults.resolveJsonPath = false;
+defaults.reuseProperties = false;
+defaults.fillProperties = true;
+
+defaults.random = Math.random;
+
 /**
  * This class defines a registry for custom settings used within JSF.
  */
 class OptionRegistry extends Registry {
   constructor() {
     super();
-    this.data = this.defaults;
+    this.data = { ...defaults };
+    this._defaults = defaults;
   }
 
   get defaults() {
-    const data = {};
-
-    data['defaultInvalidTypeProduct'] = null;
-    data['defaultRandExpMax'] = 10;
-
-    data['ignoreProperties'] = [];
-    data['ignoreMissingRefs'] = false;
-    data['failOnInvalidTypes'] = true;
-    data['failOnInvalidFormat'] = true;
-
-    data['alwaysFakeOptionals'] = false;
-    data['optionalsProbability'] = 0.0;
-    data['useDefaultValue'] = false;
-    data['requiredOnly'] = false;
-
-    data['minItems'] = 0;
-    data['maxItems'] = null;
-    data['maxLength'] = null;
-
-    data['resolveJsonPath'] = false;
-    data['reuseProperties'] = false;
-    data['fillProperties'] = true;
-
-    data['random'] = Math.random;
-
-    return data;
+    return { ...this._defaults };
   }
 }
 
