@@ -125,6 +125,16 @@ function objectType(value, path, resolve, traverseCallback) {
   // discard already ignored props if they're not required to be filled...
   let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
 
+  function get() {
+    let one;
+
+    do {
+      one = requiredProperties.shift();
+    } while (props[one]);
+
+    return one;
+  }
+
   while (fillProps) {
     if (!(patternPropertyKeys.length || allowsAdditional)) {
       break;
@@ -147,7 +157,7 @@ function objectType(value, path, resolve, traverseCallback) {
             break;
           }
 
-          key = random.pick(propertyKeys);
+          key = get() || random.pick(propertyKeys);
         } while (typeof props[key] !== 'undefined');
 
         if (typeof props[key] === 'undefined') {
@@ -163,7 +173,7 @@ function objectType(value, path, resolve, traverseCallback) {
           current += 1;
         }
       } else {
-        const word = words(1) + random.randexp('[a-f\\d]{1,3}');
+        const word = get() || (words(1) + random.randexp('[a-f\\d]{1,3}'));
 
         if (!props[word]) {
           props[word] = additionalProperties || anyType;
