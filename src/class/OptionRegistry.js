@@ -11,7 +11,7 @@ defaults.failOnInvalidTypes = true;
 defaults.failOnInvalidFormat = true;
 
 defaults.alwaysFakeOptionals = false;
-defaults.optionalsProbability = 0.0;
+defaults.optionalsProbability = false;
 defaults.useDefaultValue = false;
 defaults.requiredOnly = false;
 

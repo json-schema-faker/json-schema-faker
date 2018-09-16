@@ -1,0 +1,26 @@
+[
+  {
+    "description": "Example using $ref not working",
+    "schemas": [
+      {
+        "id": "otherSchema",
+        "type": "string"
+      }
+    ],
+    "tests": [
+      {
+        "description": "it will eventually generate a value",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "someValue": {
+              "$ref": "otherSchema"
+            }
+          }
+        },
+        "refs": ["schemas.0"],
+        "valid": true
+      }
+    ]
+  }
+]

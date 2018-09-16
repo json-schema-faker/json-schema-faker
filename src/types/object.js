@@ -53,7 +53,16 @@ function objectType(value, path, resolve, traverseCallback) {
   const min = Math.max(value.minProperties || 0, requiredProperties.length);
   const max = Math.max(value.maxProperties || allProperties.length);
 
-  const neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (max - min)));
+  let neededExtras = Math.max(0, min - requiredProperties.length);
+
+  if (allProperties.length === 1 && !requiredProperties.length) {
+    neededExtras = random.number(neededExtras, allProperties.length + (max - min));
+  }
+
+  if (optionalsProbability !== false) {
+    neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (max - min)));
+  }
+
   const extraPropertiesRandomOrder = random.shuffle(optionalProperties).slice(0, neededExtras);
   const extraProperties = optionalProperties.filter(_item => {
     return extraPropertiesRandomOrder.indexOf(_item) !== -1;
