@@ -12,6 +12,7 @@ defaults.failOnInvalidFormat = true;
 
 defaults.alwaysFakeOptionals = false;
 defaults.optionalsProbability = false;
+defaults.fixedProbabilities = false;
 defaults.useDefaultValue = false;
 defaults.requiredOnly = false;
 

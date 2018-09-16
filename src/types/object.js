@@ -48,6 +48,7 @@ function objectType(value, path, resolve, traverseCallback) {
   }
 
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
+  const fixedProbabilities = optionAPI('fixedProbabilities') || false;
   const ignoreProperties = optionAPI('ignoreProperties') || [];
 
   const min = Math.max(value.minProperties || 0, requiredProperties.length);
@@ -60,7 +61,11 @@ function objectType(value, path, resolve, traverseCallback) {
   }
 
   if (optionalsProbability !== false) {
-    neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (max - min)));
+    if (fixedProbabilities === true) {
+      neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (max - min)));
+    } else {
+      neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (max - min));
+    }
   }
 
   const extraPropertiesRandomOrder = random.shuffle(optionalProperties).slice(0, neededExtras);

@@ -83,6 +83,7 @@
         "count": 0,
         "set": {
           "useDefaultValue": true,
+          "fixedProbabilities": true,
           "optionalsProbability": 0.0
         }
       },
@@ -93,6 +94,7 @@
         "count": 1,
         "set": {
           "useDefaultValue": true,
+          "fixedProbabilities": true,
           "optionalsProbability": 0.2
         }
       },
@@ -103,6 +105,7 @@
         "count": 2,
         "set": {
           "useDefaultValue": true,
+          "fixedProbabilities": true,
           "optionalsProbability": 0.4
         }
       },
@@ -113,6 +116,7 @@
         "count": 3,
         "set": {
           "useDefaultValue": true,
+          "fixedProbabilities": true,
           "optionalsProbability": 0.6
         }
       },
@@ -123,6 +127,7 @@
         "count": 4,
         "set": {
           "useDefaultValue": true,
+          "fixedProbabilities": true,
           "optionalsProbability": 0.8
         }
       },
@@ -133,6 +138,7 @@
         "count": 5,
         "set": {
           "useDefaultValue": true,
+          "fixedProbabilities": true,
           "optionalsProbability": 1.0
         }
       }
