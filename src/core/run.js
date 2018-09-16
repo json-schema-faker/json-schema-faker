@@ -1,4 +1,3 @@
-import deref from 'deref';
 import jsonpath from 'jsonpath';
 
 import optionAPI from '../api/option';
@@ -109,14 +108,22 @@ function run(refs, schema, container) {
           return sub;
         }
 
-        if (sub.$ref.indexOf('#/') === -1) {
-          const ref = deref.util.findByRef(sub.$ref, refs);
+        let ref;
 
+        if (sub.$ref.indexOf('#/') === -1) {
+          ref = refs[sub.$ref] || null;
+        }
+
+        if (sub.$ref.indexOf('#/definitions/') === 0) {
+          ref = schema.definitions[sub.$ref.split('#/definitions/')[1]] || null;
+        }
+
+        if (typeof ref !== 'undefined') {
           if (!ref) {
             throw new Error(`Reference not found: ${sub.$ref}`);
           }
 
-          return ref;
+          utils.merge(sub, ref);
         }
 
         // just remove the reference

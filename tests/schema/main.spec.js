@@ -35,7 +35,9 @@ const { only, all } = getTests(__dirname);
         const tasks = [];
 
         while (nth) {
-          tasks.push(tryTest(test, refs, schema));
+          if (!test.skip) {
+            tasks.push(tryTest(test, refs, schema));
+          }
 
           nth -= 1;
         }
