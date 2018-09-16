@@ -83,8 +83,7 @@ export async function tryTest(test, refs, schema) {
   }
 
   if (test.dump) {
-    console.log('IN', JSON.stringify(schema, null, 2));
-    console.log('OUT', JSON.stringify(sample, null, 2));
+    console.log(JSON.stringify(sample, null, 2));
     return;
   }
 
