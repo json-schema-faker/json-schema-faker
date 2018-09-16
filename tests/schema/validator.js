@@ -1,9 +1,9 @@
 import is from 'is-my-json-valid';
+import Ajv from 'ajv';
 import tv4 from 'tv4';
 import clone from 'clone';
 import semver from 'semver';
 import ZSchema from 'z-schema';
-import JaySchema from 'jayschema';
 
 function addValidators(v) {
   const registry = v.addFormat || v.registerFormat;
@@ -104,7 +104,7 @@ export function checkSchema(sample, schema, refs) {
     api.addSchema(k, fixed[k]);
   });
 
-  let result = api.validateResult(sample, clone(schema), api.cyclicCheck, api.banUnknown);
+  const result = api.validateResult(sample, clone(schema), api.cyclicCheck, api.banUnknown);
 
   if (result.missing.length) {
     fail.push(`[tv4] Missing ${result.missing.join(', ')}`);
@@ -114,19 +114,24 @@ export function checkSchema(sample, schema, refs) {
     fail.push(`[tv4] ${result.error}`);
   }
 
-  // jayschema
-  const jay = new JaySchema();
-
-  addValidators(jay);
-
-  Object.keys(fixed).forEach(k => {
-    jay.register(clone(fixed[k]));
+  // ajv
+  const ajv = new Ajv({
+    validateSchema: false,
+    jsonPointers: true,
+    logger: false,
+    formats: {
+      semver: semver.valid,
+    },
   });
 
-  result = jay.validate(sample, clone(schema));
+  Object.keys(fixed).forEach(id => {
+    ajv.addSchema(fixed[id], id);
+  });
 
-  if (result.length) {
-    fail.push(result.map(e => `[jayschema] ${e.kind} ${e.testedValue} <${e.constraintName}> ${e.constraintValue}`).join('\n') || 'Invalid sample');
+  if (!ajv.validate(schema, sample)) {
+    ajv.errors.forEach(x => {
+      fail.push(`[ajv] ${x.message}`);
+    });
   }
 
   if (fail.length) {
