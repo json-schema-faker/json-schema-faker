@@ -14,7 +14,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   // default values has higher precedence
-  if (optionAPI('useDefaultValue') && 'default' in schema) {
+  if (path[path.length - 1] !== 'properties' && optionAPI('useDefaultValue') && 'default' in schema) {
     return schema.default;
   }
 
