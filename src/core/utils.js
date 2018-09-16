@@ -312,6 +312,18 @@ function omitProps(obj, props) {
   return copy;
 }
 
+function template(value, schema) {
+  if (Array.isArray(value)) {
+    return value.map(x => template(x, schema));
+  }
+
+  if (typeof value === 'string') {
+    value = value.replace(/#\{([\w.-]+)\}/g, (_, $1) => schema[$1]);
+  }
+
+  return value;
+}
+
 export default {
   getSubAttribute,
   hasProperties,
@@ -324,4 +336,5 @@ export default {
   anyValue,
   validate,
   isKey,
+  template,
 };

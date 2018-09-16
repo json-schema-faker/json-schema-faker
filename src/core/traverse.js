@@ -14,8 +14,14 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   // default values has higher precedence
-  if (path[path.length - 1] !== 'properties' && optionAPI('useDefaultValue') && 'default' in schema) {
-    return schema.default;
+  if (path[path.length - 1] !== 'properties') {
+    if (optionAPI('useDefaultValue') && 'default' in schema) {
+      return schema.default;
+    }
+
+    if ('template' in schema) {
+      return utils.template(schema.template, rootSchema);
+    }
   }
 
   if (schema.not && typeof schema.not === 'object') {

@@ -1,0 +1,51 @@
+{
+  "description": "Having two properties that have the same value",
+  "tests": [
+    {
+      "description": "xxx",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "default": "osom"
+                },
+                "slug": {
+                  "type": "string",
+                  "template": "#{id}"
+                }
+              },
+              "required": [
+                "id",
+                "slug"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          }
+        },
+        "required": [
+          "cards"
+        ]
+      },
+      "set": {
+        "useDefaultValue": true
+      },
+      "equal": {
+        "cards": [
+          {
+            "id": "osom",
+            "slug": "osom"
+          }
+        ]
+      },
+      "only": true,
+      "valid": true
+    }
+  ]
+}

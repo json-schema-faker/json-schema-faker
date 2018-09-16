@@ -1,14 +1,4 @@
-function template(value, schema) {
-  if (Array.isArray(value)) {
-    return value.map(x => template(x, schema));
-  }
-
-  if (typeof value === 'string') {
-    value = value.replace(/#\{([\w.-]+)\}/g, (_, $1) => schema[$1]);
-  }
-
-  return value;
-}
+import util from '../core/utils';
 
 // dynamic proxy for custom generators
 function proxy(gen) {
@@ -44,7 +34,7 @@ function proxy(gen) {
 
     // invoke dynamic generators
     if (typeof value === 'function') {
-      value = value.apply(ctx, args.map(x => template(x, rootSchema)));
+      value = value.apply(ctx, args.map(x => util.template(x, rootSchema)));
     }
 
     // test for pending callbacks
