@@ -17,6 +17,7 @@ defaults.requiredOnly = false;
 
 defaults.minItems = 0;
 defaults.maxItems = null;
+defaults.minLength = 0;
 defaults.maxLength = null;
 
 defaults.resolveJsonPath = false;

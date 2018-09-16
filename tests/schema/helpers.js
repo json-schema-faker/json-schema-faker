@@ -96,6 +96,10 @@ export async function tryTest(test, refs, schema) {
     checkSchema(sample, schema, refs);
   }
 
+  if (test.length) {
+    expect(sample.length).to.eql(test.length);
+  }
+
   if (test.hasProps) {
     test.hasProps.forEach(prop => {
       if (Array.isArray(sample)) {

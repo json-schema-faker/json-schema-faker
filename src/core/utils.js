@@ -98,6 +98,7 @@ function typecast(schema, callback) {
       if (_minLength && params.minLength < _minLength) {
         params.minLength = _minLength;
       }
+
       break;
     }
 
