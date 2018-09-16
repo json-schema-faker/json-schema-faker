@@ -1,0 +1,46 @@
+{
+  "description": "optionalsProbability not recalculated for each record in an array?",
+  "tests": [
+    {
+      "description": "it will eventually generate phone property",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "records": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 20,
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string",
+                  "faker": "name.findName"
+                },
+                "phone": {
+                  "type": "string",
+                  "faker": "phone.phoneNumber"
+                },
+                "email": {
+                  "type": "string",
+                  "faker": "internet.email"
+                }
+              },
+              "required": [
+                "name",
+                "email"
+              ]
+            }
+          }
+        },
+        "required": [
+          "records"
+        ]
+      },
+      "set": {
+        "optionalsProbability": 0.6
+      },
+      "valid": true
+    }
+  ]
+}
