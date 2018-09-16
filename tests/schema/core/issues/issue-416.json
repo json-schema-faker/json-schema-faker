@@ -1,0 +1,28 @@
+{
+  "description": "Weird output using patternProperties and minProperties",
+  "tests": [
+    {
+      "description": "it will generate only given props when additionalProperties is false",
+      "schema": {
+        "type": "object",
+        "patternProperties": {
+          "[a-z0-9]": {
+            "type": "object",
+            "properties": {
+              "example": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "example"
+            ]
+          }
+        },
+        "minProperties": 10,
+        "maxProperties": 10
+      },
+      "count": 10,
+      "valid": true
+    }
+  ]
+}

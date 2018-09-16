@@ -25,7 +25,7 @@ function objectType(value, path, resolve, traverseCallback) {
   const allProperties = requiredProperties.concat(optionalProperties);
 
   const additionalProperties = allowsAdditional // eslint-disable-line
-    ? (value.additionalProperties === true ? {} : value.additionalProperties)
+    ? (value.additionalProperties === true ? anyType : value.additionalProperties)
     : null;
 
   if (!allowsAdditional &&
@@ -52,7 +52,7 @@ function objectType(value, path, resolve, traverseCallback) {
   const ignoreProperties = optionAPI('ignoreProperties') || [];
 
   const min = Math.max(value.minProperties || 0, requiredProperties.length);
-  const max = Math.max(value.maxProperties || allProperties.length);
+  const max = Math.min(value.maxProperties || allProperties.length, allProperties.length);
 
   let neededExtras = Math.max(0, min - requiredProperties.length);
 
@@ -154,6 +154,14 @@ function objectType(value, path, resolve, traverseCallback) {
           props[key] = properties[key];
           current += 1;
         }
+      } else if (patternPropertyKeys.length && !additionalProperties) {
+        const prop = random.pick(patternPropertyKeys);
+        const word = random.randexp(prop);
+
+        if (!props[word]) {
+          props[word] = patternProperties[prop];
+          current += 1;
+        }
       } else {
         const word = words(1) + random.randexp('[a-f\\d]{1,3}');
 
@@ -164,7 +172,7 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     }
 
-    for (let i = 0; i < patternPropertyKeys.length; i += 1) {
+    for (let i = 0; current < min && i < patternPropertyKeys.length; i += 1) {
       const _key = patternPropertyKeys[i];
       const word = random.randexp(_key);
 
