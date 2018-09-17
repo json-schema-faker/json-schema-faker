@@ -14,6 +14,12 @@ const { only, all } = getTests(__dirname);
           jsf.option(test.set);
         }
 
+        if (test.seed) {
+          jsf.option({
+            random: () => test.seed,
+          });
+        }
+
         if (test.require) {
           require(`./${test.require}`).register(jsf);
         }

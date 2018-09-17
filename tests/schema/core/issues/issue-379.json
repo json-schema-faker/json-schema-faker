@@ -1,0 +1,26 @@
+{
+  "description": "Floating point when using multipleOf",
+  "tests": [
+    {
+      "description": "should truncate up to given decimals",
+      "schema": {
+        "type": "number",
+        "multipleOf": 0.01
+      },
+      "seed": 0.25546874766962246,
+      "equal": 51093749.53,
+      "valid": true
+    },
+    {
+      "description": "should truncate up to given decimals (large decimals)",
+      "schema": {
+        "type": "number",
+        "multipleOf": 0.01
+      },
+      "seed": 0.06559633646612273,
+      "equal": 13119267.29,
+      "skip": true,
+      "valid": true
+    }
+  ]
+}

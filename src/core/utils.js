@@ -75,6 +75,7 @@ function typecast(schema, callback) {
           return false;
         });
       }
+
       break;
 
     case 'string': {
