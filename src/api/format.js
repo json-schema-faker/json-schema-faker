@@ -17,6 +17,8 @@ function formatAPI(nameOrFormatMap, callback) {
   } else if (typeof nameOrFormatMap === 'string') {
     if (typeof callback === 'function') {
       registry.register(nameOrFormatMap, callback);
+    } else if (callback === null || callback === false) {
+      registry.unregister(nameOrFormatMap);
     } else {
       return registry.get(nameOrFormatMap);
     }

@@ -8,6 +8,18 @@ class Registry {
   }
 
   /**
+   * Unregisters custom format(s)
+   * @param name
+   */
+  unregister(name) {
+    if (!name) {
+      this.data = {};
+    } else {
+      delete this.data[name];
+    }
+  }
+
+  /**
    * Registers custom format
    */
   register(name, callback) {

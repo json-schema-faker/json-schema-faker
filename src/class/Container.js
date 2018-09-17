@@ -67,6 +67,20 @@ class Container {
   }
 
   /**
+   * Unregister extensions
+   * @param name
+   */
+  reset(name) {
+    if (!name) {
+      this.registry = {};
+      this.support = {};
+    } else {
+      delete this.registry[name];
+      delete this.support[name];
+    }
+  }
+
+  /**
    * Override dependency given by name
    * @param name
    * @param callback

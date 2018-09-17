@@ -11,6 +11,56 @@ import run from './core/run';
 
 const container = new Container();
 
+function setupKeywords() {
+  // built-in support
+  container.define('pattern', random.randexp);
+
+  // skip default generators
+  container.define('jsonPath', (value, schema) => {
+    delete schema.type;
+    return schema;
+  });
+
+  // safe auto-increment values
+  container.define('autoIncrement', function autoIncrement(value, schema) {
+    if (!this.offset) {
+      const min = schema.minimum || 1;
+      const max = min + env.MAX_NUMBER;
+      const offset = value.initialOffset || schema.initialOffset;
+
+      this.offset = offset || random.number(min, max);
+    }
+
+    if (value === true) {
+      return this.offset++; // eslint-disable-line
+    }
+
+    return schema;
+  });
+
+  // safe-and-sequential dates
+  container.define('sequentialDate', function sequentialDate(value, schema) {
+    if (!this.now) {
+      this.now = random.date();
+    }
+
+    if (value) {
+      schema = this.now.toISOString();
+      value = value === true
+        ? 'days'
+        : value;
+
+      if (['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'].indexOf(value) === -1) {
+        throw new Error(`Unsupported increment by ${utils.short(value)}`);
+      }
+
+      this.now.setTime(this.now.getTime() + random.date(value));
+    }
+
+    return schema;
+  });
+}
+
 function getRefs(refs) {
   let $refs = {};
 
@@ -107,57 +157,11 @@ jsf.resolve = (schema, refs, cwd) => {
     }).then(sub => run($refs, sub, container));
 };
 
+setupKeywords();
+
 jsf.format = format;
 jsf.option = option;
 jsf.random = random;
-
-// built-in support
-container.define('pattern', random.randexp);
-
-// skip default generators
-container.define('jsonPath', (value, schema) => {
-  delete schema.type;
-  return schema;
-});
-
-// safe auto-increment values
-container.define('autoIncrement', function autoIncrement(value, schema) {
-  if (!this.offset) {
-    const min = schema.minimum || 1;
-    const max = min + env.MAX_NUMBER;
-    const offset = value.initialOffset || schema.initialOffset;
-
-    this.offset = offset || random.number(min, max);
-  }
-
-  if (value === true) {
-    return this.offset++; // eslint-disable-line
-  }
-
-  return schema;
-});
-
-// safe-and-sequential dates
-container.define('sequentialDate', function sequentialDate(value, schema) {
-  if (!this.now) {
-    this.now = random.date();
-  }
-
-  if (value) {
-    schema = this.now.toISOString();
-    value = value === true
-      ? 'days'
-      : value;
-
-    if (['seconds', 'minutes', 'hours', 'days', 'weeks', 'months', 'years'].indexOf(value) === -1) {
-      throw new Error(`Unsupported increment by ${utils.short(value)}`);
-    }
-
-    this.now.setTime(this.now.getTime() + random.date(value));
-  }
-
-  return schema;
-});
 
 // returns itself for chaining
 jsf.extend = (name, cb) => {
@@ -167,6 +171,12 @@ jsf.extend = (name, cb) => {
 
 jsf.define = (name, cb) => {
   container.define(name, cb);
+  return jsf;
+};
+
+jsf.reset = name => {
+  container.reset(name);
+  setupKeywords();
   return jsf;
 };
 
