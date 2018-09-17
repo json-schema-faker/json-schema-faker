@@ -49,7 +49,7 @@ const { only, all } = getTests(__dirname);
         }
 
         return Promise.all(tasks);
-      }).timeout(10000);
+      }).timeout(process.CI ? 30000 : 10000);
     });
   });
 });
