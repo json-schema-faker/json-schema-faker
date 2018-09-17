@@ -7,7 +7,7 @@ const { only, all } = getTests(__dirname);
 (only.length ? only : all).forEach(suite => {
   describe(`${suite.description} (${suite.file.replace(`${__dirname}/`, '')})`, () => {
     suite.tests.forEach(test => {
-      it(test.description, async () => {
+      it(test.description, () => {
         jsf.option(jsf.option.getDefaults());
 
         if (test.set) {
@@ -48,7 +48,7 @@ const { only, all } = getTests(__dirname);
           nth -= 1;
         }
 
-        await Promise.all(tasks);
+        return Promise.all(tasks);
       }).timeout(10000);
     });
   });

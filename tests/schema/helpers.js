@@ -59,12 +59,53 @@ export function getTests(srcDir) {
   return { only, all };
 }
 
-export async function tryTest(test, refs, schema) {
-  let sample;
+export function tryTest(test, refs, schema) {
+  return _jsf.resolve(schema, refs).then(sample => {
+    if (test.dump) {
+      console.log(JSON.stringify(sample, null, 2));
+      return;
+    }
 
-  try {
-    sample = await _jsf.resolve(schema, refs);
-  } catch (error) {
+    if (test.type) {
+      checkType(sample, test.type);
+    }
+
+    if (test.valid) {
+      checkSchema(sample, schema, refs);
+    }
+
+    if (test.length) {
+      expect(sample.length).to.eql(test.length);
+    }
+
+    if (test.hasProps) {
+      test.hasProps.forEach(prop => {
+        if (Array.isArray(sample)) {
+          sample.forEach(s => {
+            expect(s[prop]).not.to.eql(undefined);
+          });
+        } else {
+          expect(sample[prop]).not.to.eql(undefined);
+        }
+      });
+    }
+
+    if (test.onlyProps) {
+      expect(Object.keys(sample)).to.eql(test.onlyProps);
+    }
+
+    if (test.count) {
+      expect((Array.isArray(sample) ? sample : Object.keys(sample)).length).to.eql(test.count);
+    }
+
+    if (test.hasNot) {
+      expect(JSON.stringify(sample)).not.to.contain(test.hasNot);
+    }
+
+    if ('equal' in test) {
+      expect(sample).to.eql(test.equal);
+    }
+  }).catch(error => {
     if (typeof test.throws === 'string') {
       expect(error).to.match(new RegExp(test.throws, 'im'));
     }
@@ -74,50 +115,5 @@ export async function tryTest(test, refs, schema) {
         throw error;
       }
     }
-  }
-
-  if (test.dump) {
-    console.log(JSON.stringify(sample, null, 2));
-    return;
-  }
-
-  if (test.type) {
-    checkType(sample, test.type);
-  }
-
-  if (test.valid) {
-    checkSchema(sample, schema, refs);
-  }
-
-  if (test.length) {
-    expect(sample.length).to.eql(test.length);
-  }
-
-  if (test.hasProps) {
-    test.hasProps.forEach(prop => {
-      if (Array.isArray(sample)) {
-        sample.forEach(s => {
-          expect(s[prop]).not.to.eql(undefined);
-        });
-      } else {
-        expect(sample[prop]).not.to.eql(undefined);
-      }
-    });
-  }
-
-  if (test.onlyProps) {
-    expect(Object.keys(sample)).to.eql(test.onlyProps);
-  }
-
-  if (test.count) {
-    expect((Array.isArray(sample) ? sample : Object.keys(sample)).length).to.eql(test.count);
-  }
-
-  if (test.hasNot) {
-    expect(JSON.stringify(sample)).not.to.contain(test.hasNot);
-  }
-
-  if ('equal' in test) {
-    expect(sample).to.eql(test.equal);
-  }
+  });
 }
