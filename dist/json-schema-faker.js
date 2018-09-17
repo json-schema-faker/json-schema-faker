@@ -1849,7 +1849,13 @@
     }
 
     var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-    var length = maxItems != null && optionalsProbability ? Math.round(maxItems * optionalsProbability) : random.number(minItems, maxItems, 1, 5); // TODO below looks bad. Should additionalItems be copied as-is?
+    var fixedProbabilities = optionAPI('fixedProbabilities') || false;
+    var length = random.number(minItems, maxItems, 1, 5);
+
+    if (optionalsProbability !== false) {
+      length = fixedProbabilities ? Math.round(maxItems * optionalsProbability) : random.number(minItems, maxItems * optionalsProbability);
+    } // TODO below looks bad. Should additionalItems be copied as-is?
+
 
     var sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
