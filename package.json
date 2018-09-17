@@ -7,7 +7,8 @@
   "module": "dist/json-schema-faker.es.js",
   "browser": "dist/json-schema-faker.min.js",
   "scripts": {
-    "build:browser": "bili --target browser --format umd-min --name json-schema-faker --js buble",
+    "build:concat:dist": "concat -o dist/json-schema-faker.bundle.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath/jsonpath.js dist/json-schema-faker.min.js",
+    "build:browser": "bili --banner --target browser --format umd-min --moduleName JsonSchemaFaker --name json-schema-faker --js buble && npm run build:concat:dist",
     "build:node": "bili src/index.js --target node --js buble --format es,cjs",
     "build": "npm run build:browser && npm run build:node",
     "dev": "npm test -- -w",
@@ -42,6 +43,12 @@
     "fake",
     "mocks"
   ],
+  "bili": {
+    "external": [
+      "json-schema-ref-parser",
+      "jsonpath"
+    ]
+  },
   "devDependencies": {
     "ajv": "^6.5.3",
     "bili": "^3.1.2",
@@ -49,6 +56,7 @@
     "chance": "^1.0.9",
     "clone": "^2.1.2",
     "codecov": "^3.0.0",
+    "concat": "^1.0.3",
     "esm": "^3.0.82",
     "faker": "^4.1.0",
     "fs-extra": "^7.0.0",
