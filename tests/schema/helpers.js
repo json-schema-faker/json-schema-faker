@@ -60,8 +60,6 @@ export function getTests(srcDir) {
 }
 
 export async function tryTest(test, refs, schema) {
-  if (test.skip) return;
-
   let sample;
 
   try {
