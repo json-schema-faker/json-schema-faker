@@ -91,16 +91,8 @@ const jsf = (schema, refs, cwd) => {
     order: 300,
     canRead: true,
     read(file, callback) {
-      const id = cwd !== '/'
-        ? file.url.replace(cwd, '')
-        : file.url;
-
       try {
-        if (!$refs[id]) {
-          throw new Error(`Reference not found: ${id}`);
-        }
-
-        callback(null, $refs[id]);
+        callback(null, $refs[file.url] || $refs[file.url.split('/').pop()]);
       } catch (e) {
         callback(e);
       }
@@ -109,7 +101,11 @@ const jsf = (schema, refs, cwd) => {
 
   return $RefParser
     .dereference(cwd, schema, {
-      resolve: { fixedRefs },
+      resolve: {
+        file: { order: 100 },
+        http: { order: 200 },
+        fixedRefs,
+      },
       dereference: {
         circular: 'ignore',
       },

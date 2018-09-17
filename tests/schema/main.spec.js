@@ -49,7 +49,7 @@ const { only, all } = getTests(__dirname);
         }
 
         await Promise.all(tasks);
-      });
+      }).timeout(10000);
     });
   });
 });

@@ -191,7 +191,6 @@
           },
           "copyright": "Copyright 2014-2017 Distributed Management Task Force, Inc. (DMTF). For the full DMTF copyright policy, see http://www.dmtf.org/about/policies/copyright"
         },
-        "skip": true,
         "hasProps": ["Id", "Name"]
       }
     ]
