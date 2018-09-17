@@ -29,8 +29,7 @@
               "baz": "buzz"
             }
           }
-        },
-        "require": "core/option/enable-jsonpath"
+        }
       }
     ]
   }
