@@ -75,6 +75,22 @@ function getRefs(refs) {
 }
 
 const jsf = (schema, refs, cwd) => {
+  console.log('[json-schema-faker] calling JsonSchemaFaker() is deprecated, call either .generate() or .resolve()');
+
+  if (cwd) {
+    console.log('[json-schema-faker] references are only supported by calling .resolve()');
+  }
+
+  return jsf.generate(schema, refs);
+};
+
+jsf.generate = (schema, refs) => {
+  const $refs = getRefs(refs);
+
+  return run($refs, schema, container);
+};
+
+jsf.resolve = (schema, refs, cwd) => {
   if (typeof refs === 'string') {
     cwd = refs;
     refs = {};
