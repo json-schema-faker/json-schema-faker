@@ -59,6 +59,9 @@
         ]
       },
       "require": "core/extend/faker-extend",
+      "set": {
+        "resolveJsonPath": true
+      },
       "valid": true
     },
     {
@@ -103,6 +106,9 @@
         "required": ["hunches", "boxes"]
       },
       "require": "core/extend/faker-extend",
+      "set": {
+        "resolveJsonPath": true
+      },
       "valid": true
     }
   ]

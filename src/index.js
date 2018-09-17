@@ -14,12 +14,6 @@ function setupKeywords() {
   // built-in support
   container.define('pattern', random.randexp);
 
-  // skip default generators
-  container.define('jsonPath', (value, schema) => {
-    delete schema.type;
-    return schema;
-  });
-
   // safe auto-increment values
   container.define('autoIncrement', function autoIncrement(value, schema) {
     if (!this.offset) {
