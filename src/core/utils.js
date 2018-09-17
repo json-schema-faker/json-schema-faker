@@ -67,13 +67,15 @@ function typecast(schema, callback) {
         }
 
         // discard out-of-bounds enumerations
-        schema.enum = schema.enum.filter(x => {
-          if (x >= min && x <= max) {
-            return true;
-          }
+        if (min || max !== Infinity) {
+          schema.enum = schema.enum.filter(x => {
+            if (x >= min && x <= max) {
+              return true;
+            }
 
-          return false;
-        });
+            return false;
+          });
+        }
       }
 
       break;

@@ -1,0 +1,16 @@
+{
+  "description": "Enum with negative number is not generated",
+  "tests": [
+    {
+      "description": "should pick anything from enum values",
+      "schema": {
+        "type": "integer",
+        "enum": [
+          -4
+        ]
+      },
+      "equal": -4,
+      "valid": true
+    }
+  ]
+}
