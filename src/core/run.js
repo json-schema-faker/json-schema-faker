@@ -62,7 +62,7 @@ function resolve(obj, data, values, property) {
       if (params.count > 1) {
         values[key] = jsonpath.query(data, params.path, params.count);
       } else {
-        values[key] = jsonpath.value(data, params.path);
+        values[key] = jsonpath.query(data, params.path);
       }
     }
 
