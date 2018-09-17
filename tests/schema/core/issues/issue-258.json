@@ -51,14 +51,8 @@
   ],
   "tests": [
     {
-      "description": "should work as expected (sync)",
+      "description": "should work as expected",
       "schema": "schemas.0",
-      "valid": true
-    },
-    {
-      "description": "should work as expected (async)",
-      "schema": "schemas.0",
-      "async": true,
       "valid": true
     }
   ]

@@ -45,17 +45,12 @@ function arrayType(value, path, resolve, traverseCallback) {
     return items;
   }
 
-  // see http://stackoverflow.com/a/38355228/769384
-  // after type guards support subproperties (in TS 2.0) we can simplify below to (value.items instanceof Array)
-  // so that value.items.map becomes recognized for typescript compiler
-  const tmpItems = value.items;
-
-  if (tmpItems instanceof Array) {
-    return Array.prototype.concat.call(items, tmpItems.map((item, key) => {
+  if (Array.isArray(value.items)) {
+    return value.items.map((item, key) => {
       const itemSubpath = path.concat(['items', key]);
 
       return traverseCallback(item, itemSubpath, resolve);
-    }));
+    });
   }
 
   let minItems = value.minItems;

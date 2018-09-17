@@ -44,7 +44,7 @@ export function checkSchema(sample, schema, refs) {
 
   if (refs) {
     refs.forEach(s => {
-      fixed[s.id.split('#')[0]] = clone(s);
+      fixed[s.id ? s.id.split('#')[0] : ''] = clone(s);
     });
   }
 

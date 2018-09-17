@@ -1,9 +1,9 @@
 [
   {
-    "description": "should work on sync/async mode",
+    "description": "should work on async mode (by default)",
     "tests": [
       {
-        "description": "should resolve all references in async mode",
+        "description": "should resolve all references",
         "schema": {
           "type": "object",
           "required": ["value", "other"],
@@ -24,11 +24,10 @@
             }
           }
         },
-        "async": true,
         "valid": true
       },
       {
-        "description": "should resolve only local references on sync mode",
+        "description": "should resolve only local references",
         "schema": {
           "type": "object",
           "properties": {

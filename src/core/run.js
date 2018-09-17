@@ -157,12 +157,9 @@ function run(refs, schema, container) {
           sub.enum = sub.enum.filter(x => utils.validate(x, mix));
         }
 
-        delete sub.anyOf;
-        delete sub.oneOf;
-
         return {
           thunk() {
-            const copy = utils.merge({}, sub);
+            const copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
 
             utils.merge(copy, random.pick(mix));
 

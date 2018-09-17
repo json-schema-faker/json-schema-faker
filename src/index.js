@@ -1,5 +1,4 @@
 import $RefParser from 'json-schema-ref-parser';
-import deref from 'deref';
 
 import Container from './class/Container';
 import format from './api/format';
@@ -65,7 +64,7 @@ function getRefs(refs) {
   let $refs = {};
 
   if (Array.isArray(refs)) {
-    refs.map(deref.util.normalizeSchema).forEach(schema => {
+    refs.forEach(schema => {
       $refs[schema.id] = schema;
     });
   } else {
@@ -75,41 +74,7 @@ function getRefs(refs) {
   return $refs;
 }
 
-function walk(obj, cb) {
-  const keys = Object.keys(obj);
-
-  let retval;
-
-  for (let i = 0; i < keys.length; i += 1) {
-    retval = cb(obj[keys[i]], keys[i], obj);
-
-    if (!retval && obj[keys[i]] && !Array.isArray(obj[keys[i]]) && typeof obj[keys[i]] === 'object') {
-      retval = walk(obj[keys[i]], cb);
-    }
-
-    if (typeof retval !== 'undefined') {
-      return retval;
-    }
-  }
-}
-
-const jsf = (schema, refs) => {
-  const ignore = option('ignoreMissingRefs');
-
-  const $ = deref(() => {
-    // FIXME: allow custom callback?
-
-    if (ignore) {
-      return {};
-    }
-  });
-
-  const $refs = getRefs(refs);
-
-  return run($refs, $(schema, $refs, true), container);
-};
-
-jsf.resolve = (schema, refs, cwd) => {
+const jsf = (schema, refs, cwd) => {
   if (typeof refs === 'string') {
     cwd = refs;
     refs = {};
@@ -131,19 +96,13 @@ jsf.resolve = (schema, refs, cwd) => {
         : file.url;
 
       try {
-        callback(null, deref.util.findByRef(id, $refs));
-      } catch (e) {
-        const result = walk(schema, (v, k, sub) => {
-          if (k === 'id' && v === id) {
-            return sub;
-          }
-        });
-
-        if (!result) {
-          return callback(e);
+        if (!$refs[id]) {
+          throw new Error(`Reference not found: ${id}`);
         }
 
-        callback(null, result);
+        callback(null, $refs[id]);
+      } catch (e) {
+        callback(e);
       }
     },
   };

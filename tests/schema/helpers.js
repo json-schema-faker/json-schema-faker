@@ -65,11 +65,7 @@ export async function tryTest(test, refs, schema) {
   let sample;
 
   try {
-    if (test.async) {
-      sample = await _jsf.resolve(schema, refs);
-    } else {
-      sample = _jsf(schema, refs);
-    }
+    sample = await _jsf(schema, refs);
   } catch (error) {
     if (typeof test.throws === 'string') {
       expect(error).to.match(new RegExp(test.throws, 'im'));

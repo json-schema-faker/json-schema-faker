@@ -15,6 +15,7 @@
           "minItems": 3,
           "maxItems": 3
         },
+        "repeat": 1,
         "equal": [
           {
             "id": 100001

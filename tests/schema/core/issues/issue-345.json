@@ -2,7 +2,7 @@
   "description": "Invalid JSON generated with cyclic reference",
   "tests": [
     {
-      "description": "it will work as expected (async only)",
+      "description": "it will work as expected",
       "schema": {
         "type": "object",
         "definitions": {
@@ -40,7 +40,6 @@
       "set": {
         "alwaysFakeOptionals": true
       },
-      "async": true,
       "valid": true
     }
   ]
