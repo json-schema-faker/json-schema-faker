@@ -11,8 +11,6 @@
 
 JSON Schema Faker is a JavaScript tool that can be executed both in the browser and the server.
 
-JSF has been migrated to [TypeScript](typescriptlang.org). The structure is still being refactored.
-
 Currently JSF consists of:
 
 * `types` - each module represents one basic JSON Schema structure
@@ -30,28 +28,18 @@ Currently JSF consists of:
 
 # Sources
 
-Currently we've got both:
+Currently we've got:
 
-* new TypeScript source files (`ts` directory)
-* old JavaScript output (`lib` directory).
+* JavaScript sources (`src` directory).
 
-This is a temporary state, of course, it will be refactored :).
-Once we find a suitable solution for bundling TypeScript directly into final js build files - we might remove `lib` directory then.
-TypeScript is fired with ``--module commonjs` option - javascript output uses standard CommonJS `require` calls and then
-it's processed via browserify to create bundles (as it used to before introducing TypeScript).
-
-The codebase is quite complex and so the whole process had to be cplit into parts. THe migration/refactoring is still a work-in-progress.
+The codebase is quite complex and so the whole process had to be split into parts. THe migration/refactoring is still a work-in-progress.
 
 # Building
 
-Compile typescript to javascript:
+Generate the libraries:
 
-    npm run tsc
-
-Build package files:
-
-    ./build/dist.js
+    npm run build
 
 # Testing
 
-Detailed description of test [can be found here](../spec).
+Detailed description of test [can be found here](../tests).

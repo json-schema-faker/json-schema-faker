@@ -1,35 +1,3 @@
-A release candidate for `v0.5.x` series was released in order to support local/remote reference downloading thanks to `json-schema-ref-parser`, this change forced `jsf` to be completely async.
-
-```js
-var jsf = require('json-schema-faker');
-
-var REMOTE_REF = 'https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json';
-
-var schema = {
-  $ref: REMOTE_REF
-};
-
-jsf.resolve(schema).then(function(result) {
-  console.log(JSON.stringify(result, null, 2));
-});
-```
-
-**WIP: BREAKING CHANGES**
-
-- All code examples from previous versions (`v0.4.x` and below) will not work, however the fix is easy
-- All dependent tools are of course outdated and they may not work as expected, please take care of this: If you're a maintainer please upgrade your API.
-
-Until a polished `v0.5.0` version is released we encourage you to use and test around this RC, the main API will remain intact but probably option names, or subtle behaviors can be introduced.
-
-Examples, new ideas, tips and any kind of kindly feedback is greatly appreciated.
-
-**NEW: BACKWARD COMPATIBILITY**
-
-- Since `0.5.0-rc3` we introduced a `jsf.resolve()` method for full-async results.
-- Since `0.5.0-rc3` the methods `jsf.sync()` is REMOVED and the API for `jsf()` will remain sync.
-
-Thanks for all your feedback in advance to everyone!
-
 # Table of contents
 
 - Basics
@@ -560,4 +528,23 @@ Thanks to it, you can use valid swagger definitions for `jsf` data generation.
 
 JSON-Schema-faker might be used in Node.js as well as in the browser. In order to execute `jsf` in a browser, you should include the distribution file from [`dist`](dist) directory. Each new version of `jsf` is bundled using [Rollup.js](http://rollupjs.org/) and stored by the library maintainers. The bundle includes full versions of all dependencies.
 
-From `v0.5.x` and beyond we'll not longer bundle external generators, locales and such due the unnecessary waste of time and space.
+> From `v0.5.x` and beyond we'll not longer bundle external generators, locales and such due the unnecessary waste of time and space.
+
+## Resources
+
+* [JSON, JSON Schema & JSON-schema-faker](https://www.youtube.com/watch?v=TkqiUG3j_Xw) - WarsawJS meetup presentation recording, a step-by-step guide to JSON-related tools, including `jsf`
+
+## Motivation
+
+There were some existing projects or services trying to achieve similar goals as `jsf`:
+
+- http://www.json-generator.com/
+- https://github.com/unindented/fake-json
+- https://github.com/jonahkagan/schematic-ipsum
+- https://www.npmjs.org/package/json-schema-mock
+- https://github.com/thaume/json-schema-processor
+- https://github.com/andreineculau/json-schema-random
+- https://github.com/murgatroid99/json-schema-random-instance
+- https://github.com/tomarad/JSON-Schema-Instantiator
+
+...but they were either incomplete, outdated, broken or non-standard. That's why `jsf` was created.
