@@ -1,45 +1,151 @@
-## Table of Contents
+# Table of Contents
 
 * [Architecture](#architecture)
-* [Sources](#sources)
 * [Building](#building)
-* [Testing](#testing)
+* [Testing](TESTING.md)
+* [Usage](USAGE.md)
 
-# Architecture
+## Architecture
 
-![JSON Schema Faker module graph](structure.png)
+The source code is intended to be available through `src` (for testing), but bundled versions are provided to ensure portabilty:
 
-JSON Schema Faker is a JavaScript tool that can be executed both in the browser and the server.
+- Both `cjs` and `es` modules are exported for NodeJS and modern Javascript environments respectively
+- Standard `.js` and `.min.js` are emitted for browser usage, they're exported as `umd` without dependencies (`json-schema-ref-parser` and `jsonpath`)
+- Also a single `.bundle.min.js` is generated containing both dependencies from above, also as `umd`
 
-Currently JSF consists of:
+Generated sources are available as an [NPM dependency](https://www.npmjs.com/package/json-schema-faker) and through [UNPKG](https://unpkg.com/json-schema-faker@0.5.0-rc15/dist/).
 
-* `types` - each module represents one basic JSON Schema structure
-  * there is also the `external` module which executes `chance` and `faker` generators
-* `generators` - very small modules which generate some low-level stuff
-* `core` - the engine, various files
-* `api` - here are additional methods you can call on jsf object:
-  * `format()` - to register/get/call your own formats
-  * `extend()` - extending jsf dependencies with user custom logic
-* `class` - encapsulated containers; you might consider them as part of core
-  * `format` - for custom regular expressions
-  * `container` - for dependencies (`faker`, `chance`, `randexp`); this is needed for two reasons:
-    * end user might want to extend `faker` or `chance` with his/her custom generator functions and we need to remember that
-    * we don't want to include both faker and chance by default - we wanna make them optional
+```js
+import jsf from 'json-schema-faker';
+```
 
-# Sources
+Let's examine how the library works:
 
-Currently we've got:
+```js
+// 1.0 - first, we need a working (and valid) `schema`
+const schema = {
+  type: 'string',
+};
 
-* JavaScript sources (`src` directory).
+// 1.1 - optionally, you can provide used `refs`
+const refs = [
+  {
+    id: 'Test',
+    type: 'boolean',
+  }
+];
 
-The codebase is quite complex and so the whole process had to be split into parts. THe migration/refactoring is still a work-in-progress.
+// 1.2 - additionally, you can provide a `cwd` for local references
+const cwd = `${__dirname}/schema`;
+```
 
-# Building
+Note that:
 
-Generate the libraries:
+- 1.1 &mdash; All input MUST be valid JSON-Schema
+- 1.2 &mdash; Given `refs` are also valid JSON-Schema
+- 1.3 &mdash; Given `cwd` is needed only if relative paths are used
 
-    npm run build
+Now we can produce values from our previous settings:
 
-# Testing
+```js
+// 2.0 - generate a sample from the given `schema`
+const syncValue = jsf.generate(schema, refs);
 
-Detailed description of test [can be found here](../tests).
+// 2.1 - resolve and generate complex schemas with remote references
+const asyncValue = await jsf.resolve(schema, refs, cwd);
+```
+
+The core provides typed generators for all basic types and well-known formats.
+
+- 2.0 &mdash; Built-in generators can be resolved synchronously
+- 2.1 &mdash; Local and remote references are resolved asynchronously
+
+For more specific values `jsf` offers a rich menu of options and methods:
+
+```js
+// 3.0 - custom formats are supported
+jsf.format('name', callback);
+jsf.format('name', null); // unregister `name` format
+
+// 3.1 - define `jsf` settings
+jsf.option('optionName', 'value');
+jsf.option({ optionName: 'value' });
+
+// 3.2 - the `version` is also exported
+jsf.version; // 0.5.0-rc16
+
+// 3.3 - internal `random` generators
+jsf.random; // { pick, date, shuffle, number, randexp }
+
+// 3.4 - extend keywords with external generators
+jsf.extend('chance', () => require('chance'));
+jsf.extend('faker', () => require('faker'));
+
+// 3.5 - extend keywords with custom generators
+jsf.define('myProp', (value, schema) => schema);
+
+// 3.6 - unregister extensions by keyword
+jsf.reset('myProp');
+jsf.reset(); // clear extensions
+
+// 3.7 - retrieve registered extensions by keyword
+jsf.locate('faker');
+```
+
+- 3.0 &mdash; This method should register non supported formats
+- 3.1 &mdash; You should be able to setup custom behavior or defaults, etc.
+- 3.2 &mdash; As convenience the package `version` should be exported
+- 3.3 &mdash; Helpers should be shared too, to be used outside the API
+- 3.4 &mdash; Third-party generators should be setup through this method (dependencies)
+- 3.5 &mdash; Custom keywords like `autoIncrement` and `pattern` should be setup through this method (extensions) and stored in a shared container
+- 3.6 &mdash; Added dependencies and extensions should be cleared from the container through this method, if no name is given the the entire container should be reset
+- 3.7 &mdash; Any registered third-party generator should be returned through this method
+
+### Avaliable options
+
+- `defaultInvalidTypeProduct` &mdash; If `failOnInvalidTypes` is disabled this value will be returned on any invalid `type` given (default: `null`)
+- `defaultRandExpMax` &mdash; Setup default value directly as `RandExp.prototype.max` (default: `10`)
+- `ignoreProperties` &mdash; Skip given properties from being generated (default: `[]`)
+- `ignoreMissingRefs` &mdash; If enabled, it will resolve to `{}` for unknown references (default: `false`)
+- `failOnInvalidTypes` &mdash; If enabled, it will throw an `Error` for unknown types (default: `true`)
+- `failOnInvalidFormat` &mdash; If enabled, it will throw an `Error` for unknown formats (default: `true`)
+- `alwaysFakeOptionals` &mdash; When enabled, it will set `optionalsProbability` as `1.0` (default: `false`)
+- `optionalsProbability` &mdash; A value from `0.0` to `1.0` to generate values in a consistent way, e.g. `0.5` will generate from `0%` to `50%` of values. Using arrays it means items, on objects they're properties, etc. (default: `false`)
+- `fixedProbabilities` &mdash; If enabled, then `optionalsProbability: 0.5` will always generate the half of values (default: `false`)
+- `useExamplesValue` &mdash; If enabled, it will return a random value from `examples` if they're present (default: `false`)
+- `useDefaultValue` &mdash; If enabled, it will return the `default` value if present (default: `false`)
+- `requiredOnly` &mdash; If enabled, only `required` properties will be generated (default: `false`)
+- `minItems` &mdash; Override `minItems` if it's less than this value (default: `0`)
+- `maxItems` &mdash; Override `maxItems` if it's greater than this value (default: `null`)
+- `minLength` &mdash; Override `minLength` if it's less than this value  (default: `0`)
+- `maxLength` &mdash; Override `maxLength` if it's greater than this value (default: `null`)
+- `resolveJsonPath` &mdash; If enabled, it will expand `jsonPath` keywords on all generated objects  (default: `false`)
+- `reuseProperties` &mdash; If enabled, it will try to generate missing properties from existing ones. Only when `fillProperties` is enabled too  (default: `false`)
+- `fillProperties` &mdash; If enabled, it will try to generate missing properties to fulfill the schema definition (default: `true`)
+- `random` &mdash; Setup a custom _randonmess_ generator, useful for getting deterministic results (default: `Math.random`)
+
+## Building
+
+**JSON-Schema-Faker** is a JavaScript tool that can be executed both in the browser and the server.
+
+It's built with [bili](https://github.com/egoist/bili), as we're using ES6 syntax for the source code and modules.
+
+To generate `dist/` sources run:
+
+```bash
+$ npm run build
+```
+
+## Testing
+
+Unit tests are run with `mocha -r esm` in order to use ES6 modules syntax, allowing to import and test code directly from the `src` folder.
+
+Also we include "schema tests" to ensure generated data is also valid.
+
+See our [reference guide](TESTING.md) to learn how.
+
+## Usage
+
+Use the [website](http://json-schema-faker.js.org/) tool and generate some values right now.
+
+Please read our [guide](USAGE.md) for further usage instructions.
