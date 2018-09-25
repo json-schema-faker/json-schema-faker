@@ -119,11 +119,11 @@ function run(refs, schema, container) {
         }
 
         if (typeof ref !== 'undefined') {
-          if (!ref) {
+          if (!ref && optionAPI('ignoreMissingRefs') !== true) {
             throw new Error(`Reference not found: ${sub.$ref}`);
           }
 
-          utils.merge(sub, ref);
+          utils.merge(sub, ref || {});
         }
 
         // just remove the reference
