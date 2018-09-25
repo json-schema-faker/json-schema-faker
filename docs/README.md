@@ -101,7 +101,7 @@ jsf.locate('faker');
 - 3.6 &mdash; Added dependencies and extensions should be cleared from the container through this method, if no name is given the the entire container should be reset
 - 3.7 &mdash; Any registered third-party generator should be returned through this method
 
-### Avaliable options
+### Available options
 
 - `defaultInvalidTypeProduct` &mdash; If `failOnInvalidTypes` is disabled this value will be returned on any invalid `type` given (default: `null`)
 - `defaultRandExpMax` &mdash; Setup default value directly as `RandExp.prototype.max` (default: `10`)
