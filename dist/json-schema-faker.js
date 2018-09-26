@@ -1218,16 +1218,17 @@
    * External generators (faker, chance, casual) may return data in non-expected formats, such as string, when you might expect an
    * integer. This function is used to force the typecast. This is the base formatter for all result values.
    *
+   * @param type
    * @param schema
    * @param callback
    * @returns {any}
    */
 
 
-  function typecast(schema, callback) {
+  function typecast(type, schema, callback) {
     var params = {}; // normalize constraints
 
-    switch (schema.type) {
+    switch (type || schema.type) {
       case 'integer':
       case 'number':
         if (typeof schema.minimum !== 'undefined') {
@@ -1298,7 +1299,7 @@
 
     var value = callback(params); // normalize output value
 
-    switch (schema.type) {
+    switch (type || schema.type) {
       case 'number':
         value = parseFloat(value);
         break;
@@ -2276,7 +2277,8 @@
   }
 
   function stringType(value) {
-    var output = utils.typecast(value, function (opts) {
+    // here we need to force type to fix #467
+    var output = utils.typecast('string', value, function (opts) {
       if (value.format) {
         return generateFormat(value, function () { return thunkGenerator(opts.minLength, opts.maxLength); });
       }
@@ -2311,7 +2313,7 @@
     if (path[path.length - 1] !== 'properties') {
       // example values have highest precedence
       if (optionAPI('useExamplesValue') && Array.isArray(schema.examples)) {
-        return utils.typecast(schema, function () { return random.pick(schema.examples); });
+        return utils.typecast(null, schema, function () { return random.pick(schema.examples); });
       }
 
       if (optionAPI('useDefaultValue') && 'default' in schema) {
@@ -2328,7 +2330,7 @@
     }
 
     if (Array.isArray(schema.enum)) {
-      return utils.typecast(schema, function () { return random.pick(schema.enum); });
+      return utils.typecast(null, schema, function () { return random.pick(schema.enum); });
     } // thunks can return sub-schemas
 
 
@@ -2337,7 +2339,7 @@
     }
 
     if (typeof schema.generate === 'function') {
-      return utils.typecast(schema, function () { return schema.generate(rootSchema); });
+      return utils.typecast(null, schema, function () { return schema.generate(rootSchema); });
     } // TODO remove the ugly overcome
 
 
@@ -2499,11 +2501,11 @@
           }
 
           if (typeof ref !== 'undefined') {
-            if (!ref) {
+            if (!ref && optionAPI('ignoreMissingRefs') !== true) {
               throw new Error(("Reference not found: " + (sub.$ref)));
             }
 
-            utils.merge(sub, ref);
+            utils.merge(sub, ref || {});
           } // just remove the reference
 
 
@@ -2708,7 +2710,7 @@
     return container.get(name);
   };
 
-  jsf.version = 'dev@next';
+  jsf.version = '0.5.0-rc16';
 
   return jsf;
 
