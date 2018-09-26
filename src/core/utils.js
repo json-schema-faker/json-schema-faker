@@ -35,15 +35,16 @@ function hasProperties(obj, ...properties) {
  * External generators (faker, chance, casual) may return data in non-expected formats, such as string, when you might expect an
  * integer. This function is used to force the typecast. This is the base formatter for all result values.
  *
+ * @param type
  * @param schema
  * @param callback
  * @returns {any}
  */
-function typecast(schema, callback) {
+function typecast(type, schema, callback) {
   const params = {};
 
   // normalize constraints
-  switch (schema.type) {
+  switch (type || schema.type) {
     case 'integer':
     case 'number':
       if (typeof schema.minimum !== 'undefined') {
@@ -112,7 +113,7 @@ function typecast(schema, callback) {
   let value = callback(params);
 
   // normalize output value
-  switch (schema.type) {
+  switch (type || schema.type) {
     case 'number':
       value = parseFloat(value);
       break;

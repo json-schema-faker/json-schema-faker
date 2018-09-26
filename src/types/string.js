@@ -49,7 +49,8 @@ function generateFormat(value, invalid) {
 }
 
 function stringType(value) {
-  const output = utils.typecast(value, opts => {
+  // here we need to force type to fix #467
+  const output = utils.typecast('string', value, opts => {
     if (value.format) {
       return generateFormat(value, () => thunk(opts.minLength, opts.maxLength));
     }

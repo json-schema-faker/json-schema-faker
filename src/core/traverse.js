@@ -17,7 +17,7 @@ function traverse(schema, path, resolve, rootSchema) {
   if (path[path.length - 1] !== 'properties') {
     // example values have highest precedence
     if (optionAPI('useExamplesValue') && Array.isArray(schema.examples)) {
-      return utils.typecast(schema, () => random.pick(schema.examples));
+      return utils.typecast(null, schema, () => random.pick(schema.examples));
     }
 
     if (optionAPI('useDefaultValue') && 'default' in schema) {
@@ -34,7 +34,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   if (Array.isArray(schema.enum)) {
-    return utils.typecast(schema, () => random.pick(schema.enum));
+    return utils.typecast(null, schema, () => random.pick(schema.enum));
   }
 
   // thunks can return sub-schemas
@@ -43,7 +43,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   if (typeof schema.generate === 'function') {
-    return utils.typecast(schema, () => schema.generate(rootSchema));
+    return utils.typecast(null, schema, () => schema.generate(rootSchema));
   }
 
   // TODO remove the ugly overcome
