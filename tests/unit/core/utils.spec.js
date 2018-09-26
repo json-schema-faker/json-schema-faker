@@ -60,7 +60,7 @@ describe('Utils', () => {
 
   describe('typecast function', () => {
     it('should normalize constraints and format final values', () => {
-      utils.typecast({}, opts => {
+      utils.typecast(null, {}, opts => {
         expect(opts).to.eql({});
       });
 
@@ -70,7 +70,7 @@ describe('Utils', () => {
         minimum: 2,
       };
 
-      utils.typecast(schema, opts => {
+      utils.typecast(null, schema, opts => {
         expect(schema.enum).to.eql([2, 3]);
         expect(opts).to.eql({ minimum: 2 });
       });
@@ -81,7 +81,7 @@ describe('Utils', () => {
         maxLength: 4,
       });
 
-      utils.typecast({
+      utils.typecast(null, {
         type: 'string',
         maxLength: 10,
       }, opts => {
