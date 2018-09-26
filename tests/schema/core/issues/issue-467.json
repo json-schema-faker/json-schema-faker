@@ -27,7 +27,6 @@
         ]
       },
       "only": true,
-      "dump": true,
       "valid": true
     }
   ]

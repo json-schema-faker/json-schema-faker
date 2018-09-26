@@ -88,5 +88,17 @@ describe('Utils', () => {
         expect(opts).to.eql({ maxLength: 4 });
       });
     });
+
+    it('should accept custom types for typecasting', () => {
+      optionAPI({
+        maxLength: 5,
+      });
+
+      utils.typecast('string', {
+        maxLength: 10,
+      }, opts => {
+        expect(opts).to.eql({ maxLength: 5 });
+      });
+    });
   });
 });
