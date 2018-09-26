@@ -41,9 +41,9 @@ const cwd = `${__dirname}/schema`;
 
 Note that:
 
-- 1.1 &mdash; All input MUST be valid JSON-Schema
-- 1.2 &mdash; Given `refs` are also valid JSON-Schema
-- 1.3 &mdash; Given `cwd` is needed only if relative paths are used
+- 1.0 &mdash; All input MUST be valid JSON-Schema
+- 1.1 &mdash; Given `refs` are also valid JSON-Schema
+- 1.2 &mdash; Given `cwd` is needed only if relative paths are used
 
 Now we can produce values from our previous settings:
 
