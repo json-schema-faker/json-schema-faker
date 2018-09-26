@@ -1,7 +1,0 @@
-{
-  "rules": {
-    "quotemark": [true, "single", "avoid-escape"],
-    "radix": true,
-    "semicolon": [true, "always"]
-  }
-}

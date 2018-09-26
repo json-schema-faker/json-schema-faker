@@ -6,6 +6,7 @@
 *~
 *.log
 *.tgz
+.nyc_output
 .DS_Store
 /lib
 /package

@@ -1,0 +1,59 @@
+{
+  "description": "recursive schemas (self-references)",
+  "schemas": [
+    {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "object",
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "name": {
+              "type": "string",
+              "faker": "name.findName"
+            },
+            "children": {
+              "$ref": "#/definitions/node"
+            }
+          },
+          "required": [
+            "id",
+            "name"
+          ]
+        }
+      },
+      "required": [
+        "user"
+      ],
+      "definitions": {
+        "node": {
+          "type": "array",
+          "items": {
+            "Id": {
+              "type": "integer"
+            },
+            "Label": {
+              "type": "string"
+            },
+            "Children": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/node"
+              },
+              "minItems": 5
+            }
+          }
+        }
+      }
+    }
+  ],
+  "tests": [
+    {
+      "description": "should work as expected",
+      "schema": "schemas.0",
+      "valid": true
+    }
+  ]
+}

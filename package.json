@@ -3,35 +3,35 @@
   "version": "0.5.0-rc15",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
-  "main": "lib/index.js",
+  "main": "dist/json-schema-faker.cjs.js",
+  "module": "dist/json-schema-faker.es.js",
+  "browser": "dist/json-schema-faker.min.js",
   "scripts": {
-    "dist": "npm run build:dist",
-    "watch": "tarima watch -d VERSION=`./build/VERSION`",
-    "build": "tarima -qf VERSION=`./build/VERSION`",
-    "build:dist": "npm run build && node build/dist.js",
-    "test": "npm run test:lint && npm run build && npm run test:unit && npm run test:schema",
-    "test:lint": "tslint ts/**/*.ts",
-    "test:unit": "jasmine-node spec/unit --noStackTrace --captureExceptions",
-    "test:schema": "jasmine-node spec/schema --coffee --noStackTrace --captureExceptions",
-    "dev": "jasmine-node spec/schema --coffee --verbose --autoTest --watchFolders lib",
-    "dev:unit": "jasmine-node spec/unit --coffee --verbose --autoTest --watchFolders lib",
-    "cover:up": "codecov --file=coverage/lcov.info --disable=gcov -e TRAVIS_NODE_VERSION",
-    "cover:unit": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec/unit",
-    "cover:schema": "istanbul cover --root lib --x '**/spec/**' -- jasmine-node --coffee spec/schema",
-    "typedoc": "typedoc --out docs/html ts/ --module commonjs",
-    "graphviz": "madge lib --dot > structure.gv"
+    "build:concat:dist": "concat -o dist/json-schema-faker.bundle.min.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath/jsonpath.js dist/json-schema-faker.min.js",
+    "build:browser": "bili --banner --target browser --format umd,umd-min --moduleName JSONSchemaFaker --name json-schema-faker --js buble && npm run build:concat:dist",
+    "build:node": "bili src/index.js --target node --js buble --format es,cjs",
+    "build": "npm run build:browser && npm run build:node",
+    "dev": "npm test -- -w",
+    "test": "npm run test:unit --",
+    "test:ci": "npm run coverage:all && npm run report -- -r lcov",
+    "test:all": "npm run test:run tests && npm run report -- -r html",
+    "test:run": "NODE_ENV=test _mocha --exit --recursive --watch-extensions js,json -r esm -bR spec",
+    "test:unit": "npm run test:run tests/unit",
+    "test:schema": "npm run test:run tests/schema",
+    "coverage": "nyc -x '**/tests/**' -x '**/*.spec.js'",
+    "coverage:all": "npm run coverage -- npm run test:all",
+    "coverage:unit": "npm run coverage -- npm run test:unit",
+    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
+    "report": "nyc report",
+    "lint": "eslint src tests",
+    "pretest": "npm run lint",
+    "prepublish": "npm run build",
+    "graphviz": "madge src --dot > structure.gv"
   },
+  "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
-    {
-      "name": "Alvaro Cabrera",
-      "email": "pateketrueke@gmail.com",
-      "url": "https://soypache.co"
-    },
-    {
-      "name": "Tomasz Ducin",
-      "email": "tomasz@ducin.it",
-      "url": "http://ducin.it"
-    }
+    "Ajay Karat <info@devilsgarage.com> (http://devilsgarage.com/)",
+    "Tomasz Ducin <tomasz@ducin.it> (http://ducin.it)"
   ],
   "repository": {
     "type": "git",
@@ -39,66 +39,44 @@
   },
   "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
   "license": "MIT",
-  "tarima": {
-    "from": "ts",
-    "output": "lib",
-    "watching": [
-      "spec"
-    ],
-    "bundle": true,
-    "ignore": [
-      "**/*.d.ts"
-    ],
-    "filter": [
-      "!*/*/**"
-    ],
-    "rename": [
-      "ts/**:{filepath/1}/{filename}.{extname}"
-    ],
-    "bundleOptions": {
-      "rollup": {
-        "bundle": "JSONSchemaFaker",
-        "format": "cjs",
-        "interop": false
-      }
-    }
-  },
   "keywords": [
     "json",
     "jsonschema",
     "fake",
     "mocks"
   ],
+  "bili": {
+    "external": [
+      "json-schema-ref-parser",
+      "jsonpath"
+    ]
+  },
   "devDependencies": {
+    "ajv": "^6.5.3",
+    "bili": "^3.1.2",
+    "chai": "^4.1.2",
     "chance": "^1.0.9",
-    "clone": "^2.1.1",
+    "clone": "^2.1.2",
     "codecov": "^3.0.0",
+    "concat": "^1.0.3",
+    "esm": "^3.0.82",
     "faker": "^4.1.0",
-    "fs-extra": "^5.0.0",
+    "fs-extra": "^7.0.0",
     "glob": "^7.1.2",
-    "google-closure-compiler-js": "^20180402.0.0",
-    "istanbul": "^0.4.5",
-    "jasmine-node": "2.0.0-beta4",
-    "jayschema": "^0.3.2",
-    "lodash.template": "^4.4.0",
-    "rollup": "^0.57.1",
+    "is-my-json-valid": "^2.19.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.0.1",
+    "rollup": "^0.65.0",
     "rollup-plugin-commonjs": "^9.1.0",
     "rollup-plugin-node-resolve": "^3.0.0",
     "seedrandom": "^2.4.3",
     "semver": "^5.3.0",
-    "tarima": "^4.0.3",
-    "ts-node": "^5.0.0",
-    "tslint": "^5.3.2",
     "tv4": "^1.3.0",
-    "typedoc": "^0.11.1",
-    "typescript": "^2.3.4",
     "z-schema": "^3.18.4"
   },
   "dependencies": {
-    "deref": "^0.7.1",
     "json-schema-ref-parser": "^5.0.0",
     "jsonpath": "^1.0.0",
-    "randexp": "^0.4.5",
-    "tslib": "^1.7.1"
+    "randexp": "^0.5.3"
   }
 }

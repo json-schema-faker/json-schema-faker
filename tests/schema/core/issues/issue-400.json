@@ -1,0 +1,115 @@
+{
+  "description": "jsonPath only returns the first item in data set",
+  "tests": [
+    {
+      "description": "should randomize values from json-path references",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "users": {
+            "type": "array",
+            "minItems": 5,
+            "maxItems": 10,
+            "items": {
+              "type": "object",
+              "properties": {
+                "emplId": {
+                  "type": "integer",
+                  "minimum": 1000000,
+                  "maximum": 1500000
+                },
+                "empDeptId": {
+                  "type": "integer",
+                  "jsonPath": "$..departments[*].id"
+                }
+              },
+              "required": [
+                "emplId",
+                "empDeptId"
+              ]
+            }
+          },
+          "departments": {
+            "type": "array",
+            "minItems": 3,
+            "maxItems": 5,
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer",
+                  "minimum": 1000,
+                  "maximum": 9999
+                },
+                "name": {
+                  "type": "string",
+                  "faker": "name.jobArea"
+                }
+              },
+              "required": [
+                "id",
+                "name"
+              ]
+            }
+          }
+        },
+        "required": [
+          "users",
+          "departments"
+        ]
+      },
+      "require": "core/extend/faker-extend",
+      "set": {
+        "resolveJsonPath": true
+      },
+      "valid": true
+    },
+    {
+      "description": "should randomize values from json-path references (example 2)",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "hunches": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "faker": "random.uuid"
+                }
+              },
+              "required": ["id"]
+            }
+          },
+          "boxes": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "faker": "random.uuid"
+                },
+                "hunchIds": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "jsonPath": "$..hunches[*].id"
+                  }
+                }
+              },
+              "required": ["id", "hunchIds"]
+            }
+          }
+        },
+        "required": ["hunches", "boxes"]
+      },
+      "require": "core/extend/faker-extend",
+      "set": {
+        "resolveJsonPath": true
+      },
+      "valid": true
+    }
+  ]
+}
