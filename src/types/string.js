@@ -34,6 +34,13 @@ function generateFormat(value, invalid) {
     case 'ipv6':
     case 'uri':
     case 'uri-reference':
+    case 'iri':
+    case 'iri-reference':
+    case 'idn-email':
+    case 'idn-hostname':
+    case 'json-pointer':
+    case 'uri-template':
+    case 'uuid':
       return coreFormat(value.format);
     default:
       if (typeof callback === 'undefined') {
