@@ -16,7 +16,7 @@
           "minItems": 1,
           "maxItems": 1
         },
-        "length": 1
+        "count": 1
       },
       {
         "description": "setting maxLength should truncate schema, not override",
@@ -30,7 +30,7 @@
         "set": {
           "maxLength": 20
         },
-        "length": 1
+        "count": 1
       }
     ]
   }

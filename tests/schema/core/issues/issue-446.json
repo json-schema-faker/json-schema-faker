@@ -33,7 +33,7 @@
       {
         "description": "it will always generate two items",
         "schema": "schemas.0",
-        "length": 2,
+        "count": 2,
         "valid": true
       }
     ]
