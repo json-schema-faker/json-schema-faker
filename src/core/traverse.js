@@ -69,13 +69,7 @@ function traverse(schema, path, resolve, rootSchema) {
       }
     } else {
       try {
-        const result = types[type](schema, path, resolve, traverse);
-
-        const required = schema.items
-          ? schema.items.required
-          : schema.required;
-
-        return utils.clean(result, null, required);
+        return types[type](schema, path, resolve, traverse);
       } catch (e) {
         if (typeof e.path === 'undefined') {
           throw new ParseError(e.message, path);

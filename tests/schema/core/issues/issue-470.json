@@ -1,0 +1,32 @@
+{
+  "description": "Missing property 'array of object' in object",
+  "tests": [
+    {
+      "description": "xxx",
+      "schema": {
+        "additionalProperties": false,
+        "properties": {
+          "offer": {
+            "type": "object",
+            "properties": {
+              "multiplier_for_durations": {
+                "items": {
+                  "type": "object"
+                },
+                "type": "array"
+              }
+            },
+            "required": [
+              "multiplier_for_durations"
+            ]
+          }
+        },
+        "required": [
+          "offer"
+        ],
+        "type": "object"
+      },
+      "valid": true
+    }
+  ]
+}

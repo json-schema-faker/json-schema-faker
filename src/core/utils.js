@@ -170,36 +170,6 @@ function merge(a, b) {
   return a;
 }
 
-function clean(obj, isArray, requiredProps) {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    obj = obj
-      .map(value => clean(value, true, requiredProps))
-      .filter(value => typeof value !== 'undefined');
-
-    return obj;
-  }
-
-  Object.keys(obj).forEach(k => {
-    if (!requiredProps || requiredProps.indexOf(k) === -1) {
-      if (Array.isArray(obj[k]) && !obj[k].length) {
-        delete obj[k];
-      }
-    } else {
-      obj[k] = clean(obj[k]);
-    }
-  });
-
-  if (!Object.keys(obj).length && isArray) {
-    return undefined;
-  }
-
-  return obj;
-}
-
 function short(schema) {
   const s = JSON.stringify(schema);
   const l = JSON.stringify(schema, null, 2);
@@ -334,7 +304,6 @@ export default {
   omitProps,
   typecast,
   merge,
-  clean,
   short,
   notValue,
   anyValue,
