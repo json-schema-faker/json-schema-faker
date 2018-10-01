@@ -26,6 +26,7 @@ const inferredProperties = {
     'maxLength',
     'minLength',
     'pattern',
+    'format',
   ],
 };
 
