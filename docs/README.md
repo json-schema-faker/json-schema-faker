@@ -13,7 +13,7 @@ The source code is intended to be available through `src` (for testing), but bun
 - Standard `.js` and `.min.js` are emitted for browser usage, they're exported as `umd` without dependencies (`json-schema-ref-parser` and `jsonpath`)
 - Also a single `.bundle.min.js` is generated containing both dependencies from above, also as `umd`
 
-Generated sources are available as an [NPM dependency](https://www.npmjs.com/package/json-schema-faker) and through [UNPKG](https://unpkg.com/json-schema-faker@0.5.0-rc15/dist/).
+Generated sources are available as an [NPM dependency](https://www.npmjs.com/package/json-schema-faker) and through [UNPKG](https://unpkg.com/json-schema-faker@0.5.0-rc16/dist/).
 
 ```js
 import jsf from 'json-schema-faker';

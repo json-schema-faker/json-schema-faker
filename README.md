@@ -24,9 +24,7 @@ The latest `RC16` comes with some deprecations and breaking-changes towards `v0.
   - `jsf.resolve()` is the async-version, with full dereferencing, given refs are also supported.
 - **deprecated** &mdash; TypeScript sources are not longer used, however `d.ts` definitions will be updated on time.
 
-Review here: https://github.com/json-schema-faker/json-schema-faker/pull/464
-
-> Most _documentation_ from README.md was moved to `docs/` and it should have its own place there, on the website, or wiki pages, etc. This part is unclear yet, so any suggestion is welcome on the PR above.
+> Usage info from README.md was moved to `docs/`, [read more](docs/).
 
 ## Contributors
 

@@ -455,33 +455,6 @@ function merge(a, b) {
   return a;
 }
 
-function clean(obj, isArray, requiredProps) {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    obj = obj.map(function (value) { return clean(value, true, requiredProps); }).filter(function (value) { return typeof value !== 'undefined'; });
-    return obj;
-  }
-
-  Object.keys(obj).forEach(function (k) {
-    if (!requiredProps || requiredProps.indexOf(k) === -1) {
-      if (Array.isArray(obj[k]) && !obj[k].length) {
-        delete obj[k];
-      }
-    } else {
-      obj[k] = clean(obj[k]);
-    }
-  });
-
-  if (!Object.keys(obj).length && isArray) {
-    return undefined;
-  }
-
-  return obj;
-}
-
 function short(schema) {
   var s = JSON.stringify(schema);
   var l = JSON.stringify(schema, null, 2);
@@ -561,7 +534,7 @@ function validate(value, schemas) {
 }
 
 function isKey(prop) {
-  return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
+  return ['enum', 'const', 'default', 'examples', 'required', 'definitions'].indexOf(prop) !== -1;
 }
 
 function omitProps(obj, props) {
@@ -596,7 +569,6 @@ var utils = {
   omitProps: omitProps,
   typecast: typecast,
   merge: merge,
-  clean: clean,
   short: short,
   notValue: notValue,
   anyValue: anyValue,
@@ -809,7 +781,7 @@ var inferredProperties = {
   array: ['additionalItems', 'items', 'maxItems', 'minItems', 'uniqueItems'],
   integer: ['exclusiveMaximum', 'exclusiveMinimum', 'maximum', 'minimum', 'multipleOf'],
   object: ['additionalProperties', 'dependencies', 'maxProperties', 'minProperties', 'patternProperties', 'properties', 'required'],
-  string: ['maxLength', 'minLength', 'pattern']
+  string: ['maxLength', 'minLength', 'pattern', 'format']
 };
 inferredProperties.number = inferredProperties.integer;
 var subschemaProperties = ['additionalItems', 'items', 'additionalProperties', 'dependencies', 'patternProperties', 'properties'];
@@ -1304,6 +1276,9 @@ function timeGenerator() {
   return dateTimeGenerator().slice(11);
 }
 
+var FRAGMENT = '[a-zA-Z][a-zA-Z0-9+-.]*';
+var URI_PATTERN = "https?://{hostname}(?:" + FRAGMENT + ")+";
+var PARAM_PATTERN = '(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?';
 /**
  * Predefined core formats
  * @type {[key: string]: string}
@@ -1313,9 +1288,19 @@ var regexps = {
   email: '[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}',
   hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
   ipv6: '[a-f\\d]{4}(:[a-f\\d]{4}){7}',
-  uri: 'https?://[a-zA-Z][a-zA-Z0-9+-.]*',
-  'uri-reference': '(https?://|#|/|)[a-zA-Z][a-zA-Z0-9+-.]*'
+  uri: URI_PATTERN,
+  // types from draft-0[67] (?)
+  'uri-reference': ("" + URI_PATTERN + PARAM_PATTERN),
+  'uri-template': URI_PATTERN.replace('(?:', '(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|'),
+  'json-pointer': ("(/(?:" + (FRAGMENT.replace(']*', '/]*')) + "|~[01]))+"),
+  // some types from https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#data-types (?)
+  uuid: '^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$'
 };
+regexps.iri = regexps['uri-reference'];
+regexps['iri-reference'] = regexps['uri-reference'];
+regexps['idn-email'] = regexps.email;
+regexps['idn-hostname'] = regexps.hostname;
+var ALLOWED_FORMATS = new RegExp(("\\{(" + (Object.keys(regexps).join('|')) + ")\\}"));
 /**
  * Generates randomized string basing on a built-in regex format
  *
@@ -1324,7 +1309,7 @@ var regexps = {
  */
 
 function coreFormatGenerator(coreFormat) {
-  return random.randexp(regexps[coreFormat]).replace(/\{(\w+)\}/, function (match, key) {
+  return random.randexp(regexps[coreFormat]).replace(ALLOWED_FORMATS, function (match, key) {
     return random.randexp(regexps[key]);
   });
 }
@@ -1359,6 +1344,13 @@ function generateFormat(value, invalid) {
     case 'ipv6':
     case 'uri':
     case 'uri-reference':
+    case 'iri':
+    case 'iri-reference':
+    case 'idn-email':
+    case 'idn-hostname':
+    case 'json-pointer':
+    case 'uri-template':
+    case 'uuid':
       return coreFormatGenerator(value.format);
 
     default:
@@ -1411,7 +1403,9 @@ function traverse(schema, path, resolve, rootSchema) {
   if (path[path.length - 1] !== 'properties') {
     // example values have highest precedence
     if (optionAPI('useExamplesValue') && Array.isArray(schema.examples)) {
-      return utils.typecast(null, schema, function () { return random.pick(schema.examples); });
+      // include `default` value as example too
+      var fixedExamples = schema.examples.concat('default' in schema ? [schema.default] : []);
+      return utils.typecast(null, schema, function () { return random.pick(fixedExamples); });
     }
 
     if (optionAPI('useDefaultValue') && 'default' in schema) {
@@ -1425,6 +1419,10 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (schema.not && typeof schema.not === 'object') {
     schema = utils.notValue(schema.not, utils.omitProps(schema, ['not']));
+  }
+
+  if ('const' in schema) {
+    return schema.const;
   }
 
   if (Array.isArray(schema.enum)) {
@@ -1463,9 +1461,7 @@ function traverse(schema, path, resolve, rootSchema) {
       }
     } else {
       try {
-        var result = typeMap[type](schema, path, resolve, traverse);
-        var required = schema.items ? schema.items.required : schema.required;
-        return utils.clean(result, null, required);
+        return typeMap[type](schema, path, resolve, traverse);
       } catch (e) {
         if (typeof e.path === 'undefined') {
           throw new ParseError(e.message, path);
@@ -1577,8 +1573,11 @@ function run(refs, schema, container) {
       } // cleanup
 
 
-      if (sub.id && typeof sub.id === 'string') {
+      var _id = sub.$id || sub.id;
+
+      if (typeof _id === 'string') {
         delete sub.id;
+        delete sub.$id;
         delete sub.$schema;
       }
 
@@ -1719,7 +1718,7 @@ function getRefs(refs) {
 
   if (Array.isArray(refs)) {
     refs.forEach(function (schema) {
-      $refs[schema.id] = schema;
+      $refs[schema.$id || schema.id] = schema;
     });
   } else {
     $refs = refs || {};
