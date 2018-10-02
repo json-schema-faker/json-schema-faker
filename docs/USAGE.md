@@ -430,7 +430,7 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 - **integer** &mdash; `exclusiveMaximum`, `exclusiveMinimum`, `maximum`, `minimum` and `multipleOf`
 - **number** &mdash; same as above
 - **object** &mdash; `additionalProperties`, `dependencies`, `maxProperties`, `minProperties`, `patternProperties`, `properties` and `required`
-- **string** &mdash; `maxLength`, `minLength` and `pattern`
+- **string** &mdash; `maxLength`, `minLength`, `pattern` and `format`
 
 ## Resources
 
