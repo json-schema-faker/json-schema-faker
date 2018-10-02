@@ -97,8 +97,11 @@ function run(refs, schema, container) {
       }
 
       // cleanup
-      if (sub.id && typeof sub.id === 'string') {
+      const _id = sub.$id || sub.id;
+
+      if (typeof _id === 'string') {
         delete sub.id;
+        delete sub.$id;
         delete sub.$schema;
       }
 

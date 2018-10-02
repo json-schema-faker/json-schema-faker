@@ -17,7 +17,11 @@ function traverse(schema, path, resolve, rootSchema) {
   if (path[path.length - 1] !== 'properties') {
     // example values have highest precedence
     if (optionAPI('useExamplesValue') && Array.isArray(schema.examples)) {
-      return utils.typecast(null, schema, () => random.pick(schema.examples));
+      // include `default` value as example too
+      const fixedExamples = schema.examples
+        .concat('default' in schema ? [schema.default] : []);
+
+      return utils.typecast(null, schema, () => random.pick(fixedExamples));
     }
 
     if (optionAPI('useDefaultValue') && 'default' in schema) {
@@ -31,6 +35,10 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (schema.not && typeof schema.not === 'object') {
     schema = utils.notValue(schema.not, utils.omitProps(schema, ['not']));
+  }
+
+  if ('const' in schema) {
+    return schema.const;
   }
 
   if (Array.isArray(schema.enum)) {

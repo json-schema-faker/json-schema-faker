@@ -59,7 +59,7 @@ function getRefs(refs) {
 
   if (Array.isArray(refs)) {
     refs.forEach(schema => {
-      $refs[schema.id] = schema;
+      $refs[schema.$id || schema.id] = schema;
     });
   } else {
     $refs = refs || {};

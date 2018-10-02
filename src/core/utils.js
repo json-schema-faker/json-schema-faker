@@ -265,7 +265,7 @@ function validate(value, schemas) {
 }
 
 function isKey(prop) {
-  return prop === 'enum' || prop === 'default' || prop === 'required' || prop === 'definitions';
+  return ['enum', 'const', 'default', 'examples', 'required', 'definitions'].indexOf(prop) !== -1;
 }
 
 function omitProps(obj, props) {
