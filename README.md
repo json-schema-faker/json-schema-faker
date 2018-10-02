@@ -1,5 +1,3 @@
-
-
 [![JSON Schema Faker logo](logo/JSF_logo.png)](https://github.com/json-schema-faker/json-schema-faker)
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8MXLRJ7QQXGYY)
@@ -26,9 +24,7 @@ The latest `RC16` comes with some deprecations and breaking-changes towards `v0.
   - `jsf.resolve()` is the async-version, with full dereferencing, given refs are also supported.
 - **deprecated** &mdash; TypeScript sources are not longer used, however `d.ts` definitions will be updated on time.
 
-Review here: https://github.com/json-schema-faker/json-schema-faker/pull/464
-
-> Most _documentation_ from README.md was moved to `docs/` and it should have its own place there, on the website, or wiki pages, etc. This part is unclear yet, so any suggestion is welcome on the PR above.
+> Usage info from README.md was moved to `docs/`, [read more](docs/).
 
 ## Contributors
 
@@ -44,9 +40,8 @@ Review here: https://github.com/json-schema-faker/json-schema-faker/pull/464
 
 We have a [gitter room](https://gitter.im/json-schema-faker) for this project, if you want contribute, talk about specific issues from the library, or you need help on json-schema topics just reach us!
 
-Have some &hearts; for JSON-Schema-Faker? You can support the project via:
+Please take a look at [the technical documentation page](docs/).
 
-- [Open Collective](https://opencollective.com/json-schema-faker/donate)
-- [PayPal](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8MXLRJ7QQXGYY)
-
-Take a look at [the technical documentation page](docs/).
+> If you think `json-schema-faker` is adding value on what you're doing please consider [buying me a coffee](http://ko-fi.com/pateketrueke).
+>
+> Also, you can support the project via [Open Collective](https://opencollective.com/json-schema-faker/donate).
