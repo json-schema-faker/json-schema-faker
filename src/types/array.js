@@ -83,7 +83,7 @@ function arrayType(value, path, resolve, traverseCallback) {
   if (optionalsProbability !== false) {
     length = fixedProbabilities
       ? Math.round(maxItems * optionalsProbability)
-      : random.number(minItems, maxItems * optionalsProbability);
+      : random.number(minItems, maxItems) * optionalsProbability;
   }
 
   // TODO below looks bad. Should additionalItems be copied as-is?
