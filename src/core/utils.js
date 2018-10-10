@@ -139,6 +139,24 @@ function typecast(type, schema, callback) {
       if (value.length > max) {
         value = value.substr(0, max);
       }
+
+      switch (schema.format) {
+        case 'date-time':
+        case 'datetime':
+          value = new Date(value).toISOString();
+          break;
+
+        case 'date':
+          value = new Date(value).toISOString().substr(0, 10);
+          break;
+
+        case 'time':
+          value = new Date(value).toISOString().substr(11);
+          break;
+
+        default:
+          break;
+      }
       break;
     }
 
