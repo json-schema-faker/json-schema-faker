@@ -75,6 +75,35 @@ function objectType(value, path, resolve, traverseCallback) {
 
   // properties are read from right-to-left
   const _props = requiredProperties.concat(extraProperties).slice(0, max);
+  const _defns = [];
+
+  if (value.dependencies) {
+    Object.keys(value.dependencies).forEach(prop => {
+      const _required = value.dependencies[prop];
+
+      if (_props.indexOf(prop) !== -1) {
+        if (Array.isArray(_required)) {
+          // property-dependencies
+          _required.forEach(sub => {
+            if (_props.indexOf(sub) === -1) {
+              _props.push(sub);
+            }
+          });
+        } else {
+          _defns.push(_required);
+        }
+      }
+    });
+
+    // schema-dependencies
+    if (_defns.length) {
+      delete value.dependencies;
+
+      return traverseCallback({
+        allOf: _defns.concat(value),
+      }, path.concat(['properties']), resolve);
+    }
+  }
 
   const skipped = [];
   const missing = [];
