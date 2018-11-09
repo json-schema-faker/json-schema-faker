@@ -60,9 +60,8 @@
           "additionalProperties": false
         },
         "set": {
-          "optionalsProbability": 1
+          "alwaysFakeOptionals": true
         },
-        "skip": true,
         "valid": true
       }
     ]
