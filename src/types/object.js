@@ -48,7 +48,7 @@ function objectType(value, path, resolve, traverseCallback) {
   }
 
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  const fixedProbabilities = optionAPI('fixedProbabilities') || false;
+  const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   const ignoreProperties = optionAPI('ignoreProperties') || [];
 
   const min = Math.max(value.minProperties || 0, requiredProperties.length);

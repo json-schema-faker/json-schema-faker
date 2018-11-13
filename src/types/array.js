@@ -76,7 +76,7 @@ function arrayType(value, path, resolve, traverseCallback) {
   }
 
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  const fixedProbabilities = optionAPI('fixedProbabilities') || false;
+  const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
 
   let length = random.number(minItems, maxItems, 1, 5);
 
