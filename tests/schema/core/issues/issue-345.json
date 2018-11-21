@@ -1,5 +1,6 @@
 {
   "description": "Invalid JSON generated with cyclic reference",
+  "skip": true,
   "tests": [
     {
       "description": "it will work as expected",
