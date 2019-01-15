@@ -121,29 +121,34 @@ function objectType(value, path, resolve, traverseCallback) {
     // first ones are the required properies
     if (properties[key]) {
       props[key] = properties[key];
-    } else {
-      let found;
+    }
 
-      // then try patternProperties
-      patternPropertyKeys.forEach(_key => {
-        if (key.match(new RegExp(_key))) {
-          found = true;
+    let found;
+
+    // then try patternProperties
+    patternPropertyKeys.forEach(_key => {
+      if (key.match(new RegExp(_key))) {
+        found = true;
+
+        if (props[key]) {
+          utils.merge(props[key], patternProperties[_key]);
+        } else {
           props[random.randexp(key)] = patternProperties[_key];
         }
-      });
+      }
+    });
 
-      if (!found) {
-        // try patternProperties again,
-        const subschema = patternProperties[key] || additionalProperties;
+    if (!found) {
+      // try patternProperties again,
+      const subschema = patternProperties[key] || additionalProperties;
 
-        // FIXME: allow anyType as fallback when no subschema is given?
+      // FIXME: allow anyType as fallback when no subschema is given?
 
-        if (subschema) {
-          // otherwise we can use additionalProperties?
-          props[patternProperties[key] ? random.randexp(key) : key] = subschema;
-        } else {
-          missing.push(key);
-        }
+      if (subschema) {
+        // otherwise we can use additionalProperties?
+        props[patternProperties[key] ? random.randexp(key) : key] = subschema;
+      } else {
+        missing.push(key);
       }
     }
   });

@@ -275,6 +275,7 @@
           "minProperties": 20,
           "additionalProperties": false
         },
+        "skip": true,
         "throws": "properties constraints were too strong to successfully generate a valid object for:\n[\\s\\S]+? in \\/"
       },
       {
