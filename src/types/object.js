@@ -227,20 +227,6 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  if (!allowsAdditional && current < min) {
-    if (missing.length) {
-      throw new ParseError(`properties '${
-        missing.join(', ')
-      }' were not found while additionalProperties is false:\n${
-        utils.short(value)
-      }`, path);
-    }
-
-    throw new ParseError(`properties constraints were too strong to successfully generate a valid object for:\n${
-      utils.short(value)
-    }`, path);
-  }
-
   return traverseCallback(props, path.concat(['properties']), resolve);
 }
 
