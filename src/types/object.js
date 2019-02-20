@@ -2,7 +2,6 @@ import random from '../core/random';
 import words from '../generators/words';
 import utils from '../core/utils';
 import optionAPI from '../api/option';
-import ParseError from '../core/error';
 
 // fallback generator
 const anyType = { type: ['string', 'number', 'integer', 'boolean'] };
@@ -28,10 +27,10 @@ function objectType(value, path, resolve, traverseCallback) {
     ? (value.additionalProperties === true ? anyType : value.additionalProperties)
     : null;
 
-  if (!allowsAdditional &&
-    propertyKeys.length === 0 &&
-    patternPropertyKeys.length === 0 &&
-    utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
+  if (!allowsAdditional
+    && propertyKeys.length === 0
+    && patternPropertyKeys.length === 0
+    && utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
   ) {
     // just nothing
     return {};

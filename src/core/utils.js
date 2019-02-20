@@ -1,5 +1,5 @@
 import optionAPI from '../api/option';
-import env from '../core/constants';
+import env from './constants';
 import random from './random';
 
 function getSubAttribute(obj, dotSeparatedKey) {

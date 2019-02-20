@@ -1,7 +1,7 @@
 import RandExp from 'randexp';
 
 import optionAPI from '../api/option';
-import env from '../core/constants';
+import env from './constants';
 
 function getRandomInteger(min, max) {
   min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
@@ -15,8 +15,7 @@ function _randexp(value) {
   RandExp.prototype.max = optionAPI('defaultRandExpMax');
 
   // same implementation as the original except using our random
-  RandExp.prototype.randInt = (a, b) =>
-    a + Math.floor(optionAPI('random')() * (1 + (b - a)));
+  RandExp.prototype.randInt = (a, b) => a + Math.floor(optionAPI('random')() * (1 + (b - a)));
 
   const re = new RandExp(value);
 

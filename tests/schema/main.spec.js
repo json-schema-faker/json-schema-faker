@@ -1,4 +1,6 @@
-import { jsf, pick, tryTest, getTests } from './helpers';
+import {
+  jsf, pick, tryTest, getTests,
+} from './helpers';
 
 const { only, all } = getTests(__dirname);
 
