@@ -151,7 +151,7 @@ function typecast(type, schema, callback) {
           break;
 
         case 'time':
-          value = new Date(value).toISOString().substr(11);
+          value = new Date(`1969-01-01 ${value}`).toISOString().substr(11);
           break;
 
         default:
@@ -207,6 +207,7 @@ function anyValue() {
     undefined,
     [],
     {},
+    // FIXME: use built-in random?
     Math.random(),
     Math.random().toString(36).substr(2),
   ]);
