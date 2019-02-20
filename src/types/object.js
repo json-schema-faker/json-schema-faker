@@ -139,7 +139,7 @@ function objectType(value, path, resolve, traverseCallback) {
 
     if (!found) {
       // try patternProperties again,
-      const subschema = patternProperties[key] || additionalProperties;
+      const subschema = properties[key] || patternProperties[key] || additionalProperties;
 
       // FIXME: allow anyType as fallback when no subschema is given?
 
