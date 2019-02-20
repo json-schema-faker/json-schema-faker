@@ -80,7 +80,7 @@ function traverse(schema, path, resolve, rootSchema) {
         return types[type](schema, path, resolve, traverse);
       } catch (e) {
         if (typeof e.path === 'undefined') {
-          throw new ParseError(e.message, path);
+          throw new ParseError(e.stack, path);
         }
         throw e;
       }
