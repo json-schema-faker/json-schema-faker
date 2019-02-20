@@ -108,12 +108,16 @@ export function tryTest(test, refs, schema) {
   }).catch(error => {
     if (typeof test.throws === 'string') {
       expect(error).to.match(new RegExp(test.throws, 'im'));
+      return;
     }
 
     if (typeof test.throws === 'boolean') {
       if (test.throws !== true) {
         throw error;
       }
+      return;
     }
+
+    throw error;
   });
 }
