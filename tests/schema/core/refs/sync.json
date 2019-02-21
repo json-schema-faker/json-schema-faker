@@ -24,8 +24,8 @@
             }
           }
         },
-        "FIXME": "this eventually fails, but because other is resolved to undefined",
-        "_repeat": 5000,
+        "FIXME": "this eventually fails, but because other is resolved to undefined; it just happen when repeating too much (too many requests?)",
+        "_repeat": 100,
         "_only": true,
         "valid": true
       },

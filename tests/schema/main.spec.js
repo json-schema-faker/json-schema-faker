@@ -6,8 +6,16 @@ const { only, all } = getTests(__dirname);
 
 /* global describe, it */
 
+const seeds = [];
+
+function seed() {
+  const value = Math.random();
+  seeds.push(value);
+  return value;
+}
+
 (only.length ? only : all).forEach(suite => {
-  describe(`${suite.description} (${suite.file.replace(`${__dirname}/`, '')})`, () => {
+  describe(`${suite.description} (${suite.file.replace(`${process.cwd()}/`, '')})`, () => {
     suite.tests.forEach(test => {
       it(test.description, () => {
         jsf.option(jsf.option.getDefaults());
@@ -16,11 +24,9 @@ const { only, all } = getTests(__dirname);
           jsf.option(test.set);
         }
 
-        if (test.seed) {
-          jsf.option({
-            random: () => test.seed,
-          });
-        }
+        jsf.option({
+          random: () => ((test.seed && (Array.isArray(test.seed) ? test.seed.shift() : test.seed)) || seed()),
+        });
 
         if (test.require) {
           require(`./${test.require}`).register(jsf);
@@ -50,7 +56,11 @@ const { only, all } = getTests(__dirname);
           nth -= 1;
         }
 
-        return Promise.all(tasks);
+        return Promise.all(tasks).catch(e => {
+          // FIXME: find a way to debug this
+          console.log('---> Used seeds:', seeds.slice(-10).join(', ') || test.seed);
+          throw e;
+        });
       }).timeout(process.CI ? 30000 : 10000);
     });
   });
