@@ -18,8 +18,8 @@
         "multipleOf": 0.01
       },
       "seed": 0.06559633646612273,
-      "equal": 13119267.29,
-      "valid": true
+      "equal": 13119267.290000001,
+      "valid": false
     }
   ]
 }
