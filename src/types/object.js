@@ -12,7 +12,7 @@ function objectType(value, path, resolve, traverseCallback) {
 
   const properties = value.properties || {};
   const patternProperties = value.patternProperties || {};
-  const requiredProperties = (value.required || []).slice();
+  const requiredProperties = typeof value.required === 'boolean' ? [] : (value.required || []).slice();
   const allowsAdditional = value.additionalProperties !== false;
 
   const propertyKeys = Object.keys(properties);
