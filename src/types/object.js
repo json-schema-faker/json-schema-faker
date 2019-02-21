@@ -25,7 +25,7 @@ function objectType(value, path, resolve, traverseCallback) {
 
   const additionalProperties = allowsAdditional // eslint-disable-line
     ? (value.additionalProperties === true ? anyType : value.additionalProperties)
-    : null;
+    : value.additionalProperties;
 
   if (!allowsAdditional
     && propertyKeys.length === 0
@@ -117,8 +117,11 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     }
 
-    // first ones are the required properies
-    if (properties[key]) {
+    if (additionalProperties === false) {
+      if (requiredProperties.indexOf(key) !== -1) {
+        props[key] = properties[key];
+      }
+    } else if (properties[key]) {
       props[key] = properties[key];
     }
 
@@ -139,18 +142,20 @@ function objectType(value, path, resolve, traverseCallback) {
 
     if (!found) {
       // try patternProperties again,
-      const subschema = properties[key] || patternProperties[key] || additionalProperties;
+      const subschema = patternProperties[key] || additionalProperties;
 
       // FIXME: allow anyType as fallback when no subschema is given?
 
-      if (subschema) {
+      if (subschema && additionalProperties !== false) {
         // otherwise we can use additionalProperties?
-        props[patternProperties[key] ? random.randexp(key) : key] = subschema;
+        props[patternProperties[key] ? random.randexp(key) : key] = properties[key] || subschema;
       } else {
         missing.push(key);
       }
     }
   });
+
+  // console.log(requiredProperties, Object.keys(props));
 
   const fillProps = optionAPI('fillProperties');
   const reuseProps = optionAPI('reuseProperties');
