@@ -45,7 +45,6 @@ function numberType(value) {
       fix = (num / multipleOf) % 1;
     } while (fix !== 0);
 
-
     // FIXME: https://github.com/json-schema-faker/json-schema-faker/issues/379
 
     return num;
