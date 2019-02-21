@@ -83,7 +83,7 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   try {
-    const result = traverse(utils.merge({}, schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
+    const result = traverse(utils.clone(schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
       if (typeof maxReduceDepth === 'undefined') {
         maxReduceDepth = random.number(1, 3);
       }

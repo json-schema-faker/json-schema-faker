@@ -188,6 +188,21 @@ function merge(a, b) {
   return a;
 }
 
+function clone(obj) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(x => clone(x));
+  }
+
+  return Object.keys(obj).reduce((prev, cur) => {
+    prev[cur] = clone(obj[cur]);
+    return prev;
+  }, {});
+}
+
 function short(schema) {
   const s = JSON.stringify(schema);
   const l = JSON.stringify(schema, null, 2);
@@ -323,6 +338,7 @@ export default {
   omitProps,
   typecast,
   merge,
+  clone,
   short,
   notValue,
   anyValue,
