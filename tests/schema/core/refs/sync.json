@@ -24,6 +24,9 @@
             }
           }
         },
+        "FIXME": "this eventually fails, but because other is resolved to undefined",
+        "_repeat": 5000,
+        "_only": true,
         "valid": true
       },
       {
