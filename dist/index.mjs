@@ -1,6 +1,6 @@
+import $RefParser from 'json-schema-ref-parser';
 import RandExp from 'randexp';
 import jsonpath from 'jsonpath';
-import $RefParser from 'json-schema-ref-parser';
 
 /**
  * This class defines a registry for custom formats used within JSF.
@@ -85,15 +85,15 @@ defaults.random = Math.random;
  * This class defines a registry for custom settings used within JSF.
  */
 
-var OptionRegistry = (function (Registry$$1) {
+var OptionRegistry = /*@__PURE__*/(function (Registry) {
   function OptionRegistry() {
-    Registry$$1.call(this);
+    Registry.call(this);
     this.data = Object.assign({}, defaults);
     this._defaults = defaults;
   }
 
-  if ( Registry$$1 ) OptionRegistry.__proto__ = Registry$$1;
-  OptionRegistry.prototype = Object.create( Registry$$1 && Registry$$1.prototype );
+  if ( Registry ) OptionRegistry.__proto__ = Registry;
+  OptionRegistry.prototype = Object.create( Registry && Registry.prototype );
   OptionRegistry.prototype.constructor = OptionRegistry;
 
   var prototypeAccessors = { defaults: { configurable: true } };
@@ -424,6 +424,24 @@ function typecast(type, schema, callback) {
           value = value.substr(0, max$1);
         }
 
+        switch (schema.format) {
+          case 'date-time':
+          case 'datetime':
+            value = new Date(value).toISOString().replace(/0+Z$/g, 'Z');
+            break;
+
+          case 'date':
+            value = new Date(value).toISOString().substr(0, 10);
+            break;
+
+          case 'time':
+            value = new Date(("1969-01-01 " + value)).toISOString().substr(11);
+            break;
+
+          default:
+            break;
+        }
+
         break;
       }
 
@@ -455,6 +473,21 @@ function merge(a, b) {
   return a;
 }
 
+function clone(obj) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(function (x) { return clone(x); });
+  }
+
+  return Object.keys(obj).reduce(function (prev, cur) {
+    prev[cur] = clone(obj[cur]);
+    return prev;
+  }, {});
+}
+
 function short(schema) {
   var s = JSON.stringify(schema);
   var l = JSON.stringify(schema, null, 2);
@@ -462,7 +495,8 @@ function short(schema) {
 }
 
 function anyValue() {
-  return random.pick([false, true, null, -1, NaN, Math.PI, Infinity, undefined, [], {}, Math.random(), Math.random().toString(36).substr(2)]);
+  return random.pick([false, true, null, -1, NaN, Math.PI, Infinity, undefined, [], {}, // FIXME: use built-in random?
+  Math.random(), Math.random().toString(36).substr(2)]);
 }
 
 function notValue(schema, parent) {
@@ -569,6 +603,7 @@ var utils = {
   omitProps: omitProps,
   typecast: typecast,
   merge: merge,
+  clone: clone,
   short: short,
   notValue: notValue,
   anyValue: anyValue,
@@ -744,7 +779,9 @@ var registry$1 = new Registry();
 function formatAPI(nameOrFormatMap, callback) {
   if (typeof nameOrFormatMap === 'undefined') {
     return registry$1.list();
-  } else if (typeof nameOrFormatMap === 'string') {
+  }
+
+  if (typeof nameOrFormatMap === 'string') {
     if (typeof callback === 'function') {
       registry$1.register(nameOrFormatMap, callback);
     } else if (callback === null || callback === false) {
@@ -757,7 +794,7 @@ function formatAPI(nameOrFormatMap, callback) {
   }
 }
 
-var ParseError = (function (Error) {
+var ParseError = /*@__PURE__*/(function (Error) {
   function ParseError(message, path) {
     Error.call(this);
 
@@ -920,11 +957,11 @@ function arrayType(value, path, resolve, traverseCallback) {
   }
 
   var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  var fixedProbabilities = optionAPI('fixedProbabilities') || false;
+  var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   var length = random.number(minItems, maxItems, 1, 5);
 
   if (optionalsProbability !== false) {
-    length = fixedProbabilities ? Math.round(maxItems * optionalsProbability) : random.number(minItems, maxItems * optionalsProbability);
+    length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems);
   } // TODO below looks bad. Should additionalItems be copied as-is?
 
 
@@ -1022,7 +1059,7 @@ function objectType(value, path, resolve, traverseCallback) {
   var props = {};
   var properties = value.properties || {};
   var patternProperties = value.patternProperties || {};
-  var requiredProperties = (value.required || []).slice();
+  var requiredProperties = typeof value.required === 'boolean' ? [] : (value.required || []).slice();
   var allowsAdditional = value.additionalProperties !== false;
   var propertyKeys = Object.keys(properties);
   var patternPropertyKeys = Object.keys(patternProperties);
@@ -1032,7 +1069,7 @@ function objectType(value, path, resolve, traverseCallback) {
   }, []);
   var allProperties = requiredProperties.concat(optionalProperties);
   var additionalProperties = allowsAdditional // eslint-disable-line
-  ? value.additionalProperties === true ? anyType : value.additionalProperties : null;
+  ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
 
   if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
     // just nothing
@@ -1049,7 +1086,7 @@ function objectType(value, path, resolve, traverseCallback) {
   }
 
   var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  var fixedProbabilities = optionAPI('fixedProbabilities') || false;
+  var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   var ignoreProperties = optionAPI('ignoreProperties') || [];
   var min = Math.max(value.minProperties || 0, requiredProperties.length);
   var max = Math.min(value.maxProperties || allProperties.length, allProperties.length);
@@ -1074,8 +1111,35 @@ function objectType(value, path, resolve, traverseCallback) {
 
   var _props = requiredProperties.concat(extraProperties).slice(0, max);
 
+  var _defns = [];
+
+  if (value.dependencies) {
+    Object.keys(value.dependencies).forEach(function (prop) {
+      var _required = value.dependencies[prop];
+
+      if (_props.indexOf(prop) !== -1) {
+        if (Array.isArray(_required)) {
+          // property-dependencies
+          _required.forEach(function (sub) {
+            if (_props.indexOf(sub) === -1) {
+              _props.push(sub);
+            }
+          });
+        } else {
+          _defns.push(_required);
+        }
+      }
+    }); // schema-dependencies
+
+    if (_defns.length) {
+      delete value.dependencies;
+      return traverseCallback({
+        allOf: _defns.concat(value)
+      }, path.concat(['properties']), resolve);
+    }
+  }
+
   var skipped = [];
-  var missing = [];
 
   _props.forEach(function (key) {
     for (var i = 0; i < ignoreProperties.length; i += 1) {
@@ -1083,34 +1147,41 @@ function objectType(value, path, resolve, traverseCallback) {
         skipped.push(key);
         return;
       }
-    } // first ones are the required properies
+    }
 
-
-    if (properties[key]) {
+    if (additionalProperties === false) {
+      if (requiredProperties.indexOf(key) !== -1) {
+        props[key] = properties[key];
+      }
+    } else if (properties[key]) {
       props[key] = properties[key];
-    } else {
-      var found; // then try patternProperties
+    }
 
-      patternPropertyKeys.forEach(function (_key) {
-        if (key.match(new RegExp(_key))) {
-          found = true;
+    var found; // then try patternProperties
+
+    patternPropertyKeys.forEach(function (_key) {
+      if (key.match(new RegExp(_key))) {
+        found = true;
+
+        if (props[key]) {
+          utils.merge(props[key], patternProperties[_key]);
+        } else {
           props[random.randexp(key)] = patternProperties[_key];
         }
-      });
+      }
+    });
 
-      if (!found) {
-        // try patternProperties again,
-        var subschema = patternProperties[key] || additionalProperties; // FIXME: allow anyType as fallback when no subschema is given?
+    if (!found) {
+      // try patternProperties again,
+      var subschema = patternProperties[key] || additionalProperties; // FIXME: allow anyType as fallback when no subschema is given?
 
-        if (subschema) {
-          // otherwise we can use additionalProperties?
-          props[patternProperties[key] ? random.randexp(key) : key] = subschema;
-        } else {
-          missing.push(key);
-        }
+      if (subschema && additionalProperties !== false) {
+        // otherwise we can use additionalProperties?
+        props[patternProperties[key] ? random.randexp(key) : key] = properties[key] || subschema;
       }
     }
-  });
+  }); // console.log(requiredProperties, Object.keys(props));
+
 
   var fillProps = optionAPI('fillProperties');
   var reuseProps = optionAPI('reuseProperties'); // discard already ignored props if they're not required to be filled...
@@ -1182,14 +1253,6 @@ function objectType(value, path, resolve, traverseCallback) {
         current += 1;
       }
     }
-  }
-
-  if (!allowsAdditional && current < min) {
-    if (missing.length) {
-      throw new ParseError(("properties '" + (missing.join(', ')) + "' were not found while additionalProperties is false:\n" + (utils.short(value))), path);
-    }
-
-    throw new ParseError(("properties constraints were too strong to successfully generate a valid object for:\n" + (utils.short(value))), path);
   }
 
   return traverseCallback(props, path.concat(['properties']), resolve);
@@ -1464,7 +1527,7 @@ function traverse(schema, path, resolve, rootSchema) {
         return typeMap[type](schema, path, resolve, traverse);
       } catch (e) {
         if (typeof e.path === 'undefined') {
-          throw new ParseError(e.message, path);
+          throw new ParseError(e.stack, path);
         }
 
         throw e;
@@ -1559,7 +1622,7 @@ function resolve(obj, data, values, property) {
 
 function run(refs, schema, container) {
   try {
-    var result = traverse(schema, [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
+    var result = traverse(utils.clone(schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
       if (typeof maxReduceDepth === 'undefined') {
         maxReduceDepth = random.number(1, 3);
       }
