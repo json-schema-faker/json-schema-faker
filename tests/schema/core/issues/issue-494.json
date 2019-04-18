@@ -60,7 +60,6 @@
           "account-response.current",
           "account-response.escrow"
         ],
-        "skip": true,
         "valid": true
       }
     ]
