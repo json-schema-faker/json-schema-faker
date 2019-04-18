@@ -115,8 +115,12 @@ var registry = new OptionRegistry();
  * @returns {any}
  */
 
-function optionAPI(nameOrOptionMap) {
+function optionAPI(nameOrOptionMap, optionalValue) {
   if (typeof nameOrOptionMap === 'string') {
+    if (typeof optionalValue !== 'undefined') {
+      return registry.register(nameOrOptionMap, optionalValue);
+    }
+
     return registry.get(nameOrOptionMap);
   }
 

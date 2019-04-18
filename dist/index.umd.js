@@ -6872,8 +6872,12 @@
    * @returns {any}
    */
 
-  function optionAPI(nameOrOptionMap) {
+  function optionAPI(nameOrOptionMap, optionalValue) {
     if (typeof nameOrOptionMap === 'string') {
+      if (typeof optionalValue !== 'undefined') {
+        return registry.register(nameOrOptionMap, optionalValue);
+      }
+
       return registry.get(nameOrOptionMap);
     }
 
@@ -18980,7 +18984,7 @@
     var length = random.number(minItems, maxItems, 1, 5);
 
     if (optionalsProbability !== false) {
-      length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems);
+      length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
     } // TODO below looks bad. Should additionalItems be copied as-is?
 
 
