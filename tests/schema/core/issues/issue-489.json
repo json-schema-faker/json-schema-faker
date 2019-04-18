@@ -3,6 +3,24 @@
     "description": "support consider patternProperties",
     "tests": [
       {
+        "description": "ensure first schema passes",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "patternProperties": {
+            "test": {
+              "type": "null"
+            }
+          },
+          "properties": {
+            "test": {
+              "title": "short description"
+            }
+          },
+          "required": ["test"]
+        },
+        "valid": true
+      },
+      {
         "description": "merge both properties definitions",
         "schema": {
           "$schema": "http://json-schema.org/draft-04/schema#",
