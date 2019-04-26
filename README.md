@@ -12,6 +12,7 @@
 
 [![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
 [![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
+[![Known Vulnerabilities](https://snyk.io/test/github/json-schema-faker/json-schema-faker/badge.svg)](https://snyk.io/test/github/json-schema-faker/json-schema-faker)
 
 > Use [JSON Schema](http://json-schema.org/draft-04/json-schema-core.html) along with fake generators to provide consistent and meaningful fake data for your system.
 
