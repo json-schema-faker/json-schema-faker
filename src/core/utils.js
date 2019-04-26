@@ -133,7 +133,11 @@ function typecast(type, schema, callback) {
       const max = Math.min(params.maxLength || Infinity, Infinity);
 
       while (value.length < min) {
-        value += ` ${value}`;
+        if (!schema.pattern) {
+          value += `${random.pick([' ', '/', '_', '-', '+', '=', '@', '^'])}${value}`;
+        } else {
+          value += random.randexp(schema.pattern);
+        }
       }
 
       if (value.length > max) {
