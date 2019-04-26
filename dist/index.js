@@ -1705,7 +1705,19 @@ function run(refs, schema, container) {
         return {
           thunk: function thunk() {
             var copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
-            utils.merge(copy, random.pick(mix));
+            var fixed = random.pick(mix);
+            utils.merge(copy, fixed);
+
+            if (sub.oneOf) {
+              mix.forEach(function (omit) {
+                if (omit !== fixed && omit.required) {
+                  omit.required.forEach(function (key) {
+                    delete copy.properties[key];
+                  });
+                }
+              });
+            }
+
             return copy;
           }
 
