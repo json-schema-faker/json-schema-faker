@@ -163,8 +163,19 @@ function run(refs, schema, container) {
         return {
           thunk() {
             const copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
+            const fixed = random.pick(mix);
 
-            utils.merge(copy, random.pick(mix));
+            utils.merge(copy, fixed);
+
+            if (sub.oneOf) {
+              mix.forEach(omit => {
+                if (omit !== fixed && omit.required) {
+                  omit.required.forEach(key => {
+                    delete copy.properties[key];
+                  });
+                }
+              });
+            }
 
             return copy;
           },
