@@ -421,7 +421,11 @@ function typecast(type, schema, callback) {
         var max$1 = Math.min(params.maxLength || Infinity, Infinity);
 
         while (value.length < min$1) {
-          value += " " + value;
+          if (!schema.pattern) {
+            value += "" + (random.pick([' ', '/', '_', '-', '+', '=', '@', '^'])) + value;
+          } else {
+            value += random.randexp(schema.pattern);
+          }
         }
 
         if (value.length > max$1) {
