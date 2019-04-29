@@ -39,6 +39,7 @@ function generateFormat(value, invalid) {
     case 'idn-email':
     case 'idn-hostname':
     case 'json-pointer':
+    case 'slug':
     case 'uri-template':
     case 'uuid':
       return coreFormat(value.format);
