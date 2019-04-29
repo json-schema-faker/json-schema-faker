@@ -13,6 +13,7 @@ const regexps = {
   hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
   ipv6: '[a-f\\d]{4}(:[a-f\\d]{4}){7}',
   uri: URI_PATTERN,
+  slug: '[a-zA-Z\\d_-]+',
 
   // types from draft-0[67] (?)
   'uri-reference': `${URI_PATTERN}${PARAM_PATTERN}`,
