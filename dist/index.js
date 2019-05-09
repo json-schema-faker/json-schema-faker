@@ -910,7 +910,10 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
     if (seen.indexOf(json) === -1) {
       seen.push(json);
       tmp.push(obj);
+      return true;
     }
+
+    return false;
   }
 
   items.forEach(walk); // TODO: find a better solution?
@@ -918,10 +921,11 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
   var limit = 100;
 
   while (tmp.length !== items.length) {
-    walk(traverseCallback(value.items || sample, path, resolve));
+    if (!walk(traverseCallback(value.items || sample, path, resolve))) {
+      limit -= 1;
+    }
 
     if (!limit) {
-      limit -= 1;
       break;
     }
   }
@@ -1364,6 +1368,7 @@ var regexps = {
   hostname: '[a-zA-Z]{1,33}\\.[a-z]{2,4}',
   ipv6: '[a-f\\d]{4}(:[a-f\\d]{4}){7}',
   uri: URI_PATTERN,
+  slug: '[a-zA-Z\\d_-]+',
   // types from draft-0[67] (?)
   'uri-reference': ("" + URI_PATTERN + PARAM_PATTERN),
   'uri-template': URI_PATTERN.replace('(?:', '(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|'),
@@ -1424,6 +1429,7 @@ function generateFormat(value, invalid) {
     case 'idn-email':
     case 'idn-hostname':
     case 'json-pointer':
+    case 'slug':
     case 'uri-template':
     case 'uuid':
       return coreFormatGenerator(value.format);
