@@ -14,7 +14,11 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
     if (seen.indexOf(json) === -1) {
       seen.push(json);
       tmp.push(obj);
+
+      return true;
     }
+
+    return false;
   }
 
   items.forEach(walk);
@@ -23,10 +27,11 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
   let limit = 100;
 
   while (tmp.length !== items.length) {
-    walk(traverseCallback(value.items || sample, path, resolve));
+    if (!walk(traverseCallback(value.items || sample, path, resolve))) {
+      limit -= 1;
+    }
 
     if (!limit) {
-      limit -= 1;
       break;
     }
   }
