@@ -38,7 +38,7 @@ The latest `RC16` comes with some deprecations and breaking-changes towards `v0.
 
 ### We are looking for your help!
 
-We have a [gitter room](https://gitter.im/json-schema-faker) for this project, if you want contribute, talk about specific issues from the library, or you need help on json-schema topics just reach us!
+We have a [gitter room](https://gitter.im/json-schema-faker) for this project, if you want to contribute, talk about specific issues from the library, or you need help on json-schema topics just reach out to us!
 
 Please take a look at [the technical documentation page](docs/).
 
