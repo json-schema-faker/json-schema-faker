@@ -314,7 +314,7 @@ function omitProps(obj, props) {
       if (Array.isArray(obj[k])) {
         copy[k] = obj[k].slice();
       } else {
-        copy[k] = typeof obj[k] === 'object'
+        copy[k] = obj[k] instanceof Object
           ? merge({}, obj[k])
           : obj[k];
       }

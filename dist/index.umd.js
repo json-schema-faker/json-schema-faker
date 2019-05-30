@@ -8233,7 +8233,7 @@
         if (Array.isArray(obj[k])) {
           copy[k] = obj[k].slice();
         } else {
-          copy[k] = typeof obj[k] === 'object' ? merge$2({}, obj[k]) : obj[k];
+          copy[k] = obj[k] instanceof Object ? merge$2({}, obj[k]) : obj[k];
         }
       }
     });

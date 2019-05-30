@@ -164,7 +164,6 @@ function run(refs, schema, container) {
           thunk() {
             const copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
             const fixed = random.pick(mix);
-
             utils.merge(copy, fixed);
 
             if (sub.oneOf) {
