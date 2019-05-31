@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 93,
-          "b": "enim veniam",
-          "c": "ff353"
+          "a": 71,
+          "b": "do cupidatat",
+          "c": "wj382"
         },
         "repeat": 1,
         "require": "core/option/random"

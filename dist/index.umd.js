@@ -19120,18 +19120,18 @@
     var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
     var ignoreProperties = optionAPI('ignoreProperties') || [];
     var min = Math.max(value.minProperties || 0, requiredProperties.length);
-    var max = Math.min(value.maxProperties || allProperties.length, allProperties.length);
+    var max = value.maxProperties || allProperties.length + random.number(1, 5);
     var neededExtras = Math.max(0, min - requiredProperties.length);
 
     if (allProperties.length === 1 && !requiredProperties.length) {
-      neededExtras = random.number(neededExtras, allProperties.length + (max - min));
+      neededExtras = random.number(neededExtras, allProperties.length + (allProperties.length - min));
     }
 
     if (optionalsProbability !== false) {
       if (fixedProbabilities === true) {
-        neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (max - min));
+        neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (allProperties.length - min));
       } else {
-        neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (max - min));
+        neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
       }
     }
 
@@ -19211,13 +19211,14 @@
           props[patternProperties[key] ? random.randexp(key) : key] = properties[key] || subschema;
         }
       }
-    }); // console.log(requiredProperties, Object.keys(props));
-
+    });
 
     var fillProps = optionAPI('fillProperties');
     var reuseProps = optionAPI('reuseProperties'); // discard already ignored props if they're not required to be filled...
 
-    var current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
+    var current = Object.keys(props).length + (fillProps ? 0 : skipped.length); // generate dynamic suffix for additional props...
+
+    var hash = function (suffix) { return random.randexp(("_?[_a-f\\d]{1,3}" + (suffix ? '\\$?' : ''))); };
 
     function get() {
       var one;
@@ -19266,7 +19267,7 @@
             current += 1;
           }
         } else {
-          var word$1 = get() || wordsGenerator(1) + random.randexp('[a-f\\d]{1,3}');
+          var word$1 = get() || wordsGenerator(1) + hash();
 
           if (!props[word$1]) {
             props[word$1] = additionalProperties || anyType;
@@ -19283,6 +19284,18 @@
           props[word$2] = patternProperties[_key];
           current += 1;
         }
+      }
+    } // fill up-to this value and no more!
+
+
+    var maximum = random.number(min, max);
+
+    for (; current < maximum && additionalProperties;) {
+      var word$3 = wordsGenerator(1) + hash(true);
+
+      if (!props[word$3]) {
+        props[word$3] = additionalProperties;
+        current += 1;
       }
     }
 
