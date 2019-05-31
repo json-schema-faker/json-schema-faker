@@ -13980,47 +13980,45 @@
   	SourceNode: SourceNode$1
   };
 
-  var _from$1 = "escodegen@^1.8.1";
-  var _id = "escodegen@1.11.1";
-  var _inBundle = false;
-  var _integrity$1 = "sha512-JwiqFD9KdGVVpeuRa68yU3zZnBEOcPs0nKW7wZzXky8Z7tffdYUHbe11bPCV5jYlK6DVdKLWLm0f5I/QlL0Kmw==";
-  var _location = "/static-eval/escodegen";
-  var _phantomChildren = {
-  };
-  var _requested = {
-  	type: "range",
-  	registry: true,
-  	raw: "escodegen@^1.8.1",
-  	name: "escodegen",
-  	escapedName: "escodegen",
-  	rawSpec: "^1.8.1",
-  	saveSpec: null,
-  	fetchSpec: "^1.8.1"
-  };
-  var _requiredBy = [
-  	"/static-eval"
-  ];
-  var _resolved$1 = "https://registry.npmjs.org/escodegen/-/escodegen-1.11.1.tgz";
-  var _shasum = "c485ff8d6b4cdb89e27f4a856e91f118401ca510";
-  var _spec = "escodegen@^1.8.1";
-  var _where = "/Users/alvarius/Repositories/json-schema-faker/node_modules/static-eval";
+  var name$1 = "escodegen";
+  var description$1 = "ECMAScript code generator";
+  var homepage$1 = "http://github.com/estools/escodegen";
+  var main$1 = "escodegen.js";
   var bin = {
   	esgenerate: "./bin/esgenerate.js",
   	escodegen: "./bin/escodegen.js"
   };
-  var bugs = {
-  	url: "https://github.com/estools/escodegen/issues"
+  var files = [
+  	"LICENSE.BSD",
+  	"README.md",
+  	"bin",
+  	"escodegen.js",
+  	"package.json"
+  ];
+  var version$1 = "1.11.1";
+  var engines$1 = {
+  	node: ">=4.0"
   };
-  var bundleDependencies = false;
+  var maintainers$1 = [
+  	{
+  		name: "Yusuke Suzuki",
+  		email: "utatane.tea@gmail.com",
+  		web: "http://github.com/Constellation"
+  	}
+  ];
+  var repository$1 = {
+  	type: "git",
+  	url: "http://github.com/estools/escodegen.git"
+  };
   var dependencies = {
-  	esprima: "^3.1.3",
   	estraverse: "^4.2.0",
   	esutils: "^2.0.2",
-  	optionator: "^0.8.1",
+  	esprima: "^3.1.3",
+  	optionator: "^0.8.1"
+  };
+  var optionalDependencies = {
   	"source-map": "~0.6.1"
   };
-  var deprecated$1 = false;
-  var description$1 = "ECMAScript code generator";
   var devDependencies$1 = {
   	acorn: "^4.0.4",
   	bluebird: "^3.4.7",
@@ -14032,107 +14030,58 @@
   	"gulp-mocha": "^3.0.1",
   	semver: "^5.1.0"
   };
-  var engines$1 = {
-  	node: ">=4.0"
-  };
-  var files = [
-  	"LICENSE.BSD",
-  	"README.md",
-  	"bin",
-  	"escodegen.js",
-  	"package.json"
-  ];
-  var homepage$1 = "http://github.com/estools/escodegen";
   var license$1 = "BSD-2-Clause";
-  var main$1 = "escodegen.js";
-  var maintainers$1 = [
-  	{
-  		name: "Yusuke Suzuki",
-  		email: "utatane.tea@gmail.com",
-  		url: "http://github.com/Constellation"
-  	}
-  ];
-  var name$1 = "escodegen";
-  var optionalDependencies = {
-  	"source-map": "~0.6.1"
-  };
-  var repository$1 = {
-  	type: "git",
-  	url: "git+ssh://git@github.com/estools/escodegen.git"
-  };
   var scripts$1 = {
-  	build: "cjsify -a path: tools/entry-point.js > escodegen.browser.js",
-  	"build-min": "cjsify -ma path: tools/entry-point.js > escodegen.browser.min.js",
+  	test: "gulp travis",
+  	"unit-test": "gulp test",
   	lint: "gulp lint",
   	release: "node tools/release.js",
-  	test: "gulp travis",
-  	"unit-test": "gulp test"
+  	"build-min": "./node_modules/.bin/cjsify -ma path: tools/entry-point.js > escodegen.browser.min.js",
+  	build: "./node_modules/.bin/cjsify -a path: tools/entry-point.js > escodegen.browser.js"
   };
-  var version$1 = "1.11.1";
+  var _resolved$1 = "https://registry.npmjs.org/escodegen/-/escodegen-1.11.1.tgz";
+  var _integrity$1 = "sha512-JwiqFD9KdGVVpeuRa68yU3zZnBEOcPs0nKW7wZzXky8Z7tffdYUHbe11bPCV5jYlK6DVdKLWLm0f5I/QlL0Kmw==";
+  var _from$1 = "escodegen@1.11.1";
   var _package$2 = {
-  	_from: _from$1,
-  	_id: _id,
-  	_inBundle: _inBundle,
-  	_integrity: _integrity$1,
-  	_location: _location,
-  	_phantomChildren: _phantomChildren,
-  	_requested: _requested,
-  	_requiredBy: _requiredBy,
-  	_resolved: _resolved$1,
-  	_shasum: _shasum,
-  	_spec: _spec,
-  	_where: _where,
-  	bin: bin,
-  	bugs: bugs,
-  	bundleDependencies: bundleDependencies,
-  	dependencies: dependencies,
-  	deprecated: deprecated$1,
-  	description: description$1,
-  	devDependencies: devDependencies$1,
-  	engines: engines$1,
-  	files: files,
-  	homepage: homepage$1,
-  	license: license$1,
-  	main: main$1,
-  	maintainers: maintainers$1,
   	name: name$1,
-  	optionalDependencies: optionalDependencies,
+  	description: description$1,
+  	homepage: homepage$1,
+  	main: main$1,
+  	bin: bin,
+  	files: files,
+  	version: version$1,
+  	engines: engines$1,
+  	maintainers: maintainers$1,
   	repository: repository$1,
+  	dependencies: dependencies,
+  	optionalDependencies: optionalDependencies,
+  	devDependencies: devDependencies$1,
+  	license: license$1,
   	scripts: scripts$1,
-  	version: version$1
+  	_resolved: _resolved$1,
+  	_integrity: _integrity$1,
+  	_from: _from$1
   };
 
   var _package$3 = /*#__PURE__*/Object.freeze({
-    _from: _from$1,
-    _id: _id,
-    _inBundle: _inBundle,
-    _integrity: _integrity$1,
-    _location: _location,
-    _phantomChildren: _phantomChildren,
-    _requested: _requested,
-    _requiredBy: _requiredBy,
-    _resolved: _resolved$1,
-    _shasum: _shasum,
-    _spec: _spec,
-    _where: _where,
-    bin: bin,
-    bugs: bugs,
-    bundleDependencies: bundleDependencies,
-    dependencies: dependencies,
-    deprecated: deprecated$1,
-    description: description$1,
-    devDependencies: devDependencies$1,
-    engines: engines$1,
-    files: files,
-    homepage: homepage$1,
-    license: license$1,
-    main: main$1,
-    maintainers: maintainers$1,
     name: name$1,
-    optionalDependencies: optionalDependencies,
-    repository: repository$1,
-    scripts: scripts$1,
+    description: description$1,
+    homepage: homepage$1,
+    main: main$1,
+    bin: bin,
+    files: files,
     version: version$1,
+    engines: engines$1,
+    maintainers: maintainers$1,
+    repository: repository$1,
+    dependencies: dependencies,
+    optionalDependencies: optionalDependencies,
+    devDependencies: devDependencies$1,
+    license: license$1,
+    scripts: scripts$1,
+    _resolved: _resolved$1,
+    _integrity: _integrity$1,
+    _from: _from$1,
     default: _package$2
   });
 
