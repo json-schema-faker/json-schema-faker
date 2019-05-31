@@ -435,7 +435,7 @@ function typecast(type, schema, callback) {
         switch (schema.format) {
           case 'date-time':
           case 'datetime':
-            value = new Date(value).toISOString().replace(/0+Z$/g, 'Z');
+            value = new Date(value).toISOString().replace(/([0-9])0+Z$/, '$1Z');
             break;
 
           case 'date':
