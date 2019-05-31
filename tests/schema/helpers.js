@@ -78,6 +78,16 @@ export function tryTest(test, refs, schema) {
       expect(sample.length).to.eql(test.length);
     }
 
+    if (test.notEmpty) {
+      test.notEmpty.forEach(x => {
+        const value = pick(sample, x);
+
+        if (value.length === 0) {
+          throw new Error(`${x} should not be empty`);
+        }
+      });
+    }
+
     if (test.hasProps) {
       test.hasProps.forEach(prop => {
         if (Array.isArray(sample)) {
@@ -108,12 +118,16 @@ export function tryTest(test, refs, schema) {
   }).catch(error => {
     if (typeof test.throws === 'string') {
       expect(error).to.match(new RegExp(test.throws, 'im'));
+      return;
     }
 
     if (typeof test.throws === 'boolean') {
       if (test.throws !== true) {
         throw error;
       }
+      return;
     }
+
+    throw error;
   });
 }

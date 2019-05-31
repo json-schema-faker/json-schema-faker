@@ -109,7 +109,7 @@ jsf.locate('faker');
 - `ignoreMissingRefs` &mdash; If enabled, it will resolve to `{}` for unknown references (default: `false`)
 - `failOnInvalidTypes` &mdash; If enabled, it will throw an `Error` for unknown types (default: `true`)
 - `failOnInvalidFormat` &mdash; If enabled, it will throw an `Error` for unknown formats (default: `true`)
-- `alwaysFakeOptionals` &mdash; When enabled, it will set `optionalsProbability` as `1.0` (default: `false`)
+- `alwaysFakeOptionals` &mdash; When enabled, it will set `optionalsProbability: 1.0` and ` fixedProbabilities: true` (default: `false`)
 - `optionalsProbability` &mdash; A value from `0.0` to `1.0` to generate values in a consistent way, e.g. `0.5` will generate from `0%` to `50%` of values. Using arrays it means items, on objects they're properties, etc. (default: `false`)
 - `fixedProbabilities` &mdash; If enabled, then `optionalsProbability: 0.5` will always generate the half of values (default: `false`)
 - `useExamplesValue` &mdash; If enabled, it will return a random value from `examples` if they're present (default: `false`)

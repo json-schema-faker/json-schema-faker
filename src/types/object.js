@@ -2,7 +2,6 @@ import random from '../core/random';
 import words from '../generators/words';
 import utils from '../core/utils';
 import optionAPI from '../api/option';
-import ParseError from '../core/error';
 
 // fallback generator
 const anyType = { type: ['string', 'number', 'integer', 'boolean'] };
@@ -13,7 +12,7 @@ function objectType(value, path, resolve, traverseCallback) {
 
   const properties = value.properties || {};
   const patternProperties = value.patternProperties || {};
-  const requiredProperties = (value.required || []).slice();
+  const requiredProperties = typeof value.required === 'boolean' ? [] : (value.required || []).slice();
   const allowsAdditional = value.additionalProperties !== false;
 
   const propertyKeys = Object.keys(properties);
@@ -26,12 +25,12 @@ function objectType(value, path, resolve, traverseCallback) {
 
   const additionalProperties = allowsAdditional // eslint-disable-line
     ? (value.additionalProperties === true ? anyType : value.additionalProperties)
-    : null;
+    : value.additionalProperties;
 
-  if (!allowsAdditional &&
-    propertyKeys.length === 0 &&
-    patternPropertyKeys.length === 0 &&
-    utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
+  if (!allowsAdditional
+    && propertyKeys.length === 0
+    && patternPropertyKeys.length === 0
+    && utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
   ) {
     // just nothing
     return {};
@@ -48,23 +47,23 @@ function objectType(value, path, resolve, traverseCallback) {
   }
 
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  const fixedProbabilities = optionAPI('fixedProbabilities') || false;
+  const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   const ignoreProperties = optionAPI('ignoreProperties') || [];
 
   const min = Math.max(value.minProperties || 0, requiredProperties.length);
-  const max = Math.min(value.maxProperties || allProperties.length, allProperties.length);
+  const max = value.maxProperties || (allProperties.length + random.number(1, 5));
 
   let neededExtras = Math.max(0, min - requiredProperties.length);
 
   if (allProperties.length === 1 && !requiredProperties.length) {
-    neededExtras = random.number(neededExtras, allProperties.length + (max - min));
+    neededExtras = random.number(neededExtras, allProperties.length + (allProperties.length - min));
   }
 
   if (optionalsProbability !== false) {
     if (fixedProbabilities === true) {
-      neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (max - min)));
+      neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (allProperties.length - min)));
     } else {
-      neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (max - min));
+      neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
     }
   }
 
@@ -75,6 +74,35 @@ function objectType(value, path, resolve, traverseCallback) {
 
   // properties are read from right-to-left
   const _props = requiredProperties.concat(extraProperties).slice(0, max);
+  const _defns = [];
+
+  if (value.dependencies) {
+    Object.keys(value.dependencies).forEach(prop => {
+      const _required = value.dependencies[prop];
+
+      if (_props.indexOf(prop) !== -1) {
+        if (Array.isArray(_required)) {
+          // property-dependencies
+          _required.forEach(sub => {
+            if (_props.indexOf(sub) === -1) {
+              _props.push(sub);
+            }
+          });
+        } else {
+          _defns.push(_required);
+        }
+      }
+    });
+
+    // schema-dependencies
+    if (_defns.length) {
+      delete value.dependencies;
+
+      return traverseCallback({
+        allOf: _defns.concat(value),
+      }, path.concat(['properties']), resolve);
+    }
+  }
 
   const skipped = [];
   const missing = [];
@@ -89,32 +117,40 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     }
 
-    // first ones are the required properies
-    if (properties[key]) {
+    if (additionalProperties === false) {
+      if (requiredProperties.indexOf(key) !== -1) {
+        props[key] = properties[key];
+      }
+    } else if (properties[key]) {
       props[key] = properties[key];
-    } else {
-      let found;
+    }
 
-      // then try patternProperties
-      patternPropertyKeys.forEach(_key => {
-        if (key.match(new RegExp(_key))) {
-          found = true;
+    let found;
+
+    // then try patternProperties
+    patternPropertyKeys.forEach(_key => {
+      if (key.match(new RegExp(_key))) {
+        found = true;
+
+        if (props[key]) {
+          utils.merge(props[key], patternProperties[_key]);
+        } else {
           props[random.randexp(key)] = patternProperties[_key];
         }
-      });
+      }
+    });
 
-      if (!found) {
-        // try patternProperties again,
-        const subschema = patternProperties[key] || additionalProperties;
+    if (!found) {
+      // try patternProperties again,
+      const subschema = patternProperties[key] || additionalProperties;
 
-        // FIXME: allow anyType as fallback when no subschema is given?
+      // FIXME: allow anyType as fallback when no subschema is given?
 
-        if (subschema) {
-          // otherwise we can use additionalProperties?
-          props[patternProperties[key] ? random.randexp(key) : key] = subschema;
-        } else {
-          missing.push(key);
-        }
+      if (subschema && additionalProperties !== false) {
+        // otherwise we can use additionalProperties?
+        props[patternProperties[key] ? random.randexp(key) : key] = properties[key] || subschema;
+      } else {
+        missing.push(key);
       }
     }
   });
@@ -124,6 +160,9 @@ function objectType(value, path, resolve, traverseCallback) {
 
   // discard already ignored props if they're not required to be filled...
   let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
+
+  // generate dynamic suffix for additional props...
+  const hash = suffix => random.randexp(`_?[_a-f\\d]{1,3}${suffix ? '\\$?' : ''}`);
 
   function get() {
     let one;
@@ -173,7 +212,7 @@ function objectType(value, path, resolve, traverseCallback) {
           current += 1;
         }
       } else {
-        const word = get() || (words(1) + random.randexp('[a-f\\d]{1,3}'));
+        const word = get() || (words(1) + hash());
 
         if (!props[word]) {
           props[word] = additionalProperties || anyType;
@@ -186,6 +225,7 @@ function objectType(value, path, resolve, traverseCallback) {
       const _key = patternPropertyKeys[i];
       const word = random.randexp(_key);
 
+
       if (!props[word]) {
         props[word] = patternProperties[_key];
         current += 1;
@@ -193,18 +233,16 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  if (!allowsAdditional && current < min) {
-    if (missing.length) {
-      throw new ParseError(`properties '${
-        missing.join(', ')
-      }' were not found while additionalProperties is false:\n${
-        utils.short(value)
-      }`, path);
-    }
+  // fill up-to this value and no more!
+  const maximum = random.number(min, max);
 
-    throw new ParseError(`properties constraints were too strong to successfully generate a valid object for:\n${
-      utils.short(value)
-    }`, path);
+  for (; current < maximum && additionalProperties;) {
+    const word = words(1) + hash(true);
+
+    if (!props[word]) {
+      props[word] = additionalProperties;
+      current += 1;
+    }
   }
 
   return traverseCallback(props, path.concat(['properties']), resolve);

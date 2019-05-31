@@ -114,7 +114,7 @@
           },
           "required": ["test"]
         },
-        "throws": "Error: unknown registry key .+? in \\/properties\\/test"
+        "throws": "Error: unknown registry key .+?"
       },
       {
         "description": "should validate custom formats",

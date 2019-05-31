@@ -14,7 +14,11 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
     if (seen.indexOf(json) === -1) {
       seen.push(json);
       tmp.push(obj);
+
+      return true;
     }
+
+    return false;
   }
 
   items.forEach(walk);
@@ -23,10 +27,11 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
   let limit = 100;
 
   while (tmp.length !== items.length) {
-    walk(traverseCallback(value.items || sample, path, resolve));
+    if (!walk(traverseCallback(value.items || sample, path, resolve))) {
+      limit -= 1;
+    }
 
     if (!limit) {
-      limit -= 1;
       break;
     }
   }
@@ -76,14 +81,14 @@ function arrayType(value, path, resolve, traverseCallback) {
   }
 
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  const fixedProbabilities = optionAPI('fixedProbabilities') || false;
+  const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
 
   let length = random.number(minItems, maxItems, 1, 5);
 
   if (optionalsProbability !== false) {
-    length = fixedProbabilities
+    length = Math.max(fixedProbabilities
       ? Math.round((maxItems || length) * optionalsProbability)
-      : Math.abs(random.number(minItems, maxItems) * optionalsProbability);
+      : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
   }
 
   // TODO below looks bad. Should additionalItems be copied as-is?

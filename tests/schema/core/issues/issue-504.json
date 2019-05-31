@@ -1,0 +1,27 @@
+[
+  {
+    "description": "pattern and min/max length constraints",
+    "tests": [
+      {
+        "description": "should support minLength",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "rodo": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "rodo"
+          ],
+          "minProperties": 1,
+          "maxProperties": 3,
+          "additionalProperties": {
+            "type": "boolean"
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

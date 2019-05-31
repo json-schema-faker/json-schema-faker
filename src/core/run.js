@@ -83,7 +83,7 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   try {
-    const result = traverse(utils.merge({}, schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
+    const result = traverse(utils.clone(schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
       if (typeof maxReduceDepth === 'undefined') {
         maxReduceDepth = random.number(1, 3);
       }
@@ -163,8 +163,18 @@ function run(refs, schema, container) {
         return {
           thunk() {
             const copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
+            const fixed = random.pick(mix);
+            utils.merge(copy, fixed);
 
-            utils.merge(copy, random.pick(mix));
+            if (sub.oneOf) {
+              mix.forEach(omit => {
+                if (omit !== fixed && omit.required) {
+                  omit.required.forEach(key => {
+                    delete copy.properties[key];
+                  });
+                }
+              });
+            }
 
             return copy;
           },

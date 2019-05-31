@@ -1,0 +1,55 @@
+[
+  {
+    "description": "support consider patternProperties",
+    "tests": [
+      {
+        "description": "ensure first schema passes",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "patternProperties": {
+            "test": {
+              "type": "null"
+            }
+          },
+          "properties": {
+            "test": {
+              "title": "short description"
+            }
+          },
+          "required": ["test"]
+        },
+        "valid": true
+      },
+      {
+        "description": "merge both properties definitions",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "patternProperties": {
+            ".*_int$": {
+              "type": "integer"
+            }
+          },
+          "properties": {
+            "big_int": {
+              "title": "short description",
+              "minimum": 100
+            },
+            "normal_int": {
+              "title": "short description"
+            },
+            "small_int": {
+              "title": "short description",
+              "maximum": 100
+            }
+          },
+          "required": [
+            "big_int",
+            "normal_int",
+            "small_int"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

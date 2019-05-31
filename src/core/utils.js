@@ -1,5 +1,5 @@
 import optionAPI from '../api/option';
-import env from '../core/constants';
+import env from './constants';
 import random from './random';
 
 function getSubAttribute(obj, dotSeparatedKey) {
@@ -133,7 +133,11 @@ function typecast(type, schema, callback) {
       const max = Math.min(params.maxLength || Infinity, Infinity);
 
       while (value.length < min) {
-        value += ` ${value}`;
+        if (!schema.pattern) {
+          value += `${random.pick([' ', '/', '_', '-', '+', '=', '@', '^'])}${value}`;
+        } else {
+          value += random.randexp(schema.pattern);
+        }
       }
 
       if (value.length > max) {
@@ -143,7 +147,7 @@ function typecast(type, schema, callback) {
       switch (schema.format) {
         case 'date-time':
         case 'datetime':
-          value = new Date(value).toISOString();
+          value = new Date(value).toISOString().replace(/([0-9])0+Z$/, '$1Z');
           break;
 
         case 'date':
@@ -151,7 +155,7 @@ function typecast(type, schema, callback) {
           break;
 
         case 'time':
-          value = new Date(value).toISOString().substr(11);
+          value = new Date(`1969-01-01 ${value}`).toISOString().substr(11);
           break;
 
         default:
@@ -188,6 +192,21 @@ function merge(a, b) {
   return a;
 }
 
+function clone(obj) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(x => clone(x));
+  }
+
+  return Object.keys(obj).reduce((prev, cur) => {
+    prev[cur] = clone(obj[cur]);
+    return prev;
+  }, {});
+}
+
 function short(schema) {
   const s = JSON.stringify(schema);
   const l = JSON.stringify(schema, null, 2);
@@ -207,6 +226,7 @@ function anyValue() {
     undefined,
     [],
     {},
+    // FIXME: use built-in random?
     Math.random(),
     Math.random().toString(36).substr(2),
   ]);
@@ -294,7 +314,7 @@ function omitProps(obj, props) {
       if (Array.isArray(obj[k])) {
         copy[k] = obj[k].slice();
       } else {
-        copy[k] = typeof obj[k] === 'object'
+        copy[k] = obj[k] instanceof Object
           ? merge({}, obj[k])
           : obj[k];
       }
@@ -322,6 +342,7 @@ export default {
   omitProps,
   typecast,
   merge,
+  clone,
   short,
   notValue,
   anyValue,

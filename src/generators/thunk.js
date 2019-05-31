@@ -1,4 +1,4 @@
-import words from '../generators/words';
+import words from './words';
 import random from '../core/random';
 
 /**

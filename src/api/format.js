@@ -14,7 +14,9 @@ const registry = new Registry();
 function formatAPI(nameOrFormatMap, callback) {
   if (typeof nameOrFormatMap === 'undefined') {
     return registry.list();
-  } else if (typeof nameOrFormatMap === 'string') {
+  }
+
+  if (typeof nameOrFormatMap === 'string') {
     if (typeof callback === 'function') {
       registry.register(nameOrFormatMap, callback);
     } else if (callback === null || callback === false) {
