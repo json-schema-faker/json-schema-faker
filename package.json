@@ -1,10 +1,11 @@
 {
   "name": "json-schema-faker",
-  "version": "0.5.0-rc16",
+  "version": "0.5.0-rc17",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
+  "unpkg": "dist/bundle.umd.min.js",
   "browser": "dist/index.umd.min.js",
   "scripts": {
     "build:concat:dist": "concat -o dist/bundle.umd.min.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath/jsonpath.min.js dist/index.umd.min.js",
@@ -51,6 +52,9 @@
       "jsonpath"
     ]
   },
+  "files": [
+    "dist/*.*"
+  ],
   "devDependencies": {
     "ajv": "^6.5.3",
     "bili": "^4.2.5",

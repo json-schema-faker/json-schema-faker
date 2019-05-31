@@ -1,5 +1,5 @@
 /*!
- * json-schema-faker v0.5.0-rc16
+ * json-schema-faker v0.5.0-rc17
  * (c) Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)
  * Released under the MIT License.
  */
