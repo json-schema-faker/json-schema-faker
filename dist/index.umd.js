@@ -1384,6 +1384,8 @@
   var PATTERN_TAG_URI               = /^(?:!|[^,\[\]\{\}])(?:%[0-9a-f]{2}|[0-9a-z\-#;\/\?:@&=\+\$,_\.!~\*'\(\)\[\]])*$/i;
 
 
+  function _class(obj) { return Object.prototype.toString.call(obj); }
+
   function is_EOL(c) {
     return (c === 0x0A/* LF */) || (c === 0x0D/* CR */);
   }
@@ -1638,6 +1640,31 @@
 
   function storeMappingPair(state, _result, overridableKeys, keyTag, keyNode, valueNode, startLine, startPos) {
     var index, quantity;
+
+    // The output is a plain object here, so keys can only be strings.
+    // We need to convert keyNode to a string, but doing so can hang the process
+    // (deeply nested arrays that explode exponentially using aliases).
+    if (Array.isArray(keyNode)) {
+      keyNode = Array.prototype.slice.call(keyNode);
+
+      for (index = 0, quantity = keyNode.length; index < quantity; index += 1) {
+        if (Array.isArray(keyNode[index])) {
+          throwError(state, 'nested arrays are not supported inside keys');
+        }
+
+        if (typeof keyNode === 'object' && _class(keyNode[index]) === '[object Object]') {
+          keyNode[index] = '[object Object]';
+        }
+      }
+    }
+
+    // Avoid code execution in load() via toString property
+    // (still use its own toString for arrays, timestamps,
+    // and whatever user schema extensions happen to have @@toStringTag)
+    if (typeof keyNode === 'object' && _class(keyNode) === '[object Object]') {
+      keyNode = '[object Object]';
+    }
+
 
     keyNode = String(keyNode);
 
@@ -3063,16 +3090,17 @@
   }
 
   function State$1(options) {
-    this.schema       = options['schema'] || default_full;
-    this.indent       = Math.max(1, (options['indent'] || 2));
-    this.skipInvalid  = options['skipInvalid'] || false;
-    this.flowLevel    = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']);
-    this.styleMap     = compileStyleMap(this.schema, options['styles'] || null);
-    this.sortKeys     = options['sortKeys'] || false;
-    this.lineWidth    = options['lineWidth'] || 80;
-    this.noRefs       = options['noRefs'] || false;
-    this.noCompatMode = options['noCompatMode'] || false;
-    this.condenseFlow = options['condenseFlow'] || false;
+    this.schema        = options['schema'] || default_full;
+    this.indent        = Math.max(1, (options['indent'] || 2));
+    this.noArrayIndent = options['noArrayIndent'] || false;
+    this.skipInvalid   = options['skipInvalid'] || false;
+    this.flowLevel     = (common.isNothing(options['flowLevel']) ? -1 : options['flowLevel']);
+    this.styleMap      = compileStyleMap(this.schema, options['styles'] || null);
+    this.sortKeys      = options['sortKeys'] || false;
+    this.lineWidth     = options['lineWidth'] || 80;
+    this.noRefs        = options['noRefs'] || false;
+    this.noCompatMode  = options['noCompatMode'] || false;
+    this.condenseFlow  = options['condenseFlow'] || false;
 
     this.implicitTypes = this.schema.compiledImplicit;
     this.explicitTypes = this.schema.compiledExplicit;
@@ -3692,13 +3720,14 @@
           }
         }
       } else if (type === '[object Array]') {
+        var arrayLevel = (state.noArrayIndent && (level > 0)) ? level - 1 : level;
         if (block && (state.dump.length !== 0)) {
-          writeBlockSequence(state, level, state.dump, compact);
+          writeBlockSequence(state, arrayLevel, state.dump, compact);
           if (duplicate) {
             state.dump = '&ref_' + duplicateIndex + state.dump;
           }
         } else {
-          writeFlowSequence(state, level, state.dump);
+          writeFlowSequence(state, arrayLevel, state.dump);
           if (duplicate) {
             state.dump = '&ref_' + duplicateIndex + ' ' + state.dump;
           }

@@ -133,12 +133,13 @@ Below is the list of supported keywords:
 - `required` &mdash; All required properties are guaranteed, if not can be omitted.
 - `pattern` &mdash; Generate samples based on RegExp values.
 - `format` &mdash; Core formats **v4-draft only**:
-  [`date-time`](http://json-schema.org/draft-04/json-schema-validation.html#anchor108),
+- [`date-time`](http://json-schema.org/draft-04/json-schema-validation.html#anchor108),
   [`email`](http://json-schema.org/draft-04/json-schema-validation.html#anchor111),
   [`hostname`](http://json-schema.org/draft-04/json-schema-validation.html#anchor114),
   [`ipv4`](http://json-schema.org/draft-04/json-schema-validation.html#anchor117),
   [`ipv6`](http://json-schema.org/draft-04/json-schema-validation.html#anchor120)
   and [`uri`](http://json-schema.org/draft-04/json-schema-validation.html#anchor123)
+    &mdash; also `uri-reference`, `uri-template`, `json-pointer` and `uuid` are supported.
     -- [demo »](http://json-schema-faker.js.org/#gist/f58db80cbf52c12c623166090240d964)
 - `enum` &mdash; Returns any of these enumerated values.
 - `minLength`, `maxLength` &mdash; Applies length constraints to string values.
@@ -154,7 +155,7 @@ Below is the list of supported keywords:
 - `minProperties`, `maxProperties` &mdash; Adds length constraints for object properties.
 - `patternProperties` &mdash; RegExp-based object properties.
 - `additionalProperties` &mdash; Partially supported (?)
-- `dependencies` &mdash; Not supported yet (?)
+- `dependencies` &mdash; Partially supported (?)
 - `not` &mdash; Not supported yet (?)
 
 > Notice `not` support is complex to achieve and is probably will not work as you expected, most opened issues are related to that: so any feedback there is very appreaciated!
@@ -340,6 +341,9 @@ You may define following options for `jsf` that alter its behavior:
 jsf.option({
   failOnInvalidTypes: false
 });
+
+// also valid
+jsf.option('alwaysFakeOptionals', true);
 ```
 
 > Please read the [available options here](./#available-options).
