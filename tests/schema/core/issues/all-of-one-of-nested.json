@@ -1,6 +1,6 @@
 [
   {
-    "description": "allOf and oneOff nested",
+    "description": "allOf and oneOf nested",
     "schemas": [{
       "$schema": "http://json-schema.org/draft-04/schema#",
       "type": "object",
