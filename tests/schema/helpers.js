@@ -82,7 +82,7 @@ export function tryTest(test, refs, schema) {
       test.notEmpty.forEach(x => {
         const value = pick(sample, x);
 
-        if (value.length === 0) {
+        if (value === undefined || (Array.isArray(value) && !value.length)) {
           throw new Error(`${x} should not be empty`);
         }
       });

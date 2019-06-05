@@ -13,7 +13,7 @@
     "build:node": "bili src/index.js --minimal --format es --format cjs",
     "build": "npm run build:browser && npm run build:node",
     "dev": "npm test -- -w",
-    "test": "npm run test:unit --",
+    "test": "npm run lint && npm run test:unit -- && npm run test:schema",
     "test:ci": "npm run coverage:all && npm run report -- -r lcov",
     "test:all": "npm run test:run tests && npm run report -- -r html",
     "test:run": "NODE_ENV=test _mocha --exit --recursive --watch-extensions js,json -r esm -bR spec",
