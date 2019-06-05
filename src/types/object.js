@@ -230,18 +230,19 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  // fill up-to this value and no more!
-  const maximum = random.number(min, max);
+  if (!(requiredProperties.length || allowsAdditional)) {
+    // fill up-to this value and no more!
+    const maximum = random.number(min, max);
 
-  // FIXME: recursive references never resolve without !allowsAdditional
-  for (; current < maximum;) {
-    const word = get(propertyKeys);
+    for (; current < maximum;) {
+      const word = get(propertyKeys);
 
-    if (word) {
-      props[word] = properties[word];
+      if (word) {
+        props[word] = properties[word];
+      }
+
+      current += 1;
     }
-
-    current += 1;
   }
 
   return traverseCallback(props, path.concat(['properties']), resolve);
