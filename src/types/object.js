@@ -51,7 +51,7 @@ function objectType(value, path, resolve, traverseCallback) {
   const ignoreProperties = optionAPI('ignoreProperties') || [];
 
   const min = Math.max(value.minProperties || 0, requiredProperties.length);
-  const max = value.maxProperties || (allProperties.length + random.number(1, 5));
+  const max = value.maxProperties || (allProperties.length + (allowsAdditional ? random.number(1, 5) : 0));
 
   let neededExtras = Math.max(0, min - requiredProperties.length);
 
@@ -160,11 +160,12 @@ function objectType(value, path, resolve, traverseCallback) {
   // generate dynamic suffix for additional props...
   const hash = suffix => random.randexp(`_?[_a-f\\d]{1,3}${suffix ? '\\$?' : ''}`);
 
-  function get() {
+  function get(from) {
     let one;
 
     do {
-      one = requiredProperties.shift();
+      if (!from.length) break;
+      one = from.shift();
     } while (props[one]);
 
     return one;
@@ -192,7 +193,7 @@ function objectType(value, path, resolve, traverseCallback) {
             break;
           }
 
-          key = get() || random.pick(propertyKeys);
+          key = get(requiredProperties) || random.pick(propertyKeys);
         } while (typeof props[key] !== 'undefined');
 
         if (typeof props[key] === 'undefined') {
@@ -208,7 +209,7 @@ function objectType(value, path, resolve, traverseCallback) {
           current += 1;
         }
       } else {
-        const word = get() || (words(1) + hash());
+        const word = get(requiredProperties) || (words(1) + hash());
 
         if (!props[word]) {
           props[word] = additionalProperties || anyType;
@@ -232,13 +233,15 @@ function objectType(value, path, resolve, traverseCallback) {
   // fill up-to this value and no more!
   const maximum = random.number(min, max);
 
-  for (; current < maximum && additionalProperties;) {
-    const word = words(1) + hash(true);
+  // FIXME: recursive references never resolve without !allowsAdditional
+  for (; current < maximum;) {
+    const word = get(propertyKeys);
 
-    if (!props[word]) {
-      props[word] = additionalProperties;
-      current += 1;
+    if (word) {
+      props[word] = properties[word];
     }
+
+    current += 1;
   }
 
   return traverseCallback(props, path.concat(['properties']), resolve);

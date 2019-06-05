@@ -166,7 +166,7 @@ function run(refs, schema, container) {
             const fixed = random.pick(mix);
             utils.merge(copy, fixed);
 
-            if (sub.oneOf) {
+            if (sub.oneOf && copy.properties) {
               mix.forEach(omit => {
                 if (omit !== fixed && omit.required) {
                   omit.required.forEach(key => {
