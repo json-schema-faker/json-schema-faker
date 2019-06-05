@@ -38,7 +38,7 @@
         "additionalProperties": false
       },
       "set": {
-        "alwaysFakeOptionals": true
+        "optionalsProbability": 0.75
       },
       "valid": true
     }
