@@ -170,9 +170,7 @@ function run(refs, schema, container) {
               mix.forEach(omit => {
                 if (omit !== fixed && omit.required) {
                   omit.required.forEach(key => {
-                    if (copy.properties) {
-                      delete copy.properties[key];
-                    }
+                    delete copy.properties[key];
                   });
                 }
               });
