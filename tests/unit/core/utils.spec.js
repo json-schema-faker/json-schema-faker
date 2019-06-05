@@ -101,4 +101,26 @@ describe('Utils', () => {
       });
     });
   });
+
+  describe('clone function', () => {
+    it('should handle circular refs in objects', () => {
+      const a = {};
+      const b = {
+        a,
+      };
+      a.b = b;
+
+      const clone = utils.clone(a);
+      expect(clone.b.a).to.eql(clone);
+    });
+
+    it('should handle circular refs in arrays', () => {
+      const a = [];
+      const b = [a];
+      a.push(b);
+
+      const clone = utils.clone(a);
+      expect(clone[0][0]).to.eql(clone);
+    });
+  });
 });

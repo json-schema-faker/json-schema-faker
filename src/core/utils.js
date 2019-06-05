@@ -192,19 +192,30 @@ function merge(a, b) {
   return a;
 }
 
-function clone(obj) {
+function clone(obj, cache = new Map()) {
   if (!obj || typeof obj !== 'object') {
     return obj;
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map(x => clone(x));
+  if (cache.has(obj)) {
+    return cache.get(obj);
   }
 
+  if (Array.isArray(obj)) {
+    const arr = [];
+    cache.set(obj, arr);
+
+    arr.push(...obj.map(x => clone(x, cache)));
+    return arr;
+  }
+
+  const clonedObj = {};
+  cache.set(obj, clonedObj);
+
   return Object.keys(obj).reduce((prev, cur) => {
-    prev[cur] = clone(obj[cur]);
+    prev[cur] = clone(obj[cur], cache);
     return prev;
-  }, {});
+  }, clonedObj);
 }
 
 function short(schema) {
