@@ -9,6 +9,8 @@ function addValidators(v) {
   const registry = v.addFormat || v.registerFormat;
   const msgOnFail = !v.registerFormat;
 
+  registry.call(v, 'idn-hostname', () => true);
+  registry.call(v, 'idn-email', () => true);
   registry.call(v, 'semver', value => {
     let pass;
     let err;
@@ -52,6 +54,8 @@ export function checkSchema(sample, schema, refs) {
   const v = is(schema, {
     formats: {
       semver: semver.valid,
+      'idn-hostname': () => true,
+      'idn-email': () => true,
     },
     schemas: fixed,
   });
@@ -121,6 +125,8 @@ export function checkSchema(sample, schema, refs) {
     logger: false,
     formats: {
       semver: semver.valid,
+      'idn-hostname': () => true,
+      'idn-email': () => true,
     },
   });
 
