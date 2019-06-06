@@ -230,8 +230,8 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  if (!(requiredProperties.length || allowsAdditional)) {
-    // fill up-to this value and no more!
+  // fill up-to this value and no more!
+  if (requiredProperties.length === 0 && (!allowsAdditional || optionalsProbability === false)) {
     const maximum = random.number(min, max);
 
     for (; current < maximum;) {

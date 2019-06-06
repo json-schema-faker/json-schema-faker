@@ -15,10 +15,16 @@
     ],
     "tests": [
       {
-        "description": "should handle optionalsProbability option (default = 0) for objects",
+        "description": "should handle optionalsProbability option (default = false) for objects",
+        "schema": "schemas.0",
+        "valid": true
+      },
+      {
+        "description": "should handle optionalsProbability option (= 0) for objects",
         "schema": "schemas.0",
         "valid": true,
-        "equal": {}
+        "equal": {},
+        "require": "core/option/optionalsProbabilityEquals0"
       },
       {
         "description": "should handle optionalsProbability option (= 1) for objects",

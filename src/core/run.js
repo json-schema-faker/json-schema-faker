@@ -5,6 +5,10 @@ import traverse from './traverse';
 import random from './random';
 import utils from './utils';
 
+function isEmpty(value) {
+  return Object.prototype.toString.call(value) === '[object Object]' && !Object.keys(value).length;
+}
+
 function pick(data) {
   return Array.isArray(data)
     ? random.pick(data)
@@ -27,6 +31,36 @@ function cycle(data, reverse) {
   }
 
   return value;
+}
+
+function clean(obj, isArray) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj
+      .map(value => clean(value, true))
+      .filter(value => typeof value !== 'undefined');
+  }
+
+  Object.keys(obj).forEach(k => {
+    if (!isEmpty(obj[k])) {
+      const value = clean(obj[k]);
+
+      if (!isEmpty(value)) {
+        obj[k] = value;
+      }
+    } else {
+      delete obj[k];
+    }
+  });
+
+  if (!Object.keys(obj).length && isArray) {
+    return undefined;
+  }
+
+  return obj;
 }
 
 function resolve(obj, data, values, property) {
@@ -83,12 +117,14 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   try {
-    const result = traverse(utils.clone(schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
-      if (typeof maxReduceDepth === 'undefined') {
-        maxReduceDepth = random.number(1, 3);
-      }
+    const seen = {};
+    const result = traverse(utils.clone(schema), [], function reduce(sub, parentSchemaPath) {
+      if (!sub || seen[sub.$ref] > random.pick([0, 1])) {
+        if (sub) {
+          delete sub.$ref;
+          return sub;
+        }
 
-      if (!sub) {
         return null;
       }
 
@@ -106,6 +142,9 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
+        seen[sub.$ref] = seen[sub.$ref] || 0;
+        seen[sub.$ref] += 1;
+
         if (sub.$ref === '#') {
           delete sub.$ref;
           return sub;
@@ -142,7 +181,7 @@ function run(refs, schema, container) {
         // this is the only case where all sub-schemas
         // must be resolved before any merge
         schemas.forEach(subSchema => {
-          const _sub = reduce(subSchema, maxReduceDepth + 1, parentSchemaPath);
+          const _sub = reduce(subSchema, parentSchemaPath);
 
           // call given thunks if present
           utils.merge(sub, typeof _sub.thunk === 'function'
@@ -183,7 +222,7 @@ function run(refs, schema, container) {
 
       Object.keys(sub).forEach(prop => {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-          sub[prop] = reduce(sub[prop], maxReduceDepth, parentSchemaPath.concat(prop));
+          sub[prop] = reduce(sub[prop], parentSchemaPath.concat(prop));
         }
       });
 
@@ -200,10 +239,10 @@ function run(refs, schema, container) {
     });
 
     if (optionAPI('resolveJsonPath')) {
-      return resolve(result);
+      return resolve(clean(result));
     }
 
-    return result;
+    return clean(result);
   } catch (e) {
     if (e.path) {
       throw new Error(`${e.message} in /${e.path.join('/')}`);

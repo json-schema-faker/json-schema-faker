@@ -24,8 +24,8 @@
         "valid": true,
         "equal": {
           "a": 62,
-          "b": "amet voluptate qui reprehenderi",
-          "c": "fw538"
+          "b": "occaeca",
+          "c": "vi317"
         },
         "repeat": 1,
         "require": "core/option/random"

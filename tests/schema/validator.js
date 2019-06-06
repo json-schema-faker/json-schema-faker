@@ -1,3 +1,4 @@
+import { inspect } from 'util';
 import is from 'is-my-json-valid';
 import Ajv from 'ajv';
 import tv4 from 'tv4';
@@ -141,8 +142,8 @@ export function checkSchema(sample, schema, refs) {
   }
 
   if (fail.length) {
-    const a = JSON.stringify(sample, null, 2);
-    const b = JSON.stringify(schema, null, 2);
+    const a = inspect(sample, true, 15);
+    const b = inspect(schema, true, 15);
 
     throw new Error(`Given sample does not match schema.\n${fail.join('\n')}\n---\n${a}\n---\n${b}\n---\n`);
   }

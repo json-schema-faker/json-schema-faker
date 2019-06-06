@@ -7,7 +7,7 @@ import optionAPI from '../api/option';
 
 // TODO provide types
 function traverse(schema, path, resolve, rootSchema) {
-  schema = resolve(schema, undefined, path);
+  schema = resolve(schema, path);
 
   if (!schema) {
     return;
