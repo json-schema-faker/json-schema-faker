@@ -1,0 +1,34 @@
+# IDEs
+.idea
+.vscode
+.tarima
+
+*~
+*.log
+*.tgz
+*.todo
+.nyc_output
+.DS_Store
+/lib
+/package
+/reports
+/coverage
+/generated
+/nbproject
+/node_modules
+/locale
+/build/index.json
+
+### Vim ###
+# swap
+[._]*.s[a-v][a-z]
+[._]*.sw[a-p]
+[._]s[a-v][a-z]
+[._]sw[a-p]
+# session
+Session.vim
+# temporary
+.netrwhist
+*~
+# auto-generated tag files
+tags

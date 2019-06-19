@@ -1,0 +1,37 @@
+[
+  {
+    "description": "Optional maxItems, minItems and maxLength doesn't work",
+    "tests": [
+      {
+        "description": "minItems/maxItems will override schema",
+        "schema": {
+          "type": "array",
+          "minItems": 100,
+          "maxItems": 200,
+          "items": {
+            "type": "integer"
+          }
+        },
+        "set": {
+          "minItems": 1,
+          "maxItems": 1
+        },
+        "count": 1
+      },
+      {
+        "description": "setting maxLength should truncate schema, not override",
+        "schema": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1,
+          "faker": "name.findName"
+        },
+        "require": "core/extend/faker-extend",
+        "set": {
+          "maxLength": 20
+        },
+        "count": 1
+      }
+    ]
+  }
+]

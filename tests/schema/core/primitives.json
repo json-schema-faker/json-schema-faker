@@ -1,0 +1,63 @@
+[
+  {
+    "description": "primitive values",
+    "tests": [
+      {
+        "description": "should generate arrays",
+        "schema": {
+          "type": "array"
+        },
+        "type": "array",
+        "valid": true
+      },
+      {
+        "description": "should generate booleans",
+        "schema": {
+          "type": "boolean"
+        },
+        "type": "boolean",
+        "valid": true
+      },
+      {
+        "description": "should generate integers",
+        "schema": {
+          "type": "integer"
+        },
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should generate numbers",
+        "schema": {
+          "type": "number"
+        },
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should generate nulls",
+        "schema": {
+          "type": "null"
+        },
+        "type": "null",
+        "valid": true
+      },
+      {
+        "description": "should generate objects",
+        "schema": {
+          "type": "object"
+        },
+        "type": "object",
+        "valid": true
+      },
+      {
+        "description": "should generate strings",
+        "schema": {
+          "type": "string"
+        },
+        "type": "string",
+        "valid": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,33 @@
+[
+  {
+    "description": "autoIncrement keyword",
+    "tests": [
+      {
+        "description": "should handle initialOffset",
+        "schema": {
+          "items": {
+            "id": {
+              "type": "integer",
+              "autoIncrement": true,
+              "initialOffset": 100001
+            }
+          },
+          "minItems": 3,
+          "maxItems": 3
+        },
+        "repeat": 1,
+        "equal": [
+          {
+            "id": 100001
+          },
+          {
+            "id": 100002
+          },
+          {
+            "id": 100003
+          }
+        ]
+      }
+    ]
+  }
+]

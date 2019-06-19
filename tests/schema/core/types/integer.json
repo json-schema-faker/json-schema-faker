@@ -1,0 +1,110 @@
+[
+  {
+    "description": "integer generator",
+    "tests": [
+      {
+        "description": "should handle minimum",
+        "schema": {
+          "type": "integer",
+          "minimum": 10
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": 20,
+          "maximum": 30
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle multipleOf",
+        "schema": {
+          "type": "integer",
+          "minimum": 40,
+          "maximum": 50,
+          "multipleOf": 6
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle exclusiveMinimum",
+        "schema": {
+          "type": "integer",
+          "minimum": 60,
+          "maximum": 70,
+          "multipleOf": 7,
+          "exclusiveMinimum": true
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle exclusiveMaximum",
+        "schema": {
+          "type": "integer",
+          "minimum": 80,
+          "maximum": 90,
+          "multipleOf": 8,
+          "exclusiveMinimum": true,
+          "exclusiveMaximum": true
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle inferred type (when possible)",
+        "schema": {
+          "maximum": 5
+        },
+        "type": "number"
+      },
+      {
+        "description": "should generate negative values for negative min and negative max",
+        "schema": {
+          "type": "integer",
+          "minimum": -10,
+          "maximum": -5
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle negative minimum and 0 as maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 0
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle negative minimum and 1 as maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": -100,
+          "maximum": 1
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle -1 as minimum and 1 as maximum",
+        "schema": {
+          "type": "integer",
+          "minimum": -1,
+          "maximum": 1
+        },
+        "valid": true
+      }
+    ]
+  }
+]

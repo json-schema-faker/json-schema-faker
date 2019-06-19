@@ -1,0 +1,18 @@
+[
+  {
+    "description": "faker extension",
+    "tests": [
+      {
+        "description": "should handle faker.custom.statement",
+        "schema": {
+          "type": "string",
+          "faker": {
+              "custom.statement": [19]
+          }
+        },
+        "valid": true,
+        "require": "core/extend/faker-extend"
+      }
+    ]
+  }
+]

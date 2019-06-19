@@ -1,0 +1,130 @@
+[
+  {
+    "description": "notValue generator",
+    "tests": [
+      {
+        "description": "should generate from not schemas",
+        "schema": {
+          "properties": {
+            "notString": {
+              "not": {
+                "type": "string"
+              }
+            },
+            "notNumber": {
+              "not": {
+                "type": "number"
+              }
+            },
+            "notBoolean": {
+              "not": {
+                "type": "boolean"
+              }
+            }
+          },
+          "required": [
+            "notString",
+            "notNumber",
+            "notBoolean"
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate complex not schemas",
+        "schema": {
+          "title": "ro",
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "properties": {
+            "enable": {
+              "type": "boolean",
+              "default": false,
+              "description": "Enable"
+            },
+            "disable": {
+              "type": "boolean",
+              "default": false,
+              "description": "Disable"
+            },
+            "action": {
+              "description": "Configure the action.",
+              "$ref": "#/definitions/action_ref_1"
+            },
+            "uri": {
+              "type": "string",
+              "description": "The URI",
+              "readonly": true
+            }
+          },
+          "anyOf": [
+            {
+              "required": [
+                "enable"
+              ],
+              "not": {
+                "required": [
+                  "disable"
+                ]
+              }
+            },
+            {
+              "required": [
+                "disable"
+              ],
+              "not": {
+                "required": [
+                  "enable"
+                ]
+              }
+            },
+            {
+              "required": [
+                "action"
+              ]
+            }
+          ],
+          "definitions": {
+            "action_ref_1": {
+              "type": "object",
+              "properties": {
+                "block": {
+                  "type": "boolean",
+                  "default": true,
+                  "description": "Block and log."
+                },
+                "log": {
+                  "type": "boolean",
+                  "description": "Log traffic."
+                }
+              },
+              "oneOf": [
+                {
+                  "required": [
+                    "block"
+                  ],
+                  "not": {
+                    "required": [
+                      "log"
+                    ]
+                  }
+                },
+                {
+                  "required": [
+                    "log"
+                  ],
+                  "not": {
+                    "required": [
+                      "block"
+                    ]
+                  }
+                }
+              ]
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

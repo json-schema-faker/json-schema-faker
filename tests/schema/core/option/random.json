@@ -1,0 +1,35 @@
+[
+  {
+    "description": "random option",
+    "tests": [
+      {
+        "description": "should allow pseudorandom value generation",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 100
+            },
+            "b": {
+              "type": "string"
+            },
+            "c": {
+              "pattern": "^[a-z]{2}[0-9]{3}$"
+            }
+          },
+          "required": ["a", "b", "c"]
+        },
+        "valid": true,
+        "equal": {
+          "a": 71,
+          "b": "do cupidatat",
+          "c": "wj382"
+        },
+        "repeat": 1,
+        "require": "core/option/random"
+      }
+    ]
+  }
+]

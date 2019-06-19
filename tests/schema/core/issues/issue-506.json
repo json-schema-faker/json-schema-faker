@@ -1,0 +1,31 @@
+[
+  {
+    "description": "about uniqueItems and enum",
+    "tests": [
+      {
+        "description": "should not take forever",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "array",
+              "items": {
+                "type": "string",
+                "enum": [
+                  "a",
+                  "b",
+                  "c",
+                  "d",
+                  "e"
+                ]
+              },
+              "maxItems": 10,
+              "uniqueItems": true
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

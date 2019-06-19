@@ -1,0 +1,142 @@
+[
+  {
+    "description": "string generator",
+    "tests": [
+      {
+        "description": "should handle minLength",
+        "schema": {
+          "type": "string",
+          "minLength": 10
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle maxLength",
+        "schema": {
+          "type": "string",
+          "minLength": 20,
+          "maxLength": 30
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle pattern",
+        "schema": {
+          "type": "string",
+          "pattern": "\\w+@\\w+\\.\\w+"
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle format (core)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "b": {
+              "type": "string",
+              "format": "email"
+            },
+            "c": {
+              "type": "string",
+              "format": "hostname"
+            },
+            "d": {
+              "type": "string",
+              "format": "ipv4"
+            },
+            "e": {
+              "type": "string",
+              "format": "ipv6"
+            },
+            "f": {
+              "type": "string",
+              "format": "uri"
+            }
+          },
+          "required": ["a", "b", "c", "d", "e", "f"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle format (faker)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "faker": "name.findName"
+            },
+            "email": {
+              "type": "string",
+              "faker": "internet.email"
+            }
+          },
+          "required": ["name", "email"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle format (chance)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "string",
+              "chance": "guid"
+            },
+            "emailAddr": {
+              "type": "string",
+              "chance": {
+                "email": {
+                  "domain": "fake.com"
+                }
+              },
+              "pattern": ".+@fake.com"
+            }
+          },
+          "required": ["userId", "emailAddr"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should validate core formats",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "string",
+              "format": "unknown"
+            }
+          },
+          "required": ["test"]
+        },
+        "throws": "Error: unknown registry key .+?"
+      },
+      {
+        "description": "should validate custom formats",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "string",
+              "faker": "not.exists"
+            }
+          },
+          "required": ["test"]
+        },
+        "throws": "cannot resolve faker-generator for .+? in \\/properties\\/test"
+      },
+      {
+        "description": "should handle inferred type (when possible)",
+        "schema": {
+          "maxLength": 5
+        },
+        "type": "string"
+      }
+    ]
+  }
+]

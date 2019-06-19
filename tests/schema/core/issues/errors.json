@@ -1,0 +1,20 @@
+[
+  {
+    "description": "error reporting",
+    "tests": [
+      {
+        "description": "should report paths",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "unknown"
+            }
+          },
+          "required": ["test"]
+        },
+        "throws": "unknown primitive .+? in \\/properties\\/test\\/type"
+      }
+    ]
+  }
+]

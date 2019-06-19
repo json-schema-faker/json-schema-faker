@@ -1,0 +1,77 @@
+{
+  "description": "Having two properties that have the same value",
+  "tests": [
+    {
+      "description": "should resolve values from siblings",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "cards": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "default": "osom"
+                },
+                "slug": {
+                  "type": "string",
+                  "template": "#{id}"
+                }
+              },
+              "required": [
+                "id",
+                "slug"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          }
+        },
+        "required": [
+          "cards"
+        ]
+      },
+      "set": {
+        "useDefaultValue": true
+      },
+      "equal": {
+        "cards": [
+          {
+            "id": "osom",
+            "slug": "osom"
+          }
+        ]
+      },
+      "valid": true
+    },
+    {
+      "description": "should access generated values if they're sorted",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "z": {
+            "type": "string",
+            "faker": "name.findName"
+          },
+          "b": {
+            "type": "string",
+            "faker": "name.lastName"
+          },
+          "c": {
+            "template": "#{b} II"
+          },
+          "y": {
+            "faker": {
+              "internet.email": ["#{z}", "#{c}", "#{b}.com"]
+            }
+          }
+        },
+        "required": ["z", "b", "c", "y"]
+      },
+      "require": "core/extend/faker-extend",
+      "valid": true
+    }
+  ]
+}

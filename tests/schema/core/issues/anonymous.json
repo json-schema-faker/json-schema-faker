@@ -1,0 +1,19 @@
+[
+  {
+    "description": "anonymous schemas",
+    "tests": [
+      {
+        "description": "should not work as expected",
+        "schema": {
+          "x": {
+            "enum": ["y"]
+          }
+        },
+        "valid": true,
+        "equal": {
+          "x": "y"
+        }
+      }
+    ]
+  }
+]

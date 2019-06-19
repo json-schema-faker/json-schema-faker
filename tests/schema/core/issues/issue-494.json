@@ -1,0 +1,67 @@
+[
+  {
+    "description": "will use alwaysFakeOptionals",
+    "tests": [
+      {
+        "description": "should work if enabled",
+        "schema": {
+          "account-response": {
+            "title": "Account Response",
+            "type": "object",
+            "properties": {
+              "current": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/current-account"
+                }
+              },
+              "escrow": {
+                "type": "array",
+                "items": {
+                  "$ref": "#/definitions/current-account"
+                }
+              }
+            },
+            "required": [
+              "current"
+            ]
+          },
+          "definitions": {
+            "current-account": {
+              "title": "Current Account",
+              "type": "object",
+              "properties": {
+                "number": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "balance": {
+                  "type": "number"
+                },
+                "currency": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "number",
+                "name",
+                "balance",
+                "currency"
+              ]
+            }
+          }
+        },
+        "set": {
+          "alwaysFakeOptionals": true
+        },
+        "notEmpty": [
+          "account-response.current",
+          "account-response.escrow"
+        ],
+        "valid": true
+      }
+    ]
+  }
+]

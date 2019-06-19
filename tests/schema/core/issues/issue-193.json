@@ -1,0 +1,25 @@
+[
+  {
+    "description": "pattern and min/max length constraints",
+    "tests": [
+      {
+        "description": "should support minLength",
+        "schema": {
+          "type": "string",
+          "pattern": ".+",
+          "minLength": 21
+        },
+        "valid": true
+      },
+      {
+        "description": "should support maxLength",
+        "schema": {
+          "type": "string",
+          "pattern": ".+",
+          "maxLength": 2
+        },
+        "valid": true
+      }
+    ]
+  }
+]

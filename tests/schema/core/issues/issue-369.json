@@ -1,0 +1,48 @@
+{
+  "description": "Creates unnecessary fields that not described in schema but exists in required section",
+  "tests": [
+    {
+      "description": "should take missing props from required ones",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-04/schema#",
+        "title": "Customer",
+        "description": "Customer",
+        "type": "object",
+        "properties": {
+          "emails": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "address": {
+                  "type": "string"
+                },
+                "typeCode": {
+                  "type": "string"
+                },
+                "isPrimary": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "address",
+                "typeCode",
+                "isPrimary"
+              ]
+            },
+            "minItems": 1,
+            "maxItems": 1
+          }
+        },
+        "required": [
+          "name",
+          "birthDate",
+          "addresses",
+          "emails"
+        ]
+      },
+      "count": 4,
+      "valid": true
+    }
+  ]
+}

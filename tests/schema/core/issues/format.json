@@ -1,0 +1,42 @@
+[
+  {
+    "description": "using formats",
+    "tests": [
+      {
+        "description": "should support core only",
+        "schema": {
+          "type": "string",
+          "format": "not_exists"
+        },
+        "throws": "unknown registry key"
+      },
+      {
+        "description": "should support custom formats",
+        "schema": {
+          "type": "string",
+          "format": "semver"
+        },
+        "valid": true,
+        "repeat": 100,
+        "require": "core/formats/semver"
+      },
+      {
+        "description": "should support faker/chance on numeric types",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "chanceNumber": {
+              "type": "integer",
+              "chance": "natural"
+            },
+            "fakerNumber": {
+              "type": "integer",
+              "faker": "random.number"
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

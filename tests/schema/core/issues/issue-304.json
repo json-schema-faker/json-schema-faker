@@ -1,0 +1,46 @@
+[
+  {
+    "description": "regression for decimal numbers and multiples",
+    "tests": [
+      {
+        "description": "should apply multipleOf correctly",
+        "schema": {
+          "type": "object",
+          "allOf": [
+            {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "type": "string"
+                },
+                "b": {
+                  "type": "integer"
+                }
+              },
+              "required": [
+                "a",
+                "b"
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "b": {
+                  "type": "integer"
+                },
+                "c": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "b",
+                "c"
+              ]
+            }
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

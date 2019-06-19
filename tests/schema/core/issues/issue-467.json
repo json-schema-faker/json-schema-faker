@@ -1,0 +1,32 @@
+{
+  "description": "String maxLength is ignored after 0.5.0-rc12",
+  "tests": [
+    {
+      "description": "generated strings must not exceed 10 chars",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "user": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": [
+                  "string",
+                  "null"
+                ],
+                "maxLength": 10
+              }
+            },
+            "required": [
+              "name"
+            ]
+          }
+        },
+        "required": [
+          "user"
+        ]
+      },
+      "valid": true
+    }
+  ]
+}

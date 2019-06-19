@@ -1,0 +1,26 @@
+[
+  {
+    "description": "regression for decimal numbers and multiples",
+    "tests": [
+      {
+        "description": "should apply multipleOf correctly",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "num": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "multipleOf": 0.01
+            }
+          },
+          "required": [
+            "num"
+          ]
+        },
+        "repeat": 100,
+        "valid": true
+      }
+    ]
+  }
+]

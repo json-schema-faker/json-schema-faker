@@ -1080,12 +1080,18 @@ function objectType(value, path, resolve, traverseCallback) {
   var propertyKeys = Object.keys(properties);
   var patternPropertyKeys = Object.keys(patternProperties);
   var optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce(function (_response, _key) {
+<<<<<<< HEAD
     if (requiredProperties.indexOf(_key) === -1) {
        if(_key)
       _response.push(_key); }
     return _response;
   }, []);
   //console.log(properties);
+=======
+    if (requiredProperties.indexOf(_key) === -1) { _response.push(_key); }
+    return _response;
+  }, []);
+>>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
   var allProperties = requiredProperties.concat(optionalProperties);
   var additionalProperties = allowsAdditional // eslint-disable-line
   ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
@@ -1094,6 +1100,7 @@ function objectType(value, path, resolve, traverseCallback) {
     // just nothing
     return {};
   }
+<<<<<<< HEAD
   // adds the required properties 
   requiredProperties.forEach(function (key) {
     if (properties[key]) {
@@ -1109,6 +1116,10 @@ function objectType(value, path, resolve, traverseCallback) {
     
 // only needed when you are schema faking the values, not needed for what we are doing 
   /*if (optionAPI('requiredOnly') === true) { 
+=======
+
+  if (optionAPI('requiredOnly') === true) {
+>>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
     requiredProperties.forEach(function (key) {
       if (properties[key]) {
         props[key] = properties[key];
@@ -1140,8 +1151,13 @@ function objectType(value, path, resolve, traverseCallback) {
   var extraProperties = optionalProperties.filter(function (_item) {
     return extraPropertiesRandomOrder.indexOf(_item) !== -1;
   }); // properties are read from right-to-left
+<<<<<<< HEAD
   
   var _props = requiredProperties.concat(extraProperties).slice(0, max); //Making a change so that all the properties will be listed with optional ones being shown as optional
+=======
+
+  var _props = requiredProperties.concat(extraProperties).slice(0, max);
+>>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
 
   var _defns = [];
 
@@ -1301,7 +1317,10 @@ function objectType(value, path, resolve, traverseCallback) {
   }
 
   return traverseCallback(props, path.concat(['properties']), resolve);
+<<<<<<< HEAD
   */
+=======
+>>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
 }
 
 /**
@@ -1584,6 +1603,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   var copy = {};
+<<<<<<< HEAD
    copy.description = "";
   if (Array.isArray(schema)) {
     copy = [];
@@ -1609,6 +1629,18 @@ function traverse(schema, path, resolve, rootSchema) {
       prop = prop.replace("(optional)","");
       copy[prop] = "";
       //copy[prop] = schema[prop];
+=======
+
+  if (Array.isArray(schema)) {
+    copy = [];
+  }
+
+  Object.keys(schema).forEach(function (prop) {
+    if (typeof schema[prop] === 'object' && prop !== 'definitions') {
+      copy[prop] = traverse(schema[prop], path.concat([prop]), resolve, copy);
+    } else {
+      copy[prop] = schema[prop];
+>>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
     }
   });
   return copy;

@@ -1,0 +1,69 @@
+[
+  {
+    "description": "dependencies support",
+    "tests": [
+      {
+        "description": "should handle property-dependencies",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "credit_card": {
+              "type": "number"
+            },
+            "billing_address": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "dependencies": {
+            "credit_card": [
+              "billing_address"
+            ]
+          }
+        },
+        "valid": true,
+        "set": {
+          "alwaysFakeOptionals": true
+        }
+      },
+      {
+        "description": "should handle schema-dependencies",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "credit_card": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "name"
+          ],
+          "dependencies": {
+            "credit_card": {
+              "properties": {
+                "billing_address": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "billing_address"
+              ]
+            }
+          }
+        },
+        "valid": true,
+        "set": {
+          "alwaysFakeOptionals": true
+        }
+      }
+    ]
+  }
+]
