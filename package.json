@@ -1,5 +1,4 @@
 {
-<<<<<<< HEAD
   "_from": "json-schema-faker",
   "_id": "json-schema-faker@0.5.0-rc17",
   "_inBundle": false,
@@ -29,62 +28,12 @@
     "email": "pateketrueke@gmail.com",
     "url": "https://soypache.co"
   },
-=======
-  "name": "json-schema-faker",
-  "version": "0.5.0-rc17",
-  "description": "JSON-Schema + fake data generators",
-  "homepage": "http://json-schema-faker.js.org",
-  "main": "dist/index.js",
-  "module": "dist/index.mjs",
-  "unpkg": "dist/bundle.umd.min.js",
-  "browser": "dist/index.umd.min.js",
-  "scripts": {
-    "build:concat:dist": "concat -o dist/bundle.umd.min.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath/jsonpath.min.js dist/index.umd.min.js",
-    "build:browser": "bili --banner --format umd --format umd-min --module-name JSONSchemaFaker --minimal && npm run build:concat:dist",
-    "build:node": "bili src/index.js --minimal --format es --format cjs",
-    "build": "npm run build:browser && npm run build:node",
-    "dev": "npm test -- -w",
-    "test": "npm run test:unit --",
-    "test:ci": "npm run coverage:all && npm run report -- -r lcov",
-    "test:all": "npm run test:run tests && npm run report -- -r html",
-    "test:run": "NODE_ENV=test _mocha --exit --recursive --watch-extensions js,json -r esm -bR spec",
-    "test:unit": "npm run test:run tests/unit --",
-    "test:schema": "npm run test:run tests/schema --",
-    "coverage": "nyc -x '**/tests/**' -x '**/*.spec.js'",
-    "coverage:all": "npm run coverage -- npm run test:all",
-    "coverage:unit": "npm run coverage -- npm run test:unit",
-    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
-    "report": "nyc report",
-    "lint": "eslint src tests",
-    "pretest": "npm run lint",
-    "prepublish": "npm run build",
-    "graphviz": "madge src --dot > structure.gv"
-  },
-  "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
-  "contributors": [
-    "Ajay Karat <info@devilsgarage.com> (http://devilsgarage.com/)",
-    "Tomasz Ducin <tomasz@ducin.it> (http://ducin.it)"
-  ],
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/json-schema-faker/json-schema-faker"
-  },
-  "bugs": "https://github.com/json-schema-faker/json-schema-faker/issues",
-  "license": "MIT",
-  "keywords": [
-    "json",
-    "jsonschema",
-    "fake",
-    "mocks"
-  ],
->>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
   "bili": {
     "external": [
       "json-schema-ref-parser",
       "jsonpath"
     ]
   },
-<<<<<<< HEAD
   "browser": "dist/index.umd.min.js",
   "bugs": {
     "url": "https://github.com/json-schema-faker/json-schema-faker/issues"
@@ -109,11 +58,6 @@
   },
   "deprecated": false,
   "description": "JSON-Schema + fake data generators",
-=======
-  "files": [
-    "dist/*.*"
-  ],
->>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
   "devDependencies": {
     "ajv": "^6.5.3",
     "bili": "^4.2.5",
@@ -139,7 +83,6 @@
     "tv4": "^1.3.0",
     "z-schema": "^4.1.0"
   },
-<<<<<<< HEAD
   "files": [
     "dist/*.*"
   ],
@@ -182,11 +125,4 @@
   },
   "unpkg": "dist/bundle.umd.min.js",
   "version": "0.5.0-rc17"
-=======
-  "dependencies": {
-    "json-schema-ref-parser": "^6.0.2",
-    "jsonpath": "^1.0.1",
-    "randexp": "^0.5.3"
-  }
->>>>>>> b86fb26ca822d31833b91b1a1f07b0234bf9bd2c
 }
