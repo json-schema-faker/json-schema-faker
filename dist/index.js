@@ -1081,11 +1081,12 @@ function objectType(value, path, resolve, traverseCallback) {
   var patternPropertyKeys = Object.keys(patternProperties);
   var optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce(function (_response, _key) {
     if (requiredProperties.indexOf(_key) === -1) {
-       if(_key)
-      _response.push(_key); }
+     if(_key){
+      _response.push(_key);
+     }
+    }
     return _response;
   }, []);
-  //console.log(properties);
   var allProperties = requiredProperties.concat(optionalProperties);
   var additionalProperties = allowsAdditional // eslint-disable-line
   ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
@@ -1107,201 +1108,7 @@ function objectType(value, path, resolve, traverseCallback) {
   });
   return traverseCallback(props, path.concat(['properties']), resolve);
 
-// only needed when you are schema faking the values, not needed for what we are doing
-  /*if (optionAPI('requiredOnly') === true) {
-    requiredProperties.forEach(function (key) {
-      if (properties[key]) {
-        props[key] = properties[key];
-      }
-    });
-    return traverseCallback(props, path.concat(['properties']), resolve);
-  }
 
-  var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
-  var ignoreProperties = optionAPI('ignoreProperties') || [];
-  var min = Math.max(value.minProperties || 0, requiredProperties.length);
-  var max = value.maxProperties || allProperties.length + random.number(1, 5);
-  var neededExtras = Math.max(0, min - requiredProperties.length);
-
-  if (allProperties.length === 1 && !requiredProperties.length) {
-    neededExtras = random.number(neededExtras, allProperties.length + (allProperties.length - min));
-  }
-
-  if (optionalsProbability !== false) {
-    if (fixedProbabilities === true) {
-      neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (allProperties.length - min));
-    } else {
-      neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
-    }
-  }
-
-  var extraPropertiesRandomOrder = random.shuffle(optionalProperties).slice(0, neededExtras);
-  var extraProperties = optionalProperties.filter(function (_item) {
-    return extraPropertiesRandomOrder.indexOf(_item) !== -1;
-  }); // properties are read from right-to-left
-
-  var _props = requiredProperties.concat(extraProperties).slice(0, max); //Making a change so that all the properties will be listed with optional ones being shown as optional
-
-  var _defns = [];
-
-  if (value.dependencies) {
-    Object.keys(value.dependencies).forEach(function (prop) {
-      var _required = value.dependencies[prop];
-
-      if (_props.indexOf(prop) !== -1) {
-        if (Array.isArray(_required)) {
-          // property-dependencies
-          _required.forEach(function (sub) {
-            if (_props.indexOf(sub) === -1) {
-              _props.push(sub);
-            }
-          });
-        } else {
-          _defns.push(_required);
-        }
-      }
-    }); // schema-dependencies
-
-    if (_defns.length) {
-      delete value.dependencies;
-      return traverseCallback({
-        allOf: _defns.concat(value)
-      }, path.concat(['properties']), resolve);
-    }
-  }
-
-  var skipped = [];
-
-  _props.forEach(function (key) {
-    for (var i = 0; i < ignoreProperties.length; i += 1) {
-      if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === 'string' && ignoreProperties[i] === key || typeof ignoreProperties[i] === 'function' && ignoreProperties[i](properties[key], key)) {
-        skipped.push(key);
-        return;
-      }
-    }
-
-    if (additionalProperties === false) {
-      if (requiredProperties.indexOf(key) !== -1) {
-        props[key] = properties[key];
-      }
-    } else if (properties[key]) {
-      props[key] = properties[key];
-    }
-
-    var found; // then try patternProperties
-
-    patternPropertyKeys.forEach(function (_key) {
-      if (key.match(new RegExp(_key))) {
-        found = true;
-
-        if (props[key]) {
-          utils.merge(props[key], patternProperties[_key]);
-        } else {
-          props[random.randexp(key)] = patternProperties[_key];
-        }
-      }
-    });
-
-    if (!found) {
-      // try patternProperties again,
-      var subschema = patternProperties[key] || additionalProperties; // FIXME: allow anyType as fallback when no subschema is given?
-
-      if (subschema && additionalProperties !== false) {
-        // otherwise we can use additionalProperties?
-        props[patternProperties[key] ? random.randexp(key) : key] = properties[key] || subschema;
-      }
-    }
-  });
-
-  var fillProps = optionAPI('fillProperties');
-  var reuseProps = optionAPI('reuseProperties'); // discard already ignored props if they're not required to be filled...
-
-  var current = Object.keys(props).length + (fillProps ? 0 : skipped.length); // generate dynamic suffix for additional props...
-
-  var hash = function (suffix) { return random.randexp(("_?[_a-f\\d]{1,3}" + (suffix ? '\\$?' : ''))); };
-
-  function get() {
-    var one;
-
-    do {
-      one = requiredProperties.shift();
-    } while (props[one]);
-
-    return one;
-  }
-
-  while (fillProps) {
-    if (!(patternPropertyKeys.length || allowsAdditional)) {
-      break;
-    }
-
-    if (current >= min) {
-      break;
-    }
-
-    if (allowsAdditional) {
-      if (reuseProps && propertyKeys.length - current > min) {
-        var count = 0;
-        var key = (void 0);
-
-        do {
-          count += 1; // skip large objects
-
-          if (count > 1000) {
-            break;
-          }
-
-          key = get() || random.pick(propertyKeys);
-        } while (typeof props[key] !== 'undefined');
-
-        if (typeof props[key] === 'undefined') {
-          props[key] = properties[key];
-          current += 1;
-        }
-      } else if (patternPropertyKeys.length && !additionalProperties) {
-        var prop = random.pick(patternPropertyKeys);
-        var word = random.randexp(prop);
-
-        if (!props[word]) {
-          props[word] = patternProperties[prop];
-          current += 1;
-        }
-      } else {
-        var word$1 = get() || wordsGenerator(1) + hash();
-
-        if (!props[word$1]) {
-          props[word$1] = additionalProperties || anyType;
-          current += 1;
-        }
-      }
-    }
-
-    for (var i = 0; current < min && i < patternPropertyKeys.length; i += 1) {
-      var _key = patternPropertyKeys[i];
-      var word$2 = random.randexp(_key);
-
-      if (!props[word$2]) {
-        props[word$2] = patternProperties[_key];
-        current += 1;
-      }
-    }
-  } // fill up-to this value and no more!
-
-
-  var maximum = random.number(min, max);
-
-  for (; current < maximum && additionalProperties;) {
-    var word$3 = wordsGenerator(1) + hash(true);
-
-    if (!props[word$3]) {
-      props[word$3] = additionalProperties;
-      current += 1;
-    }
-  }
-
-  return traverseCallback(props, path.concat(['properties']), resolve);
-  */
 }
 
 /**
@@ -1584,7 +1391,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   var copy = {};
-   copy.description = "";
+  copy.description = ``;
   if (Array.isArray(schema)) {
     copy = [];
   }
@@ -1600,12 +1407,12 @@ function traverse(schema, path, resolve, rootSchema) {
     }
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
     //Creates an html formatted description and creates the empty body tag if needed
-     copy.description += ("<div> " + prop + " (type: " + schema[prop].type + ") : " + schemadescription + " </div> ");
+     copy.description += (`<div> ${prop} (type: ${schema[prop].type}) : ${schemadescription} </div>`);
      prop = prop.replace("(optional)","");
      copy[prop] = "";
       //copy[prop] = traverse(schema[prop], path.concat([prop]), resolve, copy);
     } else {
-      copy.description += ("<div> " + prop + " (type: " + schema[prop].type + ") : " + schema[prop].description + " </div> ");
+      copy.description += (`<div> ${prop} (type: ${schema[prop].type}) : ${schemadescription} </div>`);
       prop = prop.replace("(optional)","");
       copy[prop] = "";
       //copy[prop] = schema[prop];
