@@ -1,6 +1,6 @@
 import $RefParser from 'json-schema-ref-parser';
 import RandExp from 'randexp';
-import jsonpath from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 
 /**
  * This class defines a registry for custom formats used within JSF.
@@ -481,19 +481,30 @@ function merge(a, b) {
   return a;
 }
 
-function clone(obj) {
+function clone(obj, cache) {
+  if ( cache === void 0 ) cache = new Map();
+
   if (!obj || typeof obj !== 'object') {
     return obj;
   }
 
-  if (Array.isArray(obj)) {
-    return obj.map(function (x) { return clone(x); });
+  if (cache.has(obj)) {
+    return cache.get(obj);
   }
 
+  if (Array.isArray(obj)) {
+    var arr = [];
+    cache.set(obj, arr);
+    arr.push.apply(arr, obj.map(function (x) { return clone(x, cache); }));
+    return arr;
+  }
+
+  var clonedObj = {};
+  cache.set(obj, clonedObj);
   return Object.keys(obj).reduce(function (prev, cur) {
-    prev[cur] = clone(obj[cur]);
+    prev[cur] = clone(obj[cur], cache);
     return prev;
-  }, {});
+  }, clonedObj);
 }
 
 function short(schema) {
@@ -1101,7 +1112,7 @@ function objectType(value, path, resolve, traverseCallback) {
   var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   var ignoreProperties = optionAPI('ignoreProperties') || [];
   var min = Math.max(value.minProperties || 0, requiredProperties.length);
-  var max = value.maxProperties || allProperties.length + random.number(1, 5);
+  var max = value.maxProperties || allProperties.length + (allowsAdditional ? random.number(1, 5) : 0);
   var neededExtras = Math.max(0, min - requiredProperties.length);
 
   if (allProperties.length === 1 && !requiredProperties.length) {
@@ -1161,11 +1172,7 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     }
 
-    if (additionalProperties === false) {
-      if (requiredProperties.indexOf(key) !== -1) {
-        props[key] = properties[key];
-      }
-    } else if (properties[key]) {
+    if (properties[key]) {
       props[key] = properties[key];
     }
 
@@ -1201,11 +1208,12 @@ function objectType(value, path, resolve, traverseCallback) {
 
   var hash = function (suffix) { return random.randexp(("_?[_a-f\\d]{1,3}" + (suffix ? '\\$?' : ''))); };
 
-  function get() {
+  function get(from) {
     var one;
 
     do {
-      one = requiredProperties.shift();
+      if (!from.length) { break; }
+      one = from.shift();
     } while (props[one]);
 
     return one;
@@ -1232,7 +1240,7 @@ function objectType(value, path, resolve, traverseCallback) {
             break;
           }
 
-          key = get() || random.pick(propertyKeys);
+          key = get(requiredProperties) || random.pick(propertyKeys);
         } while (typeof props[key] !== 'undefined');
 
         if (typeof props[key] === 'undefined') {
@@ -1248,7 +1256,7 @@ function objectType(value, path, resolve, traverseCallback) {
           current += 1;
         }
       } else {
-        var word$1 = get() || wordsGenerator(1) + hash();
+        var word$1 = get(requiredProperties) || wordsGenerator(1) + hash();
 
         if (!props[word$1]) {
           props[word$1] = additionalProperties || anyType;
@@ -1269,13 +1277,16 @@ function objectType(value, path, resolve, traverseCallback) {
   } // fill up-to this value and no more!
 
 
-  var maximum = random.number(min, max);
+  if (requiredProperties.length === 0 && (!allowsAdditional || optionalsProbability === false)) {
+    var maximum = random.number(min, max);
 
-  for (; current < maximum && additionalProperties;) {
-    var word$3 = wordsGenerator(1) + hash(true);
+    for (; current < maximum;) {
+      var word$3 = get(propertyKeys);
 
-    if (!props[word$3]) {
-      props[word$3] = additionalProperties;
+      if (word$3) {
+        props[word$3] = properties[word$3];
+      }
+
       current += 1;
     }
   }
@@ -1483,7 +1494,7 @@ var typeMap = {
 };
 
 function traverse(schema, path, resolve, rootSchema) {
-  schema = resolve(schema, undefined, path);
+  schema = resolve(schema, path);
 
   if (!schema) {
     return;
@@ -1578,6 +1589,10 @@ function traverse(schema, path, resolve, rootSchema) {
   return copy;
 }
 
+function isEmpty(value) {
+  return Object.prototype.toString.call(value) === '[object Object]' && !Object.keys(value).length;
+}
+
 function pick$1(data) {
   return Array.isArray(data) ? random.pick(data) : data;
 }
@@ -1596,6 +1611,34 @@ function cycle(data, reverse) {
   }
 
   return value;
+}
+
+function clean(obj, isArray) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj.map(function (value) { return clean(value, true); }).filter(function (value) { return typeof value !== 'undefined'; });
+  }
+
+  Object.keys(obj).forEach(function (k) {
+    if (!isEmpty(obj[k])) {
+      var value = clean(obj[k]);
+
+      if (!isEmpty(value)) {
+        obj[k] = value;
+      }
+    } else {
+      delete obj[k];
+    }
+  });
+
+  if (!Object.keys(obj).length && isArray) {
+    return undefined;
+  }
+
+  return obj;
 }
 
 function resolve(obj, data, values, property) {
@@ -1627,9 +1670,9 @@ function resolve(obj, data, values, property) {
 
     if (!values[key]) {
       if (params.count > 1) {
-        values[key] = jsonpath.query(data, params.path, params.count);
+        values[key] = JSONPath(params.path, data).slice(0, params.count);
       } else {
-        values[key] = jsonpath.query(data, params.path);
+        values[key] = JSONPath(params.path, data);
       }
     }
 
@@ -1649,12 +1692,14 @@ function resolve(obj, data, values, property) {
 
 function run(refs, schema, container) {
   try {
-    var result = traverse(utils.clone(schema), [], function reduce(sub, maxReduceDepth, parentSchemaPath) {
-      if (typeof maxReduceDepth === 'undefined') {
-        maxReduceDepth = random.number(1, 3);
-      }
+    var seen = {};
+    var result = traverse(utils.clone(schema), [], function reduce(sub, parentSchemaPath) {
+      if (!sub || seen[sub.$ref] > random.pick([0, 1])) {
+        if (sub) {
+          delete sub.$ref;
+          return sub;
+        }
 
-      if (!sub) {
         return null;
       }
 
@@ -1672,6 +1717,9 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
+        seen[sub.$ref] = seen[sub.$ref] || 0;
+        seen[sub.$ref] += 1;
+
         if (sub.$ref === '#') {
           delete sub.$ref;
           return sub;
@@ -1706,7 +1754,7 @@ function run(refs, schema, container) {
         // must be resolved before any merge
 
         schemas.forEach(function (subSchema) {
-          var _sub = reduce(subSchema, maxReduceDepth + 1, parentSchemaPath); // call given thunks if present
+          var _sub = reduce(subSchema, parentSchemaPath); // call given thunks if present
 
 
           utils.merge(sub, typeof _sub.thunk === 'function' ? _sub.thunk() : _sub);
@@ -1727,7 +1775,7 @@ function run(refs, schema, container) {
             var fixed = random.pick(mix);
             utils.merge(copy, fixed);
 
-            if (sub.oneOf) {
+            if (sub.oneOf && copy.properties) {
               mix.forEach(function (omit) {
                 if (omit !== fixed && omit.required) {
                   omit.required.forEach(function (key) {
@@ -1745,7 +1793,7 @@ function run(refs, schema, container) {
 
       Object.keys(sub).forEach(function (prop) {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-          sub[prop] = reduce(sub[prop], maxReduceDepth, parentSchemaPath.concat(prop));
+          sub[prop] = reduce(sub[prop], parentSchemaPath.concat(prop));
         }
       }); // avoid extra calls on sub-schemas, fixes #458
 
@@ -1761,10 +1809,10 @@ function run(refs, schema, container) {
     });
 
     if (optionAPI('resolveJsonPath')) {
-      return resolve(result);
+      return resolve(clean(result));
     }
 
-    return result;
+    return clean(result);
   } catch (e) {
     if (e.path) {
       throw new Error(((e.message) + " in /" + (e.path.join('/'))));
