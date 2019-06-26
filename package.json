@@ -64,6 +64,9 @@
     "codecov": "^3.0.0",
     "concat": "^1.0.3",
     "cryptiles": "^4.1.3",
+    "eslint": "^6.0.1",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.18.0",
     "esm": "^3.0.82",
     "extend": "^3.0.2",
     "faker": "^4.1.0",
@@ -82,7 +85,7 @@
   },
   "dependencies": {
     "json-schema-ref-parser": "^6.0.2",
-    "jsonpath": "^1.0.1",
+    "jsonpath-plus": "^0.20.1",
     "randexp": "^0.5.3"
   }
 }
