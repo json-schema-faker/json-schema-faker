@@ -1,4 +1,4 @@
-import jsonpath from 'jsonpath';
+import jsonpath from 'jsonpath-plus';
 
 import optionAPI from '../api/option';
 import traverse from './traverse';

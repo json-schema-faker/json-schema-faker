@@ -82,7 +82,7 @@
   },
   "dependencies": {
     "json-schema-ref-parser": "^6.0.2",
-    "jsonpath": "^1.0.1",
+    "jsonpath-plus": "^0.20.1",
     "randexp": "^0.5.3"
   }
 }
