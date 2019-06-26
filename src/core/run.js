@@ -1,4 +1,4 @@
-import jsonpath from 'jsonpath-plus';
+import { JSONPath } from 'jsonpath-plus';
 
 import optionAPI from '../api/option';
 import traverse from './traverse';
@@ -60,9 +60,9 @@ function resolve(obj, data, values, property) {
 
     if (!values[key]) {
       if (params.count > 1) {
-        values[key] = jsonpath.query(data, params.path, params.count);
+        values[key] = JSONPath(params.path, data).slice(0, params.count);
       } else {
-        values[key] = jsonpath.query(data, params.path);
+        values[key] = JSONPath(params.path, data);
       }
     }
 
