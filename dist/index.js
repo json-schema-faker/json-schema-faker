@@ -1089,11 +1089,17 @@ var anyType = {
   type: ['string', 'number', 'integer', 'boolean'],
 }; // TODO provide types
 
-function objectType(value, path, resolve, traverseCallback) {
+function objectType(value, path, resolve, level, traverseCallback) {
   var props = {};
   var properties = value.properties || {};
   var patternProperties = value.patternProperties || {};
-  var requiredProperties = typeof value.required === 'boolean' ? [] : (value.required || []).slice();
+  var requiredProperties;
+  if(typeof value.required === 'object'){ //we have a required field
+    requiredProperties = [];
+  }
+  else {
+  requiredProperties = typeof value.required === 'boolean' ? [] : (value.required || []).slice();
+  }
   var allowsAdditional = value.additionalProperties !== false;
   var propertyKeys = Object.keys(properties);
   var patternPropertyKeys = Object.keys(patternProperties);
@@ -1127,10 +1133,11 @@ function objectType(value, path, resolve, traverseCallback) {
   });
   optionalProperties.forEach(function(key) {
     if (properties[key]) {
-      props[key + ' (optional)'] = properties[key]; // adds the optional field to these values, which will later be used to create the description
+      props[key + ' (optional)'] = properties[key];
+       // adds the optional field to these values, which will later be used to create the description
     }
   });
-  return traverseCallback(props, path.concat(['properties']), resolve);
+  return traverseCallback(props, path.concat(['properties']), resolve, level);
 }
 
 /**
@@ -1307,6 +1314,7 @@ function generateFormat(value, invalid) {
 }
 
 function stringType(value) {
+  return value;
   // here we need to force type to fix #467
   var output = utils.typecast('string', value, function(opts) {
     if (value.format) {
@@ -1334,13 +1342,17 @@ var typeMap = {
   string: stringType,
 };
 
-function traverse(schema, path, resolve, rootSchema) {
+function traverse(schema, path, resolve, level) {
   schema = resolve(schema, undefined, path);
 
   if (!schema) {
     return;
   } // default values has higher precedence
-
+ if(schema == '[Circular]'){ // if we hit a circular object just return a object reference with an empty description since these are resolved as this string 
+  var returnobj = {};
+  returnobj.description = "";
+   return returnobj;
+ }
   if (path[path.length - 1] !== 'properties') {
     // example values have highest precedence
     if (optionAPI('useExamplesValue') && Array.isArray(schema.examples)) {
@@ -1355,9 +1367,7 @@ function traverse(schema, path, resolve, rootSchema) {
       return schema.default;
     }
 
-    if ('template' in schema) {
-      return utils.template(schema.template, rootSchema);
-    }
+    
   }
 
   if (schema.not && typeof schema.not === 'object') {
@@ -1378,11 +1388,7 @@ function traverse(schema, path, resolve, rootSchema) {
     return traverse(schema.thunk(), path, resolve);
   }
 
-  if (typeof schema.generate === 'function') {
-    return utils.typecast(null, schema, function() {
-      return schema.generate(rootSchema);
-    });
-  } // TODO remove the ugly overcome
+
 
   var type = schema.type;
 
@@ -1405,7 +1411,7 @@ function traverse(schema, path, resolve, rootSchema) {
       }
     } else {
       try {
-        return typeMap[type](schema, path, resolve, traverse);
+        return typeMap[type](schema, path, resolve,level, traverse); //Resolves the definitions 
       } catch (e) {
         if (typeof e.path === 'undefined') {
           throw new ParseError(e.stack, path);
@@ -1416,32 +1422,121 @@ function traverse(schema, path, resolve, rootSchema) {
     }
   }
 
-  var copy = {};
-  copy.description = ``;
-  if (Array.isArray(schema)) {
-    copy = [];
-  }
-
-  Object.keys(schema).forEach(function(prop) {
+  var copy = {}; //Create the copy object with an empty description 
+  copy.descriptionval = ``;
+ 
+  Object.keys(schema).forEach(function(prop) { //process the property based on what its type is
     var schemadescription;
+    var schemaprop = schema[prop];
+    var schemaproptype = schemaprop.type;
+   
+  if(typeof schemaprop === 'object' && 'readOnly' in schemaprop){
+    }
+    else {
     //if there is a description we set it otherwise we want an empty string
-    if (schema[prop].description) {
-      schemadescription = schema[prop].description;
+    if (schemaprop.description) {
+      schemadescription = schemaprop.description;
     } else {
       schemadescription = '';
     }
-    if (typeof schema[prop] === 'object' && prop !== 'definitions') {
+    //if (typeof schema[prop] === 'object' && prop !== 'definitions') {
+      var val;
       //Creates an html formatted description and creates the empty body tag if needed
-      copy.description += `<div> ${prop} (type: ${schema[prop].type}) : ${schemadescription} </div>`;
-      prop = prop.replace('(optional)', '');
-      copy[prop] = '';
-      //copy[prop] = traverse(schema[prop], path.concat([prop]), resolve, copy);
-    } else {
-      copy.description += `<div> ${prop} (type: ${schema[prop].type}) : ${schemadescription} </div>`;
-      prop = prop.replace('(optional)', '');
-      copy[prop] = '';
-      //copy[prop] = schema[prop];
+      copy.descriptionval += `<div> ${prop} (type: ${schema[prop].type}) : ${schemadescription} </div>`;
+      
+      if(schemaproptype == 'integer' || schemaproptype == 'number'){
+        val = 0;
+      }
+      else if(schemaproptype == 'string') {
+        val = "";
+        if('enum' in schemaprop){ // Lists the possible enum values in the description if the string is an enum
+          copy.descriptionval += `<div>Possible values for ${prop} are: `
+          for(var enumvar in schemaprop["enum"]){
+            copy.descriptionval += `${schemaprop["enum"][enumvar]}, `;
+          }
+          copy.descriptionval += `</div>`
+        }
+      }
+      else if( schemaproptype == 'boolean')
+      {
+        val = false;
+      }
+      else if(schemaproptype == "array") {
+        if(level == 6){
+          val = []; // At the sixth level we stop going any deeper 
+        }
+        else {
+        var array = schemaprop.items;
+        if(array != "[Circular]"){ // in the case a circular reference string is passed down 
+        if('properties' in array){ // Resolve hte properties of the array 
+          if(typeof array.properties === 'string'){
+            val = [] // if properties is just a string value we resolve to an empty array 
+          }
+          else {
+           val =  traverse(array["properties"], path.concat([prop]), resolve,level + 1); //Recursively resolve and increase the level
+          }
+        }
+        else {
+          val = []; // No properties field also signifies an empty array 
+        }
+        if(val.descriptionval){
+       copy.descriptionval += val.descriptionval; // If we get a value set it and then delete it from the returned object 
+       delete val.descriptionval;
+        }
+       var temp = val; // Convert returned object to an array
+       val = [];
+       val.push(temp);
+       //console.log(typeof val[0]);
+       if(Array.isArray(val[0])){ // case where an array with no given item types special case
+         val = [];
+       }
+      }
+        else { // A circular property string being hit is resolved as an empty object
+        val = {}; 
+      }
     }
+      }
+      else if (schema[prop].type == "object"){
+        
+        if(prop == "properties"){
+          if('additionalProperties' in schema[prop]){ //Special case with the additionalProperties tag nested in the properties tag of an object 
+            if(level == 6){
+              val = {}; // At the sixth level we stop going any deeper 
+            }
+            else {
+            val =  traverse(schema[prop]["additionalProperties"], path.concat([prop]), resolve, level + 1); 
+            copy.descriptionval += val.descriptionval;
+            delete val.descriptionval;
+            }
+          }
+        }
+        if(prop == "additionalProperties"){
+          val = {}; //If additionalProperties tag is not nested just resolve it as an empty object since it never contains anything 
+        }
+        if('properties' in schema[prop]){
+          if(level == 6){
+            val = {}; // If 6th level is reached just resolve as an empty object 
+          }
+          else {
+          val =  traverse(schema[prop]["properties"], path.concat([prop]), resolve, level + 1); //Recurse down a level 
+          copy.descriptionval += val.descriptionval; // Set the descriptional val and then delete it 
+          delete val.descriptionval;
+          }
+        }
+        
+      }
+      else {
+       
+      //make it an object in the case the depdenceny was resolved as circular 
+        val = {};
+      }
+      prop = prop.replace('(optional)', '');
+      prop = prop.replace(/\s+/g, '')
+     
+      copy[prop] = val;
+     
+   
+  }
   });
   return copy;
 }
@@ -1630,7 +1725,7 @@ function run(refs, schema, container) {
       }
 
       return container.wrap(sub);
-    });
+    },0);
 
     if (optionAPI('resolveJsonPath')) {
       return resolve(result);
