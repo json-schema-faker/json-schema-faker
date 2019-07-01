@@ -1439,7 +1439,7 @@ function traverse(schema, path, resolve, level) {
     } else {
       schemadescription = '';
     }
-    //if (typeof schema[prop] === 'object' && prop !== 'definitions') {
+    
       var val;
       //Creates an html formatted description and creates the empty body tag if needed
       copy.descriptionval += `<div> ${prop} (type: ${schema[prop].type}) : ${schemadescription} </div>`;
