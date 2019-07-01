@@ -124,5 +124,5 @@
     "test:unit": "npm run test:run tests/unit --"
   },
   "unpkg": "dist/bundle.umd.min.js",
-  "version": "0.5.0-rc17"
+  "version": "0.5.1-rc17"
 }
