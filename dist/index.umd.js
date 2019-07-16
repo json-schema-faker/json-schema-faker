@@ -83,8 +83,8 @@
 
 
   function toArray(sequence) {
-    if (Array.isArray(sequence)) { return sequence; }
-    else if (isNothing(sequence)) { return []; }
+    if (Array.isArray(sequence)) return sequence;
+    else if (isNothing(sequence)) return [];
 
     return [ sequence ];
   }
@@ -192,7 +192,7 @@
   Mark.prototype.getSnippet = function getSnippet(indent, maxLength) {
     var head, start, tail, end, snippet;
 
-    if (!this.buffer) { return null; }
+    if (!this.buffer) return null;
 
     indent = indent || 4;
     maxLength = maxLength || 75;
@@ -340,8 +340,6 @@
 
 
   function compileMap(/* lists... */) {
-    var arguments$1 = arguments;
-
     var result = {
           scalar: {},
           sequence: {},
@@ -354,7 +352,7 @@
     }
 
     for (index = 0, length = arguments.length; index < length; index += 1) {
-      arguments$1[index].forEach(collectType);
+      arguments[index].forEach(collectType);
     }
     return result;
   }
@@ -442,7 +440,7 @@
   });
 
   function resolveYamlNull(data) {
-    if (data === null) { return true; }
+    if (data === null) return true;
 
     var max = data.length;
 
@@ -473,7 +471,7 @@
   });
 
   function resolveYamlBoolean(data) {
-    if (data === null) { return false; }
+    if (data === null) return false;
 
     var max = data.length;
 
@@ -519,14 +517,14 @@
   }
 
   function resolveYamlInteger(data) {
-    if (data === null) { return false; }
+    if (data === null) return false;
 
     var max = data.length,
         index = 0,
         hasDigits = false,
         ch;
 
-    if (!max) { return false; }
+    if (!max) return false;
 
     ch = data[index];
 
@@ -537,7 +535,7 @@
 
     if (ch === '0') {
       // 0
-      if (index + 1 === max) { return true; }
+      if (index + 1 === max) return true;
       ch = data[++index];
 
       // base 2, base 8, base 16
@@ -548,8 +546,8 @@
 
         for (; index < max; index++) {
           ch = data[index];
-          if (ch === '_') { continue; }
-          if (ch !== '0' && ch !== '1') { return false; }
+          if (ch === '_') continue;
+          if (ch !== '0' && ch !== '1') return false;
           hasDigits = true;
         }
         return hasDigits && ch !== '_';
@@ -562,8 +560,8 @@
 
         for (; index < max; index++) {
           ch = data[index];
-          if (ch === '_') { continue; }
-          if (!isHexCode(data.charCodeAt(index))) { return false; }
+          if (ch === '_') continue;
+          if (!isHexCode(data.charCodeAt(index))) return false;
           hasDigits = true;
         }
         return hasDigits && ch !== '_';
@@ -572,8 +570,8 @@
       // base 8
       for (; index < max; index++) {
         ch = data[index];
-        if (ch === '_') { continue; }
-        if (!isOctCode(data.charCodeAt(index))) { return false; }
+        if (ch === '_') continue;
+        if (!isOctCode(data.charCodeAt(index))) return false;
         hasDigits = true;
       }
       return hasDigits && ch !== '_';
@@ -582,12 +580,12 @@
     // base 10 (except 0) or base 60
 
     // value should not start with `_`;
-    if (ch === '_') { return false; }
+    if (ch === '_') return false;
 
     for (; index < max; index++) {
       ch = data[index];
-      if (ch === '_') { continue; }
-      if (ch === ':') { break; }
+      if (ch === '_') continue;
+      if (ch === ':') break;
       if (!isDecCode(data.charCodeAt(index))) {
         return false;
       }
@@ -595,10 +593,10 @@
     }
 
     // Should have digits and should not end with `_`
-    if (!hasDigits || ch === '_') { return false; }
+    if (!hasDigits || ch === '_') return false;
 
     // if !base60 - done;
-    if (ch !== ':') { return true; }
+    if (ch !== ':') return true;
 
     // base60 almost not used, no needs to optimize
     return /^(:[0-5]?[0-9])+$/.test(data.slice(index));
@@ -614,16 +612,16 @@
     ch = value[0];
 
     if (ch === '-' || ch === '+') {
-      if (ch === '-') { sign = -1; }
+      if (ch === '-') sign = -1;
       value = value.slice(1);
       ch = value[0];
     }
 
-    if (value === '0') { return 0; }
+    if (value === '0') return 0;
 
     if (ch === '0') {
-      if (value[1] === 'b') { return sign * parseInt(value.slice(2), 2); }
-      if (value[1] === 'x') { return sign * parseInt(value, 16); }
+      if (value[1] === 'b') return sign * parseInt(value.slice(2), 2);
+      if (value[1] === 'x') return sign * parseInt(value, 16);
       return sign * parseInt(value, 8);
     }
 
@@ -687,7 +685,7 @@
     '|\\.(?:nan|NaN|NAN))$');
 
   function resolveYamlFloat(data) {
-    if (data === null) { return false; }
+    if (data === null) return false;
 
     if (!YAML_FLOAT_PATTERN.test(data) ||
         // Quick hack to not allow integers end with `_`
@@ -821,9 +819,9 @@
     '(?::([0-9][0-9]))?))?$');           // [11] tz_minute
 
   function resolveYamlTimestamp(data) {
-    if (data === null) { return false; }
-    if (YAML_DATE_REGEXP.exec(data) !== null) { return true; }
-    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) { return true; }
+    if (data === null) return false;
+    if (YAML_DATE_REGEXP.exec(data) !== null) return true;
+    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) return true;
     return false;
   }
 
@@ -832,9 +830,9 @@
         delta = null, tz_hour, tz_minute, date;
 
     match = YAML_DATE_REGEXP.exec(data);
-    if (match === null) { match = YAML_TIMESTAMP_REGEXP.exec(data); }
+    if (match === null) match = YAML_TIMESTAMP_REGEXP.exec(data);
 
-    if (match === null) { throw new Error('Date resolve error'); }
+    if (match === null) throw new Error('Date resolve error');
 
     // match: [1] year [2] month [3] day
 
@@ -866,12 +864,12 @@
       tz_hour = +(match[10]);
       tz_minute = +(match[11] || 0);
       delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-      if (match[9] === '-') { delta = -delta; }
+      if (match[9] === '-') delta = -delta;
     }
 
     date = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
 
-    if (delta) { date.setTime(date.getTime() - delta); }
+    if (delta) date.setTime(date.getTime() - delta);
 
     return date;
   }
@@ -915,7 +913,7 @@
 
 
   function resolveYamlBinary(data) {
-    if (data === null) { return false; }
+    if (data === null) return false;
 
     var code, idx, bitlen = 0, max = data.length, map = BASE64_MAP;
 
@@ -924,10 +922,10 @@
       code = map.indexOf(data.charAt(idx));
 
       // Skip CR/LF
-      if (code > 64) { continue; }
+      if (code > 64) continue;
 
       // Fail on illegal characters
-      if (code < 0) { return false; }
+      if (code < 0) return false;
 
       bitlen += 6;
     }
@@ -1038,7 +1036,7 @@
   var _toString       = Object.prototype.toString;
 
   function resolveYamlOmap(data) {
-    if (data === null) { return true; }
+    if (data === null) return true;
 
     var objectKeys = [], index, length, pair, pairKey, pairHasKey,
         object = data;
@@ -1047,19 +1045,19 @@
       pair = object[index];
       pairHasKey = false;
 
-      if (_toString.call(pair) !== '[object Object]') { return false; }
+      if (_toString.call(pair) !== '[object Object]') return false;
 
       for (pairKey in pair) {
         if (_hasOwnProperty.call(pair, pairKey)) {
-          if (!pairHasKey) { pairHasKey = true; }
-          else { return false; }
+          if (!pairHasKey) pairHasKey = true;
+          else return false;
         }
       }
 
-      if (!pairHasKey) { return false; }
+      if (!pairHasKey) return false;
 
-      if (objectKeys.indexOf(pairKey) === -1) { objectKeys.push(pairKey); }
-      else { return false; }
+      if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
+      else return false;
     }
 
     return true;
@@ -1078,7 +1076,7 @@
   var _toString$1 = Object.prototype.toString;
 
   function resolveYamlPairs(data) {
-    if (data === null) { return true; }
+    if (data === null) return true;
 
     var index, length, pair, keys, result,
         object = data;
@@ -1088,11 +1086,11 @@
     for (index = 0, length = object.length; index < length; index += 1) {
       pair = object[index];
 
-      if (_toString$1.call(pair) !== '[object Object]') { return false; }
+      if (_toString$1.call(pair) !== '[object Object]') return false;
 
       keys = Object.keys(pair);
 
-      if (keys.length !== 1) { return false; }
+      if (keys.length !== 1) return false;
 
       result[index] = [ keys[0], pair[keys[0]] ];
     }
@@ -1101,7 +1099,7 @@
   }
 
   function constructYamlPairs(data) {
-    if (data === null) { return []; }
+    if (data === null) return [];
 
     var index, length, pair, keys, result,
         object = data;
@@ -1128,13 +1126,13 @@
   var _hasOwnProperty$1 = Object.prototype.hasOwnProperty;
 
   function resolveYamlSet(data) {
-    if (data === null) { return true; }
+    if (data === null) return true;
 
     var key, object = data;
 
     for (key in object) {
       if (_hasOwnProperty$1.call(object, key)) {
-        if (object[key] !== null) { return false; }
+        if (object[key] !== null) return false;
       }
     }
 
@@ -1193,8 +1191,8 @@
   });
 
   function resolveJavascriptRegExp(data) {
-    if (data === null) { return false; }
-    if (data.length === 0) { return false; }
+    if (data === null) return false;
+    if (data.length === 0) return false;
 
     var regexp = data,
         tail   = /\/([gim]*)$/.exec(data),
@@ -1203,11 +1201,11 @@
     // if regexp starts with '/' it can have modifiers and must be properly closed
     // `/foo/gim` - modifiers tail can be maximum 3 chars
     if (regexp[0] === '/') {
-      if (tail) { modifiers = tail[1]; }
+      if (tail) modifiers = tail[1];
 
-      if (modifiers.length > 3) { return false; }
+      if (modifiers.length > 3) return false;
       // if expression starts with /, is should be properly terminated
-      if (regexp[regexp.length - modifiers.length - 1] !== '/') { return false; }
+      if (regexp[regexp.length - modifiers.length - 1] !== '/') return false;
     }
 
     return true;
@@ -1220,7 +1218,7 @@
 
     // `/foo/gim` - tail can be maximum 4 chars
     if (regexp[0] === '/') {
-      if (tail) { modifiers = tail[1]; }
+      if (tail) modifiers = tail[1];
       regexp = regexp.slice(1, regexp.length - modifiers.length - 1);
     }
 
@@ -1230,9 +1228,9 @@
   function representJavascriptRegExp(object /*, style*/) {
     var result = '/' + object.source + '/';
 
-    if (object.global) { result += 'g'; }
-    if (object.multiline) { result += 'm'; }
-    if (object.ignoreCase) { result += 'i'; }
+    if (object.global) result += 'g';
+    if (object.multiline) result += 'm';
+    if (object.ignoreCase) result += 'i';
 
     return result;
   }
@@ -1264,13 +1262,13 @@
     esprima = _require$1('esprima');
   } catch (_) {
     /*global window */
-    if (typeof window !== 'undefined') { esprima = window.esprima; }
+    if (typeof window !== 'undefined') esprima = window.esprima;
   }
 
 
 
   function resolveJavascriptFunction(data) {
-    if (data === null) { return false; }
+    if (data === null) return false;
 
     try {
       var source = '(' + data + ')',
@@ -2491,7 +2489,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x21/* ! */) { return false; }
+    if (ch !== 0x21/* ! */) return false;
 
     if (state.tag !== null) {
       throwError(state, 'duplication of a tag property');
@@ -2581,7 +2579,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x26/* & */) { return false; }
+    if (ch !== 0x26/* & */) return false;
 
     if (state.anchor !== null) {
       throwError(state, 'duplication of an anchor property');
@@ -2608,7 +2606,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x2A/* * */) { return false; }
+    if (ch !== 0x2A/* * */) return false;
 
     ch = state.input.charCodeAt(++state.position);
     _position = state.position;
@@ -2834,7 +2832,7 @@
           break;
         }
 
-        if (is_EOL(ch)) { break; }
+        if (is_EOL(ch)) break;
 
         _position = state.position;
 
@@ -2845,7 +2843,7 @@
         directiveArgs.push(state.input.slice(_position, state.position));
       }
 
-      if (ch !== 0) { readLineBreak(state); }
+      if (ch !== 0) readLineBreak(state);
 
       if (_hasOwnProperty$2.call(directiveHandlers, directiveName)) {
         directiveHandlers[directiveName](state, directiveName, directiveArgs);
@@ -3041,7 +3039,7 @@
   function compileStyleMap(schema, map) {
     var result, keys, index, length, tag, style, type;
 
-    if (map === null) { return {}; }
+    if (map === null) return {};
 
     result = {};
     keys = Object.keys(map);
@@ -3128,7 +3126,7 @@
         position = next + 1;
       }
 
-      if (line.length && line !== '\n') { result += ind; }
+      if (line.length && line !== '\n') result += ind;
 
       result += line;
     }
@@ -3345,7 +3343,7 @@
           return '>' + blockHeader(string, state.indent)
             + dropEndingNewline(indentString(foldString(string, lineWidth), indent));
         case STYLE_DOUBLE:
-          return '"' + escapeString(string, lineWidth) + '"';
+          return '"' + escapeString(string) + '"';
         default:
           throw new exception('impossible error: invalid scalar style');
       }
@@ -3409,7 +3407,7 @@
   // otherwise settles for the shortest line over the limit.
   // NB. More-indented lines *cannot* be folded, as that would add an extra \n.
   function foldLine(line, width) {
-    if (line === '' || line[0] === ' ') { return line; }
+    if (line === '' || line[0] === ' ') return line;
 
     // Since a more-indented line adds a \n, breaks can't be followed by a space.
     var breakRe = / [^ ]/g; // note: the match index will always be <= length-2.
@@ -3483,7 +3481,7 @@
     for (index = 0, length = object.length; index < length; index += 1) {
       // Write only valid elements.
       if (writeNode(state, level, object[index], false, false)) {
-        if (index !== 0) { _result += ',' + (!state.condenseFlow ? ' ' : ''); }
+        if (index !== 0) _result += ',' + (!state.condenseFlow ? ' ' : '');
         _result += state.dump;
       }
     }
@@ -3532,7 +3530,7 @@
     for (index = 0, length = objectKeyList.length; index < length; index += 1) {
       pairBuffer = state.condenseFlow ? '"' : '';
 
-      if (index !== 0) { pairBuffer += ', '; }
+      if (index !== 0) pairBuffer += ', ';
 
       objectKey = objectKeyList[index];
       objectValue = object[objectKey];
@@ -3541,7 +3539,7 @@
         continue; // Skip this pair because of invalid key;
       }
 
-      if (state.dump.length > 1024) { pairBuffer += '? '; }
+      if (state.dump.length > 1024) pairBuffer += '? ';
 
       pairBuffer += state.dump + (state.condenseFlow ? '"' : '') + ':' + (state.condenseFlow ? '' : ' ');
 
@@ -3734,7 +3732,7 @@
           writeScalar(state, state.dump, level, iskey);
         }
       } else {
-        if (state.skipInvalid) { return false; }
+        if (state.skipInvalid) return false;
         throw new exception('unacceptable kind of an object to dump ' + type);
       }
 
@@ -3794,9 +3792,9 @@
 
     var state = new State$1(options);
 
-    if (!state.noRefs) { getDuplicateReferences(input, state); }
+    if (!state.noRefs) getDuplicateReferences(input, state);
 
-    if (writeNode(state, 0, input, true, true)) { return state.dump + '\n'; }
+    if (writeNode(state, 0, input, true, true)) return state.dump + '\n';
 
     return '';
   }
@@ -3872,7 +3870,7 @@
 
   var jsYaml$1 = jsYaml;
 
-  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -3884,10 +3882,10 @@
 
 
   var slice = Array.prototype.slice;
-  var protectedProperties = ['name', 'message', 'stack'];
+  var protectedProperties = ["name", "message", "stack"];
   var errorPrototypeProperties = [
-    'name', 'message', 'description', 'number', 'code', 'fileName', 'lineNumber', 'columnNumber',
-    'sourceURL', 'line', 'column', 'stack'
+    "name", "message", "description", "number", "code", "fileName", "lineNumber", "columnNumber",
+    "sourceURL", "line", "column", "stack"
   ];
 
   module.exports = create(Error);
@@ -3916,18 +3914,18 @@
      */
     return function onoFactory (err, props, message, params) {   // eslint-disable-line no-unused-vars
       var formatArgs = [];
-      var formattedMessage = '';
+      var formattedMessage = "";
 
       // Determine which arguments were actually specified
-      if (typeof err === 'string') {
+      if (typeof err === "string") {
         formatArgs = slice.call(arguments);
         err = props = undefined;
       }
-      else if (typeof props === 'string') {
+      else if (typeof props === "string") {
         formatArgs = slice.call(arguments, 1);
         props = undefined;
       }
-      else if (typeof message === 'string') {
+      else if (typeof message === "string") {
         formatArgs = slice.call(arguments, 2);
       }
 
@@ -3938,7 +3936,7 @@
 
       if (err && err.message) {
         // The inner-error's message will be added to the new message
-        formattedMessage += (formattedMessage ? ' \n' : '') + err.message;
+        formattedMessage += (formattedMessage ? " \n" : "") + err.message;
       }
 
       // Create the new error
@@ -3984,7 +3982,7 @@
    * @param {?source} source - The object whose properties are copied
    */
   function extend (target, source) {
-    if (source && typeof source === 'object') {
+    if (source && typeof source === "object") {
       var keys = Object.keys(source);
       for (var i = 0; i < keys.length; i++) {
         var key = keys[i];
@@ -4024,7 +4022,7 @@
       var key = keys[i];
       var value = this[key];
       var type = typeof value;
-      if (type !== 'undefined' && type !== 'function') {
+      if (type !== "undefined" && type !== "function") {
         json[key] = value;
       }
     }
@@ -4038,7 +4036,7 @@
    * @returns {string}
    */
   function errorToString () {
-    return JSON.stringify(this, null, 2).replace(/\\n/g, '\n');
+    return JSON.stringify(this, null, 2).replace(/\\n/g, "\n");
   }
 
   /**
@@ -4077,7 +4075,7 @@
     newStack = popStack(newStack);
 
     if (newStack && originalStack) {
-      return newStack + '\n\n' + originalStack;
+      return newStack + "\n\n" + originalStack;
     }
     else {
       return newStack || originalStack;
@@ -4092,7 +4090,7 @@
    */
   function popStack (stack) {
     if (stack) {
-      var lines = stack.split('\n');
+      var lines = stack.split("\n");
 
       if (lines.length < 2) {
         // The stack only has one line, so there's nothing we can remove
@@ -4102,9 +4100,9 @@
       // Find the `onoFactory` call in the stack, and remove it
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i];
-        if (line.indexOf('onoFactory') >= 0) {
+        if (line.indexOf("onoFactory") >= 0) {
           lines.splice(i, 1);
-          return lines.join('\n');
+          return lines.join("\n");
         }
       }
 
@@ -4125,7 +4123,7 @@
       Object.getOwnPropertyDescriptor && Object.defineProperty &&
 
       // Chrome on Android doesn't support lazy stacks :(
-      (typeof navigator === 'undefined' || !/Android/.test(navigator.userAgent))
+      (typeof navigator === "undefined" || !/Android/.test(navigator.userAgent))
     );
   }());
 
@@ -4140,11 +4138,11 @@
       return false;
     }
 
-    var descriptor = Object.getOwnPropertyDescriptor(err, 'stack');
+    var descriptor = Object.getOwnPropertyDescriptor(err, "stack");
     if (!descriptor) {
       return false;
     }
-    return typeof descriptor.get === 'function';
+    return typeof descriptor.get === "function";
   }
 
   /**
@@ -4154,9 +4152,9 @@
    * @param {Error} sourceError
    */
   function lazyJoinStacks (targetError, sourceError) {
-    var targetStack = Object.getOwnPropertyDescriptor(targetError, 'stack');
+    var targetStack = Object.getOwnPropertyDescriptor(targetError, "stack");
 
-    Object.defineProperty(targetError, 'stack', {
+    Object.defineProperty(targetError, "stack", {
       get: function () {
         return joinStacks(targetStack.get.apply(targetError), sourceError.stack);
       },
@@ -4171,9 +4169,9 @@
    * @param {Error} error
    */
   function lazyPopStack (error) {
-    var targetStack = Object.getOwnPropertyDescriptor(error, 'stack');
+    var targetStack = Object.getOwnPropertyDescriptor(error, "stack");
 
-    Object.defineProperty(error, 'stack', {
+    Object.defineProperty(error, "stack", {
       get: function () {
         return popStack(targetStack.get.apply(error));
       },
@@ -4420,7 +4418,8 @@
   // RegExp patterns to URL-encode special characters in local filesystem paths
   var urlEncodePatterns = [
     /\?/g, "%3F",
-    /\#/g, "%23" ];
+    /\#/g, "%23",
+  ];
 
   // RegExp patterns to URL-decode special characters for local filesystem paths
   var urlDecodePatterns = [
@@ -6934,9 +6933,9 @@
     CHAR       : 7,
   };
 
-  var INTS = function () { return [{ type: types.RANGE , from: 48, to: 57 }]; };
+  const INTS = () => [{ type: types.RANGE , from: 48, to: 57 }];
 
-  var WORDS = function () {
+  const WORDS = () => {
     return [
       { type: types.CHAR, value: 95 },
       { type: types.RANGE, from: 97, to: 122 },
@@ -6944,7 +6943,7 @@
     ].concat(INTS());
   };
 
-  var WHITESPACE = function () {
+  const WHITESPACE = () => {
     return [
       { type: types.CHAR, value: 9 },
       { type: types.CHAR, value: 10 },
@@ -6964,22 +6963,23 @@
     ];
   };
 
-  var NOTANYCHAR = function () {
+  const NOTANYCHAR = () => {
     return [
       { type: types.CHAR, value: 10 },
       { type: types.CHAR, value: 13 },
       { type: types.CHAR, value: 8232 },
-      { type: types.CHAR, value: 8233 } ];
+      { type: types.CHAR, value: 8233 },
+    ];
   };
 
   // Predefined class objects.
-  var words = function () { return ({ type: types.SET, set: WORDS(), not: false }); };
-  var notWords = function () { return ({ type: types.SET, set: WORDS(), not: true }); };
-  var ints = function () { return ({ type: types.SET, set: INTS(), not: false }); };
-  var notInts = function () { return ({ type: types.SET, set: INTS(), not: true }); };
-  var whitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: false }); };
-  var notWhitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: true }); };
-  var anyChar = function () { return ({ type: types.SET, set: NOTANYCHAR(), not: true }); };
+  var words = () => ({ type: types.SET, set: WORDS(), not: false });
+  var notWords = () => ({ type: types.SET, set: WORDS(), not: true });
+  var ints = () => ({ type: types.SET, set: INTS(), not: false });
+  var notInts = () => ({ type: types.SET, set: INTS(), not: true });
+  var whitespace = () => ({ type: types.SET, set: WHITESPACE(), not: false });
+  var notWhitespace = () => ({ type: types.SET, set: WHITESPACE(), not: true });
+  var anyChar = () => ({ type: types.SET, set: NOTANYCHAR(), not: true });
 
   var sets = {
   	words: words,
@@ -6992,8 +6992,8 @@
   };
 
   var util = createCommonjsModule(function (module, exports) {
-  var CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
-  var SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
+  const CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
+  const SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
 
   /**
    * Finds character representations in str and convert all to
@@ -7039,7 +7039,7 @@
    * @param {String} regexpStr
    * @return {Array.<Array.<Object>, Number>}
    */
-  exports.tokenizeClass = function (str, regexpStr) {
+  exports.tokenizeClass = (str, regexpStr) => {
     /* jshint maxlen: false */
     var tokens = [];
     var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?([^])/g;
@@ -7093,7 +7093,7 @@
    * @param {String} regexp
    * @param {String} msg
    */
-  exports.error = function (regexp, msg) {
+  exports.error = (regexp, msg) => {
     throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
   };
   });
@@ -7101,10 +7101,10 @@
   var util_2 = util.tokenizeClass;
   var util_3 = util.error;
 
-  var wordBoundary = function () { return ({ type: types.POSITION, value: 'b' }); };
-  var nonWordBoundary = function () { return ({ type: types.POSITION, value: 'B' }); };
-  var begin = function () { return ({ type: types.POSITION, value: '^' }); };
-  var end = function () { return ({ type: types.POSITION, value: '$' }); };
+  var wordBoundary = () => ({ type: types.POSITION, value: 'b' });
+  var nonWordBoundary = () => ({ type: types.POSITION, value: 'B' });
+  var begin = () => ({ type: types.POSITION, value: '^' });
+  var end = () => ({ type: types.POSITION, value: '$' });
 
   var positions = {
   	wordBoundary: wordBoundary,
@@ -7113,7 +7113,7 @@
   	end: end
   };
 
-  var lib$1 = function (regexpStr) {
+  var lib$1 = (regexpStr) => {
     var i = 0, l, c,
       start = { type: types.ROOT, stack: []},
 
@@ -7123,8 +7123,8 @@
       groupStack = [];
 
 
-    var repeatErr = function (i) {
-      util.error(regexpStr, ("Nothing to repeat at column " + (i - 1)));
+    var repeatErr = (i) => {
+      util.error(regexpStr, `Nothing to repeat at column ${i - 1}`);
     };
 
     // Decode a few escaped characters.
@@ -7217,7 +7217,7 @@
           last.push({
             type: types.SET,
             set: classTokens[0],
-            not: not,
+            not,
           });
 
           break;
@@ -7255,8 +7255,8 @@
 
             } else if (c !== ':') {
               util.error(regexpStr,
-                "Invalid group, character '" + c + "'" +
-                " after '?' at column " + (i - 1));
+                `Invalid group, character '${c}'` +
+                ` after '?' at column ${i - 1}`);
             }
 
             group.remember = false;
@@ -7277,7 +7277,7 @@
         // Pop group out of stack.
         case ')':
           if (groupStack.length === 0) {
-            util.error(regexpStr, ("Unmatched ) at column " + (i - 1)));
+            util.error(regexpStr, `Unmatched ) at column ${i - 1}`);
           }
           lastGroup = groupStack.pop();
 
@@ -7321,8 +7321,8 @@
 
             last.push({
               type: types.REPETITION,
-              min: min,
-              max: max,
+              min,
+              max,
               value: last.pop(),
             });
           } else {
@@ -7395,168 +7395,190 @@
 
 
   // Private helper class
-  var SubRange = function SubRange(low, high) {
-      this.low = low;
-      this.high = high;
-      this.length = 1 + high - low;
-  };
-
-  SubRange.prototype.overlaps = function overlaps (range) {
-      return !(this.high < range.low || this.low > range.high);
-  };
-
-  SubRange.prototype.touches = function touches (range) {
-      return !(this.high + 1 < range.low || this.low - 1 > range.high);
-  };
-
-  // Returns inclusive combination of SubRanges as a SubRange.
-  SubRange.prototype.add = function add (range) {
-      return new SubRange(
-          Math.min(this.low, range.low),
-          Math.max(this.high, range.high)
-      );
-  };
-
-  // Returns subtraction of SubRanges as an array of SubRanges.
-  // (There's a case where subtraction divides it in 2)
-  SubRange.prototype.subtract = function subtract (range) {
-      if (range.low <= this.low && range.high >= this.high) {
-          return [];
-      } else if (range.low > this.low && range.high < this.high) {
-          return [
-              new SubRange(this.low, range.low - 1),
-              new SubRange(range.high + 1, this.high)
-          ];
-      } else if (range.low <= this.low) {
-          return [new SubRange(range.high + 1, this.high)];
-      } else {
-          return [new SubRange(this.low, range.low - 1)];
+  class SubRange {
+      constructor(low, high) {
+          this.low = low;
+          this.high = high;
+          this.length = 1 + high - low;
       }
-  };
 
-  SubRange.prototype.toString = function toString () {
-      return this.low == this.high ?
-          this.low.toString() : this.low + '-' + this.high;
-  };
+      overlaps(range) {
+          return !(this.high < range.low || this.low > range.high);
+      }
+
+      touches(range) {
+          return !(this.high + 1 < range.low || this.low - 1 > range.high);
+      }
+
+      // Returns inclusive combination of SubRanges as a SubRange.
+      add(range) {
+          return new SubRange(
+              Math.min(this.low, range.low),
+              Math.max(this.high, range.high)
+          );
+      }
+
+      // Returns subtraction of SubRanges as an array of SubRanges.
+      // (There's a case where subtraction divides it in 2)
+      subtract(range) {
+          if (range.low <= this.low && range.high >= this.high) {
+              return [];
+          } else if (range.low > this.low && range.high < this.high) {
+              return [
+                  new SubRange(this.low, range.low - 1),
+                  new SubRange(range.high + 1, this.high)
+              ];
+          } else if (range.low <= this.low) {
+              return [new SubRange(range.high + 1, this.high)];
+          } else {
+              return [new SubRange(this.low, range.low - 1)];
+          }
+      }
+
+      toString() {
+          return this.low == this.high ?
+              this.low.toString() : this.low + '-' + this.high;
+      }
+  }
 
 
-  var DRange = function DRange(a, b) {
-      this.ranges = [];
-      this.length = 0;
-      if (a != null) { this.add(a, b); }
-  };
+  class DRange {
+      constructor(a, b) {
+          this.ranges = [];
+          this.length = 0;
+          if (a != null) this.add(a, b);
+      }
 
-  DRange.prototype._update_length = function _update_length () {
-      this.length = this.ranges.reduce(function (previous, range) {
-          return previous + range.length;
-      }, 0);
-  };
+      _update_length() {
+          this.length = this.ranges.reduce((previous, range) => {
+              return previous + range.length;
+          }, 0);
+      }
 
-  DRange.prototype.add = function add (a, b) {
-          var this$1 = this;
+      add(a, b) {
+          var _add = (subrange) => {
+              var i = 0;
+              while (i < this.ranges.length && !subrange.touches(this.ranges[i])) {
+                  i++;
+              }
+              var newRanges = this.ranges.slice(0, i);
+              while (i < this.ranges.length && subrange.touches(this.ranges[i])) {
+                  subrange = subrange.add(this.ranges[i]);
+                  i++;
+              }
+              newRanges.push(subrange);
+              this.ranges = newRanges.concat(this.ranges.slice(i));
+              this._update_length();
+          };
 
-      var _add = function (subrange) {
+          if (a instanceof DRange) {
+              a.ranges.forEach(_add);
+          } else {
+              if (b == null) b = a;
+              _add(new SubRange(a, b));
+          }
+          return this;
+      }
+
+      subtract(a, b) {
+          var _subtract = (subrange) => {
+              var i = 0;
+              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
+                  i++;
+              }
+              var newRanges = this.ranges.slice(0, i);
+              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
+                  newRanges = newRanges.concat(this.ranges[i].subtract(subrange));
+                  i++;
+              }
+              this.ranges = newRanges.concat(this.ranges.slice(i));
+              this._update_length();
+          };
+
+          if (a instanceof DRange) {
+              a.ranges.forEach(_subtract);
+          } else {
+              if (b == null) b = a;
+              _subtract(new SubRange(a, b));
+          }
+          return this;
+      }
+
+      intersect(a, b) {
+          var newRanges = [];
+          var _intersect = (subrange) => {
+              var i = 0;
+              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
+                  i++;
+              }
+              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
+                  var low = Math.max(this.ranges[i].low, subrange.low);
+                  var high = Math.min(this.ranges[i].high, subrange.high);
+                  newRanges.push(new SubRange(low, high));
+                  i++;
+              }
+          };
+
+          if (a instanceof DRange) {
+              a.ranges.forEach(_intersect);
+          } else {
+              if (b == null) b = a;
+              _intersect(new SubRange(a, b));
+          }
+          this.ranges = newRanges;
+          this._update_length();
+          return this;
+      }
+
+      index(index) {
           var i = 0;
-          while (i < this$1.ranges.length && !subrange.touches(this$1.ranges[i])) {
+          while (i < this.ranges.length && this.ranges[i].length <= index) {
+              index -= this.ranges[i].length;
               i++;
           }
-          var newRanges = this$1.ranges.slice(0, i);
-          while (i < this$1.ranges.length && subrange.touches(this$1.ranges[i])) {
-              subrange = subrange.add(this$1.ranges[i]);
-              i++;
-          }
-          newRanges.push(subrange);
-          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
-          this$1._update_length();
-      };
-
-      if (a instanceof DRange) {
-          a.ranges.forEach(_add);
-      } else {
-          if (b == null) { b = a; }
-          _add(new SubRange(a, b));
+          return this.ranges[i].low + index;
       }
-      return this;
-  };
 
-  DRange.prototype.subtract = function subtract (a, b) {
-          var this$1 = this;
-
-      var _subtract = function (subrange) {
-          var i = 0;
-          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
-              i++;
-          }
-          var newRanges = this$1.ranges.slice(0, i);
-          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
-              newRanges = newRanges.concat(this$1.ranges[i].subtract(subrange));
-              i++;
-          }
-          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
-          this$1._update_length();
-      };
-
-      if (a instanceof DRange) {
-          a.ranges.forEach(_subtract);
-      } else {
-          if (b == null) { b = a; }
-          _subtract(new SubRange(a, b));
+      toString() {
+          return '[ ' + this.ranges.join(', ') + ' ]';
       }
-      return this;
-  };
 
-  DRange.prototype.intersect = function intersect (a, b) {
-          var this$1 = this;
-
-      var newRanges = [];
-      var _intersect = function (subrange) {
-          var i = 0;
-          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
-              i++;
-          }
-          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
-              var low = Math.max(this$1.ranges[i].low, subrange.low);
-              var high = Math.min(this$1.ranges[i].high, subrange.high);
-              newRanges.push(new SubRange(low, high));
-              i++;
-          }
-      };
-
-      if (a instanceof DRange) {
-          a.ranges.forEach(_intersect);
-      } else {
-          if (b == null) { b = a; }
-          _intersect(new SubRange(a, b));
+      clone() {
+          return new DRange(this);
       }
-      this.ranges = newRanges;
-      this._update_length();
-      return this;
-  };
 
-  DRange.prototype.index = function index (index$1) {
-      var i = 0;
-      while (i < this.ranges.length && this.ranges[i].length <= index$1) {
-          index$1 -= this.ranges[i].length;
-          i++;
+      numbers() {
+          return this.ranges.reduce((result, subrange) => {
+              var i = subrange.low;
+              while (i <= subrange.high) {
+                  result.push(i);
+                  i++;
+              }
+              return result;
+          }, []);
       }
-      return this.ranges[i].low + index$1;
-  };
 
-  DRange.prototype.toString = function toString () {
-      return '[ ' + this.ranges.join(', ') + ' ]';
-  };
-
-  DRange.prototype.clone = function clone () {
-      return new DRange(this);
-  };
+      subranges() {
+          return this.ranges.map((subrange) => ({
+              low: subrange.low,
+              high: subrange.high,
+              length: 1 + subrange.high - subrange.low
+          }));
+      }
+  }
 
   var lib$2 = DRange;
 
-  var types$1  = lib$1.types;
+  const types$1  = lib$1.types;
 
 
-  var randexp = /*@__PURE__*/(function () {
-    function RandExp(regexp, m) {
+  var randexp = class RandExp {
+    /**
+     * @constructor
+     * @param {RegExp|String} regexp
+     * @param {String} m
+     */
+    constructor(regexp, m) {
       this._setDefaults(regexp);
       if (regexp instanceof RegExp) {
         this.ignoreCase = regexp.ignoreCase;
@@ -7573,8 +7595,6 @@
       this.tokens = lib$1(regexp);
     }
 
-    var prototypeAccessors = { defaultRange: { configurable: true } };
-
 
     /**
      * Checks if some custom properties have been set for this regexp.
@@ -7582,7 +7602,7 @@
      * @param {RandExp} randexp
      * @param {RegExp} regexp
      */
-    RandExp.prototype._setDefaults = function _setDefaults (regexp) {
+    _setDefaults(regexp) {
       // When a repetitional token has its max set to Infinite,
       // randexp won't actually generate a random amount between min and Infinite
       // instead it will see Infinite as min + 100.
@@ -7597,7 +7617,7 @@
       if (regexp.randInt) {
         this.randInt = regexp.randInt;
       }
-    };
+    }
 
 
     /**
@@ -7605,9 +7625,9 @@
      *
      * @return {String}
      */
-    RandExp.prototype.gen = function gen () {
+    gen() {
       return this._gen(this.tokens, []);
-    };
+    }
 
 
     /**
@@ -7617,7 +7637,7 @@
      * @param {Array.<String>} groups
      * @return {String}
      */
-    RandExp.prototype._gen = function _gen (token, groups) {
+    _gen(token, groups) {
       var stack, str, n, i, l;
 
       switch (token.type) {
@@ -7673,7 +7693,7 @@
             this._toOtherCase(token.value) : token.value;
           return String.fromCharCode(code);
       }
-    };
+    }
 
 
     /**
@@ -7683,10 +7703,10 @@
      * @param {Number} code
      * @return {Number}
      */
-    RandExp.prototype._toOtherCase = function _toOtherCase (code) {
+    _toOtherCase(code) {
       return code + (97 <= code && code <= 122 ? -32 :
         65 <= code && code <= 90  ?  32 : 0);
-    };
+    }
 
 
     /**
@@ -7694,9 +7714,9 @@
      *
      * @return {Boolean}
      */
-    RandExp.prototype._randBool = function _randBool () {
+    _randBool() {
       return !this.randInt(0, 1);
-    };
+    }
 
 
     /**
@@ -7705,12 +7725,12 @@
      * @param {Array.<Object>} arr
      * @return {Object}
      */
-    RandExp.prototype._randSelect = function _randSelect (arr) {
+    _randSelect(arr) {
       if (arr instanceof lib$2) {
         return arr.index(this.randInt(0, arr.length - 1));
       }
       return arr[this.randInt(0, arr.length - 1)];
-    };
+    }
 
 
     /**
@@ -7720,20 +7740,20 @@
      * @param {Object} token
      * @return {DiscontinuousRange}
      */
-    RandExp.prototype._expand = function _expand (token) {
+    _expand(token) {
       if (token.type === lib$1.types.CHAR) {
         return new lib$2(token.value);
       } else if (token.type === lib$1.types.RANGE) {
         return new lib$2(token.from, token.to);
       } else {
-        var drange = new lib$2();
-        for (var i = 0; i < token.set.length; i++) {
-          var subrange = this._expand(token.set[i]);
+        let drange = new lib$2();
+        for (let i = 0; i < token.set.length; i++) {
+          let subrange = this._expand(token.set[i]);
           drange.add(subrange);
           if (this.ignoreCase) {
-            for (var j = 0; j < subrange.length; j++) {
-              var code = subrange.index(j);
-              var otherCaseCode = this._toOtherCase(code);
+            for (let j = 0; j < subrange.length; j++) {
+              let code = subrange.index(j);
+              let otherCaseCode = this._toOtherCase(code);
               if (code !== otherCaseCode) {
                 drange.add(otherCaseCode);
               }
@@ -7746,7 +7766,7 @@
           return this.defaultRange.clone().intersect(drange);
         }
       }
-    };
+    }
 
 
     /**
@@ -7756,21 +7776,21 @@
      * @param {Number} b
      * @return {Number}
      */
-    RandExp.prototype.randInt = function randInt (a, b) {
+    randInt(a, b) {
       return a + Math.floor(Math.random() * (1 + b - a));
-    };
+    }
 
 
     /**
      * Default range of characters to generate from.
      */
-    prototypeAccessors.defaultRange.get = function () {
+    get defaultRange() {
       return this._range = this._range || new lib$2(32, 126);
-    };
+    }
 
-    prototypeAccessors.defaultRange.set = function (range) {
+    set defaultRange(range) {
       this._range = range;
-    };
+    }
 
 
     /**
@@ -7781,7 +7801,7 @@
      * @param {String} m
      * @return {String}
      */
-    RandExp.randexp = function randexp (regexp, m) {
+    static randexp(regexp, m) {
       var randexp;
       if(typeof regexp === 'string') {
         regexp = new RegExp(regexp, m);
@@ -7795,23 +7815,19 @@
         randexp._setDefaults(regexp);
       }
       return randexp.gen();
-    };
+    }
 
 
     /**
      * Enables sugary /regexp/.gen syntax.
      */
-    RandExp.sugar = function sugar () {
+    static sugar() {
       /* eshint freeze:false */
       RegExp.prototype.gen = function() {
         return RandExp.randexp(this);
       };
-    };
-
-    Object.defineProperties( RandExp.prototype, prototypeAccessors );
-
-    return RandExp;
-  }());
+    }
+  };
 
   function getRandomInteger(min, max) {
     min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
@@ -8514,7 +8530,7 @@
         configurable: true
       }
     });
-    if (superClass) { _setPrototypeOf(subClass, superClass); }
+    if (superClass) _setPrototypeOf(subClass, superClass);
   }
 
   function _getPrototypeOf(o) {
@@ -8534,9 +8550,9 @@
   }
 
   function isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) { return false; }
-    if (Reflect.construct.sham) { return false; }
-    if (typeof Proxy === "function") { return true; }
+    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
+    if (Reflect.construct.sham) return false;
+    if (typeof Proxy === "function") return true;
 
     try {
       Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
@@ -8555,7 +8571,7 @@
         a.push.apply(a, args);
         var Constructor = Function.bind.apply(Parent, a);
         var instance = new Constructor();
-        if (Class) { _setPrototypeOf(instance, Class.prototype); }
+        if (Class) _setPrototypeOf(instance, Class.prototype);
         return instance;
       };
     }
@@ -8571,14 +8587,14 @@
     var _cache = typeof Map === "function" ? new Map() : undefined;
 
     _wrapNativeSuper = function _wrapNativeSuper(Class) {
-      if (Class === null || !_isNativeFunction(Class)) { return Class; }
+      if (Class === null || !_isNativeFunction(Class)) return Class;
 
       if (typeof Class !== "function") {
         throw new TypeError("Super expression must either be null or a function");
       }
 
       if (typeof _cache !== "undefined") {
-        if (_cache.has(Class)) { return _cache.get(Class); }
+        if (_cache.has(Class)) return _cache.get(Class);
 
         _cache.set(Class, Wrapper);
       }
