@@ -1,10 +1,6 @@
-'use strict';
-
-function _interopDefault (ex) { return (ex && (typeof ex === 'object') && 'default' in ex) ? ex['default'] : ex; }
-
-var $RefParser = _interopDefault(require('json-schema-ref-parser'));
-var RandExp = _interopDefault(require('randexp'));
-var jsonpathPlus = require('jsonpath-plus');
+import $RefParser from 'json-schema-ref-parser';
+import RandExp from 'randexp';
+import { JSONPath } from 'jsonpath-plus';
 
 /**
  * This class defines a registry for custom formats used within JSF.
@@ -1631,9 +1627,9 @@ function resolve(obj, data, values, property) {
 
     if (!values[key]) {
       if (params.count > 1) {
-        values[key] = jsonpathPlus.JSONPath(params.path, data).slice(0, params.count);
+        values[key] = JSONPath(params.path, data).slice(0, params.count);
       } else {
-        values[key] = jsonpathPlus.JSONPath(params.path, data);
+        values[key] = JSONPath(params.path, data);
       }
     }
 
@@ -1915,4 +1911,4 @@ jsf.locate = function (name) {
 
 jsf.version = '0.5.0-rc16';
 
-module.exports = jsf;
+export default jsf;
