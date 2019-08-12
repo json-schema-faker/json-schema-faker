@@ -29,7 +29,11 @@ function seed() {
         });
 
         if (test.require) {
-          require(`./${test.require}`).register(jsf);
+          test.require = Array.isArray(test.require) ? test.require : [test.require];
+
+          test.require.map(toRequire => {
+            return require(`./${toRequire}`).register(jsf);
+          });
         }
 
         const schema = typeof test.schema === 'string'
