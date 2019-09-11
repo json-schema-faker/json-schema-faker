@@ -25,6 +25,7 @@ defaults.maxLength = null;
 defaults.resolveJsonPath = false;
 defaults.reuseProperties = false;
 defaults.fillProperties = true;
+defaults.replaceEmptyByRandomValue = false;
 
 defaults.random = Math.random;
 

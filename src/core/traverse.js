@@ -25,7 +25,9 @@ function traverse(schema, path, resolve, rootSchema) {
     }
 
     if (optionAPI('useDefaultValue') && 'default' in schema) {
-      return schema.default;
+      if (schema.default !== '' || !optionAPI('replaceEmptyByRandomValue')) {
+        return schema.default;
+      }
     }
 
     if ('template' in schema) {
