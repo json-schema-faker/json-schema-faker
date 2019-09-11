@@ -5,7 +5,7 @@ import number from './number';
 // part, leaving the result as an integer.
 
 function integerType(value) {
-  return number(Object.assign({ multipleOf: 1 }, value));
+  return number({ multipleOf: 1, ...value });
 }
 
 export default integerType;
