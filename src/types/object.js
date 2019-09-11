@@ -117,6 +117,12 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     }
 
+    if (additionalProperties === false) {
+      if (requiredProperties.indexOf(key) !== -1) {
+        props[key] = properties[key];
+      }
+    }
+
     if (properties[key]) {
       props[key] = properties[key];
     }
