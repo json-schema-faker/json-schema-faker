@@ -1,5 +1,5 @@
 /*!
- * json-schema-faker v0.5.0-rc17
+ * json-schema-faker v0.5.0-rc18
  * (c) Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)
  * Released under the MIT License.
  */
@@ -49,8 +49,8 @@
      * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
      * @returns {Promise}
      */
-    parse: function parseJSON (file) {
-      return new Promise(function (resolve, reject) {
+    parse: function parse (file) {
+      return new Promise((function (resolve, reject) {
         var data = file.data;
         if (Buffer.isBuffer(data)) {
           data = data.toString();
@@ -68,7 +68,7 @@
           // data is already a JavaScript value (object, array, number, null, NaN, etc.)
           resolve(data);
         }
-      });
+      }));
     }
   };
 
@@ -83,8 +83,8 @@
 
 
   function toArray(sequence) {
-    if (Array.isArray(sequence)) return sequence;
-    else if (isNothing(sequence)) return [];
+    if (Array.isArray(sequence)) { return sequence; }
+    else if (isNothing(sequence)) { return []; }
 
     return [ sequence ];
   }
@@ -192,7 +192,7 @@
   Mark.prototype.getSnippet = function getSnippet(indent, maxLength) {
     var head, start, tail, end, snippet;
 
-    if (!this.buffer) return null;
+    if (!this.buffer) { return null; }
 
     indent = indent || 4;
     maxLength = maxLength || 75;
@@ -340,6 +340,8 @@
 
 
   function compileMap(/* lists... */) {
+    var arguments$1 = arguments;
+
     var result = {
           scalar: {},
           sequence: {},
@@ -352,7 +354,7 @@
     }
 
     for (index = 0, length = arguments.length; index < length; index += 1) {
-      arguments[index].forEach(collectType);
+      arguments$1[index].forEach(collectType);
     }
     return result;
   }
@@ -440,7 +442,7 @@
   });
 
   function resolveYamlNull(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var max = data.length;
 
@@ -471,7 +473,7 @@
   });
 
   function resolveYamlBoolean(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     var max = data.length;
 
@@ -517,14 +519,14 @@
   }
 
   function resolveYamlInteger(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     var max = data.length,
         index = 0,
         hasDigits = false,
         ch;
 
-    if (!max) return false;
+    if (!max) { return false; }
 
     ch = data[index];
 
@@ -535,7 +537,7 @@
 
     if (ch === '0') {
       // 0
-      if (index + 1 === max) return true;
+      if (index + 1 === max) { return true; }
       ch = data[++index];
 
       // base 2, base 8, base 16
@@ -546,8 +548,8 @@
 
         for (; index < max; index++) {
           ch = data[index];
-          if (ch === '_') continue;
-          if (ch !== '0' && ch !== '1') return false;
+          if (ch === '_') { continue; }
+          if (ch !== '0' && ch !== '1') { return false; }
           hasDigits = true;
         }
         return hasDigits && ch !== '_';
@@ -560,8 +562,8 @@
 
         for (; index < max; index++) {
           ch = data[index];
-          if (ch === '_') continue;
-          if (!isHexCode(data.charCodeAt(index))) return false;
+          if (ch === '_') { continue; }
+          if (!isHexCode(data.charCodeAt(index))) { return false; }
           hasDigits = true;
         }
         return hasDigits && ch !== '_';
@@ -570,8 +572,8 @@
       // base 8
       for (; index < max; index++) {
         ch = data[index];
-        if (ch === '_') continue;
-        if (!isOctCode(data.charCodeAt(index))) return false;
+        if (ch === '_') { continue; }
+        if (!isOctCode(data.charCodeAt(index))) { return false; }
         hasDigits = true;
       }
       return hasDigits && ch !== '_';
@@ -580,12 +582,12 @@
     // base 10 (except 0) or base 60
 
     // value should not start with `_`;
-    if (ch === '_') return false;
+    if (ch === '_') { return false; }
 
     for (; index < max; index++) {
       ch = data[index];
-      if (ch === '_') continue;
-      if (ch === ':') break;
+      if (ch === '_') { continue; }
+      if (ch === ':') { break; }
       if (!isDecCode(data.charCodeAt(index))) {
         return false;
       }
@@ -593,10 +595,10 @@
     }
 
     // Should have digits and should not end with `_`
-    if (!hasDigits || ch === '_') return false;
+    if (!hasDigits || ch === '_') { return false; }
 
     // if !base60 - done;
-    if (ch !== ':') return true;
+    if (ch !== ':') { return true; }
 
     // base60 almost not used, no needs to optimize
     return /^(:[0-5]?[0-9])+$/.test(data.slice(index));
@@ -612,16 +614,16 @@
     ch = value[0];
 
     if (ch === '-' || ch === '+') {
-      if (ch === '-') sign = -1;
+      if (ch === '-') { sign = -1; }
       value = value.slice(1);
       ch = value[0];
     }
 
-    if (value === '0') return 0;
+    if (value === '0') { return 0; }
 
     if (ch === '0') {
-      if (value[1] === 'b') return sign * parseInt(value.slice(2), 2);
-      if (value[1] === 'x') return sign * parseInt(value, 16);
+      if (value[1] === 'b') { return sign * parseInt(value.slice(2), 2); }
+      if (value[1] === 'x') { return sign * parseInt(value, 16); }
       return sign * parseInt(value, 8);
     }
 
@@ -685,7 +687,7 @@
     '|\\.(?:nan|NaN|NAN))$');
 
   function resolveYamlFloat(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     if (!YAML_FLOAT_PATTERN.test(data) ||
         // Quick hack to not allow integers end with `_`
@@ -819,9 +821,9 @@
     '(?::([0-9][0-9]))?))?$');           // [11] tz_minute
 
   function resolveYamlTimestamp(data) {
-    if (data === null) return false;
-    if (YAML_DATE_REGEXP.exec(data) !== null) return true;
-    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) return true;
+    if (data === null) { return false; }
+    if (YAML_DATE_REGEXP.exec(data) !== null) { return true; }
+    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) { return true; }
     return false;
   }
 
@@ -830,9 +832,9 @@
         delta = null, tz_hour, tz_minute, date;
 
     match = YAML_DATE_REGEXP.exec(data);
-    if (match === null) match = YAML_TIMESTAMP_REGEXP.exec(data);
+    if (match === null) { match = YAML_TIMESTAMP_REGEXP.exec(data); }
 
-    if (match === null) throw new Error('Date resolve error');
+    if (match === null) { throw new Error('Date resolve error'); }
 
     // match: [1] year [2] month [3] day
 
@@ -864,12 +866,12 @@
       tz_hour = +(match[10]);
       tz_minute = +(match[11] || 0);
       delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-      if (match[9] === '-') delta = -delta;
+      if (match[9] === '-') { delta = -delta; }
     }
 
     date = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
 
-    if (delta) date.setTime(date.getTime() - delta);
+    if (delta) { date.setTime(date.getTime() - delta); }
 
     return date;
   }
@@ -913,7 +915,7 @@
 
 
   function resolveYamlBinary(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     var code, idx, bitlen = 0, max = data.length, map = BASE64_MAP;
 
@@ -922,10 +924,10 @@
       code = map.indexOf(data.charAt(idx));
 
       // Skip CR/LF
-      if (code > 64) continue;
+      if (code > 64) { continue; }
 
       // Fail on illegal characters
-      if (code < 0) return false;
+      if (code < 0) { return false; }
 
       bitlen += 6;
     }
@@ -1036,7 +1038,7 @@
   var _toString       = Object.prototype.toString;
 
   function resolveYamlOmap(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var objectKeys = [], index, length, pair, pairKey, pairHasKey,
         object = data;
@@ -1045,19 +1047,19 @@
       pair = object[index];
       pairHasKey = false;
 
-      if (_toString.call(pair) !== '[object Object]') return false;
+      if (_toString.call(pair) !== '[object Object]') { return false; }
 
       for (pairKey in pair) {
         if (_hasOwnProperty.call(pair, pairKey)) {
-          if (!pairHasKey) pairHasKey = true;
-          else return false;
+          if (!pairHasKey) { pairHasKey = true; }
+          else { return false; }
         }
       }
 
-      if (!pairHasKey) return false;
+      if (!pairHasKey) { return false; }
 
-      if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
-      else return false;
+      if (objectKeys.indexOf(pairKey) === -1) { objectKeys.push(pairKey); }
+      else { return false; }
     }
 
     return true;
@@ -1076,7 +1078,7 @@
   var _toString$1 = Object.prototype.toString;
 
   function resolveYamlPairs(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var index, length, pair, keys, result,
         object = data;
@@ -1086,11 +1088,11 @@
     for (index = 0, length = object.length; index < length; index += 1) {
       pair = object[index];
 
-      if (_toString$1.call(pair) !== '[object Object]') return false;
+      if (_toString$1.call(pair) !== '[object Object]') { return false; }
 
       keys = Object.keys(pair);
 
-      if (keys.length !== 1) return false;
+      if (keys.length !== 1) { return false; }
 
       result[index] = [ keys[0], pair[keys[0]] ];
     }
@@ -1099,7 +1101,7 @@
   }
 
   function constructYamlPairs(data) {
-    if (data === null) return [];
+    if (data === null) { return []; }
 
     var index, length, pair, keys, result,
         object = data;
@@ -1126,13 +1128,13 @@
   var _hasOwnProperty$1 = Object.prototype.hasOwnProperty;
 
   function resolveYamlSet(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var key, object = data;
 
     for (key in object) {
       if (_hasOwnProperty$1.call(object, key)) {
-        if (object[key] !== null) return false;
+        if (object[key] !== null) { return false; }
       }
     }
 
@@ -1191,8 +1193,8 @@
   });
 
   function resolveJavascriptRegExp(data) {
-    if (data === null) return false;
-    if (data.length === 0) return false;
+    if (data === null) { return false; }
+    if (data.length === 0) { return false; }
 
     var regexp = data,
         tail   = /\/([gim]*)$/.exec(data),
@@ -1201,11 +1203,11 @@
     // if regexp starts with '/' it can have modifiers and must be properly closed
     // `/foo/gim` - modifiers tail can be maximum 3 chars
     if (regexp[0] === '/') {
-      if (tail) modifiers = tail[1];
+      if (tail) { modifiers = tail[1]; }
 
-      if (modifiers.length > 3) return false;
+      if (modifiers.length > 3) { return false; }
       // if expression starts with /, is should be properly terminated
-      if (regexp[regexp.length - modifiers.length - 1] !== '/') return false;
+      if (regexp[regexp.length - modifiers.length - 1] !== '/') { return false; }
     }
 
     return true;
@@ -1218,7 +1220,7 @@
 
     // `/foo/gim` - tail can be maximum 4 chars
     if (regexp[0] === '/') {
-      if (tail) modifiers = tail[1];
+      if (tail) { modifiers = tail[1]; }
       regexp = regexp.slice(1, regexp.length - modifiers.length - 1);
     }
 
@@ -1228,9 +1230,9 @@
   function representJavascriptRegExp(object /*, style*/) {
     var result = '/' + object.source + '/';
 
-    if (object.global) result += 'g';
-    if (object.multiline) result += 'm';
-    if (object.ignoreCase) result += 'i';
+    if (object.global) { result += 'g'; }
+    if (object.multiline) { result += 'm'; }
+    if (object.ignoreCase) { result += 'i'; }
 
     return result;
   }
@@ -1262,13 +1264,13 @@
     esprima = _require$1('esprima');
   } catch (_) {
     /*global window */
-    if (typeof window !== 'undefined') esprima = window.esprima;
+    if (typeof window !== 'undefined') { esprima = window.esprima; }
   }
 
 
 
   function resolveJavascriptFunction(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     try {
       var source = '(' + data + ')',
@@ -2489,7 +2491,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x21/* ! */) return false;
+    if (ch !== 0x21/* ! */) { return false; }
 
     if (state.tag !== null) {
       throwError(state, 'duplication of a tag property');
@@ -2579,7 +2581,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x26/* & */) return false;
+    if (ch !== 0x26/* & */) { return false; }
 
     if (state.anchor !== null) {
       throwError(state, 'duplication of an anchor property');
@@ -2606,7 +2608,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x2A/* * */) return false;
+    if (ch !== 0x2A/* * */) { return false; }
 
     ch = state.input.charCodeAt(++state.position);
     _position = state.position;
@@ -2832,7 +2834,7 @@
           break;
         }
 
-        if (is_EOL(ch)) break;
+        if (is_EOL(ch)) { break; }
 
         _position = state.position;
 
@@ -2843,7 +2845,7 @@
         directiveArgs.push(state.input.slice(_position, state.position));
       }
 
-      if (ch !== 0) readLineBreak(state);
+      if (ch !== 0) { readLineBreak(state); }
 
       if (_hasOwnProperty$2.call(directiveHandlers, directiveName)) {
         directiveHandlers[directiveName](state, directiveName, directiveArgs);
@@ -3039,7 +3041,7 @@
   function compileStyleMap(schema, map) {
     var result, keys, index, length, tag, style, type;
 
-    if (map === null) return {};
+    if (map === null) { return {}; }
 
     result = {};
     keys = Object.keys(map);
@@ -3126,7 +3128,7 @@
         position = next + 1;
       }
 
-      if (line.length && line !== '\n') result += ind;
+      if (line.length && line !== '\n') { result += ind; }
 
       result += line;
     }
@@ -3343,7 +3345,7 @@
           return '>' + blockHeader(string, state.indent)
             + dropEndingNewline(indentString(foldString(string, lineWidth), indent));
         case STYLE_DOUBLE:
-          return '"' + escapeString(string) + '"';
+          return '"' + escapeString(string, lineWidth) + '"';
         default:
           throw new exception('impossible error: invalid scalar style');
       }
@@ -3407,7 +3409,7 @@
   // otherwise settles for the shortest line over the limit.
   // NB. More-indented lines *cannot* be folded, as that would add an extra \n.
   function foldLine(line, width) {
-    if (line === '' || line[0] === ' ') return line;
+    if (line === '' || line[0] === ' ') { return line; }
 
     // Since a more-indented line adds a \n, breaks can't be followed by a space.
     var breakRe = / [^ ]/g; // note: the match index will always be <= length-2.
@@ -3481,7 +3483,7 @@
     for (index = 0, length = object.length; index < length; index += 1) {
       // Write only valid elements.
       if (writeNode(state, level, object[index], false, false)) {
-        if (index !== 0) _result += ',' + (!state.condenseFlow ? ' ' : '');
+        if (index !== 0) { _result += ',' + (!state.condenseFlow ? ' ' : ''); }
         _result += state.dump;
       }
     }
@@ -3530,7 +3532,7 @@
     for (index = 0, length = objectKeyList.length; index < length; index += 1) {
       pairBuffer = state.condenseFlow ? '"' : '';
 
-      if (index !== 0) pairBuffer += ', ';
+      if (index !== 0) { pairBuffer += ', '; }
 
       objectKey = objectKeyList[index];
       objectValue = object[objectKey];
@@ -3539,7 +3541,7 @@
         continue; // Skip this pair because of invalid key;
       }
 
-      if (state.dump.length > 1024) pairBuffer += '? ';
+      if (state.dump.length > 1024) { pairBuffer += '? '; }
 
       pairBuffer += state.dump + (state.condenseFlow ? '"' : '') + ':' + (state.condenseFlow ? '' : ' ');
 
@@ -3732,7 +3734,7 @@
           writeScalar(state, state.dump, level, iskey);
         }
       } else {
-        if (state.skipInvalid) return false;
+        if (state.skipInvalid) { return false; }
         throw new exception('unacceptable kind of an object to dump ' + type);
       }
 
@@ -3792,9 +3794,9 @@
 
     var state = new State$1(options);
 
-    if (!state.noRefs) getDuplicateReferences(input, state);
+    if (!state.noRefs) { getDuplicateReferences(input, state); }
 
-    if (writeNode(state, 0, input, true, true)) return state.dump + '\n';
+    if (writeNode(state, 0, input, true, true)) { return state.dump + '\n'; }
 
     return '';
   }
@@ -3870,323 +3872,338 @@
 
   var jsYaml$1 = jsYaml;
 
-  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
-
-  function createCommonjsModule(fn, module) {
-  	return module = { exports: {} }, fn(module, module.exports), module.exports;
-  }
-
-  var formatUtil = util$1.format;
-
-  var ono = createCommonjsModule(function (module) {
-
-
-  var slice = Array.prototype.slice;
-  var protectedProperties = ["name", "message", "stack"];
-  var errorPrototypeProperties = [
-    "name", "message", "description", "number", "code", "fileName", "lineNumber", "columnNumber",
-    "sourceURL", "line", "column", "stack"
-  ];
-
-  module.exports = create(Error);
-  module.exports.error = create(Error);
-  module.exports.eval = create(EvalError);
-  module.exports.range = create(RangeError);
-  module.exports.reference = create(ReferenceError);
-  module.exports.syntax = create(SyntaxError);
-  module.exports.type = create(TypeError);
-  module.exports.uri = create(URIError);
-  module.exports.formatter = formatUtil;
-
-  /**
-   * Creates a new {@link ono} function that creates the given Error class.
-   *
-   * @param {Class} Klass - The Error subclass to create
-   * @returns {ono}
-   */
-  function create (Klass) {
-    /**
-     * @param {Error}   [err]     - The original error, if any
-     * @param {object}  [props]   - An object whose properties will be added to the error object
-     * @param {string}  [message] - The error message. May contain {@link util#format} placeholders
-     * @param {...*}    [params]  - Parameters that map to the `message` placeholders
-     * @returns {Error}
-     */
-    return function onoFactory (err, props, message, params) {   // eslint-disable-line no-unused-vars
-      var formatArgs = [];
-      var formattedMessage = "";
-
-      // Determine which arguments were actually specified
-      if (typeof err === "string") {
-        formatArgs = slice.call(arguments);
-        err = props = undefined;
-      }
-      else if (typeof props === "string") {
-        formatArgs = slice.call(arguments, 1);
-        props = undefined;
-      }
-      else if (typeof message === "string") {
-        formatArgs = slice.call(arguments, 2);
-      }
-
-      // If there are any format arguments, then format the error message
-      if (formatArgs.length > 0) {
-        formattedMessage = module.exports.formatter.apply(null, formatArgs);
-      }
-
-      if (err && err.message) {
-        // The inner-error's message will be added to the new message
-        formattedMessage += (formattedMessage ? " \n" : "") + err.message;
-      }
-
-      // Create the new error
-      // NOTE: DON'T move this to a separate function! We don't want to pollute the stack trace
-      var newError = new Klass(formattedMessage);
-
-      // Extend the new error with the additional properties
-      extendError(newError, err);   // Copy properties of the original error
-      extendToJSON(newError);       // Replace the original toJSON method
-      extend(newError, props);      // Copy custom properties, possibly including a custom toJSON method
-
-      return newError;
-    };
-  }
-
-  /**
-   * Extends the targetError with the properties of the source error.
-   *
-   * @param {Error}   targetError - The error object to extend
-   * @param {?Error}  sourceError - The source error object, if any
-   */
-  function extendError (targetError, sourceError) {
-    extendStack(targetError, sourceError);
-    extend(targetError, sourceError);
-  }
-
-  /**
-   * JavaScript engines differ in how errors are serialized to JSON - especially when it comes
-   * to custom error properties and stack traces.  So we add our own toJSON method that ALWAYS
-   * outputs every property of the error.
-   */
-  function extendToJSON (error) {
-    error.toJSON = errorToJSON;
-
-    // Also add an inspect() method, for compatibility with Node.js' `util.inspect()` method
-    error.inspect = errorToString;
-  }
-
-  /**
-   * Extends the target object with the properties of the source object.
-   *
-   * @param {object}  target - The object to extend
-   * @param {?source} source - The object whose properties are copied
-   */
-  function extend (target, source) {
-    if (source && typeof source === "object") {
-      var keys = Object.keys(source);
-      for (var i = 0; i < keys.length; i++) {
-        var key = keys[i];
-
-        // Don't copy "protected" properties, since they have special meaning/behavior
-        // and are set by the onoFactory function
-        if (protectedProperties.indexOf(key) >= 0) {
-          continue;
-        }
-
-        try {
-          target[key] = source[key];
-        }
-        catch (e) {
-          // This property is read-only, so it can't be copied
-        }
-      }
-    }
-  }
-
+  var nonJsonTypes = ["function", "symbol", "undefined"];
+  var protectedProps = ["constructor", "prototype", "__proto__"];
+  var objectPrototype = Object.getPrototypeOf({});
   /**
    * Custom JSON serializer for Error objects.
    * Returns all built-in error properties, as well as extended properties.
-   *
-   * @returns {object}
    */
-  function errorToJSON () {
-    var json = {};
+  function toJSON() {
+      // HACK: We have to cast the objects to `any` so we can use symbol indexers.
+      // see https://github.com/Microsoft/TypeScript/issues/1863
+      // tslint:disable: no-any no-unsafe-any
+      var pojo = {};
+      var error = this;
+      for (var i = 0, list = getDeepKeys(error); i < list.length; i += 1) {
+          var key = list[i];
 
-    // Get all the properties of this error
-    var keys = Object.keys(this);
-
-    // Also include properties from the Error prototype
-    keys = keys.concat(errorPrototypeProperties);
-
-    for (var i = 0; i < keys.length; i++) {
-      var key = keys[i];
-      var value = this[key];
-      var type = typeof value;
-      if (type !== "undefined" && type !== "function") {
-        json[key] = value;
+          if (typeof key === "string") {
+              var value = error[key];
+              var type = typeof value;
+              if (!nonJsonTypes.includes(type)) {
+                  pojo[key] = value;
+              }
+          }
       }
-    }
-
-    return json;
+      // tslint:enable: no-any no-unsafe-any
+      return pojo;
   }
-
   /**
-   * Serializes Error objects as human-readable JSON strings for debugging/logging purposes.
-   *
-   * @returns {string}
+   * Returns own, inherited, enumerable, non-enumerable, string, and symbol keys of `obj`.
+   * Does NOT return members of the base Object prototype, or the specified omitted keys.
    */
-  function errorToString () {
-    return JSON.stringify(this, null, 2).replace(/\\n/g, "\n");
+  function getDeepKeys(obj, omit) {
+      if ( omit === void 0 ) omit = [];
+
+      var keys = [];
+      // Crawl the prototype chain, finding all the string and symbol keys
+      while (obj && obj !== objectPrototype) {
+          keys = keys.concat(Object.getOwnPropertyNames(obj), Object.getOwnPropertySymbols(obj));
+          obj = Object.getPrototypeOf(obj);
+      }
+      // De-duplicate the list of keys
+      var uniqueKeys = new Set(keys);
+      // Remove any omitted keys
+      for (var i = 0, list = omit.concat(protectedProps); i < list.length; i += 1) {
+          var key = list[i];
+
+          uniqueKeys.delete(key);
+      }
+      return uniqueKeys;
   }
 
+  // The `inspect()` method is actually a Symbol, not a string key.
+  // https://nodejs.org/api/util.html#util_util_inspect_custom
+  var inspectMethod = util$1.inspect.custom || Symbol.for("nodejs.util.inspect.custom");
   /**
-   * Extend the error stack to include its cause
+   * Ono supports Node's `util.format()` formatting for error messages.
    *
-   * @param {Error} targetError
-   * @param {Error} sourceError
+   * @see https://nodejs.org/api/util.html#util_util_format_format_args
    */
-  function extendStack (targetError, sourceError) {
-    if (hasLazyStack(targetError)) {
-      if (sourceError) {
-        lazyJoinStacks(targetError, sourceError);
-      }
-      else {
-        lazyPopStack(targetError);
-      }
-    }
-    else {
-      if (sourceError) {
-        targetError.stack = joinStacks(targetError.stack, sourceError.stack);
-      }
-      else {
-        targetError.stack = popStack(targetError.stack);
-      }
-    }
-  }
-
+  var formatter = util$1.format;
   /**
-   * Appends the original {@link Error#stack} property to the new Error's stack.
+   * Adds an `inspect()` method to support Node's `util.inspect()` function.
    *
-   * @param {string} newStack
-   * @param {string} originalStack
-   * @returns {string}
+   * @see https://nodejs.org/api/util.html#util_util_inspect_custom
    */
-  function joinStacks (newStack, originalStack) {
-    newStack = popStack(newStack);
-
-    if (newStack && originalStack) {
-      return newStack + "\n\n" + originalStack;
-    }
-    else {
-      return newStack || originalStack;
-    }
+  function addInspectMethod(newError) {
+      // @ts-ignore
+      newError[inspectMethod] = inspect;
   }
-
   /**
-   * Removes Ono from the stack, so that the stack starts at the original error location
+   * Returns a representation of the error for Node's `util.inspect()` method.
    *
-   * @param {string} stack
-   * @returns {string}
+   * @see https://nodejs.org/api/util.html#util_custom_inspection_functions_on_objects
    */
-  function popStack (stack) {
-    if (stack) {
-      var lines = stack.split("\n");
+  function inspect() {
+      // HACK: We have to cast the objects to `any` so we can use symbol indexers.
+      // see https://github.com/Microsoft/TypeScript/issues/1863
+      // tslint:disable: no-any no-unsafe-any
+      var pojo = {};
+      var error = this;
+      for (var i = 0, list = getDeepKeys(error); i < list.length; i += 1) {
+          var key = list[i];
 
-      if (lines.length < 2) {
-        // The stack only has one line, so there's nothing we can remove
-        return stack;
+          var value = error[key];
+          pojo[key] = value;
       }
-
-      // Find the `onoFactory` call in the stack, and remove it
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i];
-        if (line.indexOf("onoFactory") >= 0) {
-          lines.splice(i, 1);
-          return lines.join("\n");
-        }
-      }
-
-      // If we get here, then the stack doesn't contain a call to `onoFactory`.
-      // This may be due to minification or some optimization of the JS engine.
-      // So just return the stack as-is.
-      return stack;
-    }
+      // Don't include the `inspect()` method on the output object,
+      // otherwise it will cause `util.inspect()` to go into an infinite loop
+      // @ts-ignore
+      delete pojo[inspectMethod]; // tslint:disable-line: no-dynamic-delete
+      // tslint:enable: no-any no-unsafe-any
+      return pojo;
   }
 
+  var newline = /\r?\n/;
+  var onoCall = /\bono\b/;
   /**
    * Does a one-time determination of whether this JavaScript engine
    * supports lazy `Error.stack` properties.
    */
-  var supportsLazyStack = (function () {
-    return !!(
-      // ES5 property descriptors must be supported
-      Object.getOwnPropertyDescriptor && Object.defineProperty &&
-
+  var supportsLazyStack = Boolean(
+  // ES5 property descriptors must be supported
+  Object.getOwnPropertyDescriptor && Object.defineProperty &&
       // Chrome on Android doesn't support lazy stacks :(
-      (typeof navigator === "undefined" || !/Android/.test(navigator.userAgent))
-    );
-  }());
-
+      (typeof navigator === "undefined" || !/Android/.test(navigator.userAgent)));
   /**
    * Does this error have a lazy stack property?
-   *
-   * @param {Error} err
-   * @returns {boolean}
    */
-  function hasLazyStack (err) {
-    if (!supportsLazyStack) {
-      return false;
-    }
-
-    var descriptor = Object.getOwnPropertyDescriptor(err, "stack");
-    if (!descriptor) {
-      return false;
-    }
-    return typeof descriptor.get === "function";
+  function hasLazyStack(error) {
+      if (!supportsLazyStack) {
+          return false;
+      }
+      var descriptor = Object.getOwnPropertyDescriptor(error, "stack");
+      if (!descriptor) {
+          return false;
+      }
+      return typeof descriptor.get === "function";
   }
-
   /**
-   * Calls {@link joinStacks} lazily, when the {@link Error#stack} property is accessed.
-   *
-   * @param {Error} targetError
-   * @param {Error} sourceError
+   * Appends the original `Error.stack` property to the new Error's stack.
    */
-  function lazyJoinStacks (targetError, sourceError) {
-    var targetStack = Object.getOwnPropertyDescriptor(targetError, "stack");
-
-    Object.defineProperty(targetError, "stack", {
-      get: function () {
-        return joinStacks(targetStack.get.apply(targetError), sourceError.stack);
-      },
-      enumerable: false,
-      configurable: true
-    });
+  function joinStacks(newError, originalError) {
+      var newStack = popStack(newError.stack);
+      var originalStack = originalError ? originalError.stack : undefined;
+      if (newStack && originalStack) {
+          return newStack + "\n\n" + originalStack;
+      }
+      else {
+          return newStack || originalStack;
+      }
   }
-
   /**
-   * Calls {@link popStack} lazily, when the {@link Error#stack} property is accessed.
-   *
-   * @param {Error} error
+   * Calls `joinStacks` lazily, when the `Error.stack` property is accessed.
    */
-  function lazyPopStack (error) {
-    var targetStack = Object.getOwnPropertyDescriptor(error, "stack");
-
-    Object.defineProperty(error, "stack", {
-      get: function () {
-        return popStack(targetStack.get.apply(error));
-      },
-      enumerable: false,
-      configurable: true
-    });
+  function lazyJoinStacks(newError, originalError) {
+      var descriptor = Object.getOwnPropertyDescriptor(newError, "stack");
+      if (originalError && descriptor && typeof descriptor.get === "function") {
+          Object.defineProperty(newError, "stack", {
+              get: function () {
+                  var newStack = descriptor.get.apply(newError);
+                  return joinStacks({ stack: newStack }, originalError);
+              },
+              enumerable: false,
+              configurable: true
+          });
+      }
+      else {
+          lazyPopStack(newError);
+      }
   }
-  });
-  var ono_1 = ono.error;
-  var ono_2 = ono.range;
-  var ono_3 = ono.reference;
-  var ono_4 = ono.syntax;
-  var ono_5 = ono.type;
-  var ono_6 = ono.uri;
-  var ono_7 = ono.formatter;
+  /**
+   * Removes Ono from the stack, so that the stack starts at the original error location
+   */
+  function popStack(stack) {
+      if (stack === undefined) {
+          return undefined;
+      }
+      var lines = stack.split(newline);
+      if (lines.length < 2) {
+          // The stack only has one line, so there's nothing we can remove
+          return stack;
+      }
+      // Find the `ono` call in the stack, and remove it
+      for (var i = 0; i < lines.length; i++) {
+          var line = lines[i];
+          if (onoCall.test(line)) {
+              lines.splice(i, 1);
+              return lines.join("\n");
+          }
+      }
+      // If we get here, then the stack doesn't contain a call to `ono`.
+      // This may be due to minification or some optimization of the JS engine.
+      // So just return the stack as-is.
+      return stack;
+  }
+  /**
+   * Calls `popStack` lazily, when the `Error.stack` property is accessed.
+   */
+  function lazyPopStack(error) {
+      var descriptor = Object.getOwnPropertyDescriptor(error, "stack");
+      if (descriptor && typeof descriptor.get === "function") {
+          Object.defineProperty(error, "stack", {
+              get: function () { return popStack(descriptor.get.apply(error)); },
+              enumerable: false,
+              configurable: true
+          });
+      }
+  }
+
+  var protectedProps$1 = ["name", "message", "stack"];
+  /**
+   * Extends the new error with the properties of the original error and the `props` object.
+   *
+   * @param newError - The error object to extend
+   * @param originalError - The original error object, if any
+   * @param props - Additional properties to add, if any
+   */
+  function extendError(newError, originalError, props) {
+      extendStack(newError, originalError);
+      // Copy properties from the original error
+      if (originalError && typeof originalError === "object") {
+          mergeErrors(newError, originalError);
+      }
+      // The default `toJSON` method doesn't output props like `name`, `message`, `stack`, etc.
+      // So replace it with one that outputs every property of the error.
+      newError.toJSON = toJSON;
+      // On Node.js, add support for the `util.inspect()` method
+      if (addInspectMethod) {
+          addInspectMethod(newError);
+      }
+      // Finally, copy custom properties that were specified by the user.
+      // These props OVERWRITE any previous props
+      if (props && typeof props === "object") {
+          Object.assign(newError, props);
+      }
+  }
+  /**
+   * Extend the error stack to include its cause
+   */
+  function extendStack(newError, originalError) {
+      if (hasLazyStack(newError)) {
+          lazyJoinStacks(newError, originalError);
+      }
+      else {
+          newError.stack = joinStacks(newError, originalError);
+      }
+  }
+  /**
+   * Merges properties of the original error with the new error.
+   *
+   * @param newError - The error object to extend
+   * @param originalError - The original error object, if any
+   */
+  function mergeErrors(newError, originalError) {
+      // Get the original error's keys
+      // NOTE: We specifically exclude properties that we have already set on the new error.
+      // This is _especially_ important for the `stack` property, because this property has
+      // a lazy getter in some environments
+      var keys = getDeepKeys(originalError, protectedProps$1);
+      // HACK: We have to cast the errors to `any` so we can use symbol indexers.
+      // see https://github.com/Microsoft/TypeScript/issues/1863
+      // tslint:disable: no-any no-unsafe-any
+      var _newError = newError;
+      var _originalError = originalError;
+      for (var i = 0, list = keys; i < list.length; i += 1) {
+          var key = list[i];
+
+          if (_newError[key] === undefined) {
+              try {
+                  _newError[key] = _originalError[key];
+              }
+              catch (e) {
+                  // This property is read-only, so it can't be copied
+              }
+          }
+      }
+  }
+
+  var onoConstructor = Ono;
+  var onoSingleton = Ono(Error);
+  /**
+   * Creates an `Ono` instance for a specifc error type.
+   */
+  function Ono(klass) {
+      // tslint:disable-next-line: no-shadowed-variable
+      return function ono() {
+          var args = [], len = arguments.length;
+          while ( len-- ) args[ len ] = arguments[ len ];
+
+          var originalError;
+          var props;
+          var formatArgs;
+          var formattedMessage = "";
+          // Determine which arguments were actually specified
+          if (typeof args[0] === "string") {
+              formatArgs = args;
+          }
+          else if (typeof args[1] === "string") {
+              if (args[0] instanceof Error) {
+                  originalError = args[0];
+              }
+              else {
+                  props = args[0];
+              }
+              formatArgs = args.slice(1);
+          }
+          else {
+              originalError = args[0];
+              props = args[1];
+              formatArgs = args.slice(2);
+          }
+          // If there are any format arguments, then format the error message
+          if (formatArgs.length > 0) {
+              formattedMessage = onoSingleton.formatter.apply(undefined, formatArgs);
+          }
+          if (originalError && originalError.message) {
+              // The inner-error's message will be added to the new message
+              formattedMessage += (formattedMessage ? " \n" : "") + originalError.message;
+          }
+          // @ts-ignore
+          // Create the new error
+          // NOTE: DON'T move this line to a separate function! We don't want to pollute the stack trace
+          var newError = new klass(formattedMessage);
+          // Extend the error with the properties of the original error and the `props` object
+          extendError(newError, originalError, props);
+          return newError;
+      };
+  }
+
+  // Create Ono instances for each of the JavaScript error types
+  onoSingleton.error = new onoConstructor(Error);
+  onoSingleton.eval = new onoConstructor(EvalError);
+  onoSingleton.range = new onoConstructor(RangeError);
+  onoSingleton.reference = new onoConstructor(ReferenceError);
+  onoSingleton.syntax = new onoConstructor(SyntaxError);
+  onoSingleton.type = new onoConstructor(TypeError);
+  onoSingleton.uri = new onoConstructor(URIError);
+  // Default to Node's `util.format()` functionality, but allow users to substitute their own
+  onoSingleton.formatter = formatter;
+  /**
+   * Returns an object containing all properties of the given Error object,
+   * which can be used with `JSON.stringify()`.
+   */
+  onoConstructor.toJSON = function toJSON$1(error) {
+      return toJSON.call(error);
+  };
+  // CommonJS default export hack
+  if (typeof module === "object" && typeof module.exports === "object") {
+      module.exports = Object.assign(module.exports.default, module.exports); // tslint:disable-line: no-unsafe-any
+  }
+
+  var ono = onoSingleton.ono;
 
   /**
    * Simple YAML parsing functions, similar to {@link JSON.parse} and {@link JSON.stringify}
@@ -4199,7 +4216,7 @@
      * @param {function} [reviver] - Not currently supported. Provided for consistency with {@link JSON.parse}
      * @returns {*}
      */
-    parse: function yamlParse (text, reviver) {
+    parse: function parse (text, reviver) {
       try {
         return jsYaml$1.safeLoad(text);
       }
@@ -4222,7 +4239,7 @@
      * @param   {string|number} space - The number of spaces to use for indentation, or a string containing the number of spaces.
      * @returns {string}
      */
-    stringify: function yamlStringify (value, replacer, space) {
+    stringify: function stringify (value, replacer, space) {
       try {
         var indent = (typeof space === "string" ? space.length : space) || 2;
         return jsYaml$1.safeDump(value, { indent: indent });
@@ -4273,8 +4290,8 @@
      * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
      * @returns {Promise}
      */
-    parse: function parseYAML (file) {
-      return new Promise(function (resolve, reject) {
+    parse: function parse (file) {
+      return new Promise((function (resolve, reject) {
         var data = file.data;
         if (Buffer.isBuffer(data)) {
           data = data.toString();
@@ -4287,7 +4304,7 @@
           // data is already a JavaScript value (object, array, number, null, NaN, etc.)
           resolve(data);
         }
-      });
+      }));
     }
   };
 
@@ -4327,7 +4344,7 @@
      * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
      * @returns {boolean}
      */
-    canParse: function isText (file) {
+    canParse: function canParse (file) {
       // Use this parser if the file is a string or Buffer, and has a known text-based extension
       return (typeof file.data === "string" || Buffer.isBuffer(file.data)) && TEXT_REGEXP.test(file.url);
     },
@@ -4341,7 +4358,7 @@
      * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
      * @returns {Promise<string>}
      */
-    parse: function parseText (file) {
+    parse: function parse (file) {
       if (typeof file.data === "string") {
         return file.data;
       }
@@ -4383,7 +4400,7 @@
      * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
      * @returns {boolean}
      */
-    canParse: function isBinary (file) {
+    canParse: function canParse (file) {
       // Use this parser if the file is a Buffer, and has a known binary extension
       return Buffer.isBuffer(file.data) && BINARY_REGEXP.test(file.url);
     },
@@ -4397,16 +4414,22 @@
      * @param {*}      file.data      - The file contents. This will be whatever data type was returned by the resolver
      * @returns {Promise<Buffer>}
      */
-    parse: function parseBinary (file) {
+    parse: function parse (file) {
       if (Buffer.isBuffer(file.data)) {
         return file.data;
       }
       else {
         // This will reject if data is anything other than a string or typed array
-        return new Buffer(file.data);
+        return Buffer.from(file.data);
       }
     }
   };
+
+  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+
+  function createCommonjsModule(fn, module) {
+  	return module = { exports: {} }, fn(module, module.exports), module.exports;
+  }
 
   var url_1 = createCommonjsModule(function (module, exports) {
 
@@ -4418,8 +4441,7 @@
   // RegExp patterns to URL-encode special characters in local filesystem paths
   var urlEncodePatterns = [
     /\?/g, "%3F",
-    /\#/g, "%23",
-  ];
+    /\#/g, "%23" ];
 
   // RegExp patterns to URL-decode special characters for local filesystem paths
   var urlDecodePatterns = [
@@ -4643,6 +4665,9 @@
   var url_11 = url_1.fromFileSystemPath;
   var url_12 = url_1.toFileSystemPath;
 
+  var ono$1 = onoSingleton.ono;
+
+
   var file = {
     /**
      * The order that this resolver will run, in relation to other resolvers.
@@ -4661,7 +4686,7 @@
      * @param {string} file.extension - The lowercased file extension (e.g. ".txt", ".html", etc.)
      * @returns {boolean}
      */
-    canRead: function isFile (file) {
+    canRead: function canRead (file) {
       return url_1.isFileSystemPath(file.url);
     },
 
@@ -4673,14 +4698,14 @@
      * @param {string} file.extension - The lowercased file extension (e.g. ".txt", ".html", etc.)
      * @returns {Promise<Buffer>}
      */
-    read: function readFile (file) {
-      return new Promise(function (resolve, reject) {
+    read: function read (file) {
+      return new Promise((function (resolve, reject) {
         var path;
         try {
           path = url_1.toFileSystemPath(file.url);
         }
         catch (err) {
-          reject(ono.uri(err, "Malformed URI: %s", file.url));
+          reject(ono$1.uri(err, ("Malformed URI: " + (file.url))));
         }
 
         // console.log('Opening file: %s', path);
@@ -4688,7 +4713,7 @@
         try {
           fs.readFile(path, function (err, data) {
             if (err) {
-              reject(ono(err, 'Error opening file "%s"', path));
+              reject(ono$1(err, ("Error opening file \"" + path + "\"")));
             }
             else {
               resolve(data);
@@ -4696,11 +4721,14 @@
           });
         }
         catch (err) {
-          reject(ono(err, 'Error opening file "%s"', path));
+          reject(ono$1(err, ("Error opening file \"" + path + "\"")));
         }
-      });
+      }));
     }
   };
+
+  var ono$2 = onoSingleton.ono;
+
 
   var http_1 = {
     /**
@@ -4756,7 +4784,7 @@
      * @param {string} file.extension - The lowercased file extension (e.g. ".txt", ".html", etc.)
      * @returns {boolean}
      */
-    canRead: function isHttp (file) {
+    canRead: function canRead (file) {
       return url_1.isHttp(file.url);
     },
 
@@ -4768,7 +4796,7 @@
      * @param {string} file.extension - The lowercased file extension (e.g. ".txt", ".html", etc.)
      * @returns {Promise<Buffer>}
      */
-    read: function readHttp (file) {
+    read: function read (file) {
       var u = url_1.parse(file.url);
 
       if (process.browser && !u.protocol) {
@@ -4791,7 +4819,7 @@
    * The promise resolves with the raw downloaded data, or rejects if there is an HTTP error.
    */
   function download (u, httpOptions, redirects) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((function (resolve, reject) {
       u = url_1.parse(u);
       redirects = redirects || [];
       redirects.push(u.href);
@@ -4799,15 +4827,15 @@
       get(u, httpOptions)
         .then(function (res) {
           if (res.statusCode >= 400) {
-            throw ono({ status: res.statusCode }, "HTTP ERROR %d", res.statusCode);
+            throw ono$2({ status: res.statusCode }, ("HTTP ERROR " + (res.statusCode)));
           }
           else if (res.statusCode >= 300) {
             if (redirects.length > httpOptions.redirects) {
-              reject(ono({ status: res.statusCode }, "Error downloading %s. \nToo many redirects: \n  %s",
-                redirects[0], redirects.join(" \n  ")));
+              reject(ono$2({ status: res.statusCode },
+                ("Error downloading " + (redirects[0]) + ". \nToo many redirects: \n  " + (redirects.join(" \n  ")))));
             }
             else if (!res.headers.location) {
-              throw ono({ status: res.statusCode }, "HTTP %d redirect with no location header", res.statusCode);
+              throw ono$2({ status: res.statusCode }, ("HTTP " + (res.statusCode) + " redirect with no location header"));
             }
             else {
               // console.log('HTTP %d redirect %s -> %s', res.statusCode, u.href, res.headers.location);
@@ -4816,13 +4844,13 @@
             }
           }
           else {
-            resolve(res.body || new Buffer(0));
+            resolve(res.body || Buffer.alloc(0));
           }
         })
         .catch(function (err) {
-          reject(ono(err, "Error downloading", u.href));
+          reject(ono$2(err, ("Error downloading " + (u.href))));
         });
-    });
+    }));
   }
 
   /**
@@ -4835,7 +4863,7 @@
    * The promise resolves with the HTTP Response object.
    */
   function get (u, httpOptions) {
-    return new Promise(function (resolve, reject) {
+    return new Promise((function (resolve, reject) {
       // console.log('GET', u.href);
 
       var protocol = u.protocol === "https:" ? https : http;
@@ -4860,10 +4888,10 @@
       req.on("error", reject);
 
       req.once("response", function (res) {
-        res.body = new Buffer(0);
+        res.body = Buffer.alloc(0);
 
         res.on("data", function (data) {
-          res.body = Buffer.concat([res.body, new Buffer(data)]);
+          res.body = Buffer.concat([res.body, Buffer.from(data)]);
         });
 
         res.on("error", reject);
@@ -4872,7 +4900,7 @@
           resolve(res);
         });
       });
-    });
+    }));
   }
 
   var options = $RefParserOptions;
@@ -4982,10 +5010,14 @@
 
   var pointer = Pointer;
 
-  var slashes = /\//g,
-      tildes = /~/g,
-      escapedSlash = /~1/g,
-      escapedTilde = /~0/g;
+
+
+
+  var ono$3 = onoSingleton.ono;
+  var slashes = /\//g;
+  var tildes = /~/g;
+  var escapedSlash = /~1/g;
+  var escapedTilde = /~0/g;
 
   /**
    * This class represents a single JSON pointer and its resolved value.
@@ -5061,7 +5093,7 @@
 
       var token = tokens[i];
       if (this.value[token] === undefined) {
-        throw ono.syntax('Error resolving $ref pointer "%s". \nToken "%s" does not exist.', this.originalPath, token);
+        throw ono$3.syntax(("Error resolving $ref pointer \"" + (this.originalPath) + "\". \nToken \"" + token + "\" does not exist."));
       }
       else {
         this.value = this.value[token];
@@ -5148,7 +5180,7 @@
     }
 
     if (pointer[0] !== "") {
-      throw ono.syntax('Invalid $ref pointer "%s". Pointers must begin with "#/"', pointer);
+      throw ono$3.syntax(("Invalid $ref pointer \"" + pointer + "\". Pointers must begin with \"#/\""));
     }
 
     return pointer.slice(1);
@@ -5241,7 +5273,7 @@
       }
     }
     else {
-      throw ono.syntax('Error assigning $ref pointer "%s". \nCannot set "%s" of a non-object.', pointer.path, token);
+      throw ono$3.syntax(("Error assigning $ref pointer \"" + (pointer.path) + "\". \nCannot set \"" + token + "\" of a non-object."));
     }
     return value;
   }
@@ -5459,16 +5491,22 @@
   $Ref.dereference = function ($ref, resolvedValue) {
     if (resolvedValue && typeof resolvedValue === "object" && $Ref.isExtended$Ref($ref)) {
       var merged = {};
-      Object.keys($ref).forEach(function (key) {
+      for (var i = 0, list = Object.keys($ref); i < list.length; i += 1) {
+        var key = list[i];
+
         if (key !== "$ref") {
           merged[key] = $ref[key];
         }
-      });
-      Object.keys(resolvedValue).forEach(function (key) {
-        if (!(key in merged)) {
-          merged[key] = resolvedValue[key];
+      }
+
+      for (var i$1 = 0, list$1 = Object.keys(resolvedValue); i$1 < list$1.length; i$1 += 1) {
+        var key$1 = list$1[i$1];
+
+        if (!(key$1 in merged)) {
+          merged[key$1] = resolvedValue[key$1];
         }
-      });
+      }
+
       return merged;
     }
     else {
@@ -5476,6 +5514,10 @@
       return resolvedValue;
     }
   };
+
+  var ono$4 = onoSingleton.ono;
+
+
 
   var refs = $Refs;
 
@@ -5584,7 +5626,7 @@
     var $ref = this._$refs[withoutHash];
 
     if (!$ref) {
-      throw ono('Error resolving $ref pointer "%s". \n"%s" not found.', path, withoutHash);
+      throw ono$4(("Error resolving $ref pointer \"" + path + "\". \n\"" + withoutHash + "\" not found."));
     }
 
     $ref.set(absPath, value);
@@ -5622,7 +5664,7 @@
     var $ref = this._$refs[withoutHash];
 
     if (!$ref) {
-      throw ono('Error resolving $ref pointer "%s". \n"%s" not found.', path, withoutHash);
+      throw ono$4(("Error resolving $ref pointer \"" + path + "\". \n\"" + withoutHash + "\" not found."));
     }
 
     return $ref.resolve(absPath, options, path);
@@ -5708,9 +5750,11 @@
    * @returns {object[]}
    */
   var sort = function (plugins) {
-    plugins.forEach(function (plugin) {
+    for (var i = 0, list = plugins; i < list.length; i += 1) {
+      var plugin = list[i];
+
       plugin.order = plugin.order || Number.MAX_SAFE_INTEGER;
-    });
+    }
 
     return plugins.sort(function (a, b) { return a.order - b.order; });
   };
@@ -5728,10 +5772,10 @@
    * @param {object}    file    - A file info object, which will be passed to each method
    * @returns {Promise}
    */
-  var run = function (plugins, method, file) {
+  var run = function (plugins, method, file, $refs) {
     var plugin, lastError, index = 0;
 
-    return new Promise(function (resolve, reject) {
+    return new Promise((function (resolve, reject) {
       runNextPlugin();
 
       function runNextPlugin () {
@@ -5743,7 +5787,7 @@
 
         try {
           // console.log('  %s', plugin.name);
-          var result = getResult(plugin, method, file, callback);
+          var result = getResult(plugin, method, file, callback, $refs);
           if (result && typeof result.then === "function") {
             // A promise was returned
             result.then(onSuccess, onError);
@@ -5781,7 +5825,7 @@
         lastError = err;
         runNextPlugin();
       }
-    });
+    }));
   };
 
   /**
@@ -5796,11 +5840,11 @@
    * @param   {function} [callback] - A callback function, which will be passed to the method
    * @returns {*}
    */
-  function getResult (obj, prop, file, callback) {
+  function getResult (obj, prop, file, callback, $refs) {
     var value = obj[prop];
 
     if (typeof value === "function") {
-      return value.apply(obj, [file, callback]);
+      return value.apply(obj, [file, callback, $refs]);
     }
 
     if (!callback) {
@@ -5828,6 +5872,10 @@
   	run: run
   };
 
+  var ono$5 = onoSingleton.ono;
+
+
+
   var parse_1 = parse$1;
 
   /**
@@ -5840,7 +5888,7 @@
    * @returns {Promise}
    * The promise resolves with the parsed file contents, NOT the raw (Buffer) contents.
    */
-  function parse$1 (path, $refs, options) {
+  async function parse$1 (path, $refs, options) {
     try {
       // Remove the URL fragment, if any
       path = url_1.stripHash(path);
@@ -5856,16 +5904,14 @@
       };
 
       // Read the file and then parse the data
-      return readFile(file, options)
-        .then(function (resolver) {
-          $ref.pathType = resolver.plugin.name;
-          file.data = resolver.result;
-          return parseFile(file, options);
-        })
-        .then(function (parser) {
-          $ref.value = parser.result;
-          return parser.result;
-        });
+      var resolver = await readFile(file, options, $refs);
+      $ref.pathType = resolver.plugin.name;
+      file.data = resolver.result;
+
+      var parser = await parseFile(file, options, $refs);
+      $ref.value = parser.result;
+
+      return parser.result;
     }
     catch (e) {
       return Promise.reject(e);
@@ -5883,8 +5929,8 @@
    * @returns {Promise}
    * The promise resolves with the raw file contents and the resolver that was used.
    */
-  function readFile (file, options) {
-    return new Promise(function (resolve, reject) {
+  function readFile (file, options, $refs) {
+    return new Promise((function (resolve, reject) {
       // console.log('Reading %s', file.url);
 
       // Find the resolvers that can read this file
@@ -5893,7 +5939,7 @@
 
       // Run the resolvers, in order, until one of them succeeds
       plugins.sort(resolvers);
-      plugins.run(resolvers, "read", file)
+      plugins.run(resolvers, "read", file, $refs)
         .then(resolve, onError);
 
       function onError (err) {
@@ -5903,10 +5949,10 @@
           reject(err);
         }
         else {
-          reject(ono.syntax('Unable to resolve $ref pointer "%s"', file.url));
+          reject(ono$5.syntax(("Unable to resolve $ref pointer \"" + (file.url) + "\"")));
         }
       }
-    });
+    }));
   }
 
   /**
@@ -5921,8 +5967,8 @@
    * @returns {Promise}
    * The promise resolves with the parsed file contents and the parser that was used.
    */
-  function parseFile (file, options) {
-    return new Promise(function (resolve, reject) {
+  function parseFile (file, options, $refs) {
+    return new Promise((function (resolve, reject) {
       // console.log('Parsing %s', file.url);
 
       // Find the parsers that can read this file type.
@@ -5934,12 +5980,12 @@
 
       // Run the parsers, in order, until one of them succeeds
       plugins.sort(parsers);
-      plugins.run(parsers, "parse", file)
+      plugins.run(parsers, "parse", file, $refs)
         .then(onParsed, onError);
 
       function onParsed (parser) {
         if (!parser.plugin.allowEmpty && isEmpty(parser.result)) {
-          reject(ono.syntax('Error parsing "%s" as %s. \nParsed value is empty', file.url, parser.plugin.name));
+          reject(ono$5.syntax(("Error parsing \"" + (file.url) + "\" as " + (parser.plugin.name) + ". \nParsed value is empty")));
         }
         else {
           resolve(parser);
@@ -5949,13 +5995,13 @@
       function onError (err) {
         if (err) {
           err = err instanceof Error ? err : new Error(err);
-          reject(ono.syntax(err, "Error parsing %s", file.url));
+          reject(ono$5.syntax(err, ("Error parsing " + (file.url))));
         }
         else {
-          reject(ono.syntax("Unable to parse %s", file.url));
+          reject(ono$5.syntax(("Unable to parse " + (file.url))));
         }
       }
-    });
+    }));
   }
 
   /**
@@ -6074,7 +6120,9 @@
         promises.push(resolve$Ref(obj, path, $refs, options));
       }
       else {
-        Object.keys(obj).forEach(function (key) {
+        for (var i = 0, list = Object.keys(obj); i < list.length; i += 1) {
+          var key = list[i];
+
           var keyPath = pointer.join(path, key);
           var value = obj[key];
 
@@ -6084,7 +6132,7 @@
           else {
             promises = promises.concat(crawl(value, keyPath, $refs, options));
           }
-        });
+        }
       }
     }
 
@@ -6103,7 +6151,7 @@
    * The promise resolves once all JSON references in the object have been resolved,
    * including nested references that are contained in externally-referenced files.
    */
-  function resolve$Ref ($ref, path, $refs, options) {
+  async function resolve$Ref ($ref, path, $refs, options) {
     // console.log('Resolving $ref pointer "%s" at %s', $ref.$ref, path);
 
     var resolvedPath = url_1.resolve(path, $ref.$ref);
@@ -6117,13 +6165,13 @@
     }
 
     // Parse the $referenced file/url
-    return parse_1(resolvedPath, $refs, options)
-      .then(function (result) {
-        // Crawl the parsed value
-        // console.log('Resolving $ref pointers in %s', withoutHash);
-        var promises = crawl(result, withoutHash + "#", $refs, options);
-        return Promise.all(promises);
-      });
+    var result = await parse_1(resolvedPath, $refs, options);
+
+    // Crawl the parsed value
+    // console.log('Resolving $ref pointers in %s', withoutHash);
+    var promises = crawl(result, withoutHash + "#", $refs, options);
+
+    return Promise.all(promises);
   }
 
   var bundle_1 = bundle;
@@ -6186,18 +6234,21 @@
             }
           });
 
-        keys.forEach(function (key) {
-          var keyPath = pointer.join(path, key);
-          var keyPathFromRoot = pointer.join(pathFromRoot, key);
-          var value = obj[key];
+        // eslint-disable-next-line no-shadow
+        for (var i = 0, list = keys; i < list.length; i += 1) {
+          var key$1 = list[i];
+
+          var keyPath = pointer.join(path, key$1);
+          var keyPathFromRoot = pointer.join(pathFromRoot, key$1);
+          var value = obj[key$1];
 
           if (ref.isAllowed$Ref(value)) {
-            inventory$Ref(obj, key, path, keyPathFromRoot, indirections, inventory, $refs, options);
+            inventory$Ref(obj, key$1, path, keyPathFromRoot, indirections, inventory, $refs, options);
           }
           else {
-            crawl$1(obj, key, keyPath, keyPathFromRoot, indirections, inventory, $refs, options);
+            crawl$1(obj, key$1, keyPath, keyPathFromRoot, indirections, inventory, $refs, options);
           }
-        });
+        }
       }
     }
   }
@@ -6323,8 +6374,10 @@
     });
 
     var file, hash, pathFromRoot;
-    inventory.forEach(function (entry) {
+    for (var i = 0, list = inventory; i < list.length; i += 1) {
       // console.log('Re-mapping $ref pointer "%s" at %s', entry.$ref.$ref, entry.pathFromRoot);
+
+      var entry = list[i];
 
       if (!entry.external) {
         // This $ref already resolves to the main JSON Schema file
@@ -6355,7 +6408,7 @@
       }
 
       // console.log('    new value: %s', (entry.$ref && entry.$ref.$ref) ? entry.$ref.$ref : '[object Object]');
-    });
+    }
   }
 
   /**
@@ -6374,6 +6427,9 @@
     var index = inventory.indexOf(entry);
     inventory.splice(index, 1);
   }
+
+  var ono$6 = onoSingleton.ono;
+
 
   var dereference_1 = dereference;
 
@@ -6418,7 +6474,9 @@
         result.value = dereferenced.value;
       }
       else {
-        Object.keys(obj).forEach(function (key) {
+        for (var i = 0, list = Object.keys(obj); i < list.length; i += 1) {
+          var key = list[i];
+
           var keyPath = pointer.join(path, key);
           var keyPathFromRoot = pointer.join(pathFromRoot, key);
           var value = obj[key];
@@ -6442,7 +6500,7 @@
 
           // Set the "isCircular" flag if this or any other property is circular
           result.circular = result.circular || circular;
-        });
+        }
       }
 
       parents.pop();
@@ -6513,7 +6571,7 @@
   function foundCircularReference (keyPath, $refs, options) {
     $refs.circular = true;
     if (!options.dereference.circular) {
-      throw ono.reference("Circular $ref pointer found at %s", keyPath);
+      throw ono$6.reference(("Circular $ref pointer found at " + keyPath));
     }
     return true;
   }
@@ -6536,6 +6594,8 @@
       return promise
     }
   };
+
+  var ono$7 = onoSingleton.ono;
 
   var lib = $RefParser;
   var YAML = yaml_1;
@@ -6592,12 +6652,12 @@
    * @param {function} [callback] - An error-first callback. The second parameter is the parsed JSON schema object.
    * @returns {Promise} - The returned promise resolves with the parsed JSON schema object.
    */
-  $RefParser.prototype.parse = function (path, schema, options, callback) {
+  $RefParser.prototype.parse = async function (path, schema, options, callback) {
     var args = normalizeArgs_1(arguments);
     var promise;
 
     if (!args.path && !args.schema) {
-      var err = ono("Expected a file path, URL, or object. Got %s", args.path || args.schema);
+      var err = ono$7(("Expected a file path, URL, or object. Got " + (args.path || args.schema)));
       return callMeMaybe(args.callback, Promise.reject(err));
     }
 
@@ -6634,19 +6694,20 @@
     }
 
     var me = this;
-    return promise
-      .then(function (result) {
-        if (!result || typeof result !== "object" || Buffer.isBuffer(result)) {
-          throw ono.syntax('"%s" is not a valid JSON Schema', me.$refs._root$Ref.path || result);
-        }
-        else {
-          me.schema = result;
-          return callMeMaybe(args.callback, Promise.resolve(me.schema));
-        }
-      })
-      .catch(function (e) {
-        return callMeMaybe(args.callback, Promise.reject(e));
-      });
+    try {
+      var result = await promise;
+
+      if (!result || typeof result !== "object" || Buffer.isBuffer(result)) {
+        throw ono$7.syntax(("\"" + (me.$refs._root$Ref.path || result) + "\" is not a valid JSON Schema"));
+      }
+      else {
+        me.schema = result;
+        return callMeMaybe(args.callback, Promise.resolve(me.schema));
+      }
+    }
+    catch (e) {
+      return callMeMaybe(args.callback, Promise.reject(e));
+    }
   };
 
   /**
@@ -6681,20 +6742,18 @@
    * @returns {Promise}
    * The returned promise resolves with a {@link $Refs} object containing the resolved JSON references
    */
-  $RefParser.prototype.resolve = function (path, schema, options, callback) {
+  $RefParser.prototype.resolve = async function (path, schema, options, callback) {
     var me = this;
     var args = normalizeArgs_1(arguments);
 
-    return this.parse(args.path, args.schema, args.options)
-      .then(function () {
-        return resolveExternal_1(me, args.options);
-      })
-      .then(function () {
-        return callMeMaybe(args.callback, Promise.resolve(me.$refs));
-      })
-      .catch(function (err) {
-        return callMeMaybe(args.callback, Promise.reject(err));
-      });
+    try {
+      await this.parse(args.path, args.schema, args.options);
+      await resolveExternal_1(me, args.options);
+      return callMeMaybe(args.callback, Promise.resolve(me.$refs));
+    }
+    catch (err) {
+      return callMeMaybe(args.callback, Promise.reject(err));
+    }
   };
 
   /**
@@ -6725,18 +6784,18 @@
    * @param {function} [callback] - An error-first callback. The second parameter is the bundled JSON schema object
    * @returns {Promise} - The returned promise resolves with the bundled JSON schema object.
    */
-  $RefParser.prototype.bundle = function (path, schema, options, callback) {
+  $RefParser.prototype.bundle = async function (path, schema, options, callback) {
     var me = this;
     var args = normalizeArgs_1(arguments);
 
-    return this.resolve(args.path, args.schema, args.options)
-      .then(function () {
-        bundle_1(me, args.options);
-        return callMeMaybe(args.callback, Promise.resolve(me.schema));
-      })
-      .catch(function (err) {
-        return callMeMaybe(args.callback, Promise.reject(err));
-      });
+    try {
+      await this.resolve(args.path, args.schema, args.options);
+      bundle_1(me, args.options);
+      return callMeMaybe(args.callback, Promise.resolve(me.schema));
+    }
+    catch (err) {
+      return callMeMaybe(args.callback, Promise.reject(err));
+    }
   };
 
   /**
@@ -6765,18 +6824,18 @@
    * @param {function} [callback] - An error-first callback. The second parameter is the dereferenced JSON schema object
    * @returns {Promise} - The returned promise resolves with the dereferenced JSON schema object.
    */
-  $RefParser.prototype.dereference = function (path, schema, options, callback) {
+  $RefParser.prototype.dereference = async function (path, schema, options, callback) {
     var me = this;
     var args = normalizeArgs_1(arguments);
 
-    return this.resolve(args.path, args.schema, args.options)
-      .then(function () {
-        dereference_1(me, args.options);
-        return callMeMaybe(args.callback, Promise.resolve(me.schema));
-      })
-      .catch(function (err) {
-        return callMeMaybe(args.callback, Promise.reject(err));
-      });
+    try {
+      await this.resolve(args.path, args.schema, args.options);
+      dereference_1(me, args.options);
+      return callMeMaybe(args.callback, Promise.resolve(me.schema));
+    }
+    catch (err) {
+      return callMeMaybe(args.callback, Promise.reject(err));
+    }
   };
   lib.YAML = YAML;
 
@@ -6933,9 +6992,9 @@
     CHAR       : 7,
   };
 
-  const INTS = () => [{ type: types.RANGE , from: 48, to: 57 }];
+  var INTS = function () { return [{ type: types.RANGE , from: 48, to: 57 }]; };
 
-  const WORDS = () => {
+  var WORDS = function () {
     return [
       { type: types.CHAR, value: 95 },
       { type: types.RANGE, from: 97, to: 122 },
@@ -6943,7 +7002,7 @@
     ].concat(INTS());
   };
 
-  const WHITESPACE = () => {
+  var WHITESPACE = function () {
     return [
       { type: types.CHAR, value: 9 },
       { type: types.CHAR, value: 10 },
@@ -6963,23 +7022,22 @@
     ];
   };
 
-  const NOTANYCHAR = () => {
+  var NOTANYCHAR = function () {
     return [
       { type: types.CHAR, value: 10 },
       { type: types.CHAR, value: 13 },
       { type: types.CHAR, value: 8232 },
-      { type: types.CHAR, value: 8233 },
-    ];
+      { type: types.CHAR, value: 8233 } ];
   };
 
   // Predefined class objects.
-  var words = () => ({ type: types.SET, set: WORDS(), not: false });
-  var notWords = () => ({ type: types.SET, set: WORDS(), not: true });
-  var ints = () => ({ type: types.SET, set: INTS(), not: false });
-  var notInts = () => ({ type: types.SET, set: INTS(), not: true });
-  var whitespace = () => ({ type: types.SET, set: WHITESPACE(), not: false });
-  var notWhitespace = () => ({ type: types.SET, set: WHITESPACE(), not: true });
-  var anyChar = () => ({ type: types.SET, set: NOTANYCHAR(), not: true });
+  var words = function () { return ({ type: types.SET, set: WORDS(), not: false }); };
+  var notWords = function () { return ({ type: types.SET, set: WORDS(), not: true }); };
+  var ints = function () { return ({ type: types.SET, set: INTS(), not: false }); };
+  var notInts = function () { return ({ type: types.SET, set: INTS(), not: true }); };
+  var whitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: false }); };
+  var notWhitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: true }); };
+  var anyChar = function () { return ({ type: types.SET, set: NOTANYCHAR(), not: true }); };
 
   var sets = {
   	words: words,
@@ -6992,8 +7050,8 @@
   };
 
   var util = createCommonjsModule(function (module, exports) {
-  const CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
-  const SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
+  var CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
+  var SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
 
   /**
    * Finds character representations in str and convert all to
@@ -7039,7 +7097,7 @@
    * @param {String} regexpStr
    * @return {Array.<Array.<Object>, Number>}
    */
-  exports.tokenizeClass = (str, regexpStr) => {
+  exports.tokenizeClass = function (str, regexpStr) {
     /* jshint maxlen: false */
     var tokens = [];
     var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?([^])/g;
@@ -7093,7 +7151,7 @@
    * @param {String} regexp
    * @param {String} msg
    */
-  exports.error = (regexp, msg) => {
+  exports.error = function (regexp, msg) {
     throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
   };
   });
@@ -7101,10 +7159,10 @@
   var util_2 = util.tokenizeClass;
   var util_3 = util.error;
 
-  var wordBoundary = () => ({ type: types.POSITION, value: 'b' });
-  var nonWordBoundary = () => ({ type: types.POSITION, value: 'B' });
-  var begin = () => ({ type: types.POSITION, value: '^' });
-  var end = () => ({ type: types.POSITION, value: '$' });
+  var wordBoundary = function () { return ({ type: types.POSITION, value: 'b' }); };
+  var nonWordBoundary = function () { return ({ type: types.POSITION, value: 'B' }); };
+  var begin = function () { return ({ type: types.POSITION, value: '^' }); };
+  var end = function () { return ({ type: types.POSITION, value: '$' }); };
 
   var positions = {
   	wordBoundary: wordBoundary,
@@ -7113,7 +7171,7 @@
   	end: end
   };
 
-  var lib$1 = (regexpStr) => {
+  var lib$1 = function (regexpStr) {
     var i = 0, l, c,
       start = { type: types.ROOT, stack: []},
 
@@ -7123,8 +7181,8 @@
       groupStack = [];
 
 
-    var repeatErr = (i) => {
-      util.error(regexpStr, `Nothing to repeat at column ${i - 1}`);
+    var repeatErr = function (i) {
+      util.error(regexpStr, ("Nothing to repeat at column " + (i - 1)));
     };
 
     // Decode a few escaped characters.
@@ -7217,7 +7275,7 @@
           last.push({
             type: types.SET,
             set: classTokens[0],
-            not,
+            not: not,
           });
 
           break;
@@ -7255,8 +7313,8 @@
 
             } else if (c !== ':') {
               util.error(regexpStr,
-                `Invalid group, character '${c}'` +
-                ` after '?' at column ${i - 1}`);
+                "Invalid group, character '" + c + "'" +
+                " after '?' at column " + (i - 1));
             }
 
             group.remember = false;
@@ -7277,7 +7335,7 @@
         // Pop group out of stack.
         case ')':
           if (groupStack.length === 0) {
-            util.error(regexpStr, `Unmatched ) at column ${i - 1}`);
+            util.error(regexpStr, ("Unmatched ) at column " + (i - 1)));
           }
           lastGroup = groupStack.pop();
 
@@ -7321,8 +7379,8 @@
 
             last.push({
               type: types.REPETITION,
-              min,
-              max,
+              min: min,
+              max: max,
               value: last.pop(),
             });
           } else {
@@ -7395,190 +7453,168 @@
 
 
   // Private helper class
-  class SubRange {
-      constructor(low, high) {
-          this.low = low;
-          this.high = high;
-          this.length = 1 + high - low;
+  var SubRange = function SubRange(low, high) {
+      this.low = low;
+      this.high = high;
+      this.length = 1 + high - low;
+  };
+
+  SubRange.prototype.overlaps = function overlaps (range) {
+      return !(this.high < range.low || this.low > range.high);
+  };
+
+  SubRange.prototype.touches = function touches (range) {
+      return !(this.high + 1 < range.low || this.low - 1 > range.high);
+  };
+
+  // Returns inclusive combination of SubRanges as a SubRange.
+  SubRange.prototype.add = function add (range) {
+      return new SubRange(
+          Math.min(this.low, range.low),
+          Math.max(this.high, range.high)
+      );
+  };
+
+  // Returns subtraction of SubRanges as an array of SubRanges.
+  // (There's a case where subtraction divides it in 2)
+  SubRange.prototype.subtract = function subtract (range) {
+      if (range.low <= this.low && range.high >= this.high) {
+          return [];
+      } else if (range.low > this.low && range.high < this.high) {
+          return [
+              new SubRange(this.low, range.low - 1),
+              new SubRange(range.high + 1, this.high)
+          ];
+      } else if (range.low <= this.low) {
+          return [new SubRange(range.high + 1, this.high)];
+      } else {
+          return [new SubRange(this.low, range.low - 1)];
       }
+  };
 
-      overlaps(range) {
-          return !(this.high < range.low || this.low > range.high);
-      }
-
-      touches(range) {
-          return !(this.high + 1 < range.low || this.low - 1 > range.high);
-      }
-
-      // Returns inclusive combination of SubRanges as a SubRange.
-      add(range) {
-          return new SubRange(
-              Math.min(this.low, range.low),
-              Math.max(this.high, range.high)
-          );
-      }
-
-      // Returns subtraction of SubRanges as an array of SubRanges.
-      // (There's a case where subtraction divides it in 2)
-      subtract(range) {
-          if (range.low <= this.low && range.high >= this.high) {
-              return [];
-          } else if (range.low > this.low && range.high < this.high) {
-              return [
-                  new SubRange(this.low, range.low - 1),
-                  new SubRange(range.high + 1, this.high)
-              ];
-          } else if (range.low <= this.low) {
-              return [new SubRange(range.high + 1, this.high)];
-          } else {
-              return [new SubRange(this.low, range.low - 1)];
-          }
-      }
-
-      toString() {
-          return this.low == this.high ?
-              this.low.toString() : this.low + '-' + this.high;
-      }
-  }
+  SubRange.prototype.toString = function toString () {
+      return this.low == this.high ?
+          this.low.toString() : this.low + '-' + this.high;
+  };
 
 
-  class DRange {
-      constructor(a, b) {
-          this.ranges = [];
-          this.length = 0;
-          if (a != null) this.add(a, b);
-      }
+  var DRange = function DRange(a, b) {
+      this.ranges = [];
+      this.length = 0;
+      if (a != null) { this.add(a, b); }
+  };
 
-      _update_length() {
-          this.length = this.ranges.reduce((previous, range) => {
-              return previous + range.length;
-          }, 0);
-      }
+  DRange.prototype._update_length = function _update_length () {
+      this.length = this.ranges.reduce(function (previous, range) {
+          return previous + range.length;
+      }, 0);
+  };
 
-      add(a, b) {
-          var _add = (subrange) => {
-              var i = 0;
-              while (i < this.ranges.length && !subrange.touches(this.ranges[i])) {
-                  i++;
-              }
-              var newRanges = this.ranges.slice(0, i);
-              while (i < this.ranges.length && subrange.touches(this.ranges[i])) {
-                  subrange = subrange.add(this.ranges[i]);
-                  i++;
-              }
-              newRanges.push(subrange);
-              this.ranges = newRanges.concat(this.ranges.slice(i));
-              this._update_length();
-          };
+  DRange.prototype.add = function add (a, b) {
+          var this$1 = this;
 
-          if (a instanceof DRange) {
-              a.ranges.forEach(_add);
-          } else {
-              if (b == null) b = a;
-              _add(new SubRange(a, b));
-          }
-          return this;
-      }
-
-      subtract(a, b) {
-          var _subtract = (subrange) => {
-              var i = 0;
-              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
-                  i++;
-              }
-              var newRanges = this.ranges.slice(0, i);
-              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
-                  newRanges = newRanges.concat(this.ranges[i].subtract(subrange));
-                  i++;
-              }
-              this.ranges = newRanges.concat(this.ranges.slice(i));
-              this._update_length();
-          };
-
-          if (a instanceof DRange) {
-              a.ranges.forEach(_subtract);
-          } else {
-              if (b == null) b = a;
-              _subtract(new SubRange(a, b));
-          }
-          return this;
-      }
-
-      intersect(a, b) {
-          var newRanges = [];
-          var _intersect = (subrange) => {
-              var i = 0;
-              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
-                  i++;
-              }
-              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
-                  var low = Math.max(this.ranges[i].low, subrange.low);
-                  var high = Math.min(this.ranges[i].high, subrange.high);
-                  newRanges.push(new SubRange(low, high));
-                  i++;
-              }
-          };
-
-          if (a instanceof DRange) {
-              a.ranges.forEach(_intersect);
-          } else {
-              if (b == null) b = a;
-              _intersect(new SubRange(a, b));
-          }
-          this.ranges = newRanges;
-          this._update_length();
-          return this;
-      }
-
-      index(index) {
+      var _add = function (subrange) {
           var i = 0;
-          while (i < this.ranges.length && this.ranges[i].length <= index) {
-              index -= this.ranges[i].length;
+          while (i < this$1.ranges.length && !subrange.touches(this$1.ranges[i])) {
               i++;
           }
-          return this.ranges[i].low + index;
-      }
+          var newRanges = this$1.ranges.slice(0, i);
+          while (i < this$1.ranges.length && subrange.touches(this$1.ranges[i])) {
+              subrange = subrange.add(this$1.ranges[i]);
+              i++;
+          }
+          newRanges.push(subrange);
+          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
+          this$1._update_length();
+      };
 
-      toString() {
-          return '[ ' + this.ranges.join(', ') + ' ]';
+      if (a instanceof DRange) {
+          a.ranges.forEach(_add);
+      } else {
+          if (b == null) { b = a; }
+          _add(new SubRange(a, b));
       }
+      return this;
+  };
 
-      clone() {
-          return new DRange(this);
-      }
+  DRange.prototype.subtract = function subtract (a, b) {
+          var this$1 = this;
 
-      numbers() {
-          return this.ranges.reduce((result, subrange) => {
-              var i = subrange.low;
-              while (i <= subrange.high) {
-                  result.push(i);
-                  i++;
-              }
-              return result;
-          }, []);
-      }
+      var _subtract = function (subrange) {
+          var i = 0;
+          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
+              i++;
+          }
+          var newRanges = this$1.ranges.slice(0, i);
+          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
+              newRanges = newRanges.concat(this$1.ranges[i].subtract(subrange));
+              i++;
+          }
+          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
+          this$1._update_length();
+      };
 
-      subranges() {
-          return this.ranges.map((subrange) => ({
-              low: subrange.low,
-              high: subrange.high,
-              length: 1 + subrange.high - subrange.low
-          }));
+      if (a instanceof DRange) {
+          a.ranges.forEach(_subtract);
+      } else {
+          if (b == null) { b = a; }
+          _subtract(new SubRange(a, b));
       }
-  }
+      return this;
+  };
+
+  DRange.prototype.intersect = function intersect (a, b) {
+          var this$1 = this;
+
+      var newRanges = [];
+      var _intersect = function (subrange) {
+          var i = 0;
+          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
+              i++;
+          }
+          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
+              var low = Math.max(this$1.ranges[i].low, subrange.low);
+              var high = Math.min(this$1.ranges[i].high, subrange.high);
+              newRanges.push(new SubRange(low, high));
+              i++;
+          }
+      };
+
+      if (a instanceof DRange) {
+          a.ranges.forEach(_intersect);
+      } else {
+          if (b == null) { b = a; }
+          _intersect(new SubRange(a, b));
+      }
+      this.ranges = newRanges;
+      this._update_length();
+      return this;
+  };
+
+  DRange.prototype.index = function index (index$1) {
+      var i = 0;
+      while (i < this.ranges.length && this.ranges[i].length <= index$1) {
+          index$1 -= this.ranges[i].length;
+          i++;
+      }
+      return this.ranges[i].low + index$1;
+  };
+
+  DRange.prototype.toString = function toString () {
+      return '[ ' + this.ranges.join(', ') + ' ]';
+  };
+
+  DRange.prototype.clone = function clone () {
+      return new DRange(this);
+  };
 
   var lib$2 = DRange;
 
-  const types$1  = lib$1.types;
+  var types$1  = lib$1.types;
 
 
-  var randexp = class RandExp {
-    /**
-     * @constructor
-     * @param {RegExp|String} regexp
-     * @param {String} m
-     */
-    constructor(regexp, m) {
+  var randexp = /*@__PURE__*/(function () {
+    function RandExp(regexp, m) {
       this._setDefaults(regexp);
       if (regexp instanceof RegExp) {
         this.ignoreCase = regexp.ignoreCase;
@@ -7595,6 +7631,8 @@
       this.tokens = lib$1(regexp);
     }
 
+    var prototypeAccessors = { defaultRange: { configurable: true } };
+
 
     /**
      * Checks if some custom properties have been set for this regexp.
@@ -7602,7 +7640,7 @@
      * @param {RandExp} randexp
      * @param {RegExp} regexp
      */
-    _setDefaults(regexp) {
+    RandExp.prototype._setDefaults = function _setDefaults (regexp) {
       // When a repetitional token has its max set to Infinite,
       // randexp won't actually generate a random amount between min and Infinite
       // instead it will see Infinite as min + 100.
@@ -7617,7 +7655,7 @@
       if (regexp.randInt) {
         this.randInt = regexp.randInt;
       }
-    }
+    };
 
 
     /**
@@ -7625,9 +7663,9 @@
      *
      * @return {String}
      */
-    gen() {
+    RandExp.prototype.gen = function gen () {
       return this._gen(this.tokens, []);
-    }
+    };
 
 
     /**
@@ -7637,7 +7675,7 @@
      * @param {Array.<String>} groups
      * @return {String}
      */
-    _gen(token, groups) {
+    RandExp.prototype._gen = function _gen (token, groups) {
       var stack, str, n, i, l;
 
       switch (token.type) {
@@ -7693,7 +7731,7 @@
             this._toOtherCase(token.value) : token.value;
           return String.fromCharCode(code);
       }
-    }
+    };
 
 
     /**
@@ -7703,10 +7741,10 @@
      * @param {Number} code
      * @return {Number}
      */
-    _toOtherCase(code) {
+    RandExp.prototype._toOtherCase = function _toOtherCase (code) {
       return code + (97 <= code && code <= 122 ? -32 :
         65 <= code && code <= 90  ?  32 : 0);
-    }
+    };
 
 
     /**
@@ -7714,9 +7752,9 @@
      *
      * @return {Boolean}
      */
-    _randBool() {
+    RandExp.prototype._randBool = function _randBool () {
       return !this.randInt(0, 1);
-    }
+    };
 
 
     /**
@@ -7725,12 +7763,12 @@
      * @param {Array.<Object>} arr
      * @return {Object}
      */
-    _randSelect(arr) {
+    RandExp.prototype._randSelect = function _randSelect (arr) {
       if (arr instanceof lib$2) {
         return arr.index(this.randInt(0, arr.length - 1));
       }
       return arr[this.randInt(0, arr.length - 1)];
-    }
+    };
 
 
     /**
@@ -7740,20 +7778,20 @@
      * @param {Object} token
      * @return {DiscontinuousRange}
      */
-    _expand(token) {
+    RandExp.prototype._expand = function _expand (token) {
       if (token.type === lib$1.types.CHAR) {
         return new lib$2(token.value);
       } else if (token.type === lib$1.types.RANGE) {
         return new lib$2(token.from, token.to);
       } else {
-        let drange = new lib$2();
-        for (let i = 0; i < token.set.length; i++) {
-          let subrange = this._expand(token.set[i]);
+        var drange = new lib$2();
+        for (var i = 0; i < token.set.length; i++) {
+          var subrange = this._expand(token.set[i]);
           drange.add(subrange);
           if (this.ignoreCase) {
-            for (let j = 0; j < subrange.length; j++) {
-              let code = subrange.index(j);
-              let otherCaseCode = this._toOtherCase(code);
+            for (var j = 0; j < subrange.length; j++) {
+              var code = subrange.index(j);
+              var otherCaseCode = this._toOtherCase(code);
               if (code !== otherCaseCode) {
                 drange.add(otherCaseCode);
               }
@@ -7766,7 +7804,7 @@
           return this.defaultRange.clone().intersect(drange);
         }
       }
-    }
+    };
 
 
     /**
@@ -7776,21 +7814,21 @@
      * @param {Number} b
      * @return {Number}
      */
-    randInt(a, b) {
+    RandExp.prototype.randInt = function randInt (a, b) {
       return a + Math.floor(Math.random() * (1 + b - a));
-    }
+    };
 
 
     /**
      * Default range of characters to generate from.
      */
-    get defaultRange() {
+    prototypeAccessors.defaultRange.get = function () {
       return this._range = this._range || new lib$2(32, 126);
-    }
+    };
 
-    set defaultRange(range) {
+    prototypeAccessors.defaultRange.set = function (range) {
       this._range = range;
-    }
+    };
 
 
     /**
@@ -7801,7 +7839,7 @@
      * @param {String} m
      * @return {String}
      */
-    static randexp(regexp, m) {
+    RandExp.randexp = function randexp (regexp, m) {
       var randexp;
       if(typeof regexp === 'string') {
         regexp = new RegExp(regexp, m);
@@ -7815,19 +7853,23 @@
         randexp._setDefaults(regexp);
       }
       return randexp.gen();
-    }
+    };
 
 
     /**
      * Enables sugary /regexp/.gen syntax.
      */
-    static sugar() {
+    RandExp.sugar = function sugar () {
       /* eshint freeze:false */
       RegExp.prototype.gen = function() {
         return RandExp.randexp(this);
       };
-    }
-  };
+    };
+
+    Object.defineProperties( RandExp.prototype, prototypeAccessors );
+
+    return RandExp;
+  }());
 
   function getRandomInteger(min, max) {
     min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
@@ -8519,7 +8561,7 @@
         configurable: true
       }
     });
-    if (superClass) _setPrototypeOf(subClass, superClass);
+    if (superClass) { _setPrototypeOf(subClass, superClass); }
   }
 
   function _getPrototypeOf(o) {
@@ -8539,9 +8581,9 @@
   }
 
   function isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
+    if (typeof Reflect === "undefined" || !Reflect.construct) { return false; }
+    if (Reflect.construct.sham) { return false; }
+    if (typeof Proxy === "function") { return true; }
 
     try {
       Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
@@ -8560,7 +8602,7 @@
         a.push.apply(a, args);
         var Constructor = Function.bind.apply(Parent, a);
         var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
+        if (Class) { _setPrototypeOf(instance, Class.prototype); }
         return instance;
       };
     }
@@ -8576,14 +8618,14 @@
     var _cache = typeof Map === "function" ? new Map() : undefined;
 
     _wrapNativeSuper = function _wrapNativeSuper(Class) {
-      if (Class === null || !_isNativeFunction(Class)) return Class;
+      if (Class === null || !_isNativeFunction(Class)) { return Class; }
 
       if (typeof Class !== "function") {
         throw new TypeError("Super expression must either be null or a function");
       }
 
       if (typeof _cache !== "undefined") {
-        if (_cache.has(Class)) return _cache.get(Class);
+        if (_cache.has(Class)) { return _cache.get(Class); }
 
         _cache.set(Class, Wrapper);
       }
@@ -8622,11 +8664,18 @@
     return _assertThisInitialized(self);
   }
 
-  /* eslint-disable no-eval, jsdoc/check-types */
-  // Todo: Reenable jsdoc/check-types once PR merged: https://github.com/gajus/eslint-plugin-jsdoc/pull/270
-  var globalEval = eval; // eslint-disable-next-line import/no-commonjs
+  /* eslint-disable no-eval, prefer-named-capture-group */
+  // Disabled `prefer-named-capture-group` due to https://github.com/babel/babel/issues/8951#issuecomment-508045524
+  var globalEval = eval; // Only Node.JS has a process variable that is of [[Class]] process
 
-  var supportsNodeVM = typeof module !== 'undefined' && Boolean(module.exports) && !(typeof navigator !== 'undefined' && navigator.product === 'ReactNative');
+  var supportsNodeVM = function supportsNodeVM() {
+    try {
+      return Object.prototype.toString.call(global.process) === '[object process]';
+    } catch (e) {
+      return false;
+    }
+  };
+
   var allowedResultTypes = ['value', 'path', 'pointer', 'parent', 'parentProperty', 'all'];
   var hasOwnProp = Object.prototype.hasOwnProperty;
   /**
@@ -8641,10 +8690,10 @@
 
   /**
    * Copy items out of one array into another.
-   * @param {Array} source Array with items to copy
-   * @param {Array} target Array to which to copy
-   * @param {ConditionCallback} conditionCb Callback passed the current item; will move
-   *     item if evaluates to `true`
+   * @param {GenericArray} source Array with items to copy
+   * @param {GenericArray} target Array to which to copy
+   * @param {ConditionCallback} conditionCb Callback passed the current item;
+   *     will move item if evaluates to `true`
    * @returns {undefined}
    */
 
@@ -8660,11 +8709,12 @@
     }
   };
 
-  var vm = supportsNodeVM ? require('vm') : {
+  var vm = supportsNodeVM() ? require('vm') : {
     /**
      * @param {string} expr Expression to evaluate
-     * @param {PlainObject} context Object whose items will be added to evaluation
-     * @returns {Any} Result of evaluated code
+     * @param {PlainObject} context Object whose items will be added
+     *   to evaluation
+     * @returns {any} Result of evaluated code
      */
     runInNewContext: function runInNewContext(expr, context) {
       var keys = Object.keys(context);
@@ -8691,9 +8741,9 @@
   };
   /**
    * Copies array and then pushes item into it.
-   * @param {Array} arr Array to copy and into which to push
-   * @param {Any} item Array item to add (to end)
-   * @returns {Array} Copy of the original array
+   * @param {GenericArray} arr Array to copy and into which to push
+   * @param {any} item Array item to add (to end)
+   * @returns {GenericArray} Copy of the original array
    */
 
   function push(arr, item) {
@@ -8703,9 +8753,9 @@
   }
   /**
    * Copies array and then unshifts item into it.
-   * @param {Any} item Array item to add (to beginning)
-   * @param {Array} arr Array to copy and into which to unshift
-   * @returns {Array} Copy of the original array
+   * @param {any} item Array item to add (to beginning)
+   * @param {GenericArray} arr Array to copy and into which to unshift
+   * @returns {GenericArray} Copy of the original array
    */
 
 
@@ -8726,14 +8776,14 @@
     _inherits(NewError, _Error);
 
     /**
-     * @param {Any} value The evaluated scalar value
+     * @param {any} value The evaluated scalar value
      */
     function NewError(value) {
       var _this;
 
       _classCallCheck(this, NewError);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(NewError).call(this, 'JSONPath should not be called with "new" (it prevents return of (unwrapped) scalar values)'));
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(NewError).call(this, 'JSONPath should not be called with "new" (it prevents return ' + 'of (unwrapped) scalar values)'));
       _this.avoidNew = true;
       _this.value = value;
       _this.name = 'NewError';
@@ -8769,12 +8819,14 @@
    * @param {PlainObject} [opts] If present, must be an object
    * @param {string} expr JSON path to evaluate
    * @param {JSON} obj JSON object to evaluate against
-   * @param {JSONPathCallback} callback Passed 3 arguments: 1) desired payload per `resultType`,
-   *     2) `"value"|"property"`, 3) Full returned object with all payloads
-   * @param {OtherTypeCallback} otherTypeCallback If `@other()` is at the end of one's query, this
-   *  will be invoked with the value of the item, its path, its parent, and its parent's
-   *  property name, and it should return a boolean indicating whether the supplied value
-   *  belongs to the "other" type or not (or it may handle transformations and return `false`).
+   * @param {JSONPathCallback} callback Passed 3 arguments: 1) desired payload
+   *     per `resultType`, 2) `"value"|"property"`, 3) Full returned object with
+   *     all payloads
+   * @param {OtherTypeCallback} otherTypeCallback If `@other()` is at the end
+   *   of one's query, this will be invoked with the value of the item, its
+   *   path, its parent, and its parent's property name, and it should return
+   *   a boolean indicating whether the supplied value belongs to the "other"
+   *   type or not (or it may handle transformations and return `false`).
    * @returns {JSONPath}
    * @class
    */
@@ -8816,7 +8868,7 @@
     this.callback = opts.callback || callback || null;
 
     this.otherTypeCallback = opts.otherTypeCallback || otherTypeCallback || function () {
-      throw new Error('You must supply an otherTypeCallback callback option with the @other() operator.');
+      throw new Error('You must supply an otherTypeCallback callback option ' + 'with the @other() operator.');
     };
 
     if (opts.autostart !== false) {
@@ -8850,7 +8902,7 @@
 
     if (expr && _typeof(expr) === 'object') {
       if (!expr.path) {
-        throw new Error('You must supply a "path" property when providing an object argument to JSONPath.evaluate().');
+        throw new Error('You must supply a "path" property when providing an object ' + 'argument to JSONPath.evaluate().');
       }
 
       json = hasOwnProp.call(expr, 'json') ? expr.json : json;
@@ -8960,7 +9012,8 @@
 
 
   JSONPath.prototype._trace = function (expr, val, path, parent, parentPropName, callback, literalPriority) {
-    // No expr to follow? return path and value as the result of this trace branch
+    // No expr to follow? return path and value as the result of
+    //  this trace branch
     var retObj;
     var that = this;
 
@@ -8990,7 +9043,9 @@
 
     function addRet(elems) {
       if (Array.isArray(elems)) {
-        // This was causing excessive stack size in Node (with or without Babel) against our performance test: `ret.push(...elems);`
+        // This was causing excessive stack size in Node (with or
+        //  without Babel) against our performance test:
+        //  `ret.push(...elems);`
         elems.forEach(function (t) {
           ret.push(t);
         });
@@ -9004,20 +9059,21 @@
       addRet(this._trace(x, val[loc], push(path, loc), val, loc, callback));
     } else if (loc === '*') {
       // all child properties
-      // eslint-disable-next-line no-shadow
-      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, x, v, p, par, pr, cb) {
-        addRet(that._trace(unshift(m, x), v, p, par, pr, cb, true));
+      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, _x, v, p, par, pr, cb) {
+        addRet(that._trace(unshift(m, _x), v, p, par, pr, cb, true));
       });
     } else if (loc === '..') {
       // all descendent parent properties
-      addRet(this._trace(x, val, path, parent, parentPropName, callback)); // Check remaining expression with val's immediate children
-      // eslint-disable-next-line no-shadow
+      // Check remaining expression with val's immediate children
+      addRet(this._trace(x, val, path, parent, parentPropName, callback));
 
-      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, x, v, p, par, pr, cb) {
-        // We don't join m and x here because we only want parents, not scalar values
+      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, _x, v, p, par, pr, cb) {
+        // We don't join m and x here because we only want parents,
+        //   not scalar values
         if (_typeof(v[m]) === 'object') {
-          // Keep going with recursive descent on val's object children
-          addRet(that._trace(unshift(l, x), v[m], push(p, m), v, m, cb));
+          // Keep going with recursive descent on val's
+          //   object children
+          addRet(that._trace(unshift(l, _x), v[m], push(p, m), v, m, cb));
         }
       }); // The parent sel computation is handled in the frame above using the
       // ancestor object of val
@@ -9045,26 +9101,27 @@
     } else if (loc === '$') {
       // root only
       addRet(this._trace(x, val, path, null, null, callback));
-    } else if (/^(-?\d*):(-?\d*):?(\d*)$/.test(loc)) {
+    } else if (/^(\x2D?[0-9]*):(\x2D?[0-9]*):?([0-9]*)$/.test(loc)) {
       // [start:end:step]  Python slice syntax
       addRet(this._slice(loc, x, val, path, parent, parentPropName, callback));
     } else if (loc.indexOf('?(') === 0) {
       // [?(expr)] (filtering)
       if (this.currPreventEval) {
         throw new Error('Eval [?(expr)] prevented in JSONPath expression.');
-      } // eslint-disable-next-line no-shadow
+      }
 
-
-      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, x, v, p, par, pr, cb) {
-        if (that._eval(l.replace(/^\?\((.*?)\)$/, '$1'), v[m], m, p, par, pr)) {
-          addRet(that._trace(unshift(m, x), v, p, par, pr, cb));
+      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, _x, v, p, par, pr, cb) {
+        if (that._eval(l.replace(/^\?\(((?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?)\)$/, '$1'), v[m], m, p, par, pr)) {
+          addRet(that._trace(unshift(m, _x), v, p, par, pr, cb));
         }
       });
     } else if (loc[0] === '(') {
       // [(expr)] (dynamic property/index)
       if (this.currPreventEval) {
         throw new Error('Eval [(expr)] prevented in JSONPath expression.');
-      } // As this will resolve to a property name (but we don't know it yet), property and parent information is relative to the parent of the property to which this expression will resolve
+      } // As this will resolve to a property name (but we don't know it
+      //  yet), property and parent information is relative to the
+      //  parent of the property to which this expression will resolve
 
 
       addRet(this._trace(unshift(this._eval(loc, val, path[path.length - 1], path.slice(0, -1), parent, parentPropName), x), val, path, parent, parentPropName, callback));
@@ -9088,16 +9145,16 @@
         case 'string':
         case 'undefined':
         case 'function':
+          // eslint-disable-next-line valid-typeof
           if (_typeof(val) === valueType) {
-            // eslint-disable-line valid-typeof
             addType = true;
           }
 
           break;
 
         case 'number':
+          // eslint-disable-next-line valid-typeof
           if (_typeof(val) === valueType && isFinite(val)) {
-            // eslint-disable-line valid-typeof
             addType = true;
           }
 
@@ -9111,8 +9168,8 @@
           break;
 
         case 'object':
+          // eslint-disable-next-line valid-typeof
           if (val && _typeof(val) === valueType) {
-            // eslint-disable-line valid-typeof
             addType = true;
           }
 
@@ -9155,9 +9212,9 @@
         this._handleCallback(retObj, callback, 'value');
 
         return retObj;
-      }
+      } // `-escaped property
+
     } else if (loc[0] === '`' && val && hasOwnProp.call(val, loc.slice(1))) {
-      // `-escaped property
       var locProp = loc.slice(1);
       addRet(this._trace(x, val[locProp], push(path, locProp), val, locProp, callback, true));
     } else if (loc.includes(',')) {
@@ -9171,7 +9228,8 @@
         for (var _iterator = parts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var part = _step.value;
           addRet(this._trace(unshift(part, x), val, path, parent, parentPropName, callback));
-        }
+        } // simple case--directly follow property
+
       } catch (err) {
         _didIteratorError = true;
         _iteratorError = err;
@@ -9187,7 +9245,6 @@
         }
       }
     } else if (!literalPriority && val && hasOwnProp.call(val, loc)) {
-      // simple case--directly follow property
       addRet(this._trace(x, val[loc], push(path, loc), val, loc, callback, true));
     } // We check the resulting values for parent selections. For parent
     // selections we discard the value object and continue the trace with the
@@ -9253,7 +9310,8 @@
       var tmp = this._trace(unshift(i, expr), val, path, parent, parentPropName, callback);
 
       if (Array.isArray(tmp)) {
-        // This was causing excessive stack size in Node (with or without Babel) against our performance test: `ret.push(...tmp);`
+        // This was causing excessive stack size in Node (with or
+        //  without Babel) against our performance test: `ret.push(...tmp);`
         tmp.forEach(function (t) {
           ret.push(t);
         });
@@ -9290,9 +9348,9 @@
       code = code.replace(/@path/g, '_$_path');
     }
 
-    if (code.match(/@([.\s)[])/)) {
+    if (code.match(/@([\t-\r \)\.\[\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF])/)) {
       this.currSandbox._$_v = _v;
-      code = code.replace(/@([.\s)[])/g, '_$_v$1');
+      code = code.replace(/@([\t-\r \)\.\[\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF])/g, '_$_v$1');
     }
 
     try {
@@ -9318,8 +9376,8 @@
     var p = '$';
 
     for (var i = 1; i < n; i++) {
-      if (!/^(~|\^|@.*?\(\))$/.test(x[i])) {
-        p += /^[0-9*]+$/.test(x[i]) ? '[' + x[i] + ']' : "['" + x[i] + "']";
+      if (!/^(~|\^|@(?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\(\))$/.test(x[i])) {
+        p += /^[\*0-9]+$/.test(x[i]) ? '[' + x[i] + ']' : "['" + x[i] + "']";
       }
     }
 
@@ -9337,7 +9395,7 @@
     var p = '';
 
     for (var i = 1; i < n; i++) {
-      if (!/^(~|\^|@.*?\(\))$/.test(x[i])) {
+      if (!/^(~|\^|@(?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\(\))$/.test(x[i])) {
         p += '/' + x[i].toString().replace(/~/g, '~0').replace(/\//g, '~1');
       }
     }
@@ -9361,14 +9419,14 @@
     var normalized = expr // Properties
     .replace(/@(?:null|boolean|number|string|integer|undefined|nonFinite|scalar|array|object|function|other)\(\)/g, ';$&;') // Parenthetical evaluations (filtering and otherwise), directly
     //   within brackets or single quotes
-    .replace(/[['](\??\(.*?\))[\]']/g, function ($0, $1) {
+    .replace(/['\[](\??\((?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\))['\]]/g, function ($0, $1) {
       return '[#' + (subx.push($1) - 1) + ']';
     }) // Escape periods and tildes within properties
-    .replace(/\['([^'\]]*)'\]/g, function ($0, prop) {
+    .replace(/\['((?:[\0-&\(-\\\^-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)'\]/g, function ($0, prop) {
       return "['" + prop.replace(/\./g, '%@%').replace(/~/g, '%%@@%%') + "']";
     }) // Properties operator
     .replace(/~/g, ';~;') // Split by property boundaries
-    .replace(/'?\.'?(?![^[]*\])|\['?/g, ';') // Reinsert periods within properties
+    .replace(/'?\.'?(?!(?:[\0-Z\\-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*\])|\['?/g, ';') // Reinsert periods within properties
     .replace(/%@%/g, '.') // Reinsert tildes within properties
     .replace(/%%@@%%/g, '~') // Parent
     .replace(/(?:;)?(\^+)(?:;)?/g, function ($0, ups) {
@@ -9377,7 +9435,7 @@
     .replace(/;;;|;;/g, ';..;') // Remove trailing
     .replace(/;$|'?\]|'$/g, '');
     var exprList = normalized.split(';').map(function (exp) {
-      var match = exp.match(/#(\d+)/);
+      var match = exp.match(/#([0-9]+)/);
       return !match || !match[1] ? exp : subx[match[1]];
     });
     cache[expr] = exprList;

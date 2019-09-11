@@ -1,6 +1,6 @@
 import $RefParser from 'json-schema-ref-parser';
 import RandExp from 'randexp';
-import jsonpath from 'jsonpath';
+import { JSONPath } from 'jsonpath-plus';
 
 /**
  * This class defines a registry for custom formats used within JSF.
@@ -1627,9 +1627,9 @@ function resolve(obj, data, values, property) {
 
     if (!values[key]) {
       if (params.count > 1) {
-        values[key] = jsonpath.query(data, params.path, params.count);
+        values[key] = JSONPath(params.path, data).slice(0, params.count);
       } else {
-        values[key] = jsonpath.query(data, params.path);
+        values[key] = JSONPath(params.path, data);
       }
     }
 
