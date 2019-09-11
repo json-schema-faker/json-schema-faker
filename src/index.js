@@ -149,6 +149,6 @@ jsf.locate = name => {
   return container.get(name);
 };
 
-jsf.version = '0.5.0-rc16';
+jsf.version = '0.5.0-rc18';
 
 export default jsf;
