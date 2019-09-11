@@ -1,5 +1,5 @@
 /*!
- * json-schema-faker v0.5.0-rc18
+ * json-schema-faker v0.5.0-rc19
  * (c) Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)
  * Released under the MIT License.
  */
@@ -2810,7 +2810,7 @@
     return container.get(name);
   };
 
-  jsf.version = '0.5.0-rc18';
+  jsf.version = '0.5.0-rc19';
 
   return jsf;
 
