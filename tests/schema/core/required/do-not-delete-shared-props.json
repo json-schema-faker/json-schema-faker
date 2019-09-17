@@ -1,0 +1,69 @@
+[
+  {
+    "description": "when allOf is provided and all the schemas are sharing some required properties",
+    "tests": [
+      {
+        "description": "should not remove the shared properties",
+        "schema": {
+          "type": "object",
+          "oneOf": [
+            {
+              "$ref": "#/components/A"
+            },
+            {
+              "$ref": "#/components/B"
+            }
+          ],
+          "components": {
+            "A": {
+              "required": [
+                "name",
+                "resourceType"
+              ],
+              "type": "object",
+              "properties": {
+                "resourceType": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "color": {
+                  "type": "string"
+                },
+                "length": {
+                  "type": "integer"
+                }
+              }
+            },
+            "B": {
+              "required": [
+                "name",
+                "resourceType"
+              ],
+              "type": "object",
+              "properties": {
+                "resourceType": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                },
+                "age": {
+                  "type": "integer"
+                }
+              }
+            }
+          }
+        },
+        "hasProps": [
+          "name",
+          "resourceType"
+        ]
+      }
+    ]
+  }
+]
