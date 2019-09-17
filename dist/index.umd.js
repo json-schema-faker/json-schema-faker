@@ -2631,7 +2631,7 @@
               if (sub.oneOf) {
                 mix.forEach(function (omit) {
                   if (omit !== fixed && omit.required) {
-                    omit.required.forEach(function (key) {
+                    omit.required.filter(function (required) { return !fixed.required.includes(required); }).forEach(function (key) {
                       delete copy.properties[key];
                     });
                   }
