@@ -25,6 +25,14 @@
           "format": "time"
         },
         "type": "string"
+      },
+      {
+        "description": "should handle uuid",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        },
+        "type": "string"
       }
     ]
   }

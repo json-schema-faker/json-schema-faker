@@ -1387,7 +1387,7 @@ var regexps = {
   'uri-template': URI_PATTERN.replace('(?:', '(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|'),
   'json-pointer': ("(/(?:" + (FRAGMENT.replace(']*', '/]*')) + "|~[01]))+"),
   // some types from https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#data-types (?)
-  uuid: '^(?:urn:uuid:)?[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$'
+  uuid: '[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$'
 };
 regexps.iri = regexps['uri-reference'];
 regexps['iri-reference'] = regexps['uri-reference'];
