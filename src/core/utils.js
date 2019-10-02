@@ -193,18 +193,7 @@ function merge(a, b) {
 }
 
 function clone(obj) {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map(x => clone(x));
-  }
-
-  return Object.keys(obj).reduce((prev, cur) => {
-    prev[cur] = clone(obj[cur]);
-    return prev;
-  }, {});
+  return JSON.parse(JSON.stringify(obj));
 }
 
 function short(schema) {
