@@ -56,6 +56,11 @@ function traverse(schema, path, resolve, rootSchema) {
     return utils.typecast(null, schema, () => schema.generate(rootSchema));
   }
 
+  // short-circuit as we don't plan generate more values!
+  if (schema.jsonPath) {
+    return schema;
+  }
+
   // TODO remove the ugly overcome
   let type = schema.type;
 
