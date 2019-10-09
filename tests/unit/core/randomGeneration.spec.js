@@ -4,7 +4,7 @@ import jsf from '../../../src';
 /* global describe, it */
 
 describe('Random Generation', () => {
-  it('should generate all the fields with alwaysFakeOptionals option and additionalProperties: true', async () => {
+  it('should generate all the fields with alwaysFakeOptionals option and additionalProperties: true', () => {
     jsf.option({
       alwaysFakeOptionals: true,
     });
@@ -19,11 +19,11 @@ describe('Random Generation', () => {
       additionalProperties: true,
     };
 
-    const resolved = await jsf.resolve(schema);
-
-    expect(Object.keys(resolved).length).to.be.at.least(2);
+    return jsf.resolve(schema).then(resolved => {
+      expect(Object.keys(resolved).length).to.be.at.least(2);
+    });
   });
-  it('should generate all the fields with alwaysFakeOptionals option and additionalProperties: false', async () => {
+  it('should generate all the fields with alwaysFakeOptionals option and additionalProperties: false', () => {
     jsf.option({
       alwaysFakeOptionals: true,
     });
@@ -38,8 +38,8 @@ describe('Random Generation', () => {
       additionalProperties: false,
     };
 
-    const resolved = await jsf.resolve(schema);
-
-    expect(Object.keys(resolved).length).is.eql(2);
+    return jsf.resolve(schema).then(resolved => {
+      expect(Object.keys(resolved).length).is.eql(2);
+    });
   });
 });
