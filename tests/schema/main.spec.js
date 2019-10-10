@@ -17,6 +17,8 @@ function seed() {
 (only.length ? only : all).forEach(suite => {
   describe(`${suite.description} (${suite.file.replace(`${process.cwd()}/`, '')})`, () => {
     suite.tests.forEach(test => {
+      if (!process.env.CI && test.online) return;
+
       it(test.description, () => {
         jsf.option(jsf.option.getDefaults());
 

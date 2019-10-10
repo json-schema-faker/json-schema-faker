@@ -72,7 +72,7 @@ export function checkSchema(sample, schema, refs) {
 
   // z-schema
   const validator = new ZSchema({
-    ignoreUnresolvableReferences: false,
+    ignoreUnresolvableReferences: true,
   });
 
   Object.keys(fixed).forEach(k => {

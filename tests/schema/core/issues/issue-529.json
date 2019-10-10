@@ -1,9 +1,10 @@
 {
-  "description": "...",
+  "description": "repeated properties between oneOf sub schemas",
   "tests": [
     {
-      "description": "should ...",
+      "description": "should not skip required properties",
       "schema": {
+        "$schema": "http://json-schema.org/draft-06/schema#",
         "type": "object",
         "required": [
           "filters"
@@ -23,7 +24,6 @@
             }
           }
         },
-        "$schema": "http://json-schema.org/draft-06/schema#",
         "definitions": {
           "FilterAgc": {
             "type": "object",
@@ -77,7 +77,6 @@
           }
         }
       },
-      "skip": true,
       "valid": true
     }
   ]
