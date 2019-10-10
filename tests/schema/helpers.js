@@ -59,19 +59,27 @@ export function getTests(srcDir) {
   return { only, all };
 }
 
-export function tryTest(test, refs, schema) {
+export function tryTest(nth, max, test, refs, schema) {
   return _jsf.resolve(schema, refs).then(sample => {
     if (test.dump) {
       console.log(JSON.stringify(sample, null, 2));
       return;
     }
 
-    if (test.type) {
-      checkType(sample, test.type);
-    }
+    try {
+      if (test.type) {
+        checkType(sample, test.type);
+      }
 
-    if (test.valid) {
-      checkSchema(sample, schema, refs);
+      if (test.valid) {
+        checkSchema(sample, schema, refs);
+      }
+    } catch (e) {
+      const _e = new Error(`${e.message.split('\n')[0]} (${nth} of ${max})`);
+
+      _e.stack = e.stack.split('\n').slice(1).join('\n');
+
+      throw _e;
     }
 
     if (test.length) {
