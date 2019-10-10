@@ -119,7 +119,7 @@ function run(refs, schema, container) {
   let depth = 0;
 
   try {
-    const result = traverse(utils.clone(schema), [], function reduce(sub, parentSchemaPath) {
+    const result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath, parentSchema) {
       if (typeof sub.generate === 'function') {
         return sub;
       }
@@ -134,7 +134,11 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
-        if (sub.$ref === '#' || ++depth > random.number(0, 2)) {
+        if (index !== null && parentSchema && parentSchema.required) {
+          if (parentSchema.required.includes(index)) return sub;
+        }
+
+        if (sub.$ref === '#' || (++depth > random.number(0, 1))) {
           delete sub.$ref;
           return sub;
         }
@@ -170,7 +174,7 @@ function run(refs, schema, container) {
         // this is the only case where all sub-schemas
         // must be resolved before any merge
         schemas.forEach(subSchema => {
-          const _sub = reduce(subSchema, parentSchemaPath);
+          const _sub = reduce(subSchema, null, rootPath, parentSchema);
 
           // call given thunks if present
           utils.merge(sub, typeof _sub.thunk === 'function'
@@ -217,13 +221,13 @@ function run(refs, schema, container) {
 
       Object.keys(sub).forEach(prop => {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-          sub[prop] = reduce(sub[prop], parentSchemaPath.concat(prop));
+          sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop), parentSchema);
         }
       });
 
       // avoid extra calls on sub-schemas, fixes #458
-      if (parentSchemaPath) {
-        const lastProp = parentSchemaPath[parentSchemaPath.length - 1];
+      if (rootPath) {
+        const lastProp = rootPath[rootPath.length - 1];
 
         if (lastProp === 'properties' || lastProp === 'items') {
           return sub;

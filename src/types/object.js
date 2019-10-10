@@ -251,7 +251,7 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  return traverseCallback(props, path.concat(['properties']), resolve);
+  return traverseCallback(props, path.concat(['properties']), resolve, value);
 }
 
 export default objectType;
