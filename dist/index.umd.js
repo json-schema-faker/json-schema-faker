@@ -8140,7 +8140,7 @@
         a[key] = a[key] || []; // fix #292 - skip duplicated values from merge object (b)
 
         b[key].forEach(function (value) {
-          if (a[key].indexOf(value) === -1) {
+          if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
             a[key].push(value);
           }
         });
@@ -9696,9 +9696,9 @@
     var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
     var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
     var ignoreProperties = optionAPI('ignoreProperties') || [];
-    var min = Math.max(value.minProperties || 0, random.number(requiredProperties.length, allProperties.length));
+    var min = Math.max(value.minProperties || 0, requiredProperties.length);
     var max = value.maxProperties || allProperties.length + (allowsAdditional ? random.number(1, 5) : 0);
-    var neededExtras = Math.max(0, min - requiredProperties.length);
+    var neededExtras = Math.max(0, allProperties.length - min);
 
     if (allProperties.length === 1 && !requiredProperties.length) {
       neededExtras = random.number(neededExtras, allProperties.length + (allProperties.length - min));
@@ -9882,7 +9882,7 @@
       }
     }
 
-    return traverseCallback(props, path.concat(['properties']), resolve);
+    return traverseCallback(props, path.concat(['properties']), resolve, value);
   }
 
   /**
@@ -10085,7 +10085,7 @@
   };
 
   function traverse(schema, path, resolve, rootSchema) {
-    schema = resolve(schema, path);
+    schema = resolve(schema, null, path, rootSchema);
 
     if (!schema) {
       return;
@@ -10129,7 +10129,7 @@
 
 
     if (typeof schema.thunk === 'function') {
-      return traverse(schema.thunk(), path, resolve);
+      return traverse(schema.thunk(rootSchema), path, resolve);
     }
 
     if (typeof schema.generate === 'function') {
@@ -10293,18 +10293,10 @@
 
 
   function run$1(refs, schema, container) {
+    var depth = 0;
+
     try {
-      var seen = {};
-      var result = traverse(utils.clone(schema), [], function reduce(sub, parentSchemaPath) {
-        if (!sub || seen[sub.$ref] > random.pick([0, 1])) {
-          if (sub) {
-            delete sub.$ref;
-            return sub;
-          }
-
-          return null;
-        }
-
+      var result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath, parentSchema) {
         if (typeof sub.generate === 'function') {
           return sub;
         } // cleanup
@@ -10319,10 +10311,11 @@
         }
 
         if (typeof sub.$ref === 'string') {
-          seen[sub.$ref] = seen[sub.$ref] || 0;
-          seen[sub.$ref] += 1;
+          if (index !== null && parentSchema && parentSchema.required) {
+            if (parentSchema.required.includes(index)) { return sub; }
+          }
 
-          if (sub.$ref === '#') {
+          if (sub.$ref === '#' || ++depth > random.number(0, 1)) {
             delete sub.$ref;
             return sub;
           }
@@ -10356,10 +10349,10 @@
           // must be resolved before any merge
 
           schemas.forEach(function (subSchema) {
-            var _sub = reduce(subSchema, parentSchemaPath); // call given thunks if present
+            var _sub = reduce(subSchema, null, rootPath, parentSchema); // call given thunks if present
 
 
-            utils.merge(sub, typeof _sub.thunk === 'function' ? _sub.thunk() : _sub);
+            utils.merge(sub, typeof _sub.thunk === 'function' ? _sub.thunk(sub) : _sub);
           });
         }
 
@@ -10372,24 +10365,24 @@
           }
 
           return {
-            thunk: function thunk() {
+            thunk: function thunk(rootSchema) {
               var copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
               var fixed = random.pick(mix);
-              utils.merge(copy, fixed);
+              utils.merge(copy, fixed); // remove additional properties from merged schemas
 
-              if (sub.oneOf && copy.properties) {
-                mix.forEach(function (omit) {
-                  if (omit !== fixed && omit.required) {
-                    omit.required.forEach(function (key) {
-                      // remove additional properties from merged schemas
-                      if (!copy.required.includes(key)) {
-                        delete copy.properties[key];
-                      }
-                    });
-                  }
-                });
-              }
+              mix.forEach(function (omit) {
+                if (omit.required && omit !== fixed) {
+                  omit.required.forEach(function (key) {
+                    if (copy.properties && !copy.required.includes(key)) {
+                      delete copy.properties[key];
+                    }
 
+                    if (rootSchema && rootSchema.properties) {
+                      delete rootSchema.properties[key];
+                    }
+                  });
+                }
+              });
               return copy;
             }
 
@@ -10398,12 +10391,12 @@
 
         Object.keys(sub).forEach(function (prop) {
           if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-            sub[prop] = reduce(sub[prop], parentSchemaPath.concat(prop));
+            sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop), parentSchema);
           }
         }); // avoid extra calls on sub-schemas, fixes #458
 
-        if (parentSchemaPath) {
-          var lastProp = parentSchemaPath[parentSchemaPath.length - 1];
+        if (rootPath) {
+          var lastProp = rootPath[rootPath.length - 1];
 
           if (lastProp === 'properties' || lastProp === 'items') {
             return sub;
