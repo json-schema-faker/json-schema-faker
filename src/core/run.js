@@ -185,7 +185,7 @@ function run(refs, schema, container) {
 
           // call given thunks if present
           utils.merge(sub, typeof _sub.thunk === 'function'
-            ? _sub.thunk()
+            ? _sub.thunk(sub)
             : _sub);
         });
       }
@@ -200,24 +200,26 @@ function run(refs, schema, container) {
         }
 
         return {
-          thunk() {
+          thunk(rootSchema) {
             const copy = utils.omitProps(sub, ['anyOf', 'oneOf']);
             const fixed = random.pick(mix);
 
             utils.merge(copy, fixed);
 
-            if (sub.oneOf && copy.properties) {
-              mix.forEach(omit => {
-                if (omit !== fixed && omit.required) {
-                  omit.required.forEach(key => {
-                    // remove additional properties from merged schemas
-                    if (!copy.required.includes(key)) {
-                      delete copy.properties[key];
-                    }
-                  });
-                }
-              });
-            }
+            // remove additional properties from merged schemas
+            mix.forEach(omit => {
+              if (omit.required && omit !== fixed) {
+                omit.required.forEach(key => {
+                  if (copy.properties && !copy.required.includes(key)) {
+                    delete copy.properties[key];
+                  }
+
+                  if (rootSchema && rootSchema.properties) {
+                    delete rootSchema.properties[key];
+                  }
+                });
+              }
+            });
 
             return copy;
           },

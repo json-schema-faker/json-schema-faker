@@ -54,7 +54,7 @@ function traverse(schema, path, resolve, rootSchema) {
 
   // thunks can return sub-schemas
   if (typeof schema.thunk === 'function') {
-    return traverse(schema.thunk(), path, resolve);
+    return traverse(schema.thunk(rootSchema), path, resolve);
   }
 
   if (typeof schema.generate === 'function') {
