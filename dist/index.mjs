@@ -1114,7 +1114,7 @@ function objectType(value, path, resolve, traverseCallback) {
   var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
   var fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   var ignoreProperties = optionAPI('ignoreProperties') || [];
-  var min = Math.max(value.minProperties || 0, requiredProperties.length);
+  var min = Math.max(value.minProperties || 0, random.number(requiredProperties.length, allProperties.length));
   var max = value.maxProperties || allProperties.length + (allowsAdditional ? random.number(1, 5) : 0);
   var neededExtras = Math.max(0, min - requiredProperties.length);
 
