@@ -50,10 +50,10 @@ function objectType(value, path, resolve, traverseCallback) {
   const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   const ignoreProperties = optionAPI('ignoreProperties') || [];
 
-  const min = Math.max(value.minProperties || 0, random.number(requiredProperties.length, allProperties.length));
+  const min = Math.max(value.minProperties || 0, requiredProperties.length);
   const max = value.maxProperties || (allProperties.length + (allowsAdditional ? random.number(1, 5) : 0));
 
-  let neededExtras = Math.max(0, min - requiredProperties.length);
+  let neededExtras = Math.max(0, allProperties.length - min);
 
   if (allProperties.length === 1 && !requiredProperties.length) {
     neededExtras = random.number(neededExtras, allProperties.length + (allProperties.length - min));

@@ -178,7 +178,7 @@ function merge(a, b) {
       a[key] = a[key] || [];
       // fix #292 - skip duplicated values from merge object (b)
       b[key].forEach(value => {
-        if (a[key].indexOf(value) === -1) {
+        if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
           a[key].push(value);
         }
       });
