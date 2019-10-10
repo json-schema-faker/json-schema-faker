@@ -138,7 +138,7 @@ function run(refs, schema, container) {
           if (parentSchema.required.includes(index)) return sub;
         }
 
-        if (sub.$ref === '#' || (++depth > random.number(0, 1))) {
+        if (sub.$ref === '#' || (++depth > random.number(1, 2))) {
           delete sub.$ref;
           return sub;
         }
