@@ -1,6 +1,8 @@
 [
   {
     "description": "should work on async mode (by default)",
+    "timeout": 30000,
+    "online": true,
     "tests": [
       {
         "description": "should resolve all references",
