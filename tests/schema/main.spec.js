@@ -18,6 +18,10 @@ function seed() {
   describe(`${suite.description} (${suite.file.replace(`${process.cwd()}/`, '')})`, () => {
     suite.tests.forEach(test => {
       if (!process.env.CI && test.online) return;
+      if (process.argv.includes('--skip')) {
+        if (!test.skip) return;
+        delete test.skip;
+      }
 
       it(test.description, () => {
         jsf.option(jsf.option.getDefaults());
