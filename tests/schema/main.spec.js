@@ -67,6 +67,12 @@ function seed() {
         }
 
         return Promise.all(tasks).catch(e => {
+          if (test.online) {
+            console.log('---> failed due connectivity issues?');
+            console.log(e.message);
+            return
+          }
+
           // FIXME: find a way to debug this
           console.log('---> Used seeds:', seeds.slice(-10).join(', ') || test.seed);
           throw e;
