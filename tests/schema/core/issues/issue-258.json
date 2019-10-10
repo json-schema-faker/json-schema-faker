@@ -53,6 +53,7 @@
     {
       "description": "should work as expected",
       "schema": "schemas.0",
+      "skip": true,
       "valid": true
     }
   ]

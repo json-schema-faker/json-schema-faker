@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 62,
-          "b": "occaeca",
-          "c": "vi317"
+          "a": 54,
+          "b": "minim amet in dolor laborum",
+          "c": "pf922"
         },
         "repeat": 1,
         "require": "core/option/random"

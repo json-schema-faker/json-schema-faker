@@ -117,16 +117,9 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   try {
-    const seen = {};
     const result = traverse(utils.clone(schema), [], function reduce(sub, parentSchemaPath) {
-      if (!sub || seen[sub.$ref] > random.pick([0, 1])) {
-        if (sub) {
-          delete sub.$ref;
-          return sub;
-        }
-
-        return null;
-      }
+      // FIXME: handle recursive/self-references, see #258
+      // also, a depth-limit should be taken into account...
 
       if (typeof sub.generate === 'function') {
         return sub;
@@ -142,9 +135,6 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
-        seen[sub.$ref] = seen[sub.$ref] || 0;
-        seen[sub.$ref] += 1;
-
         if (sub.$ref === '#') {
           delete sub.$ref;
           return sub;
