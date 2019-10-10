@@ -33,7 +33,7 @@ function objectType(value, path, resolve, traverseCallback) {
     && utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')
   ) {
     // just nothing
-    return {};
+    return null;
   }
 
   if (optionAPI('requiredOnly') === true) {

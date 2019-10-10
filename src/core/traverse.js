@@ -37,6 +37,11 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (schema.not && typeof schema.not === 'object') {
     schema = utils.notValue(schema.not, utils.omitProps(schema, ['not']));
+
+    // build new object value from not-schema!
+    if (schema.type && schema.type === 'object') {
+      return traverse(schema, path.concat(['not']), resolve, rootSchema);
+    }
   }
 
   if ('const' in schema) {

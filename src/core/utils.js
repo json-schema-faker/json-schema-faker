@@ -265,7 +265,7 @@ function notValue(schema, parent) {
   }
 
   if (schema.type) {
-    copy.type = random.pick(env.ALL_TYPES.filter(x => {
+    copy.type = random.pick(env.SCALAR_TYPES.filter(x => {
       const types = Array.isArray(schema.type) ? schema.type : [schema.type];
 
       return types.every(type => {
