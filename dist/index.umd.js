@@ -10381,7 +10381,10 @@
                 mix.forEach(function (omit) {
                   if (omit !== fixed && omit.required) {
                     omit.required.forEach(function (key) {
-                      delete copy.properties[key];
+                      // remove additional properties from merged schemas
+                      if (!copy.required.includes(key)) {
+                        delete copy.properties[key];
+                      }
                     });
                   }
                 });
