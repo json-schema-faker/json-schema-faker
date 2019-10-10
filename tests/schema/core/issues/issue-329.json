@@ -4,7 +4,7 @@
     "tests": [
       {
         "description": "should resolve the schema (without $refs)",
-        "skip": true,
+        "timeout": 30000,
         "schema": {
           "$schema": "http://redfish.dmtf.org/schemas/v1/redfish-schema.v1_2_0.json",
           "title": "#AccountService.v1_2_1.AccountService",

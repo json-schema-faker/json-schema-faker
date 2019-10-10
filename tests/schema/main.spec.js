@@ -65,7 +65,7 @@ function seed() {
           console.log('---> Used seeds:', seeds.slice(-10).join(', ') || test.seed);
           throw e;
         });
-      }).timeout(process.CI ? 30000 : 10000);
+      }).timeout(suite.timeout || test.timeout || (process.CI ? 30000 : 10000));
     });
   });
 });
