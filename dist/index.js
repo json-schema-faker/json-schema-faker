@@ -84,6 +84,7 @@ defaults.maxLength = null;
 defaults.resolveJsonPath = false;
 defaults.reuseProperties = false;
 defaults.fillProperties = true;
+defaults.replaceEmptyByRandomValue = false;
 defaults.random = Math.random;
 /**
  * This class defines a registry for custom settings used within JSF.
@@ -133,13 +134,15 @@ function optionAPI(nameOrOptionMap, optionalValue) {
 
 optionAPI.getDefaults = function () { return registry.defaults; };
 
-var ALL_TYPES = ['array', 'object', 'integer', 'number', 'string', 'boolean', 'null'];
+var SCALAR_TYPES = ['integer', 'number', 'string', 'boolean', 'null'];
+var ALL_TYPES = ['array', 'object'].concat(SCALAR_TYPES);
 var MOST_NEAR_DATETIME = 2524608000000;
 var MIN_INTEGER = -100000000;
 var MAX_INTEGER = 100000000;
 var MIN_NUMBER = -100;
 var MAX_NUMBER = 100;
 var env = {
+  SCALAR_TYPES: SCALAR_TYPES,
   ALL_TYPES: ALL_TYPES,
   MIN_NUMBER: MIN_NUMBER,
   MAX_NUMBER: MAX_NUMBER,
@@ -544,7 +547,7 @@ function notValue(schema, parent) {
   }
 
   if (schema.type) {
-    copy.type = random.pick(env.ALL_TYPES.filter(function (x) {
+    copy.type = random.pick(env.SCALAR_TYPES.filter(function (x) {
       var types = Array.isArray(schema.type) ? schema.type : [schema.type];
       return types.every(function (type) {
         // treat both types as _similar enough_ to be skipped equal
@@ -1100,7 +1103,7 @@ function objectType(value, path, resolve, traverseCallback) {
 
   if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
     // just nothing
-    return {};
+    return null;
   }
 
   if (optionAPI('requiredOnly') === true) {
@@ -1173,6 +1176,12 @@ function objectType(value, path, resolve, traverseCallback) {
       if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === 'string' && ignoreProperties[i] === key || typeof ignoreProperties[i] === 'function' && ignoreProperties[i](properties[key], key)) {
         skipped.push(key);
         return;
+      }
+    }
+
+    if (additionalProperties === false) {
+      if (requiredProperties.indexOf(key) !== -1) {
+        props[key] = properties[key];
       }
     }
 
@@ -1514,7 +1523,9 @@ function traverse(schema, path, resolve, rootSchema) {
     }
 
     if (optionAPI('useDefaultValue') && 'default' in schema) {
-      return schema.default;
+      if (schema.default !== '' || !optionAPI('replaceEmptyByRandomValue')) {
+        return schema.default;
+      }
     }
 
     if ('template' in schema) {
@@ -1523,7 +1534,11 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   if (schema.not && typeof schema.not === 'object') {
-    schema = utils.notValue(schema.not, utils.omitProps(schema, ['not']));
+    schema = utils.notValue(schema.not, utils.omitProps(schema, ['not'])); // build new object value from not-schema!
+
+    if (schema.type && schema.type === 'object') {
+      return traverse(schema, path.concat(['not']), resolve, rootSchema);
+    }
   }
 
   if ('const' in schema) {
@@ -1541,6 +1556,11 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (typeof schema.generate === 'function') {
     return utils.typecast(null, schema, function () { return schema.generate(rootSchema); });
+  } // short-circuit as we don't plan generate more values!
+
+
+  if (schema.jsonPath) {
+    return schema;
   } // TODO remove the ugly overcome
 
 

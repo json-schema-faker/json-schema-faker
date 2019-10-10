@@ -83,8 +83,8 @@
 
 
   function toArray(sequence) {
-    if (Array.isArray(sequence)) return sequence;
-    else if (isNothing(sequence)) return [];
+    if (Array.isArray(sequence)) { return sequence; }
+    else if (isNothing(sequence)) { return []; }
 
     return [ sequence ];
   }
@@ -192,7 +192,7 @@
   Mark.prototype.getSnippet = function getSnippet(indent, maxLength) {
     var head, start, tail, end, snippet;
 
-    if (!this.buffer) return null;
+    if (!this.buffer) { return null; }
 
     indent = indent || 4;
     maxLength = maxLength || 75;
@@ -340,6 +340,8 @@
 
 
   function compileMap(/* lists... */) {
+    var arguments$1 = arguments;
+
     var result = {
           scalar: {},
           sequence: {},
@@ -352,7 +354,7 @@
     }
 
     for (index = 0, length = arguments.length; index < length; index += 1) {
-      arguments[index].forEach(collectType);
+      arguments$1[index].forEach(collectType);
     }
     return result;
   }
@@ -440,7 +442,7 @@
   });
 
   function resolveYamlNull(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var max = data.length;
 
@@ -471,7 +473,7 @@
   });
 
   function resolveYamlBoolean(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     var max = data.length;
 
@@ -517,14 +519,14 @@
   }
 
   function resolveYamlInteger(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     var max = data.length,
         index = 0,
         hasDigits = false,
         ch;
 
-    if (!max) return false;
+    if (!max) { return false; }
 
     ch = data[index];
 
@@ -535,7 +537,7 @@
 
     if (ch === '0') {
       // 0
-      if (index + 1 === max) return true;
+      if (index + 1 === max) { return true; }
       ch = data[++index];
 
       // base 2, base 8, base 16
@@ -546,8 +548,8 @@
 
         for (; index < max; index++) {
           ch = data[index];
-          if (ch === '_') continue;
-          if (ch !== '0' && ch !== '1') return false;
+          if (ch === '_') { continue; }
+          if (ch !== '0' && ch !== '1') { return false; }
           hasDigits = true;
         }
         return hasDigits && ch !== '_';
@@ -560,8 +562,8 @@
 
         for (; index < max; index++) {
           ch = data[index];
-          if (ch === '_') continue;
-          if (!isHexCode(data.charCodeAt(index))) return false;
+          if (ch === '_') { continue; }
+          if (!isHexCode(data.charCodeAt(index))) { return false; }
           hasDigits = true;
         }
         return hasDigits && ch !== '_';
@@ -570,8 +572,8 @@
       // base 8
       for (; index < max; index++) {
         ch = data[index];
-        if (ch === '_') continue;
-        if (!isOctCode(data.charCodeAt(index))) return false;
+        if (ch === '_') { continue; }
+        if (!isOctCode(data.charCodeAt(index))) { return false; }
         hasDigits = true;
       }
       return hasDigits && ch !== '_';
@@ -580,12 +582,12 @@
     // base 10 (except 0) or base 60
 
     // value should not start with `_`;
-    if (ch === '_') return false;
+    if (ch === '_') { return false; }
 
     for (; index < max; index++) {
       ch = data[index];
-      if (ch === '_') continue;
-      if (ch === ':') break;
+      if (ch === '_') { continue; }
+      if (ch === ':') { break; }
       if (!isDecCode(data.charCodeAt(index))) {
         return false;
       }
@@ -593,10 +595,10 @@
     }
 
     // Should have digits and should not end with `_`
-    if (!hasDigits || ch === '_') return false;
+    if (!hasDigits || ch === '_') { return false; }
 
     // if !base60 - done;
-    if (ch !== ':') return true;
+    if (ch !== ':') { return true; }
 
     // base60 almost not used, no needs to optimize
     return /^(:[0-5]?[0-9])+$/.test(data.slice(index));
@@ -612,16 +614,16 @@
     ch = value[0];
 
     if (ch === '-' || ch === '+') {
-      if (ch === '-') sign = -1;
+      if (ch === '-') { sign = -1; }
       value = value.slice(1);
       ch = value[0];
     }
 
-    if (value === '0') return 0;
+    if (value === '0') { return 0; }
 
     if (ch === '0') {
-      if (value[1] === 'b') return sign * parseInt(value.slice(2), 2);
-      if (value[1] === 'x') return sign * parseInt(value, 16);
+      if (value[1] === 'b') { return sign * parseInt(value.slice(2), 2); }
+      if (value[1] === 'x') { return sign * parseInt(value, 16); }
       return sign * parseInt(value, 8);
     }
 
@@ -685,7 +687,7 @@
     '|\\.(?:nan|NaN|NAN))$');
 
   function resolveYamlFloat(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     if (!YAML_FLOAT_PATTERN.test(data) ||
         // Quick hack to not allow integers end with `_`
@@ -819,9 +821,9 @@
     '(?::([0-9][0-9]))?))?$');           // [11] tz_minute
 
   function resolveYamlTimestamp(data) {
-    if (data === null) return false;
-    if (YAML_DATE_REGEXP.exec(data) !== null) return true;
-    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) return true;
+    if (data === null) { return false; }
+    if (YAML_DATE_REGEXP.exec(data) !== null) { return true; }
+    if (YAML_TIMESTAMP_REGEXP.exec(data) !== null) { return true; }
     return false;
   }
 
@@ -830,9 +832,9 @@
         delta = null, tz_hour, tz_minute, date;
 
     match = YAML_DATE_REGEXP.exec(data);
-    if (match === null) match = YAML_TIMESTAMP_REGEXP.exec(data);
+    if (match === null) { match = YAML_TIMESTAMP_REGEXP.exec(data); }
 
-    if (match === null) throw new Error('Date resolve error');
+    if (match === null) { throw new Error('Date resolve error'); }
 
     // match: [1] year [2] month [3] day
 
@@ -864,12 +866,12 @@
       tz_hour = +(match[10]);
       tz_minute = +(match[11] || 0);
       delta = (tz_hour * 60 + tz_minute) * 60000; // delta in mili-seconds
-      if (match[9] === '-') delta = -delta;
+      if (match[9] === '-') { delta = -delta; }
     }
 
     date = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
 
-    if (delta) date.setTime(date.getTime() - delta);
+    if (delta) { date.setTime(date.getTime() - delta); }
 
     return date;
   }
@@ -913,7 +915,7 @@
 
 
   function resolveYamlBinary(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     var code, idx, bitlen = 0, max = data.length, map = BASE64_MAP;
 
@@ -922,10 +924,10 @@
       code = map.indexOf(data.charAt(idx));
 
       // Skip CR/LF
-      if (code > 64) continue;
+      if (code > 64) { continue; }
 
       // Fail on illegal characters
-      if (code < 0) return false;
+      if (code < 0) { return false; }
 
       bitlen += 6;
     }
@@ -1036,7 +1038,7 @@
   var _toString       = Object.prototype.toString;
 
   function resolveYamlOmap(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var objectKeys = [], index, length, pair, pairKey, pairHasKey,
         object = data;
@@ -1045,19 +1047,19 @@
       pair = object[index];
       pairHasKey = false;
 
-      if (_toString.call(pair) !== '[object Object]') return false;
+      if (_toString.call(pair) !== '[object Object]') { return false; }
 
       for (pairKey in pair) {
         if (_hasOwnProperty.call(pair, pairKey)) {
-          if (!pairHasKey) pairHasKey = true;
-          else return false;
+          if (!pairHasKey) { pairHasKey = true; }
+          else { return false; }
         }
       }
 
-      if (!pairHasKey) return false;
+      if (!pairHasKey) { return false; }
 
-      if (objectKeys.indexOf(pairKey) === -1) objectKeys.push(pairKey);
-      else return false;
+      if (objectKeys.indexOf(pairKey) === -1) { objectKeys.push(pairKey); }
+      else { return false; }
     }
 
     return true;
@@ -1076,7 +1078,7 @@
   var _toString$1 = Object.prototype.toString;
 
   function resolveYamlPairs(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var index, length, pair, keys, result,
         object = data;
@@ -1086,11 +1088,11 @@
     for (index = 0, length = object.length; index < length; index += 1) {
       pair = object[index];
 
-      if (_toString$1.call(pair) !== '[object Object]') return false;
+      if (_toString$1.call(pair) !== '[object Object]') { return false; }
 
       keys = Object.keys(pair);
 
-      if (keys.length !== 1) return false;
+      if (keys.length !== 1) { return false; }
 
       result[index] = [ keys[0], pair[keys[0]] ];
     }
@@ -1099,7 +1101,7 @@
   }
 
   function constructYamlPairs(data) {
-    if (data === null) return [];
+    if (data === null) { return []; }
 
     var index, length, pair, keys, result,
         object = data;
@@ -1126,13 +1128,13 @@
   var _hasOwnProperty$1 = Object.prototype.hasOwnProperty;
 
   function resolveYamlSet(data) {
-    if (data === null) return true;
+    if (data === null) { return true; }
 
     var key, object = data;
 
     for (key in object) {
       if (_hasOwnProperty$1.call(object, key)) {
-        if (object[key] !== null) return false;
+        if (object[key] !== null) { return false; }
       }
     }
 
@@ -1191,8 +1193,8 @@
   });
 
   function resolveJavascriptRegExp(data) {
-    if (data === null) return false;
-    if (data.length === 0) return false;
+    if (data === null) { return false; }
+    if (data.length === 0) { return false; }
 
     var regexp = data,
         tail   = /\/([gim]*)$/.exec(data),
@@ -1201,11 +1203,11 @@
     // if regexp starts with '/' it can have modifiers and must be properly closed
     // `/foo/gim` - modifiers tail can be maximum 3 chars
     if (regexp[0] === '/') {
-      if (tail) modifiers = tail[1];
+      if (tail) { modifiers = tail[1]; }
 
-      if (modifiers.length > 3) return false;
+      if (modifiers.length > 3) { return false; }
       // if expression starts with /, is should be properly terminated
-      if (regexp[regexp.length - modifiers.length - 1] !== '/') return false;
+      if (regexp[regexp.length - modifiers.length - 1] !== '/') { return false; }
     }
 
     return true;
@@ -1218,7 +1220,7 @@
 
     // `/foo/gim` - tail can be maximum 4 chars
     if (regexp[0] === '/') {
-      if (tail) modifiers = tail[1];
+      if (tail) { modifiers = tail[1]; }
       regexp = regexp.slice(1, regexp.length - modifiers.length - 1);
     }
 
@@ -1228,9 +1230,9 @@
   function representJavascriptRegExp(object /*, style*/) {
     var result = '/' + object.source + '/';
 
-    if (object.global) result += 'g';
-    if (object.multiline) result += 'm';
-    if (object.ignoreCase) result += 'i';
+    if (object.global) { result += 'g'; }
+    if (object.multiline) { result += 'm'; }
+    if (object.ignoreCase) { result += 'i'; }
 
     return result;
   }
@@ -1262,13 +1264,13 @@
     esprima = _require$1('esprima');
   } catch (_) {
     /*global window */
-    if (typeof window !== 'undefined') esprima = window.esprima;
+    if (typeof window !== 'undefined') { esprima = window.esprima; }
   }
 
 
 
   function resolveJavascriptFunction(data) {
-    if (data === null) return false;
+    if (data === null) { return false; }
 
     try {
       var source = '(' + data + ')',
@@ -2489,7 +2491,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x21/* ! */) return false;
+    if (ch !== 0x21/* ! */) { return false; }
 
     if (state.tag !== null) {
       throwError(state, 'duplication of a tag property');
@@ -2579,7 +2581,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x26/* & */) return false;
+    if (ch !== 0x26/* & */) { return false; }
 
     if (state.anchor !== null) {
       throwError(state, 'duplication of an anchor property');
@@ -2606,7 +2608,7 @@
 
     ch = state.input.charCodeAt(state.position);
 
-    if (ch !== 0x2A/* * */) return false;
+    if (ch !== 0x2A/* * */) { return false; }
 
     ch = state.input.charCodeAt(++state.position);
     _position = state.position;
@@ -2832,7 +2834,7 @@
           break;
         }
 
-        if (is_EOL(ch)) break;
+        if (is_EOL(ch)) { break; }
 
         _position = state.position;
 
@@ -2843,7 +2845,7 @@
         directiveArgs.push(state.input.slice(_position, state.position));
       }
 
-      if (ch !== 0) readLineBreak(state);
+      if (ch !== 0) { readLineBreak(state); }
 
       if (_hasOwnProperty$2.call(directiveHandlers, directiveName)) {
         directiveHandlers[directiveName](state, directiveName, directiveArgs);
@@ -3039,7 +3041,7 @@
   function compileStyleMap(schema, map) {
     var result, keys, index, length, tag, style, type;
 
-    if (map === null) return {};
+    if (map === null) { return {}; }
 
     result = {};
     keys = Object.keys(map);
@@ -3126,7 +3128,7 @@
         position = next + 1;
       }
 
-      if (line.length && line !== '\n') result += ind;
+      if (line.length && line !== '\n') { result += ind; }
 
       result += line;
     }
@@ -3343,7 +3345,7 @@
           return '>' + blockHeader(string, state.indent)
             + dropEndingNewline(indentString(foldString(string, lineWidth), indent));
         case STYLE_DOUBLE:
-          return '"' + escapeString(string) + '"';
+          return '"' + escapeString(string, lineWidth) + '"';
         default:
           throw new exception('impossible error: invalid scalar style');
       }
@@ -3407,7 +3409,7 @@
   // otherwise settles for the shortest line over the limit.
   // NB. More-indented lines *cannot* be folded, as that would add an extra \n.
   function foldLine(line, width) {
-    if (line === '' || line[0] === ' ') return line;
+    if (line === '' || line[0] === ' ') { return line; }
 
     // Since a more-indented line adds a \n, breaks can't be followed by a space.
     var breakRe = / [^ ]/g; // note: the match index will always be <= length-2.
@@ -3481,7 +3483,7 @@
     for (index = 0, length = object.length; index < length; index += 1) {
       // Write only valid elements.
       if (writeNode(state, level, object[index], false, false)) {
-        if (index !== 0) _result += ',' + (!state.condenseFlow ? ' ' : '');
+        if (index !== 0) { _result += ',' + (!state.condenseFlow ? ' ' : ''); }
         _result += state.dump;
       }
     }
@@ -3530,7 +3532,7 @@
     for (index = 0, length = objectKeyList.length; index < length; index += 1) {
       pairBuffer = state.condenseFlow ? '"' : '';
 
-      if (index !== 0) pairBuffer += ', ';
+      if (index !== 0) { pairBuffer += ', '; }
 
       objectKey = objectKeyList[index];
       objectValue = object[objectKey];
@@ -3539,7 +3541,7 @@
         continue; // Skip this pair because of invalid key;
       }
 
-      if (state.dump.length > 1024) pairBuffer += '? ';
+      if (state.dump.length > 1024) { pairBuffer += '? '; }
 
       pairBuffer += state.dump + (state.condenseFlow ? '"' : '') + ':' + (state.condenseFlow ? '' : ' ');
 
@@ -3732,7 +3734,7 @@
           writeScalar(state, state.dump, level, iskey);
         }
       } else {
-        if (state.skipInvalid) return false;
+        if (state.skipInvalid) { return false; }
         throw new exception('unacceptable kind of an object to dump ' + type);
       }
 
@@ -3792,9 +3794,9 @@
 
     var state = new State$1(options);
 
-    if (!state.noRefs) getDuplicateReferences(input, state);
+    if (!state.noRefs) { getDuplicateReferences(input, state); }
 
-    if (writeNode(state, 0, input, true, true)) return state.dump + '\n';
+    if (writeNode(state, 0, input, true, true)) { return state.dump + '\n'; }
 
     return '';
   }
@@ -3870,7 +3872,7 @@
 
   var jsYaml$1 = jsYaml;
 
-  var commonjsGlobal = typeof globalThis !== 'undefined' ? globalThis : typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
+  var commonjsGlobal = typeof window !== 'undefined' ? window : typeof global !== 'undefined' ? global : typeof self !== 'undefined' ? self : {};
 
   function createCommonjsModule(fn, module) {
   	return module = { exports: {} }, fn(module, module.exports), module.exports;
@@ -4418,8 +4420,7 @@
   // RegExp patterns to URL-encode special characters in local filesystem paths
   var urlEncodePatterns = [
     /\?/g, "%3F",
-    /\#/g, "%23",
-  ];
+    /\#/g, "%23" ];
 
   // RegExp patterns to URL-decode special characters for local filesystem paths
   var urlDecodePatterns = [
@@ -6858,6 +6859,7 @@
   defaults.resolveJsonPath = false;
   defaults.reuseProperties = false;
   defaults.fillProperties = true;
+  defaults.replaceEmptyByRandomValue = false;
   defaults.random = Math.random;
   /**
    * This class defines a registry for custom settings used within JSF.
@@ -6907,13 +6909,15 @@
 
   optionAPI.getDefaults = function () { return registry.defaults; };
 
-  var ALL_TYPES = ['array', 'object', 'integer', 'number', 'string', 'boolean', 'null'];
+  var SCALAR_TYPES = ['integer', 'number', 'string', 'boolean', 'null'];
+  var ALL_TYPES = ['array', 'object'].concat(SCALAR_TYPES);
   var MOST_NEAR_DATETIME = 2524608000000;
   var MIN_INTEGER = -100000000;
   var MAX_INTEGER = 100000000;
   var MIN_NUMBER = -100;
   var MAX_NUMBER = 100;
   var env = {
+    SCALAR_TYPES: SCALAR_TYPES,
     ALL_TYPES: ALL_TYPES,
     MIN_NUMBER: MIN_NUMBER,
     MAX_NUMBER: MAX_NUMBER,
@@ -6933,9 +6937,9 @@
     CHAR       : 7,
   };
 
-  const INTS = () => [{ type: types.RANGE , from: 48, to: 57 }];
+  var INTS = function () { return [{ type: types.RANGE , from: 48, to: 57 }]; };
 
-  const WORDS = () => {
+  var WORDS = function () {
     return [
       { type: types.CHAR, value: 95 },
       { type: types.RANGE, from: 97, to: 122 },
@@ -6943,7 +6947,7 @@
     ].concat(INTS());
   };
 
-  const WHITESPACE = () => {
+  var WHITESPACE = function () {
     return [
       { type: types.CHAR, value: 9 },
       { type: types.CHAR, value: 10 },
@@ -6963,23 +6967,22 @@
     ];
   };
 
-  const NOTANYCHAR = () => {
+  var NOTANYCHAR = function () {
     return [
       { type: types.CHAR, value: 10 },
       { type: types.CHAR, value: 13 },
       { type: types.CHAR, value: 8232 },
-      { type: types.CHAR, value: 8233 },
-    ];
+      { type: types.CHAR, value: 8233 } ];
   };
 
   // Predefined class objects.
-  var words = () => ({ type: types.SET, set: WORDS(), not: false });
-  var notWords = () => ({ type: types.SET, set: WORDS(), not: true });
-  var ints = () => ({ type: types.SET, set: INTS(), not: false });
-  var notInts = () => ({ type: types.SET, set: INTS(), not: true });
-  var whitespace = () => ({ type: types.SET, set: WHITESPACE(), not: false });
-  var notWhitespace = () => ({ type: types.SET, set: WHITESPACE(), not: true });
-  var anyChar = () => ({ type: types.SET, set: NOTANYCHAR(), not: true });
+  var words = function () { return ({ type: types.SET, set: WORDS(), not: false }); };
+  var notWords = function () { return ({ type: types.SET, set: WORDS(), not: true }); };
+  var ints = function () { return ({ type: types.SET, set: INTS(), not: false }); };
+  var notInts = function () { return ({ type: types.SET, set: INTS(), not: true }); };
+  var whitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: false }); };
+  var notWhitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: true }); };
+  var anyChar = function () { return ({ type: types.SET, set: NOTANYCHAR(), not: true }); };
 
   var sets = {
   	words: words,
@@ -6992,8 +6995,8 @@
   };
 
   var util = createCommonjsModule(function (module, exports) {
-  const CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
-  const SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
+  var CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
+  var SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
 
   /**
    * Finds character representations in str and convert all to
@@ -7039,7 +7042,7 @@
    * @param {String} regexpStr
    * @return {Array.<Array.<Object>, Number>}
    */
-  exports.tokenizeClass = (str, regexpStr) => {
+  exports.tokenizeClass = function (str, regexpStr) {
     /* jshint maxlen: false */
     var tokens = [];
     var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?([^])/g;
@@ -7093,7 +7096,7 @@
    * @param {String} regexp
    * @param {String} msg
    */
-  exports.error = (regexp, msg) => {
+  exports.error = function (regexp, msg) {
     throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
   };
   });
@@ -7101,10 +7104,10 @@
   var util_2 = util.tokenizeClass;
   var util_3 = util.error;
 
-  var wordBoundary = () => ({ type: types.POSITION, value: 'b' });
-  var nonWordBoundary = () => ({ type: types.POSITION, value: 'B' });
-  var begin = () => ({ type: types.POSITION, value: '^' });
-  var end = () => ({ type: types.POSITION, value: '$' });
+  var wordBoundary = function () { return ({ type: types.POSITION, value: 'b' }); };
+  var nonWordBoundary = function () { return ({ type: types.POSITION, value: 'B' }); };
+  var begin = function () { return ({ type: types.POSITION, value: '^' }); };
+  var end = function () { return ({ type: types.POSITION, value: '$' }); };
 
   var positions = {
   	wordBoundary: wordBoundary,
@@ -7113,7 +7116,7 @@
   	end: end
   };
 
-  var lib$1 = (regexpStr) => {
+  var lib$1 = function (regexpStr) {
     var i = 0, l, c,
       start = { type: types.ROOT, stack: []},
 
@@ -7123,8 +7126,8 @@
       groupStack = [];
 
 
-    var repeatErr = (i) => {
-      util.error(regexpStr, `Nothing to repeat at column ${i - 1}`);
+    var repeatErr = function (i) {
+      util.error(regexpStr, ("Nothing to repeat at column " + (i - 1)));
     };
 
     // Decode a few escaped characters.
@@ -7217,7 +7220,7 @@
           last.push({
             type: types.SET,
             set: classTokens[0],
-            not,
+            not: not,
           });
 
           break;
@@ -7255,8 +7258,8 @@
 
             } else if (c !== ':') {
               util.error(regexpStr,
-                `Invalid group, character '${c}'` +
-                ` after '?' at column ${i - 1}`);
+                "Invalid group, character '" + c + "'" +
+                " after '?' at column " + (i - 1));
             }
 
             group.remember = false;
@@ -7277,7 +7280,7 @@
         // Pop group out of stack.
         case ')':
           if (groupStack.length === 0) {
-            util.error(regexpStr, `Unmatched ) at column ${i - 1}`);
+            util.error(regexpStr, ("Unmatched ) at column " + (i - 1)));
           }
           lastGroup = groupStack.pop();
 
@@ -7321,8 +7324,8 @@
 
             last.push({
               type: types.REPETITION,
-              min,
-              max,
+              min: min,
+              max: max,
               value: last.pop(),
             });
           } else {
@@ -7395,190 +7398,168 @@
 
 
   // Private helper class
-  class SubRange {
-      constructor(low, high) {
-          this.low = low;
-          this.high = high;
-          this.length = 1 + high - low;
+  var SubRange = function SubRange(low, high) {
+      this.low = low;
+      this.high = high;
+      this.length = 1 + high - low;
+  };
+
+  SubRange.prototype.overlaps = function overlaps (range) {
+      return !(this.high < range.low || this.low > range.high);
+  };
+
+  SubRange.prototype.touches = function touches (range) {
+      return !(this.high + 1 < range.low || this.low - 1 > range.high);
+  };
+
+  // Returns inclusive combination of SubRanges as a SubRange.
+  SubRange.prototype.add = function add (range) {
+      return new SubRange(
+          Math.min(this.low, range.low),
+          Math.max(this.high, range.high)
+      );
+  };
+
+  // Returns subtraction of SubRanges as an array of SubRanges.
+  // (There's a case where subtraction divides it in 2)
+  SubRange.prototype.subtract = function subtract (range) {
+      if (range.low <= this.low && range.high >= this.high) {
+          return [];
+      } else if (range.low > this.low && range.high < this.high) {
+          return [
+              new SubRange(this.low, range.low - 1),
+              new SubRange(range.high + 1, this.high)
+          ];
+      } else if (range.low <= this.low) {
+          return [new SubRange(range.high + 1, this.high)];
+      } else {
+          return [new SubRange(this.low, range.low - 1)];
       }
+  };
 
-      overlaps(range) {
-          return !(this.high < range.low || this.low > range.high);
-      }
-
-      touches(range) {
-          return !(this.high + 1 < range.low || this.low - 1 > range.high);
-      }
-
-      // Returns inclusive combination of SubRanges as a SubRange.
-      add(range) {
-          return new SubRange(
-              Math.min(this.low, range.low),
-              Math.max(this.high, range.high)
-          );
-      }
-
-      // Returns subtraction of SubRanges as an array of SubRanges.
-      // (There's a case where subtraction divides it in 2)
-      subtract(range) {
-          if (range.low <= this.low && range.high >= this.high) {
-              return [];
-          } else if (range.low > this.low && range.high < this.high) {
-              return [
-                  new SubRange(this.low, range.low - 1),
-                  new SubRange(range.high + 1, this.high)
-              ];
-          } else if (range.low <= this.low) {
-              return [new SubRange(range.high + 1, this.high)];
-          } else {
-              return [new SubRange(this.low, range.low - 1)];
-          }
-      }
-
-      toString() {
-          return this.low == this.high ?
-              this.low.toString() : this.low + '-' + this.high;
-      }
-  }
+  SubRange.prototype.toString = function toString () {
+      return this.low == this.high ?
+          this.low.toString() : this.low + '-' + this.high;
+  };
 
 
-  class DRange {
-      constructor(a, b) {
-          this.ranges = [];
-          this.length = 0;
-          if (a != null) this.add(a, b);
-      }
+  var DRange = function DRange(a, b) {
+      this.ranges = [];
+      this.length = 0;
+      if (a != null) { this.add(a, b); }
+  };
 
-      _update_length() {
-          this.length = this.ranges.reduce((previous, range) => {
-              return previous + range.length;
-          }, 0);
-      }
+  DRange.prototype._update_length = function _update_length () {
+      this.length = this.ranges.reduce(function (previous, range) {
+          return previous + range.length;
+      }, 0);
+  };
 
-      add(a, b) {
-          var _add = (subrange) => {
-              var i = 0;
-              while (i < this.ranges.length && !subrange.touches(this.ranges[i])) {
-                  i++;
-              }
-              var newRanges = this.ranges.slice(0, i);
-              while (i < this.ranges.length && subrange.touches(this.ranges[i])) {
-                  subrange = subrange.add(this.ranges[i]);
-                  i++;
-              }
-              newRanges.push(subrange);
-              this.ranges = newRanges.concat(this.ranges.slice(i));
-              this._update_length();
-          };
+  DRange.prototype.add = function add (a, b) {
+          var this$1 = this;
 
-          if (a instanceof DRange) {
-              a.ranges.forEach(_add);
-          } else {
-              if (b == null) b = a;
-              _add(new SubRange(a, b));
-          }
-          return this;
-      }
-
-      subtract(a, b) {
-          var _subtract = (subrange) => {
-              var i = 0;
-              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
-                  i++;
-              }
-              var newRanges = this.ranges.slice(0, i);
-              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
-                  newRanges = newRanges.concat(this.ranges[i].subtract(subrange));
-                  i++;
-              }
-              this.ranges = newRanges.concat(this.ranges.slice(i));
-              this._update_length();
-          };
-
-          if (a instanceof DRange) {
-              a.ranges.forEach(_subtract);
-          } else {
-              if (b == null) b = a;
-              _subtract(new SubRange(a, b));
-          }
-          return this;
-      }
-
-      intersect(a, b) {
-          var newRanges = [];
-          var _intersect = (subrange) => {
-              var i = 0;
-              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
-                  i++;
-              }
-              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
-                  var low = Math.max(this.ranges[i].low, subrange.low);
-                  var high = Math.min(this.ranges[i].high, subrange.high);
-                  newRanges.push(new SubRange(low, high));
-                  i++;
-              }
-          };
-
-          if (a instanceof DRange) {
-              a.ranges.forEach(_intersect);
-          } else {
-              if (b == null) b = a;
-              _intersect(new SubRange(a, b));
-          }
-          this.ranges = newRanges;
-          this._update_length();
-          return this;
-      }
-
-      index(index) {
+      var _add = function (subrange) {
           var i = 0;
-          while (i < this.ranges.length && this.ranges[i].length <= index) {
-              index -= this.ranges[i].length;
+          while (i < this$1.ranges.length && !subrange.touches(this$1.ranges[i])) {
               i++;
           }
-          return this.ranges[i].low + index;
-      }
+          var newRanges = this$1.ranges.slice(0, i);
+          while (i < this$1.ranges.length && subrange.touches(this$1.ranges[i])) {
+              subrange = subrange.add(this$1.ranges[i]);
+              i++;
+          }
+          newRanges.push(subrange);
+          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
+          this$1._update_length();
+      };
 
-      toString() {
-          return '[ ' + this.ranges.join(', ') + ' ]';
+      if (a instanceof DRange) {
+          a.ranges.forEach(_add);
+      } else {
+          if (b == null) { b = a; }
+          _add(new SubRange(a, b));
       }
+      return this;
+  };
 
-      clone() {
-          return new DRange(this);
-      }
+  DRange.prototype.subtract = function subtract (a, b) {
+          var this$1 = this;
 
-      numbers() {
-          return this.ranges.reduce((result, subrange) => {
-              var i = subrange.low;
-              while (i <= subrange.high) {
-                  result.push(i);
-                  i++;
-              }
-              return result;
-          }, []);
-      }
+      var _subtract = function (subrange) {
+          var i = 0;
+          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
+              i++;
+          }
+          var newRanges = this$1.ranges.slice(0, i);
+          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
+              newRanges = newRanges.concat(this$1.ranges[i].subtract(subrange));
+              i++;
+          }
+          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
+          this$1._update_length();
+      };
 
-      subranges() {
-          return this.ranges.map((subrange) => ({
-              low: subrange.low,
-              high: subrange.high,
-              length: 1 + subrange.high - subrange.low
-          }));
+      if (a instanceof DRange) {
+          a.ranges.forEach(_subtract);
+      } else {
+          if (b == null) { b = a; }
+          _subtract(new SubRange(a, b));
       }
-  }
+      return this;
+  };
+
+  DRange.prototype.intersect = function intersect (a, b) {
+          var this$1 = this;
+
+      var newRanges = [];
+      var _intersect = function (subrange) {
+          var i = 0;
+          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
+              i++;
+          }
+          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
+              var low = Math.max(this$1.ranges[i].low, subrange.low);
+              var high = Math.min(this$1.ranges[i].high, subrange.high);
+              newRanges.push(new SubRange(low, high));
+              i++;
+          }
+      };
+
+      if (a instanceof DRange) {
+          a.ranges.forEach(_intersect);
+      } else {
+          if (b == null) { b = a; }
+          _intersect(new SubRange(a, b));
+      }
+      this.ranges = newRanges;
+      this._update_length();
+      return this;
+  };
+
+  DRange.prototype.index = function index (index$1) {
+      var i = 0;
+      while (i < this.ranges.length && this.ranges[i].length <= index$1) {
+          index$1 -= this.ranges[i].length;
+          i++;
+      }
+      return this.ranges[i].low + index$1;
+  };
+
+  DRange.prototype.toString = function toString () {
+      return '[ ' + this.ranges.join(', ') + ' ]';
+  };
+
+  DRange.prototype.clone = function clone () {
+      return new DRange(this);
+  };
 
   var lib$2 = DRange;
 
-  const types$1  = lib$1.types;
+  var types$1  = lib$1.types;
 
 
-  var randexp = class RandExp {
-    /**
-     * @constructor
-     * @param {RegExp|String} regexp
-     * @param {String} m
-     */
-    constructor(regexp, m) {
+  var randexp = /*@__PURE__*/(function () {
+    function RandExp(regexp, m) {
       this._setDefaults(regexp);
       if (regexp instanceof RegExp) {
         this.ignoreCase = regexp.ignoreCase;
@@ -7595,6 +7576,8 @@
       this.tokens = lib$1(regexp);
     }
 
+    var prototypeAccessors = { defaultRange: { configurable: true } };
+
 
     /**
      * Checks if some custom properties have been set for this regexp.
@@ -7602,7 +7585,7 @@
      * @param {RandExp} randexp
      * @param {RegExp} regexp
      */
-    _setDefaults(regexp) {
+    RandExp.prototype._setDefaults = function _setDefaults (regexp) {
       // When a repetitional token has its max set to Infinite,
       // randexp won't actually generate a random amount between min and Infinite
       // instead it will see Infinite as min + 100.
@@ -7617,7 +7600,7 @@
       if (regexp.randInt) {
         this.randInt = regexp.randInt;
       }
-    }
+    };
 
 
     /**
@@ -7625,9 +7608,9 @@
      *
      * @return {String}
      */
-    gen() {
+    RandExp.prototype.gen = function gen () {
       return this._gen(this.tokens, []);
-    }
+    };
 
 
     /**
@@ -7637,7 +7620,7 @@
      * @param {Array.<String>} groups
      * @return {String}
      */
-    _gen(token, groups) {
+    RandExp.prototype._gen = function _gen (token, groups) {
       var stack, str, n, i, l;
 
       switch (token.type) {
@@ -7693,7 +7676,7 @@
             this._toOtherCase(token.value) : token.value;
           return String.fromCharCode(code);
       }
-    }
+    };
 
 
     /**
@@ -7703,10 +7686,10 @@
      * @param {Number} code
      * @return {Number}
      */
-    _toOtherCase(code) {
+    RandExp.prototype._toOtherCase = function _toOtherCase (code) {
       return code + (97 <= code && code <= 122 ? -32 :
         65 <= code && code <= 90  ?  32 : 0);
-    }
+    };
 
 
     /**
@@ -7714,9 +7697,9 @@
      *
      * @return {Boolean}
      */
-    _randBool() {
+    RandExp.prototype._randBool = function _randBool () {
       return !this.randInt(0, 1);
-    }
+    };
 
 
     /**
@@ -7725,12 +7708,12 @@
      * @param {Array.<Object>} arr
      * @return {Object}
      */
-    _randSelect(arr) {
+    RandExp.prototype._randSelect = function _randSelect (arr) {
       if (arr instanceof lib$2) {
         return arr.index(this.randInt(0, arr.length - 1));
       }
       return arr[this.randInt(0, arr.length - 1)];
-    }
+    };
 
 
     /**
@@ -7740,20 +7723,20 @@
      * @param {Object} token
      * @return {DiscontinuousRange}
      */
-    _expand(token) {
+    RandExp.prototype._expand = function _expand (token) {
       if (token.type === lib$1.types.CHAR) {
         return new lib$2(token.value);
       } else if (token.type === lib$1.types.RANGE) {
         return new lib$2(token.from, token.to);
       } else {
-        let drange = new lib$2();
-        for (let i = 0; i < token.set.length; i++) {
-          let subrange = this._expand(token.set[i]);
+        var drange = new lib$2();
+        for (var i = 0; i < token.set.length; i++) {
+          var subrange = this._expand(token.set[i]);
           drange.add(subrange);
           if (this.ignoreCase) {
-            for (let j = 0; j < subrange.length; j++) {
-              let code = subrange.index(j);
-              let otherCaseCode = this._toOtherCase(code);
+            for (var j = 0; j < subrange.length; j++) {
+              var code = subrange.index(j);
+              var otherCaseCode = this._toOtherCase(code);
               if (code !== otherCaseCode) {
                 drange.add(otherCaseCode);
               }
@@ -7766,7 +7749,7 @@
           return this.defaultRange.clone().intersect(drange);
         }
       }
-    }
+    };
 
 
     /**
@@ -7776,21 +7759,21 @@
      * @param {Number} b
      * @return {Number}
      */
-    randInt(a, b) {
+    RandExp.prototype.randInt = function randInt (a, b) {
       return a + Math.floor(Math.random() * (1 + b - a));
-    }
+    };
 
 
     /**
      * Default range of characters to generate from.
      */
-    get defaultRange() {
+    prototypeAccessors.defaultRange.get = function () {
       return this._range = this._range || new lib$2(32, 126);
-    }
+    };
 
-    set defaultRange(range) {
+    prototypeAccessors.defaultRange.set = function (range) {
       this._range = range;
-    }
+    };
 
 
     /**
@@ -7801,7 +7784,7 @@
      * @param {String} m
      * @return {String}
      */
-    static randexp(regexp, m) {
+    RandExp.randexp = function randexp (regexp, m) {
       var randexp;
       if(typeof regexp === 'string') {
         regexp = new RegExp(regexp, m);
@@ -7815,19 +7798,23 @@
         randexp._setDefaults(regexp);
       }
       return randexp.gen();
-    }
+    };
 
 
     /**
      * Enables sugary /regexp/.gen syntax.
      */
-    static sugar() {
+    RandExp.sugar = function sugar () {
       /* eshint freeze:false */
       RegExp.prototype.gen = function() {
         return RandExp.randexp(this);
       };
-    }
-  };
+    };
+
+    Object.defineProperties( RandExp.prototype, prototypeAccessors );
+
+    return RandExp;
+  }());
 
   function getRandomInteger(min, max) {
     min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
@@ -8225,7 +8212,7 @@
     }
 
     if (schema.type) {
-      copy.type = random.pick(env.ALL_TYPES.filter(function (x) {
+      copy.type = random.pick(env.SCALAR_TYPES.filter(function (x) {
         var types = Array.isArray(schema.type) ? schema.type : [schema.type];
         return types.every(function (type) {
           // treat both types as _similar enough_ to be skipped equal
@@ -8530,7 +8517,7 @@
         configurable: true
       }
     });
-    if (superClass) _setPrototypeOf(subClass, superClass);
+    if (superClass) { _setPrototypeOf(subClass, superClass); }
   }
 
   function _getPrototypeOf(o) {
@@ -8550,9 +8537,9 @@
   }
 
   function isNativeReflectConstruct() {
-    if (typeof Reflect === "undefined" || !Reflect.construct) return false;
-    if (Reflect.construct.sham) return false;
-    if (typeof Proxy === "function") return true;
+    if (typeof Reflect === "undefined" || !Reflect.construct) { return false; }
+    if (Reflect.construct.sham) { return false; }
+    if (typeof Proxy === "function") { return true; }
 
     try {
       Date.prototype.toString.call(Reflect.construct(Date, [], function () {}));
@@ -8571,7 +8558,7 @@
         a.push.apply(a, args);
         var Constructor = Function.bind.apply(Parent, a);
         var instance = new Constructor();
-        if (Class) _setPrototypeOf(instance, Class.prototype);
+        if (Class) { _setPrototypeOf(instance, Class.prototype); }
         return instance;
       };
     }
@@ -8587,14 +8574,14 @@
     var _cache = typeof Map === "function" ? new Map() : undefined;
 
     _wrapNativeSuper = function _wrapNativeSuper(Class) {
-      if (Class === null || !_isNativeFunction(Class)) return Class;
+      if (Class === null || !_isNativeFunction(Class)) { return Class; }
 
       if (typeof Class !== "function") {
         throw new TypeError("Super expression must either be null or a function");
       }
 
       if (typeof _cache !== "undefined") {
-        if (_cache.has(Class)) return _cache.get(Class);
+        if (_cache.has(Class)) { return _cache.get(Class); }
 
         _cache.set(Class, Wrapper);
       }
@@ -8633,11 +8620,18 @@
     return _assertThisInitialized(self);
   }
 
-  /* eslint-disable no-eval, jsdoc/check-types */
-  // Todo: Reenable jsdoc/check-types once PR merged: https://github.com/gajus/eslint-plugin-jsdoc/pull/270
-  var globalEval = eval; // eslint-disable-next-line import/no-commonjs
+  /* eslint-disable no-eval, prefer-named-capture-group */
+  // Disabled `prefer-named-capture-group` due to https://github.com/babel/babel/issues/8951#issuecomment-508045524
+  var globalEval = eval; // Only Node.JS has a process variable that is of [[Class]] process
 
-  var supportsNodeVM = typeof module !== 'undefined' && Boolean(module.exports) && !(typeof navigator !== 'undefined' && navigator.product === 'ReactNative');
+  var supportsNodeVM = function supportsNodeVM() {
+    try {
+      return Object.prototype.toString.call(global.process) === '[object process]';
+    } catch (e) {
+      return false;
+    }
+  };
+
   var allowedResultTypes = ['value', 'path', 'pointer', 'parent', 'parentProperty', 'all'];
   var hasOwnProp = Object.prototype.hasOwnProperty;
   /**
@@ -8652,10 +8646,10 @@
 
   /**
    * Copy items out of one array into another.
-   * @param {Array} source Array with items to copy
-   * @param {Array} target Array to which to copy
-   * @param {ConditionCallback} conditionCb Callback passed the current item; will move
-   *     item if evaluates to `true`
+   * @param {GenericArray} source Array with items to copy
+   * @param {GenericArray} target Array to which to copy
+   * @param {ConditionCallback} conditionCb Callback passed the current item;
+   *     will move item if evaluates to `true`
    * @returns {undefined}
    */
 
@@ -8671,11 +8665,12 @@
     }
   };
 
-  var vm = supportsNodeVM ? require('vm') : {
+  var vm = supportsNodeVM() ? require('vm') : {
     /**
      * @param {string} expr Expression to evaluate
-     * @param {PlainObject} context Object whose items will be added to evaluation
-     * @returns {Any} Result of evaluated code
+     * @param {PlainObject} context Object whose items will be added
+     *   to evaluation
+     * @returns {any} Result of evaluated code
      */
     runInNewContext: function runInNewContext(expr, context) {
       var keys = Object.keys(context);
@@ -8702,9 +8697,9 @@
   };
   /**
    * Copies array and then pushes item into it.
-   * @param {Array} arr Array to copy and into which to push
-   * @param {Any} item Array item to add (to end)
-   * @returns {Array} Copy of the original array
+   * @param {GenericArray} arr Array to copy and into which to push
+   * @param {any} item Array item to add (to end)
+   * @returns {GenericArray} Copy of the original array
    */
 
   function push(arr, item) {
@@ -8714,9 +8709,9 @@
   }
   /**
    * Copies array and then unshifts item into it.
-   * @param {Any} item Array item to add (to beginning)
-   * @param {Array} arr Array to copy and into which to unshift
-   * @returns {Array} Copy of the original array
+   * @param {any} item Array item to add (to beginning)
+   * @param {GenericArray} arr Array to copy and into which to unshift
+   * @returns {GenericArray} Copy of the original array
    */
 
 
@@ -8737,14 +8732,14 @@
     _inherits(NewError, _Error);
 
     /**
-     * @param {Any} value The evaluated scalar value
+     * @param {any} value The evaluated scalar value
      */
     function NewError(value) {
       var _this;
 
       _classCallCheck(this, NewError);
 
-      _this = _possibleConstructorReturn(this, _getPrototypeOf(NewError).call(this, 'JSONPath should not be called with "new" (it prevents return of (unwrapped) scalar values)'));
+      _this = _possibleConstructorReturn(this, _getPrototypeOf(NewError).call(this, 'JSONPath should not be called with "new" (it prevents return ' + 'of (unwrapped) scalar values)'));
       _this.avoidNew = true;
       _this.value = value;
       _this.name = 'NewError';
@@ -8780,12 +8775,14 @@
    * @param {PlainObject} [opts] If present, must be an object
    * @param {string} expr JSON path to evaluate
    * @param {JSON} obj JSON object to evaluate against
-   * @param {JSONPathCallback} callback Passed 3 arguments: 1) desired payload per `resultType`,
-   *     2) `"value"|"property"`, 3) Full returned object with all payloads
-   * @param {OtherTypeCallback} otherTypeCallback If `@other()` is at the end of one's query, this
-   *  will be invoked with the value of the item, its path, its parent, and its parent's
-   *  property name, and it should return a boolean indicating whether the supplied value
-   *  belongs to the "other" type or not (or it may handle transformations and return `false`).
+   * @param {JSONPathCallback} callback Passed 3 arguments: 1) desired payload
+   *     per `resultType`, 2) `"value"|"property"`, 3) Full returned object with
+   *     all payloads
+   * @param {OtherTypeCallback} otherTypeCallback If `@other()` is at the end
+   *   of one's query, this will be invoked with the value of the item, its
+   *   path, its parent, and its parent's property name, and it should return
+   *   a boolean indicating whether the supplied value belongs to the "other"
+   *   type or not (or it may handle transformations and return `false`).
    * @returns {JSONPath}
    * @class
    */
@@ -8827,7 +8824,7 @@
     this.callback = opts.callback || callback || null;
 
     this.otherTypeCallback = opts.otherTypeCallback || otherTypeCallback || function () {
-      throw new Error('You must supply an otherTypeCallback callback option with the @other() operator.');
+      throw new Error('You must supply an otherTypeCallback callback option ' + 'with the @other() operator.');
     };
 
     if (opts.autostart !== false) {
@@ -8861,7 +8858,7 @@
 
     if (expr && _typeof(expr) === 'object') {
       if (!expr.path) {
-        throw new Error('You must supply a "path" property when providing an object argument to JSONPath.evaluate().');
+        throw new Error('You must supply a "path" property when providing an object ' + 'argument to JSONPath.evaluate().');
       }
 
       json = hasOwnProp.call(expr, 'json') ? expr.json : json;
@@ -8971,7 +8968,8 @@
 
 
   JSONPath.prototype._trace = function (expr, val, path, parent, parentPropName, callback, literalPriority) {
-    // No expr to follow? return path and value as the result of this trace branch
+    // No expr to follow? return path and value as the result of
+    //  this trace branch
     var retObj;
     var that = this;
 
@@ -9001,7 +8999,9 @@
 
     function addRet(elems) {
       if (Array.isArray(elems)) {
-        // This was causing excessive stack size in Node (with or without Babel) against our performance test: `ret.push(...elems);`
+        // This was causing excessive stack size in Node (with or
+        //  without Babel) against our performance test:
+        //  `ret.push(...elems);`
         elems.forEach(function (t) {
           ret.push(t);
         });
@@ -9015,20 +9015,21 @@
       addRet(this._trace(x, val[loc], push(path, loc), val, loc, callback));
     } else if (loc === '*') {
       // all child properties
-      // eslint-disable-next-line no-shadow
-      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, x, v, p, par, pr, cb) {
-        addRet(that._trace(unshift(m, x), v, p, par, pr, cb, true));
+      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, _x, v, p, par, pr, cb) {
+        addRet(that._trace(unshift(m, _x), v, p, par, pr, cb, true));
       });
     } else if (loc === '..') {
       // all descendent parent properties
-      addRet(this._trace(x, val, path, parent, parentPropName, callback)); // Check remaining expression with val's immediate children
-      // eslint-disable-next-line no-shadow
+      // Check remaining expression with val's immediate children
+      addRet(this._trace(x, val, path, parent, parentPropName, callback));
 
-      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, x, v, p, par, pr, cb) {
-        // We don't join m and x here because we only want parents, not scalar values
+      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, _x, v, p, par, pr, cb) {
+        // We don't join m and x here because we only want parents,
+        //   not scalar values
         if (_typeof(v[m]) === 'object') {
-          // Keep going with recursive descent on val's object children
-          addRet(that._trace(unshift(l, x), v[m], push(p, m), v, m, cb));
+          // Keep going with recursive descent on val's
+          //   object children
+          addRet(that._trace(unshift(l, _x), v[m], push(p, m), v, m, cb));
         }
       }); // The parent sel computation is handled in the frame above using the
       // ancestor object of val
@@ -9056,26 +9057,27 @@
     } else if (loc === '$') {
       // root only
       addRet(this._trace(x, val, path, null, null, callback));
-    } else if (/^(-?\d*):(-?\d*):?(\d*)$/.test(loc)) {
+    } else if (/^(\x2D?[0-9]*):(\x2D?[0-9]*):?([0-9]*)$/.test(loc)) {
       // [start:end:step]  Python slice syntax
       addRet(this._slice(loc, x, val, path, parent, parentPropName, callback));
     } else if (loc.indexOf('?(') === 0) {
       // [?(expr)] (filtering)
       if (this.currPreventEval) {
         throw new Error('Eval [?(expr)] prevented in JSONPath expression.');
-      } // eslint-disable-next-line no-shadow
+      }
 
-
-      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, x, v, p, par, pr, cb) {
-        if (that._eval(l.replace(/^\?\((.*?)\)$/, '$1'), v[m], m, p, par, pr)) {
-          addRet(that._trace(unshift(m, x), v, p, par, pr, cb));
+      this._walk(loc, x, val, path, parent, parentPropName, callback, function (m, l, _x, v, p, par, pr, cb) {
+        if (that._eval(l.replace(/^\?\(((?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?)\)$/, '$1'), v[m], m, p, par, pr)) {
+          addRet(that._trace(unshift(m, _x), v, p, par, pr, cb));
         }
       });
     } else if (loc[0] === '(') {
       // [(expr)] (dynamic property/index)
       if (this.currPreventEval) {
         throw new Error('Eval [(expr)] prevented in JSONPath expression.');
-      } // As this will resolve to a property name (but we don't know it yet), property and parent information is relative to the parent of the property to which this expression will resolve
+      } // As this will resolve to a property name (but we don't know it
+      //  yet), property and parent information is relative to the
+      //  parent of the property to which this expression will resolve
 
 
       addRet(this._trace(unshift(this._eval(loc, val, path[path.length - 1], path.slice(0, -1), parent, parentPropName), x), val, path, parent, parentPropName, callback));
@@ -9099,16 +9101,16 @@
         case 'string':
         case 'undefined':
         case 'function':
+          // eslint-disable-next-line valid-typeof
           if (_typeof(val) === valueType) {
-            // eslint-disable-line valid-typeof
             addType = true;
           }
 
           break;
 
         case 'number':
+          // eslint-disable-next-line valid-typeof
           if (_typeof(val) === valueType && isFinite(val)) {
-            // eslint-disable-line valid-typeof
             addType = true;
           }
 
@@ -9122,8 +9124,8 @@
           break;
 
         case 'object':
+          // eslint-disable-next-line valid-typeof
           if (val && _typeof(val) === valueType) {
-            // eslint-disable-line valid-typeof
             addType = true;
           }
 
@@ -9166,9 +9168,9 @@
         this._handleCallback(retObj, callback, 'value');
 
         return retObj;
-      }
+      } // `-escaped property
+
     } else if (loc[0] === '`' && val && hasOwnProp.call(val, loc.slice(1))) {
-      // `-escaped property
       var locProp = loc.slice(1);
       addRet(this._trace(x, val[locProp], push(path, locProp), val, locProp, callback, true));
     } else if (loc.includes(',')) {
@@ -9182,7 +9184,8 @@
         for (var _iterator = parts[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
           var part = _step.value;
           addRet(this._trace(unshift(part, x), val, path, parent, parentPropName, callback));
-        }
+        } // simple case--directly follow property
+
       } catch (err) {
         _didIteratorError = true;
         _iteratorError = err;
@@ -9198,7 +9201,6 @@
         }
       }
     } else if (!literalPriority && val && hasOwnProp.call(val, loc)) {
-      // simple case--directly follow property
       addRet(this._trace(x, val[loc], push(path, loc), val, loc, callback, true));
     } // We check the resulting values for parent selections. For parent
     // selections we discard the value object and continue the trace with the
@@ -9264,7 +9266,8 @@
       var tmp = this._trace(unshift(i, expr), val, path, parent, parentPropName, callback);
 
       if (Array.isArray(tmp)) {
-        // This was causing excessive stack size in Node (with or without Babel) against our performance test: `ret.push(...tmp);`
+        // This was causing excessive stack size in Node (with or
+        //  without Babel) against our performance test: `ret.push(...tmp);`
         tmp.forEach(function (t) {
           ret.push(t);
         });
@@ -9301,9 +9304,9 @@
       code = code.replace(/@path/g, '_$_path');
     }
 
-    if (code.match(/@([.\s)[])/)) {
+    if (code.match(/@([\t-\r \)\.\[\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF])/)) {
       this.currSandbox._$_v = _v;
-      code = code.replace(/@([.\s)[])/g, '_$_v$1');
+      code = code.replace(/@([\t-\r \)\.\[\xA0\u1680\u2000-\u200A\u2028\u2029\u202F\u205F\u3000\uFEFF])/g, '_$_v$1');
     }
 
     try {
@@ -9329,8 +9332,8 @@
     var p = '$';
 
     for (var i = 1; i < n; i++) {
-      if (!/^(~|\^|@.*?\(\))$/.test(x[i])) {
-        p += /^[0-9*]+$/.test(x[i]) ? '[' + x[i] + ']' : "['" + x[i] + "']";
+      if (!/^(~|\^|@(?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\(\))$/.test(x[i])) {
+        p += /^[\*0-9]+$/.test(x[i]) ? '[' + x[i] + ']' : "['" + x[i] + "']";
       }
     }
 
@@ -9348,7 +9351,7 @@
     var p = '';
 
     for (var i = 1; i < n; i++) {
-      if (!/^(~|\^|@.*?\(\))$/.test(x[i])) {
+      if (!/^(~|\^|@(?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\(\))$/.test(x[i])) {
         p += '/' + x[i].toString().replace(/~/g, '~0').replace(/\//g, '~1');
       }
     }
@@ -9372,14 +9375,14 @@
     var normalized = expr // Properties
     .replace(/@(?:null|boolean|number|string|integer|undefined|nonFinite|scalar|array|object|function|other)\(\)/g, ';$&;') // Parenthetical evaluations (filtering and otherwise), directly
     //   within brackets or single quotes
-    .replace(/[['](\??\(.*?\))[\]']/g, function ($0, $1) {
+    .replace(/['\[](\??\((?:[\0-\t\x0B\f\x0E-\u2027\u202A-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*?\))['\]]/g, function ($0, $1) {
       return '[#' + (subx.push($1) - 1) + ']';
     }) // Escape periods and tildes within properties
-    .replace(/\['([^'\]]*)'\]/g, function ($0, prop) {
+    .replace(/\['((?:[\0-&\(-\\\^-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*)'\]/g, function ($0, prop) {
       return "['" + prop.replace(/\./g, '%@%').replace(/~/g, '%%@@%%') + "']";
     }) // Properties operator
     .replace(/~/g, ';~;') // Split by property boundaries
-    .replace(/'?\.'?(?![^[]*\])|\['?/g, ';') // Reinsert periods within properties
+    .replace(/'?\.'?(?!(?:[\0-Z\\-\uD7FF\uE000-\uFFFF]|[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDBFF](?![\uDC00-\uDFFF])|(?:[^\uD800-\uDBFF]|^)[\uDC00-\uDFFF])*\])|\['?/g, ';') // Reinsert periods within properties
     .replace(/%@%/g, '.') // Reinsert tildes within properties
     .replace(/%%@@%%/g, '~') // Parent
     .replace(/(?:;)?(\^+)(?:;)?/g, function ($0, ups) {
@@ -9388,7 +9391,7 @@
     .replace(/;;;|;;/g, ';..;') // Remove trailing
     .replace(/;$|'?\]|'$/g, '');
     var exprList = normalized.split(';').map(function (exp) {
-      var match = exp.match(/#(\d+)/);
+      var match = exp.match(/#([0-9]+)/);
       return !match || !match[1] ? exp : subx[match[1]];
     });
     cache[expr] = exprList;
@@ -9678,7 +9681,7 @@
 
     if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils.hasProperties(value, 'minProperties', 'maxProperties', 'dependencies', 'required')) {
       // just nothing
-      return {};
+      return null;
     }
 
     if (optionAPI('requiredOnly') === true) {
@@ -9751,6 +9754,12 @@
         if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === 'string' && ignoreProperties[i] === key || typeof ignoreProperties[i] === 'function' && ignoreProperties[i](properties[key], key)) {
           skipped.push(key);
           return;
+        }
+      }
+
+      if (additionalProperties === false) {
+        if (requiredProperties.indexOf(key) !== -1) {
+          props[key] = properties[key];
         }
       }
 
@@ -10092,7 +10101,9 @@
       }
 
       if (optionAPI('useDefaultValue') && 'default' in schema) {
-        return schema.default;
+        if (schema.default !== '' || !optionAPI('replaceEmptyByRandomValue')) {
+          return schema.default;
+        }
       }
 
       if ('template' in schema) {
@@ -10101,7 +10112,11 @@
     }
 
     if (schema.not && typeof schema.not === 'object') {
-      schema = utils.notValue(schema.not, utils.omitProps(schema, ['not']));
+      schema = utils.notValue(schema.not, utils.omitProps(schema, ['not'])); // build new object value from not-schema!
+
+      if (schema.type && schema.type === 'object') {
+        return traverse(schema, path.concat(['not']), resolve, rootSchema);
+      }
     }
 
     if ('const' in schema) {
@@ -10119,6 +10134,11 @@
 
     if (typeof schema.generate === 'function') {
       return utils.typecast(null, schema, function () { return schema.generate(rootSchema); });
+    } // short-circuit as we don't plan generate more values!
+
+
+    if (schema.jsonPath) {
+      return schema;
     } // TODO remove the ugly overcome
 
 
