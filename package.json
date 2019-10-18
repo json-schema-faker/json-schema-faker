@@ -1,10 +1,10 @@
 {
   "name": "json-schema-faker",
-  "version": "0.5.0-rc21",
+  "version": "0.5.0-rc22",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "dist/index.js",
-  "module": "dist/index.esm.js",
+  "module": "dist/index.mjs",
   "unpkg": "dist/bundle.umd.min.js",
   "browser": "dist/index.umd.min.js",
   "scripts": {
