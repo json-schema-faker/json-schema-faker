@@ -52,8 +52,10 @@
   "tarima": {
     "from": "src",
     "output": ".",
-    "serve": "dist",
-    "public": "build",
+    "serve": [
+      "dist",
+      "build"
+    ],
     "rename": [
       "**/web/**:build/{fullpath/2}",
       "**/main*js:dist/{fullpath/1}"
