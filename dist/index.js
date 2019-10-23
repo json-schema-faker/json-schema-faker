@@ -1112,7 +1112,7 @@ function objectType(value, path, resolve, traverseCallback) {
         props[key] = properties[key];
       }
     });
-    return traverseCallback(props, path.concat(['properties']), resolve);
+    return traverseCallback(props, path.concat(['properties']), resolve, value);
   }
 
   var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
@@ -1165,7 +1165,7 @@ function objectType(value, path, resolve, traverseCallback) {
       delete value.dependencies;
       return traverseCallback({
         allOf: _defns.concat(value)
-      }, path.concat(['properties']), resolve);
+      }, path.concat(['properties']), resolve, value);
     }
   }
 
@@ -1507,7 +1507,7 @@ var typeMap = {
 };
 
 function traverse(schema, path, resolve, rootSchema) {
-  schema = resolve(schema, null, path, rootSchema);
+  schema = resolve(schema, null, path);
 
   if (!schema) {
     return;
@@ -1716,9 +1716,10 @@ function resolve(obj, data, values, property) {
 
 function run(refs, schema, container) {
   var depth = 0;
+  var lastRef;
 
   try {
-    var result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath, parentSchema) {
+    var result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath) {
       if (typeof sub.generate === 'function') {
         return sub;
       } // cleanup
@@ -1733,15 +1734,13 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
-        if (index !== null && parentSchema && parentSchema.required) {
-          if (parentSchema.required.includes(index)) { return sub; }
-        }
-
-        if (sub.$ref === '#' || ++depth > random.number(0, 1)) {
+        // increasing depth only for repeated refs seems to be fixing #258
+        if (sub.$ref === '#' || lastRef === sub.$ref && ++depth > random.number(0, 3)) {
           delete sub.$ref;
           return sub;
         }
 
+        lastRef = sub.$ref;
         var ref;
 
         if (sub.$ref.indexOf('#/') === -1) {
@@ -1771,7 +1770,7 @@ function run(refs, schema, container) {
         // must be resolved before any merge
 
         schemas.forEach(function (subSchema) {
-          var _sub = reduce(subSchema, null, rootPath, parentSchema); // call given thunks if present
+          var _sub = reduce(subSchema, null, rootPath); // call given thunks if present
 
 
           utils.merge(sub, typeof _sub.thunk === 'function' ? _sub.thunk(sub) : _sub);
@@ -1813,7 +1812,7 @@ function run(refs, schema, container) {
 
       Object.keys(sub).forEach(function (prop) {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-          sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop), parentSchema);
+          sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop));
         }
       }); // avoid extra calls on sub-schemas, fixes #458
 

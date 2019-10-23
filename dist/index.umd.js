@@ -7553,6 +7553,25 @@
       return new DRange(this);
   };
 
+  DRange.prototype.numbers = function numbers () {
+      return this.ranges.reduce(function (result, subrange) {
+          var i = subrange.low;
+          while (i <= subrange.high) {
+              result.push(i);
+              i++;
+          }
+          return result;
+      }, []);
+  };
+
+  DRange.prototype.subranges = function subranges () {
+      return this.ranges.map(function (subrange) { return ({
+          low: subrange.low,
+          high: subrange.high,
+          length: 1 + subrange.high - subrange.low
+      }); });
+  };
+
   var lib$2 = DRange;
 
   var types$1  = lib$1.types;
@@ -9690,7 +9709,7 @@
           props[key] = properties[key];
         }
       });
-      return traverseCallback(props, path.concat(['properties']), resolve);
+      return traverseCallback(props, path.concat(['properties']), resolve, value);
     }
 
     var optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
@@ -9743,7 +9762,7 @@
         delete value.dependencies;
         return traverseCallback({
           allOf: _defns.concat(value)
-        }, path.concat(['properties']), resolve);
+        }, path.concat(['properties']), resolve, value);
       }
     }
 
@@ -10085,7 +10104,7 @@
   };
 
   function traverse(schema, path, resolve, rootSchema) {
-    schema = resolve(schema, null, path, rootSchema);
+    schema = resolve(schema, null, path);
 
     if (!schema) {
       return;
@@ -10294,9 +10313,10 @@
 
   function run$1(refs, schema, container) {
     var depth = 0;
+    var lastRef;
 
     try {
-      var result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath, parentSchema) {
+      var result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath) {
         if (typeof sub.generate === 'function') {
           return sub;
         } // cleanup
@@ -10311,15 +10331,13 @@
         }
 
         if (typeof sub.$ref === 'string') {
-          if (index !== null && parentSchema && parentSchema.required) {
-            if (parentSchema.required.includes(index)) { return sub; }
-          }
-
-          if (sub.$ref === '#' || ++depth > random.number(0, 1)) {
+          // increasing depth only for repeated refs seems to be fixing #258
+          if (sub.$ref === '#' || lastRef === sub.$ref && ++depth > random.number(0, 3)) {
             delete sub.$ref;
             return sub;
           }
 
+          lastRef = sub.$ref;
           var ref;
 
           if (sub.$ref.indexOf('#/') === -1) {
@@ -10349,7 +10367,7 @@
           // must be resolved before any merge
 
           schemas.forEach(function (subSchema) {
-            var _sub = reduce(subSchema, null, rootPath, parentSchema); // call given thunks if present
+            var _sub = reduce(subSchema, null, rootPath); // call given thunks if present
 
 
             utils.merge(sub, typeof _sub.thunk === 'function' ? _sub.thunk(sub) : _sub);
@@ -10391,7 +10409,7 @@
 
         Object.keys(sub).forEach(function (prop) {
           if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-            sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop), parentSchema);
+            sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop));
           }
         }); // avoid extra calls on sub-schemas, fixes #458
 
