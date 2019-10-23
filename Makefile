@@ -25,6 +25,12 @@ endef
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
+build: ## Generate dist files from sources
+	@npm run build
+
+test: deps ## Invoke all tests like if we're in CI
+	@npm run test:schema
+
 dist: deps ## Build artifact for production
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
