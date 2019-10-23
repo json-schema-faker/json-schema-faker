@@ -168,8 +168,8 @@ function run(refs, schema, container) {
 
             if (sub.oneOf) {
               mix.forEach(omit => {
-                if (omit !== fixed && omit.required) {
-                  omit.required.filter(required => !(fixed.required || []).includes(required)).forEach(function (key) {
+                if (omit !== fixed && omit.required && copy.properties) {
+                  omit.required.filter(required => !(fixed.required || []).includes(required)).forEach(key => {
                     delete copy.properties[key];
                   });
                 }
