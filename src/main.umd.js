@@ -5,4 +5,4 @@ $bundle: JSONSchemaFaker
 ---
 */
 
-export { default } from './lib';
+export { default } from './main';
