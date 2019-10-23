@@ -11,7 +11,7 @@ node_js:
   - 11
   - 12
 before_script:
-  - make build
+  - make lib
 script:
   - make test
 after_success:
