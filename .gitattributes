@@ -1,4 +1,0 @@
-lib/** -diff
-dist/** -diff binary
-locale/* -diff
-package-lock.json -diff
