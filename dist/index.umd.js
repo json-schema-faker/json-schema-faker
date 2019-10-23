@@ -168,9 +168,9 @@
     CHAR       : 7,
   };
 
-  var INTS = function () { return [{ type: types.RANGE , from: 48, to: 57 }]; };
+  const INTS = () => [{ type: types.RANGE , from: 48, to: 57 }];
 
-  var WORDS = function () {
+  const WORDS = () => {
     return [
       { type: types.CHAR, value: 95 },
       { type: types.RANGE, from: 97, to: 122 },
@@ -178,7 +178,7 @@
     ].concat(INTS());
   };
 
-  var WHITESPACE = function () {
+  const WHITESPACE = () => {
     return [
       { type: types.CHAR, value: 9 },
       { type: types.CHAR, value: 10 },
@@ -198,22 +198,23 @@
     ];
   };
 
-  var NOTANYCHAR = function () {
+  const NOTANYCHAR = () => {
     return [
       { type: types.CHAR, value: 10 },
       { type: types.CHAR, value: 13 },
       { type: types.CHAR, value: 8232 },
-      { type: types.CHAR, value: 8233 } ];
+      { type: types.CHAR, value: 8233 },
+    ];
   };
 
   // Predefined class objects.
-  var words = function () { return ({ type: types.SET, set: WORDS(), not: false }); };
-  var notWords = function () { return ({ type: types.SET, set: WORDS(), not: true }); };
-  var ints = function () { return ({ type: types.SET, set: INTS(), not: false }); };
-  var notInts = function () { return ({ type: types.SET, set: INTS(), not: true }); };
-  var whitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: false }); };
-  var notWhitespace = function () { return ({ type: types.SET, set: WHITESPACE(), not: true }); };
-  var anyChar = function () { return ({ type: types.SET, set: NOTANYCHAR(), not: true }); };
+  var words = () => ({ type: types.SET, set: WORDS(), not: false });
+  var notWords = () => ({ type: types.SET, set: WORDS(), not: true });
+  var ints = () => ({ type: types.SET, set: INTS(), not: false });
+  var notInts = () => ({ type: types.SET, set: INTS(), not: true });
+  var whitespace = () => ({ type: types.SET, set: WHITESPACE(), not: false });
+  var notWhitespace = () => ({ type: types.SET, set: WHITESPACE(), not: true });
+  var anyChar = () => ({ type: types.SET, set: NOTANYCHAR(), not: true });
 
   var sets = {
   	words: words,
@@ -226,8 +227,8 @@
   };
 
   var util = createCommonjsModule(function (module, exports) {
-  var CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
-  var SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
+  const CTRL = '@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?';
+  const SLSH = { '0': 0, 't': 9, 'n': 10, 'v': 11, 'f': 12, 'r': 13 };
 
   /**
    * Finds character representations in str and convert all to
@@ -273,7 +274,7 @@
    * @param {String} regexpStr
    * @return {Array.<Array.<Object>, Number>}
    */
-  exports.tokenizeClass = function (str, regexpStr) {
+  exports.tokenizeClass = (str, regexpStr) => {
     /* jshint maxlen: false */
     var tokens = [];
     var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?([^])/g;
@@ -327,7 +328,7 @@
    * @param {String} regexp
    * @param {String} msg
    */
-  exports.error = function (regexp, msg) {
+  exports.error = (regexp, msg) => {
     throw new SyntaxError('Invalid regular expression: /' + regexp + '/: ' + msg);
   };
   });
@@ -335,10 +336,10 @@
   var util_2 = util.tokenizeClass;
   var util_3 = util.error;
 
-  var wordBoundary = function () { return ({ type: types.POSITION, value: 'b' }); };
-  var nonWordBoundary = function () { return ({ type: types.POSITION, value: 'B' }); };
-  var begin = function () { return ({ type: types.POSITION, value: '^' }); };
-  var end = function () { return ({ type: types.POSITION, value: '$' }); };
+  var wordBoundary = () => ({ type: types.POSITION, value: 'b' });
+  var nonWordBoundary = () => ({ type: types.POSITION, value: 'B' });
+  var begin = () => ({ type: types.POSITION, value: '^' });
+  var end = () => ({ type: types.POSITION, value: '$' });
 
   var positions = {
   	wordBoundary: wordBoundary,
@@ -347,7 +348,7 @@
   	end: end
   };
 
-  var lib = function (regexpStr) {
+  var lib = (regexpStr) => {
     var i = 0, l, c,
       start = { type: types.ROOT, stack: []},
 
@@ -357,8 +358,8 @@
       groupStack = [];
 
 
-    var repeatErr = function (i) {
-      util.error(regexpStr, ("Nothing to repeat at column " + (i - 1)));
+    var repeatErr = (i) => {
+      util.error(regexpStr, `Nothing to repeat at column ${i - 1}`);
     };
 
     // Decode a few escaped characters.
@@ -451,7 +452,7 @@
           last.push({
             type: types.SET,
             set: classTokens[0],
-            not: not,
+            not,
           });
 
           break;
@@ -489,8 +490,8 @@
 
             } else if (c !== ':') {
               util.error(regexpStr,
-                "Invalid group, character '" + c + "'" +
-                " after '?' at column " + (i - 1));
+                `Invalid group, character '${c}'` +
+                ` after '?' at column ${i - 1}`);
             }
 
             group.remember = false;
@@ -511,7 +512,7 @@
         // Pop group out of stack.
         case ')':
           if (groupStack.length === 0) {
-            util.error(regexpStr, ("Unmatched ) at column " + (i - 1)));
+            util.error(regexpStr, `Unmatched ) at column ${i - 1}`);
           }
           lastGroup = groupStack.pop();
 
@@ -555,8 +556,8 @@
 
             last.push({
               type: types.REPETITION,
-              min: min,
-              max: max,
+              min,
+              max,
               value: last.pop(),
             });
           } else {
@@ -629,168 +630,171 @@
 
 
   // Private helper class
-  var SubRange = function SubRange(low, high) {
-      this.low = low;
-      this.high = high;
-      this.length = 1 + high - low;
-  };
-
-  SubRange.prototype.overlaps = function overlaps (range) {
-      return !(this.high < range.low || this.low > range.high);
-  };
-
-  SubRange.prototype.touches = function touches (range) {
-      return !(this.high + 1 < range.low || this.low - 1 > range.high);
-  };
-
-  // Returns inclusive combination of SubRanges as a SubRange.
-  SubRange.prototype.add = function add (range) {
-      return new SubRange(
-          Math.min(this.low, range.low),
-          Math.max(this.high, range.high)
-      );
-  };
-
-  // Returns subtraction of SubRanges as an array of SubRanges.
-  // (There's a case where subtraction divides it in 2)
-  SubRange.prototype.subtract = function subtract (range) {
-      if (range.low <= this.low && range.high >= this.high) {
-          return [];
-      } else if (range.low > this.low && range.high < this.high) {
-          return [
-              new SubRange(this.low, range.low - 1),
-              new SubRange(range.high + 1, this.high)
-          ];
-      } else if (range.low <= this.low) {
-          return [new SubRange(range.high + 1, this.high)];
-      } else {
-          return [new SubRange(this.low, range.low - 1)];
+  class SubRange {
+      constructor(low, high) {
+          this.low = low;
+          this.high = high;
+          this.length = 1 + high - low;
       }
-  };
 
-  SubRange.prototype.toString = function toString () {
-      return this.low == this.high ?
-          this.low.toString() : this.low + '-' + this.high;
-  };
+      overlaps(range) {
+          return !(this.high < range.low || this.low > range.high);
+      }
+
+      touches(range) {
+          return !(this.high + 1 < range.low || this.low - 1 > range.high);
+      }
+
+      // Returns inclusive combination of SubRanges as a SubRange.
+      add(range) {
+          return new SubRange(
+              Math.min(this.low, range.low),
+              Math.max(this.high, range.high)
+          );
+      }
+
+      // Returns subtraction of SubRanges as an array of SubRanges.
+      // (There's a case where subtraction divides it in 2)
+      subtract(range) {
+          if (range.low <= this.low && range.high >= this.high) {
+              return [];
+          } else if (range.low > this.low && range.high < this.high) {
+              return [
+                  new SubRange(this.low, range.low - 1),
+                  new SubRange(range.high + 1, this.high)
+              ];
+          } else if (range.low <= this.low) {
+              return [new SubRange(range.high + 1, this.high)];
+          } else {
+              return [new SubRange(this.low, range.low - 1)];
+          }
+      }
+
+      toString() {
+          return this.low == this.high ?
+              this.low.toString() : this.low + '-' + this.high;
+      }
+  }
 
 
-  var DRange = function DRange(a, b) {
-      this.ranges = [];
-      this.length = 0;
-      if (a != null) { this.add(a, b); }
-  };
+  class DRange {
+      constructor(a, b) {
+          this.ranges = [];
+          this.length = 0;
+          if (a != null) this.add(a, b);
+      }
 
-  DRange.prototype._update_length = function _update_length () {
-      this.length = this.ranges.reduce(function (previous, range) {
-          return previous + range.length;
-      }, 0);
-  };
+      _update_length() {
+          this.length = this.ranges.reduce((previous, range) => {
+              return previous + range.length;
+          }, 0);
+      }
 
-  DRange.prototype.add = function add (a, b) {
-          var this$1 = this;
+      add(a, b) {
+          var _add = (subrange) => {
+              var i = 0;
+              while (i < this.ranges.length && !subrange.touches(this.ranges[i])) {
+                  i++;
+              }
+              var newRanges = this.ranges.slice(0, i);
+              while (i < this.ranges.length && subrange.touches(this.ranges[i])) {
+                  subrange = subrange.add(this.ranges[i]);
+                  i++;
+              }
+              newRanges.push(subrange);
+              this.ranges = newRanges.concat(this.ranges.slice(i));
+              this._update_length();
+          };
 
-      var _add = function (subrange) {
+          if (a instanceof DRange) {
+              a.ranges.forEach(_add);
+          } else {
+              if (b == null) b = a;
+              _add(new SubRange(a, b));
+          }
+          return this;
+      }
+
+      subtract(a, b) {
+          var _subtract = (subrange) => {
+              var i = 0;
+              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
+                  i++;
+              }
+              var newRanges = this.ranges.slice(0, i);
+              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
+                  newRanges = newRanges.concat(this.ranges[i].subtract(subrange));
+                  i++;
+              }
+              this.ranges = newRanges.concat(this.ranges.slice(i));
+              this._update_length();
+          };
+
+          if (a instanceof DRange) {
+              a.ranges.forEach(_subtract);
+          } else {
+              if (b == null) b = a;
+              _subtract(new SubRange(a, b));
+          }
+          return this;
+      }
+
+      intersect(a, b) {
+          var newRanges = [];
+          var _intersect = (subrange) => {
+              var i = 0;
+              while (i < this.ranges.length && !subrange.overlaps(this.ranges[i])) {
+                  i++;
+              }
+              while (i < this.ranges.length && subrange.overlaps(this.ranges[i])) {
+                  var low = Math.max(this.ranges[i].low, subrange.low);
+                  var high = Math.min(this.ranges[i].high, subrange.high);
+                  newRanges.push(new SubRange(low, high));
+                  i++;
+              }
+          };
+
+          if (a instanceof DRange) {
+              a.ranges.forEach(_intersect);
+          } else {
+              if (b == null) b = a;
+              _intersect(new SubRange(a, b));
+          }
+          this.ranges = newRanges;
+          this._update_length();
+          return this;
+      }
+
+      index(index) {
           var i = 0;
-          while (i < this$1.ranges.length && !subrange.touches(this$1.ranges[i])) {
+          while (i < this.ranges.length && this.ranges[i].length <= index) {
+              index -= this.ranges[i].length;
               i++;
           }
-          var newRanges = this$1.ranges.slice(0, i);
-          while (i < this$1.ranges.length && subrange.touches(this$1.ranges[i])) {
-              subrange = subrange.add(this$1.ranges[i]);
-              i++;
-          }
-          newRanges.push(subrange);
-          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
-          this$1._update_length();
-      };
-
-      if (a instanceof DRange) {
-          a.ranges.forEach(_add);
-      } else {
-          if (b == null) { b = a; }
-          _add(new SubRange(a, b));
+          return this.ranges[i].low + index;
       }
-      return this;
-  };
 
-  DRange.prototype.subtract = function subtract (a, b) {
-          var this$1 = this;
-
-      var _subtract = function (subrange) {
-          var i = 0;
-          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
-              i++;
-          }
-          var newRanges = this$1.ranges.slice(0, i);
-          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
-              newRanges = newRanges.concat(this$1.ranges[i].subtract(subrange));
-              i++;
-          }
-          this$1.ranges = newRanges.concat(this$1.ranges.slice(i));
-          this$1._update_length();
-      };
-
-      if (a instanceof DRange) {
-          a.ranges.forEach(_subtract);
-      } else {
-          if (b == null) { b = a; }
-          _subtract(new SubRange(a, b));
+      toString() {
+          return '[ ' + this.ranges.join(', ') + ' ]';
       }
-      return this;
-  };
 
-  DRange.prototype.intersect = function intersect (a, b) {
-          var this$1 = this;
-
-      var newRanges = [];
-      var _intersect = function (subrange) {
-          var i = 0;
-          while (i < this$1.ranges.length && !subrange.overlaps(this$1.ranges[i])) {
-              i++;
-          }
-          while (i < this$1.ranges.length && subrange.overlaps(this$1.ranges[i])) {
-              var low = Math.max(this$1.ranges[i].low, subrange.low);
-              var high = Math.min(this$1.ranges[i].high, subrange.high);
-              newRanges.push(new SubRange(low, high));
-              i++;
-          }
-      };
-
-      if (a instanceof DRange) {
-          a.ranges.forEach(_intersect);
-      } else {
-          if (b == null) { b = a; }
-          _intersect(new SubRange(a, b));
+      clone() {
+          return new DRange(this);
       }
-      this.ranges = newRanges;
-      this._update_length();
-      return this;
-  };
-
-  DRange.prototype.index = function index (index$1) {
-      var i = 0;
-      while (i < this.ranges.length && this.ranges[i].length <= index$1) {
-          index$1 -= this.ranges[i].length;
-          i++;
-      }
-      return this.ranges[i].low + index$1;
-  };
-
-  DRange.prototype.toString = function toString () {
-      return '[ ' + this.ranges.join(', ') + ' ]';
-  };
-
-  DRange.prototype.clone = function clone () {
-      return new DRange(this);
-  };
+  }
 
   var lib$1 = DRange;
 
-  var types$1  = lib.types;
+  const types$1  = lib.types;
 
 
-  var randexp = /*@__PURE__*/(function () {
-    function RandExp(regexp, m) {
+  var randexp = class RandExp {
+    /**
+     * @constructor
+     * @param {RegExp|String} regexp
+     * @param {String} m
+     */
+    constructor(regexp, m) {
       this._setDefaults(regexp);
       if (regexp instanceof RegExp) {
         this.ignoreCase = regexp.ignoreCase;
@@ -807,8 +811,6 @@
       this.tokens = lib(regexp);
     }
 
-    var prototypeAccessors = { defaultRange: { configurable: true } };
-
 
     /**
      * Checks if some custom properties have been set for this regexp.
@@ -816,7 +818,7 @@
      * @param {RandExp} randexp
      * @param {RegExp} regexp
      */
-    RandExp.prototype._setDefaults = function _setDefaults (regexp) {
+    _setDefaults(regexp) {
       // When a repetitional token has its max set to Infinite,
       // randexp won't actually generate a random amount between min and Infinite
       // instead it will see Infinite as min + 100.
@@ -831,7 +833,7 @@
       if (regexp.randInt) {
         this.randInt = regexp.randInt;
       }
-    };
+    }
 
 
     /**
@@ -839,9 +841,9 @@
      *
      * @return {String}
      */
-    RandExp.prototype.gen = function gen () {
+    gen() {
       return this._gen(this.tokens, []);
-    };
+    }
 
 
     /**
@@ -851,7 +853,7 @@
      * @param {Array.<String>} groups
      * @return {String}
      */
-    RandExp.prototype._gen = function _gen (token, groups) {
+    _gen(token, groups) {
       var stack, str, n, i, l;
 
       switch (token.type) {
@@ -907,7 +909,7 @@
             this._toOtherCase(token.value) : token.value;
           return String.fromCharCode(code);
       }
-    };
+    }
 
 
     /**
@@ -917,10 +919,10 @@
      * @param {Number} code
      * @return {Number}
      */
-    RandExp.prototype._toOtherCase = function _toOtherCase (code) {
+    _toOtherCase(code) {
       return code + (97 <= code && code <= 122 ? -32 :
         65 <= code && code <= 90  ?  32 : 0);
-    };
+    }
 
 
     /**
@@ -928,9 +930,9 @@
      *
      * @return {Boolean}
      */
-    RandExp.prototype._randBool = function _randBool () {
+    _randBool() {
       return !this.randInt(0, 1);
-    };
+    }
 
 
     /**
@@ -939,12 +941,12 @@
      * @param {Array.<Object>} arr
      * @return {Object}
      */
-    RandExp.prototype._randSelect = function _randSelect (arr) {
+    _randSelect(arr) {
       if (arr instanceof lib$1) {
         return arr.index(this.randInt(0, arr.length - 1));
       }
       return arr[this.randInt(0, arr.length - 1)];
-    };
+    }
 
 
     /**
@@ -954,20 +956,20 @@
      * @param {Object} token
      * @return {DiscontinuousRange}
      */
-    RandExp.prototype._expand = function _expand (token) {
+    _expand(token) {
       if (token.type === lib.types.CHAR) {
         return new lib$1(token.value);
       } else if (token.type === lib.types.RANGE) {
         return new lib$1(token.from, token.to);
       } else {
-        var drange = new lib$1();
-        for (var i = 0; i < token.set.length; i++) {
-          var subrange = this._expand(token.set[i]);
+        let drange = new lib$1();
+        for (let i = 0; i < token.set.length; i++) {
+          let subrange = this._expand(token.set[i]);
           drange.add(subrange);
           if (this.ignoreCase) {
-            for (var j = 0; j < subrange.length; j++) {
-              var code = subrange.index(j);
-              var otherCaseCode = this._toOtherCase(code);
+            for (let j = 0; j < subrange.length; j++) {
+              let code = subrange.index(j);
+              let otherCaseCode = this._toOtherCase(code);
               if (code !== otherCaseCode) {
                 drange.add(otherCaseCode);
               }
@@ -980,7 +982,7 @@
           return this.defaultRange.clone().intersect(drange);
         }
       }
-    };
+    }
 
 
     /**
@@ -990,21 +992,21 @@
      * @param {Number} b
      * @return {Number}
      */
-    RandExp.prototype.randInt = function randInt (a, b) {
+    randInt(a, b) {
       return a + Math.floor(Math.random() * (1 + b - a));
-    };
+    }
 
 
     /**
      * Default range of characters to generate from.
      */
-    prototypeAccessors.defaultRange.get = function () {
+    get defaultRange() {
       return this._range = this._range || new lib$1(32, 126);
-    };
+    }
 
-    prototypeAccessors.defaultRange.set = function (range) {
+    set defaultRange(range) {
       this._range = range;
-    };
+    }
 
 
     /**
@@ -1015,7 +1017,7 @@
      * @param {String} m
      * @return {String}
      */
-    RandExp.randexp = function randexp (regexp, m) {
+    static randexp(regexp, m) {
       var randexp;
       if(typeof regexp === 'string') {
         regexp = new RegExp(regexp, m);
@@ -1029,23 +1031,19 @@
         randexp._setDefaults(regexp);
       }
       return randexp.gen();
-    };
+    }
 
 
     /**
      * Enables sugary /regexp/.gen syntax.
      */
-    RandExp.sugar = function sugar () {
+    static sugar() {
       /* eshint freeze:false */
       RegExp.prototype.gen = function() {
         return RandExp.randexp(this);
       };
-    };
-
-    Object.defineProperties( RandExp.prototype, prototypeAccessors );
-
-    return RandExp;
-  }());
+    }
+  };
 
   function getRandomInteger(min, max) {
     min = typeof min === 'undefined' ? env.MIN_INTEGER : min;
@@ -2628,8 +2626,8 @@
 
               if (sub.oneOf) {
                 mix.forEach(function (omit) {
-                  if (omit !== fixed && omit.required) {
-                    omit.required.filter(function (required) { return !fixed.required.includes(required); }).forEach(function (key) {
+                  if (omit !== fixed && omit.required && copy.properties) {
+                    omit.required.filter(function (required) { return !(fixed.required || []).includes(required); }).forEach(function (key) {
                       delete copy.properties[key];
                     });
                   }

@@ -1729,8 +1729,8 @@ function run(refs, schema, container) {
 
             if (sub.oneOf) {
               mix.forEach(function (omit) {
-                if (omit !== fixed && omit.required) {
-                  omit.required.filter(function (required) { return !fixed.required.includes(required); }).forEach(function (key) {
+                if (omit !== fixed && omit.required && copy.properties) {
+                  omit.required.filter(function (required) { return !(fixed.required || []).includes(required); }).forEach(function (key) {
                     delete copy.properties[key];
                   });
                 }

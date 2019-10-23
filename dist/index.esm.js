@@ -482,18 +482,7 @@ function merge(a, b) {
 }
 
 function clone(obj) {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    return obj.map(function (x) { return clone(x); });
-  }
-
-  return Object.keys(obj).reduce(function (prev, cur) {
-    prev[cur] = clone(obj[cur]);
-    return prev;
-  }, {});
+  return JSON.parse(JSON.stringify(obj));
 }
 
 function short(schema) {
@@ -1165,7 +1154,9 @@ function objectType(value, path, resolve, traverseCallback) {
       if (requiredProperties.indexOf(key) !== -1) {
         props[key] = properties[key];
       }
-    } else if (properties[key]) {
+    }
+
+    if (properties[key]) {
       props[key] = properties[key];
     }
 
@@ -1526,6 +1517,11 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (typeof schema.generate === 'function') {
     return utils.typecast(null, schema, function () { return schema.generate(rootSchema); });
+  } // short-circuit as we don't plan generate more values!
+
+
+  if (schema.jsonPath) {
+    return schema;
   } // TODO remove the ugly overcome
 
 
@@ -1729,8 +1725,8 @@ function run(refs, schema, container) {
 
             if (sub.oneOf) {
               mix.forEach(function (omit) {
-                if (omit !== fixed && omit.required) {
-                  omit.required.filter(function (required) { return !fixed.required.includes(required); }).forEach(function (key) {
+                if (omit !== fixed && omit.required && copy.properties) {
+                  omit.required.filter(function (required) { return !(fixed.required || []).includes(required); }).forEach(function (key) {
                     delete copy.properties[key];
                   });
                 }
@@ -1909,6 +1905,6 @@ jsf.locate = function (name) {
   return container.get(name);
 };
 
-jsf.version = '0.5.0-rc21';
+jsf.version = '0.5.0-rc22';
 
 export default jsf;
