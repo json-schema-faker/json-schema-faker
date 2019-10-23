@@ -26,7 +26,7 @@ endef
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
 lib: deps
-	@npm run build
+	@npm run build -- -y main
 
 dev:
 	@npm run watch
