@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const jsf = require('../dist/bundle.umd.min.js');
+const jsf = require('../dist/bundle.js');
 
 // FIXME: load faker/change on startup?
 
