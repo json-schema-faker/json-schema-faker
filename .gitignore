@@ -10,6 +10,8 @@
 .nyc_output
 .DS_Store
 /lib
+/dist
+/build
 /package
 /reports
 /coverage
@@ -17,6 +19,7 @@
 /nbproject
 /node_modules
 /locale
+/bower_components
 /build/index.json
 
 ### Vim ###

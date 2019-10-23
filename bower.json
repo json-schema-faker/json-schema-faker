@@ -1,0 +1,38 @@
+{
+  "name": "website-jsf",
+  "homepage": "https://github.com/json-schema-faker/website-jsf",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "ace-builds": "^1.2.6",
+    "vue": "^2.5.13",
+    "yaml.js": "^0.3.0",
+    "Faker": "^4.1.0",
+    "chance": "^1.0.13"
+  },
+  "overrides": {
+    "vue": {
+      "main": "dist/vue.runtime.js"
+    },
+    "faker": {
+      "main": "build/build/faker.min.js"
+    },
+    "chance": {
+      "main": "dist/chance.min.js"
+    },
+    "ace-builds": {
+      "main": [
+        "src-min/ace.js",
+        "src-min/mode-json.js",
+        "src-min/mode-yaml.js",
+        "src-min/worker-json.js",
+        "src-min/theme-github.js"
+      ]
+    }
+  }
+}

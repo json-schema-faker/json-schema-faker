@@ -11,26 +11,28 @@
   "unpkg": "dist/bundle.umd.min.js",
   "browser": "dist/index.umd.min.js",
   "scripts": {
-    "build:concat:dist": "concat -o dist/bundle.umd.min.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js dist/index.umd.min.js",
-    "build:browser": "bili --banner --format umd --format umd-min --module-name JSONSchemaFaker --minimal && npm run build:concat:dist",
-    "build:node": "bili src/index.js --minimal --format es --format cjs",
-    "build": "npm run build:browser && npm run build:node",
-    "dev": "npm test -- -w",
-    "test": "npm run lint && npm run test:unit -- && npm run test:schema",
-    "test:ci": "npm run coverage:all && npm run report -- -r lcov",
-    "test:all": "npm run test:run tests && npm run report -- -r html",
+    "_build:concat:dist": "concat -o dist/bundle.umd.min.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js dist/index.umd.min.js",
+    "_build:browser": "bili --banner --format umd --format umd-min --module-name JSONSchemaFaker --minimal && npm run build:concat:dist",
+    "_build:node": "bili src/index.js --minimal --format es --format cjs",
+    "dev": "npm run test:schema -- -w",
+    "_test": "npm run lint && npm run test:unit -- && npm run test:schema",
+    "_test:ci": "npm run coverage:all && npm run report -- -r lcov",
+    "_test:all": "npm run test:run tests && npm run report -- -r html",
     "test:run": "NODE_ENV=test _mocha --exit --recursive --watch-extensions js,json -r esm -bR spec",
-    "test:unit": "npm run test:run tests/unit --",
+    "_test:unit": "npm run test:run tests/unit --",
     "test:schema": "npm run test:run tests/schema --",
-    "coverage": "nyc -x '**/tests/**' -x '**/*.spec.js'",
-    "coverage:all": "npm run coverage -- npm run test:all",
-    "coverage:unit": "npm run coverage -- npm run test:unit",
-    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
-    "report": "nyc report",
-    "lint": "eslint src tests",
-    "pretest": "npm run lint",
-    "prepublish": "npm run build",
-    "graphviz": "madge src --dot > structure.gv"
+    "_coverage": "nyc -x '**/tests/**' -x '**/*.spec.js'",
+    "_coverage:all": "npm run coverage -- npm run test:all",
+    "_coverage:unit": "npm run coverage -- npm run test:unit",
+    "_codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION",
+    "_report": "nyc report",
+    "_lint": "eslint src tests",
+    "_pretest": "npm run lint",
+    "_prepublish": "npm run build",
+    "_graphviz": "madge src --dot > structure.gv",
+    "watch": "tarima watch",
+    "pretest": "eslint src",
+    "build": "tarima -fqe production"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
@@ -49,41 +51,89 @@
     "fake",
     "mocks"
   ],
-  "bili": {
-    "external": [
-      "json-schema-ref-parser",
-      "jsonpath"
-    ]
+  "tarima": {
+    "from": "src",
+    "output": ".",
+    "serve": "dist",
+    "public": "build",
+    "rename": [
+      "**/web/**:build/{fullpath/2}",
+      "**/main*js:dist/{fullpath/1}"
+    ],
+    "bundle": [
+      "**/main*.js",
+      "**/app.js"
+    ],
+    "filter": [
+      "!_*",
+      "!**/_*",
+      "!**/_*/**",
+      "!**/lib/**"
+    ],
+    "plugins": [
+      "tarima-bower"
+    ],
+    "bundleOptions": {
+      "extensions": {
+        "js": "es6",
+        "css": "less",
+        "umd": false
+      },
+      "rollup": {
+        "format": "es",
+        "external": [
+          "jsonpath-plus",
+          "json-schema-ref-parser"
+        ],
+        "plugins": [
+          "rollup-plugin-node-resolve",
+          "rollup-plugin-commonjs",
+          "rollup-plugin-vue"
+        ]
+      },
+      "buble": {
+        "objectAssign": "Object.assign"
+      },
+      "less": {
+        "plugins": [
+          "less-plugin-autoprefix"
+        ]
+      }
+    }
   },
   "files": [
     "dist/*.*"
   ],
   "devDependencies": {
     "ajv": "^6.5.3",
-    "bili": "^4.2.5",
+    "buble": "^0.19.8",
     "chai": "^4.1.2",
     "chance": "^1.0.9",
-    "clone": "^2.1.2",
     "codecov": "^3.0.0",
     "concat": "^1.0.3",
-    "cryptiles": "^4.1.3",
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.0",
     "esm": "^3.0.82",
-    "extend": "^3.0.2",
     "faker": "^4.1.0",
     "fs-extra": "^8.0.1",
     "glob": "^7.1.2",
     "is-my-json-valid": "^2.19.0",
+    "less": "^3.10.3",
+    "less-plugin-autoprefix": "^2.0.0",
     "mocha": "^6.1.4",
     "nyc": "^14.1.1",
-    "rollup": "^1.2.2",
+    "pug": "^2.0.4",
+    "rollup": "^1.25.1",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
+    "rollup-plugin-vue": "^5.0.1",
     "seedrandom": "^3.0.1",
     "semver": "^6.1.1",
+    "tarima": "^4.6.0",
+    "tarima-bower": "^0.4.3",
     "tv4": "^1.3.0",
+    "vue-template-compiler": "^2.6.10",
     "z-schema": "^4.1.0"
   },
   "dependencies": {

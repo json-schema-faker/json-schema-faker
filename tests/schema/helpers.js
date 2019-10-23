@@ -1,7 +1,7 @@
 import fs from 'fs';
 import glob from 'glob';
 import { expect } from 'chai';
-import _jsf from '../../src';
+import _jsf from '../../src/lib';
 import { checkType, checkSchema } from './validator';
 
 export const jsf = _jsf;
