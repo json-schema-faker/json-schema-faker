@@ -73,7 +73,8 @@ function objectType(value, path, resolve, traverseCallback) {
   });
 
   // properties are read from right-to-left
-  const _props = requiredProperties.concat(extraProperties).slice(0, max);
+  const _limit = optionalsProbability !== false ? max : random.number(0, max);
+  const _props = requiredProperties.concat(extraProperties.slice(0, _limit));
   const _defns = [];
 
   if (value.dependencies) {

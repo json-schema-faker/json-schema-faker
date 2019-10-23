@@ -60,9 +60,25 @@ function seed() {
 
         const tasks = [];
 
+        // count prescence of props...
+        const props = test.minProps ? test.minProps.reduce((prev, cur) => {
+          prev[String(cur)] = 0;
+          return prev;
+        }, {}) : null;
+
         while (nth) {
           if (!test.skip) {
-            tasks.push(tryTest(nth, max, test, refs, schema));
+            tasks.push(tryTest(nth, max, test, refs, schema, sample => {
+              if (props) {
+                const length = String(Object.keys(sample).length);
+
+                if (typeof props[length] === 'undefined') {
+                  throw new Error(`Unexpected length(${length}), given '${test.minProps.join(', ')}'`);
+                }
+
+                props[length] += 1;
+              }
+            }));
           }
 
           nth -= 1;
@@ -78,6 +94,10 @@ function seed() {
           // FIXME: find a way to debug this
           console.log('---> Used seeds:', seeds.slice(-10).join(', ') || test.seed);
           throw e;
+        }).then(() => {
+          if (props && Object.values(props).some(x => x === 0)) {
+            throw new Error(`minProps failed, got: ${JSON.stringify(props)}`);
+          }
         });
       }).timeout(suite.timeout || test.timeout || (process.CI ? 30000 : 10000));
     });

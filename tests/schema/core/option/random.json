@@ -23,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 54,
-          "b": "minim amet in dolor laborum",
-          "c": "pf922"
+          "a": 44,
+          "b": "in culpa proident amet",
+          "c": "fe228"
         },
         "repeat": 1,
         "require": "core/option/random"

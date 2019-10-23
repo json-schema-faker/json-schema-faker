@@ -59,7 +59,7 @@ export function getTests(srcDir) {
   return { only, all };
 }
 
-export function tryTest(nth, max, test, refs, schema) {
+export function tryTest(nth, max, test, refs, schema, callback) {
   return _jsf.resolve(schema, refs).then(sample => {
     if (test.dump) {
       console.log(JSON.stringify(sample, null, 2));
@@ -122,6 +122,10 @@ export function tryTest(nth, max, test, refs, schema) {
 
     if ('equal' in test) {
       expect(sample).to.eql(test.equal);
+    }
+
+    if (callback) {
+      callback(sample);
     }
   }).catch(error => {
     if (typeof test.throws === 'string') {
