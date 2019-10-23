@@ -12,9 +12,9 @@ node_js:
   - 11
   - 12
 before_script:
-  - npm run build
+  - make build
 script:
-  - npm run test:ci
+  - make test
 after_success:
   - npm run codecov
 notifications:
