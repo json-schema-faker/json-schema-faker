@@ -28,7 +28,7 @@ endef
 dist: deps ## Build artifact for production
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
-	@cd $(src) && rm -rf *
+	@cd $(src) && rm -rf * && git checkout -- vendor
 	@cp -r public/* build
 	@npm run build
 
