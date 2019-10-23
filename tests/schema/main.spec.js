@@ -72,7 +72,7 @@ function seed() {
           if (test.online) {
             console.log('---> failed due connectivity issues?');
             console.log(e.message);
-            return
+            return;
           }
 
           // FIXME: find a way to debug this
