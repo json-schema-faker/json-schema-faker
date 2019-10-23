@@ -19,7 +19,10 @@ html
       window.Buffer = Function
       window.TIME = new Date()
     script(src='js/app.js' defer)
-    script(src='//unpkg.com/json-schema-faker')
+    if env.NODE_ENV === 'production'
+      script(src='//unpkg.com/json-schema-faker')
+    else
+      script(src='bundle.js' defer)
   body
     .Toolbar.f
       .p.oh.rel
