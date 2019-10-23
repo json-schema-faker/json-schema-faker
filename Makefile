@@ -23,27 +23,28 @@ endef
 
 # display all targets-with-help in this file
 ?: Makefile
-	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
+  @awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
 dist: deps ## Build artifact for production
-	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
-	@git worktree add $(src) $(target)
-	@cd $(src) && rm -rf * # && git checkout -- vendor
-	@npm run build
+  @(git worktree remove $(src) --force > /dev/null 2>&1) || true
+  @git worktree add $(src) $(target)
+  @cd $(src) && rm -rf *
+  @cp -r public/* build
+  @npm run build
 
 clean: ## Remove cache and generated artifacts
-	@$(call iif,rm -r $(src) dist,Built artifacts were deleted,Artifacts already deleted)
-	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
+  @$(call iif,rm -r $(src) dist,Built artifacts were deleted,Artifacts already deleted)
+  @$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 
 deploy: $(src) ## Push built artifacts to github!
-	@cd $(src) && git add . && git commit -m "$(message)"
-	@git push origin $(target) -f
+  @cd $(src) && git add . && git commit -m "$(message)"
+  @git push origin $(target) -f
 
 deps: ## Check for installed dependencies
-	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+  @(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
 
 purge: clean ## Remove all from node_modules/*
-	@printf "\r* Removing all dependencies... "
-	@rm -rf node_modules/.{bin,cache}
-	@rm -rf node_modules/*
-	@echo "OK"
+  @printf "\r* Removing all dependencies... "
+  @rm -rf node_modules/.{bin,cache}
+  @rm -rf node_modules/*
+  @echo "OK"
