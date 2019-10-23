@@ -28,13 +28,13 @@ endef
 lib: deps
 	@npm run build -- -y main
 
-dev:
+dev: deps ## Watch and start development server
 	@npm run watch
 
-test: deps ## Invoke all tests like if we're in CI
+test: deps ## Run tests like if we're in CI ;-)
 	@npm run test:schema
 
-dist: deps ## Build artifact for production
+dist: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
 	@cd $(src) && rm -rf * && git checkout -- vendor
