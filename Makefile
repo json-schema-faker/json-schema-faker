@@ -25,8 +25,11 @@ endef
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
-build: ## Generate dist files from sources
+lib: deps
 	@npm run build
+
+dev:
+	@npm run watch
 
 test: deps ## Invoke all tests like if we're in CI
 	@npm run test:schema
@@ -48,6 +51,7 @@ deploy: $(src) ## Push built artifacts to github!
 
 deps: ## Check for installed dependencies
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
+	@(((ls bower_components | grep .) > /dev/null 2>&1) || bower i) || true
 
 purge: clean ## Remove all from node_modules/*
 	@printf "\r* Removing all dependencies... "
