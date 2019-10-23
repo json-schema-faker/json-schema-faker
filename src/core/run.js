@@ -117,9 +117,10 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   let depth = 0;
+  let lastRef;
 
   try {
-    const result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath, parentSchema) {
+    const result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath) {
       if (typeof sub.generate === 'function') {
         return sub;
       }
@@ -134,14 +135,13 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
-        if (index !== null && parentSchema && parentSchema.required) {
-          if (parentSchema.required.includes(index)) return sub;
-        }
-
-        if (sub.$ref === '#' || (++depth > random.number(1, 2))) {
+        // increasing depth only for repeated refs seems to be fixing #258
+        if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > random.number(0, 3))) {
           delete sub.$ref;
           return sub;
         }
+
+        lastRef = sub.$ref;
 
         let ref;
 
@@ -221,7 +221,7 @@ function run(refs, schema, container) {
 
       Object.keys(sub).forEach(prop => {
         if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-          sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop), parentSchema);
+          sub[prop] = reduce(sub[prop], prop, rootPath.concat(prop));
         }
       });
 

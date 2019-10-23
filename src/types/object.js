@@ -43,7 +43,7 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     });
 
-    return traverseCallback(props, path.concat(['properties']), resolve);
+    return traverseCallback(props, path.concat(['properties']), resolve, value);
   }
 
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
@@ -100,7 +100,7 @@ function objectType(value, path, resolve, traverseCallback) {
 
       return traverseCallback({
         allOf: _defns.concat(value),
-      }, path.concat(['properties']), resolve);
+      }, path.concat(['properties']), resolve, value);
     }
   }
 
