@@ -89,6 +89,6 @@
   "dependencies": {
     "json-schema-ref-parser": "^6.1.0",
     "jsonpath-plus": "^1.0.0",
-    "randexp": "^0.5.3"
+    "randexp": "^0.4.9"
   }
 }
