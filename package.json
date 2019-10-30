@@ -4,7 +4,7 @@
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "main": "dist/index.js",
-  "module": "dist/index.mjs",
+  "module": "dist/index.esm.js",
   "unpkg": "dist/bundle.umd.min.js",
   "browser": "dist/index.umd.min.js",
   "scripts": {
