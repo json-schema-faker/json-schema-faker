@@ -8,10 +8,11 @@ target := gh-pages
 message := Release: $(shell date)
 
 # environment vars
-NODE_ENV := development
+PORT ?= 3000
+NODE_ENV ?= development
 
 # export vars
-export NODE_ENV
+.EXPORT_ALL_VARIABLES:
 
 # targets
 .PHONY: ? deps purge dist clean deploy
