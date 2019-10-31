@@ -6,13 +6,47 @@ const jsf = require('../dist/main.umd.js');
 
 const sample = process.argv.slice(2)[0];
 
-// FIXME: setup argv....
+// FIXME: validate types on given input....
 const argv = require('wargs')(process.argv.slice(2), {
-  boolean: 'O',
+  boolean: 'DXMTFOxedrJUSE',
   alias: {
-    'always-fake-optionals': 'O',
+    D: 'defaultInvalidTypeProduct',
+    X: 'defaultRandExpMax',
+
+    p: 'ignoreProperties',
+    M: 'ignoreMissingRefs',
+    T: 'failOnInvalidTypes',
+    F: 'failOnInvalidFormat',
+
+    O: 'alwaysFakeOptionals',
+    o: 'optionalsProbability',
+    x: 'fixedProbabilities',
+    e: 'useExamplesValue',
+    d: 'useDefaultValue',
+    R: 'requiredOnly',
+    r: 'random',
+
+    i: 'minItems',
+    I: 'maxItems',
+    l: 'minLength',
+    L: 'maxLength',
+
+    J: 'resolveJsonPath',
+    U: 'reuseProperties',
+    S: 'fillProperties',
+    E: 'replaceEmptyByRandomValue',
   },
 });
+
+if (typeof argv.flags.random === 'string') {
+  argv.flags.random = () => parseFloat(argv.flags.random);
+}
+
+if (typeof argv.flags.ignoreProperties === 'string') {
+  argv.flags.ignoreProperties = [argv.flags.ignoreProperties];
+}
+
+jsf.option(argv.flags);
 
 const { inspect } = require('util');
 const { Transform } = require('stream');
