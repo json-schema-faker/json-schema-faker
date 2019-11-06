@@ -149,6 +149,7 @@ jsf.locate = name => {
   return container.get(name);
 };
 
-jsf.version = '0.5.0-rc16';
+/* global VERSION */
+jsf.version = VERSION;
 
 export default jsf;
