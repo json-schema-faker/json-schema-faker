@@ -1,0 +1,66 @@
+[
+  {
+    "description": "jsf.resolve() hangs with circular reference when alwaysFakeOptionals is true",
+    "tests": [
+      {
+        "description": "should resolve circular-refs now",
+        "schema": {
+          "type": "object",
+          "definitions": {
+            "collectionDef": {
+              "additionalProperties": false,
+              "properties": {
+                "a": {
+                  "items": {
+                    "$ref": "#/definitions/aDef"
+                  },
+                  "type": "array"
+                },
+                "b": {
+                  "type": "string"
+                }
+              },
+              "type": "object",
+              "required": [
+                "b",
+                "a"
+              ]
+            },
+            "aDef": {
+              "additionalProperties": true,
+              "properties": {
+                "subA": {
+                  "items": {
+                    "$ref": "#/definitions/aDef"
+                  },
+                  "type": "array"
+                },
+                "b": {
+                  "type": "string"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "properties": {
+            "name": {
+              "type": "string",
+              "faker": "name.findName"
+            },
+            "email": {
+              "type": "string",
+              "faker": "internet.email"
+            },
+            "collection": {
+              "$ref": "#/definitions/collectionDef"
+            }
+          },
+          "required": [
+            "name"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]
