@@ -53,6 +53,7 @@ deploy: $(src) ## Push built artifacts to github!
 deps: ## Check for installed dependencies
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
 	@(((ls bower_components | grep .) > /dev/null 2>&1) || bower i) || true
+	@(((ls dist | grep main.umd.js) > /dev/null 2>&1) || npm run build) || true
 
 purge: clean ## Remove all from node_modules/*
 	@printf "\r* Removing all dependencies... "
