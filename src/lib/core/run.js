@@ -150,7 +150,7 @@ function run(refs, schema, container) {
         }
 
         if (sub.$ref.indexOf('#/definitions/') === 0) {
-          ref = schema.definitions[sub.$ref.split('#/definitions/')[1]] || null;
+          ref = sub.$ref.split("/").slice(1).reduce((obj, key) => obj ? obj[key] : null, schema);
         }
 
         if (typeof ref !== 'undefined') {
