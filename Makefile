@@ -9,6 +9,7 @@ message := Release: $(shell date)
 
 # environment vars
 PORT ?= 3000
+VERSION=0.5.0-rc23
 NODE_ENV ?= development
 
 # export vars
@@ -26,7 +27,7 @@ endef
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
-lib: deps
+lib: deps ## Build library output only
 	@npm run build -- -y main
 
 dev: deps ## Watch and start development server
