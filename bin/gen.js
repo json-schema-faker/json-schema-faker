@@ -70,7 +70,7 @@ function generate(schema, callback) {
     }
 
     callback(null, `${sample}\n`);
-  });
+  }).catch(callback);
 }
 
 process.stdin.pipe(new Transform({
