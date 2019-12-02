@@ -1,0 +1,20 @@
+{
+  "description": "Empty strings were causing infinite-loops",
+  "tests": [
+    {
+      "description": "should generate enough valid strings",
+      "schema": {
+        "comment": {
+          "description": "Comment field",
+          "maxLength": 254,
+          "minLength": 1,
+          "type": "string",
+          "pattern": "^"
+        }
+      },
+      "equal": {
+        "comment": ""
+      }
+    }
+  ]
+}

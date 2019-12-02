@@ -132,12 +132,20 @@ function typecast(type, schema, callback) {
       const min = Math.max(params.minLength || 0, 0);
       const max = Math.min(params.maxLength || Infinity, Infinity);
 
+      let prev;
+
       while (value.length < min) {
+        prev = value;
+
         if (!schema.pattern) {
           value += `${random.pick([' ', '/', '_', '-', '+', '=', '@', '^'])}${value}`;
         } else {
           value += random.randexp(schema.pattern);
         }
+
+        // avoid infinite-loops while filling strings, if no changes
+        // are made we just break the loop... see #540
+        if (value === prev) break;
       }
 
       if (value.length > max) {
