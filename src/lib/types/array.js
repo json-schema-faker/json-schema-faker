@@ -58,8 +58,8 @@ function arrayType(value, path, resolve, traverseCallback) {
     });
   }
 
-  let minItems = value.minItems;
-  let maxItems = value.maxItems;
+  let minItems = value.minItems || optionAPI('minItems');
+  let maxItems = value.maxItems || optionAPI('maxItems');
 
   if (optionAPI('minItems')) {
     // fix boundaries
@@ -80,29 +80,55 @@ function arrayType(value, path, resolve, traverseCallback) {
     }
   }
 
-  const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
-  const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
+  const optionalsProbability =
+    optionAPI('alwaysFakeOptionals') === true
+      ? 1.0
+      : optionAPI('optionalsProbability');
+  const fixedProbabilities =
+    optionAPI('alwaysFakeOptionals') ||
+    optionAPI('fixedProbabilities') ||
+    false;
 
-  let length = random.number(minItems, maxItems, 1, 5);
+  let length = random.number(
+    optionAPI('alwaysFakeOptionals') ? Math.max(1, minItems) : minItems,
+    maxItems,
+    1,
+    5
+  );
 
   if (optionalsProbability !== false) {
-    length = Math.max(fixedProbabilities
-      ? Math.round((maxItems || length) * optionalsProbability)
-      : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
+    length = Math.max(
+      fixedProbabilities
+        ? Math.round(length * optionalsProbability)
+        : Math.abs(random.number(minItems, maxItems) * optionalsProbability),
+      minItems || 0
+    );
   }
 
   // TODO below looks bad. Should additionalItems be copied as-is?
-  const sample = typeof value.additionalItems === 'object' ? value.additionalItems : {};
+  const sample =
+    typeof value.additionalItems === 'object' ? value.additionalItems : {};
 
   for (let current = items.length; current < length; current += 1) {
     const itemSubpath = path.concat(['items', current]);
-    const element = traverseCallback(value.items || sample, itemSubpath, resolve);
+    const element = traverseCallback(
+      value.items || sample,
+      itemSubpath,
+      resolve
+    );
 
     items.push(element);
   }
 
   if (value.uniqueItems) {
-    return unique(path.concat(['items']), items, value, sample, resolve, traverseCallback);
+    return unique(
+      path.concat(['items']),
+      items,
+      value,
+      sample,
+      resolve,
+      traverseCallback
+    );
   }
 
   return items;

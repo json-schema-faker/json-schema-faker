@@ -5,11 +5,11 @@
       {
         "type": "object",
         "properties": {
-          "optionalProperty1": { "type": "number", "default": 1 },
-          "optionalProperty2": { "type": "number", "default": 1 },
-          "optionalProperty3": { "type": "number", "default": 1 },
-          "optionalProperty4": { "type": "number", "default": 1 },
-          "optionalProperty5": { "type": "number", "default": 1 }
+          "optionalProperty1": {"type": "number", "default": 1},
+          "optionalProperty2": {"type": "number", "default": 1},
+          "optionalProperty3": {"type": "number", "default": 1},
+          "optionalProperty4": {"type": "number", "default": 1},
+          "optionalProperty5": {"type": "number", "default": 1}
         }
       }
     ],
@@ -51,7 +51,7 @@
           "minItems": 0
         },
         "valid": true,
-        "equal": ["a", "a", "a", "a", "a"],
+        "contains": ["a"],
         "require": "core/option/optionalsProbabilityEquals1"
       },
       {
@@ -79,7 +79,7 @@
           "minItems": 0
         },
         "valid": true,
-        "equal": ["a", "a", "a", "a", "a"],
+        "contains": ["a"],
         "require": "core/option/optionalsProbabilityOverwritten"
       },
       {
