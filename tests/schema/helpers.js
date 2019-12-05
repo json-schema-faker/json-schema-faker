@@ -1,8 +1,8 @@
 import fs from 'fs';
 import glob from 'glob';
-import {expect} from 'chai';
+import { expect } from 'chai';
 import _jsf from '../../src/lib';
-import {checkType, checkSchema} from './validator';
+import { checkType, checkSchema } from './validator';
 
 export const jsf = _jsf;
 
@@ -38,19 +38,17 @@ export function getTests(srcDir) {
 
       let _only = false;
 
-      suite = Object.assign({file}, x);
+      suite = Object.assign({ file }, x);
 
-      suite.tests = suite.tests
-        .sort((a, b) => {
-          if (a.only) return -1;
-          if (b.only) return 1;
-          return 0;
-        })
-        .filter(y => {
-          if ((_only && !y.only) || y.xdescription) return false;
-          if (y.only) _only = true;
-          return true;
-        });
+      suite.tests = suite.tests.sort((a, b) => {
+        if (a.only) return -1;
+        if (b.only) return 1;
+        return 0;
+      }).filter(y => {
+        if ((_only && !y.only) || y.xdescription) return false;
+        if (y.only) _only = true;
+        return true;
+      });
 
       if (x.only || _only) only.push(suite);
 
@@ -58,102 +56,94 @@ export function getTests(srcDir) {
     });
   });
 
-  return {only, all};
+  return { only, all };
 }
 
 export function tryTest(nth, max, test, refs, schema, callback) {
-  return _jsf
-    .resolve(schema, refs)
-    .then(sample => {
-      if (test.dump) {
-        console.log(JSON.stringify(sample, null, 2));
-        return;
+  return _jsf.resolve(schema, refs).then(sample => {
+    if (test.dump) {
+      console.log(JSON.stringify(sample, null, 2));
+      return;
+    }
+
+    try {
+      if (test.type) {
+        checkType(sample, test.type);
       }
 
-      try {
-        if (test.type) {
-          checkType(sample, test.type);
+      if (test.valid) {
+        checkSchema(sample, schema, refs);
+      }
+    } catch (e) {
+      const _e = new Error(`${e.message.split('\n')[0]} (${nth} of ${max})`);
+
+      _e.stack = e.stack.split('\n').slice(1).join('\n');
+
+      throw _e;
+    }
+
+    if (test.length) {
+      expect(sample.length).to.eql(test.length);
+    }
+
+    if (test.notEmpty) {
+      test.notEmpty.forEach(x => {
+        const value = pick(sample, x);
+
+        if (value === undefined || (Array.isArray(value) && !value.length)) {
+          throw new Error(`${x} should not be empty`);
         }
+      });
+    }
 
-        if (test.valid) {
-          checkSchema(sample, schema, refs);
+    if (test.hasProps) {
+      test.hasProps.forEach(prop => {
+        if (Array.isArray(sample)) {
+          sample.forEach(s => {
+            expect(s[prop]).not.to.eql(undefined);
+          });
+        } else {
+          expect(sample[prop]).not.to.eql(undefined);
         }
-      } catch (e) {
-        const _e = new Error(`${e.message.split('\n')[0]} (${nth} of ${max})`);
+      });
+    }
 
-        _e.stack = e.stack
-          .split('\n')
-          .slice(1)
-          .join('\n');
+    if (test.onlyProps) {
+      expect(Object.keys(sample)).to.eql(test.onlyProps);
+    }
 
-        throw _e;
+    if ('contains' in test) {
+      expect(test.contains.every(element => sample.includes(element)));
+    }
+
+    if (test.count) {
+      expect((Array.isArray(sample) ? sample : Object.keys(sample)).length).to.eql(test.count);
+    }
+
+    if (test.hasNot) {
+      expect(JSON.stringify(sample)).not.to.contain(test.hasNot);
+    }
+
+    if ('equal' in test) {
+      expect(sample).to.eql(test.equal);
+    }
+
+    if (callback) {
+      callback(sample);
+    }
+  }).catch(error => {
+    if (typeof test.throws === 'string') {
+      expect(error).to.match(new RegExp(test.throws, 'im'));
+      return;
+    }
+
+    if (typeof test.throws === 'boolean') {
+      if (test.throws !== true) {
+        throw error;
       }
+      return;
+    }
 
-      if (test.length) {
-        expect(sample.length).to.eql(test.length);
-      }
-
-      if (test.notEmpty) {
-        test.notEmpty.forEach(x => {
-          const value = pick(sample, x);
-
-          if (value === undefined || (Array.isArray(value) && !value.length)) {
-            throw new Error(`${x} should not be empty`);
-          }
-        });
-      }
-
-      if (test.hasProps) {
-        test.hasProps.forEach(prop => {
-          if (Array.isArray(sample)) {
-            sample.forEach(s => {
-              expect(s[prop]).not.to.eql(undefined);
-            });
-          } else {
-            expect(sample[prop]).not.to.eql(undefined);
-          }
-        });
-      }
-
-      if (test.onlyProps) {
-        expect(Object.keys(sample)).to.eql(test.onlyProps);
-      }
-
-      if (test.count) {
-        expect(
-          (Array.isArray(sample) ? sample : Object.keys(sample)).length
-        ).to.eql(test.count);
-      }
-
-      if (test.hasNot) {
-        expect(JSON.stringify(sample)).not.to.contain(test.hasNot);
-      }
-
-      if ('equal' in test) {
-        expect(sample).to.eql(test.equal);
-      }
-
-      if ('contains' in test) {
-        expect(test.contains.every(element => sample.includes(element)));
-      }
-
-      if (callback) {
-        callback(sample);
-      }
-    })
-    .catch(error => {
-      if (typeof test.throws === 'string') {
-        expect(error).to.match(new RegExp(test.throws, 'im'));
-        return;
-      }
-
-      if (typeof test.throws === 'boolean') {
-        if (test.throws !== true) {
-          throw error;
-        }
-        return;
-      }
-
-      throw error;
-    });
+    throw error;
+  });
 }
