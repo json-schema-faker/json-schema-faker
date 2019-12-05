@@ -7,13 +7,15 @@
 
 ## Architecture
 
-The source code is intended to be available through `src` (for testing), but bundled versions are provided to ensure portabilty:
+The source code is written in modern ES6-modules through `src` (for testing), but bundled versions are provided to ensure portabilty:
 
-- Both `cjs` and `es` modules are exported for NodeJS and modern Javascript environments respectively
-- Standard `.js` and `.min.js` are emitted for browser usage, they're exported as `umd` without dependencies (`json-schema-ref-parser` and `jsonpath`)
-- Also a single `.bundle.min.js` is generated containing both dependencies from above, also as `umd`
+- `main.umd.js` are emitted for general usage, but exported without dependencies (`json-schema-ref-parser` and `jsonpath`)
+- `bundle.js` is generated containing both dependencies from above, ready for the browser!
+- `main.js` is the bundled version of `./src`
 
 Generated sources are available as an [NPM dependency](https://www.npmjs.com/package/json-schema-faker) and through [UNPKG](https://unpkg.com/json-schema-faker@0.5.0-rc16/dist/).
+
+> Dependencies are not needed for generating basic types and resolving local references, so it is fine to getting started this way.
 
 ```js
 import jsf from 'json-schema-faker';
@@ -72,7 +74,7 @@ jsf.option('optionName', 'value');
 jsf.option({ optionName: 'value' });
 
 // 3.2 - the `version` is also exported
-jsf.version; // 0.5.0-rc16
+jsf.version; // 0.5.0
 
 // 3.3 - internal `random` generators
 jsf.random; // { pick, date, shuffle, number, randexp }

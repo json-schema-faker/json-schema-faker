@@ -18,12 +18,7 @@
 
 ## What's next?
 
-On `RC17` support for more keywords landed, but is still outdated from recent JSON-Schema drafts.
-
-- Many bugs were _gone_ and no new features were introduced this time, documentation is still incomplete.
-- Support for `not` keywords are still missing or partially working, please [read the docs](docs/USAGE.md) to see all supported keywords.
-
-Since `RC16` comes with some deprecations and breaking-changes towards `v0.5.x` API:
+Breaking-changes towards `v0.5.x` API:
 
 - **deprecated** &mdash; You will not longer be able to call `jsf()` and get a fully-dereferenced result. It will just generate given refs and inline ones, nothing else.
   - `jsf.generate()` is the sync-version, with partial dereferencing through given refs, etc.
