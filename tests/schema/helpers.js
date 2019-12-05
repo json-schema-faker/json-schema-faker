@@ -112,10 +112,6 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       expect(Object.keys(sample)).to.eql(test.onlyProps);
     }
 
-    if ('contains' in test) {
-      expect(test.contains.every(element => sample.includes(element)));
-    }
-
     if (test.count) {
       expect((Array.isArray(sample) ? sample : Object.keys(sample)).length).to.eql(test.count);
     }

@@ -51,7 +51,7 @@
           "minItems": 0
         },
         "valid": true,
-        "contains": ["a"],
+        "equal": ["a", "a", "a", "a", "a"],
         "require": "core/option/optionalsProbabilityEquals1"
       },
       {
@@ -79,7 +79,7 @@
           "minItems": 0
         },
         "valid": true,
-        "contains": ["a"],
+        "equal": ["a", "a", "a", "a", "a"],
         "require": "core/option/optionalsProbabilityOverwritten"
       },
       {
