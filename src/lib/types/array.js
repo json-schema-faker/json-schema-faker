@@ -58,8 +58,8 @@ function arrayType(value, path, resolve, traverseCallback) {
     });
   }
 
-  let minItems = value.minItems || optionAPI('minItems');
-  let maxItems = value.maxItems || optionAPI('maxItems');
+  let minItems = value.minItems;
+  let maxItems = value.maxItems;
 
   if (optionAPI('minItems')) {
     // fix boundaries
@@ -69,6 +69,10 @@ function arrayType(value, path, resolve, traverseCallback) {
   }
 
   if (optionAPI('maxItems')) {
+    if (!maxItems) {
+      maxItems = optionAPI('maxItems');
+    }
+
     // Don't allow user to set max items above our maximum
     if (maxItems && maxItems > optionAPI('maxItems')) {
       maxItems = optionAPI('maxItems');
@@ -83,11 +87,11 @@ function arrayType(value, path, resolve, traverseCallback) {
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
   const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
 
-  let length = random.number(optionAPI('alwaysFakeOptionals') ? Math.max(1, minItems) : minItems, maxItems, 1, 5);
+  let length = random.number(minItems, maxItems, 1, 5);
 
   if (optionalsProbability !== false) {
     length = Math.max(fixedProbabilities
-      ? Math.round((maxItems || length) * optionalsProbability)
+      ? Math.round((length || maxItems) * optionalsProbability)
       : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
   }
 
