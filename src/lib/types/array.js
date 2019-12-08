@@ -69,6 +69,10 @@ function arrayType(value, path, resolve, traverseCallback) {
   }
 
   if (optionAPI('maxItems')) {
+    maxItems = !minItems
+      ? optionAPI('maxItems')
+      : Math.min(optionAPI('maxItems'), minItems);
+
     // Don't allow user to set max items above our maximum
     if (maxItems && maxItems > optionAPI('maxItems')) {
       maxItems = optionAPI('maxItems');

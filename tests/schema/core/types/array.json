@@ -47,6 +47,42 @@
         "valid": true
       },
       {
+        "description": "should handle minItems and maxItems passed as arguments to JSF",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "default": 1
+          }
+        },
+        "valid": true,
+        "set": {
+          "minItems": 7,
+          "maxItems": 7,
+          "useDefaultValue": true
+        },
+        "equal": [1, 1, 1, 1, 1, 1, 1]
+      },
+      {
+        "description": "should handle minItems and maxItems passed as arguments to JSF, in the presence of minItems and maxItems in the schema",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "default": 1,
+            "minItems": 3,
+            "maxItems": 5
+          }
+        },
+        "valid": true,
+        "set": {
+          "minItems": 7,
+          "maxItems": 7,
+          "useDefaultValue": true
+        },
+        "equal": [1, 1, 1, 1, 1, 1, 1]
+      },
+      {
         "description": "should handle uniqueItems",
         "schema": {
           "type": "array",
