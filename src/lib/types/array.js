@@ -69,9 +69,9 @@ function arrayType(value, path, resolve, traverseCallback) {
   }
 
   if (optionAPI('maxItems')) {
-    if (!maxItems) {
-      maxItems = optionAPI('maxItems');
-    }
+    maxItems = !minItems
+      ? optionAPI('maxItems')
+      : Math.min(optionAPI('maxItems'), minItems);
 
     // Don't allow user to set max items above our maximum
     if (maxItems && maxItems > optionAPI('maxItems')) {
@@ -91,7 +91,7 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (optionalsProbability !== false) {
     length = Math.max(fixedProbabilities
-      ? Math.round((length || maxItems) * optionalsProbability)
+      ? Math.round((maxItems || length) * optionalsProbability)
       : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
   }
 
