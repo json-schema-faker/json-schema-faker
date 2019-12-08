@@ -136,11 +136,9 @@ function run(refs, schema, container) {
         delete sub.$schema;
       }
 
-      const refDepth = random.number(Math.min(refDepthMin, refDepthMax), Math.max(refDepthMin, refDepthMax));
-
       if (typeof sub.$ref === 'string') {
         // increasing depth only for repeated refs seems to be fixing #258
-        if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > refDepth - 1)) {
+        if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > random.number(refDepthMin, refDepthMax) - 1)) {
           delete sub.$ref;
           return sub;
         }
