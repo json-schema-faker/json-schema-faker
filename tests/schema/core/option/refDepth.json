@@ -1,0 +1,66 @@
+[
+  {
+    "description": "refDepth option",
+    "tests": [
+      {
+        "description": "should handle refDepth option",
+        "schema": {
+          "type": "object",
+          "definitions": {
+            "aDef": {
+              "properties": {
+                "subA": {
+                  "items": {
+                    "$ref": "#/definitions/aDef"
+                  },
+                  "type": "array"
+                }
+              },
+              "type": "object"
+            }
+          },
+          "properties": {
+            "collection": {
+              "properties": {
+                "a": {
+                  "$ref": "#/definitions/aDef"
+                }
+              },
+              "type": "object",
+              "required": ["a"]
+            }
+          },
+          "required": ["collection"]
+        },
+        "equal": {
+          "collection": {
+            "a": {
+              "subA": [
+                {
+                  "subA": [
+                    {
+                      "subA": [
+                        {
+                          "subA": [
+                            {
+                              "subA": [
+                                {
+                                  "subA": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "require": "core/option/refDepth"
+      }
+    ]
+  }
+]
