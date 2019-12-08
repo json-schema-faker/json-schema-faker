@@ -117,8 +117,8 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   let depth = 0;
-  const refDepthMin = optionAPI('refDepthMin') || random.number(0, 3);
-  const refDepthMax = optionAPI('refDepthMax') || random.number(0, 3);
+  const refDepthMin = optionAPI('refDepthMin') || 0;
+  const refDepthMax = optionAPI('refDepthMax') || 3;
   let lastRef;
 
   try {
