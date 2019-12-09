@@ -90,6 +90,28 @@
         },
         "valid": true,
         "repeat": 1
+      },
+      {
+        "description": "should handle refDepthMin being larger than refDepthMax",
+        "schema": "schemas.0",
+        "equal": {
+          "collection": {
+            "a": {
+              "subA": [
+                {
+                  "subA": []
+                }
+              ]
+            }
+          }
+        },
+        "require": "core/option/refDepth",
+        "set": {
+          "refDepthMin": 3,
+          "refDepthMax": 1
+        },
+        "valid": true,
+        "repeat": 1
       }
     ]
   }
