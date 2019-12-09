@@ -136,10 +136,9 @@ function run(refs, schema, container) {
         delete sub.$schema;
       }
 
-      // the -1 here will cause the deepest element to be empty, vs. fully rendered with an additional, one-level-deeper, empty element within it:
-      const maxDepth = random.number(refDepthMin, refDepthMax) - 1;
-
       if (typeof sub.$ref === 'string') {
+        const maxDepth = random.number(Math.min(refDepthMin, refDepthMax), Math.max(refDepthMin, refDepthMax)) - 1;
+
         // increasing depth only for repeated refs seems to be fixing #258
         if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > maxDepth)) {
           delete sub.$ref;
