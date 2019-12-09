@@ -1,37 +1,40 @@
 [
   {
     "description": "refDepth option",
+    "schemas": [
+      {
+        "type": "object",
+        "definitions": {
+          "aDef": {
+            "properties": {
+              "subA": {
+                "items": {
+                  "$ref": "#/definitions/aDef"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "properties": {
+          "collection": {
+            "properties": {
+              "a": {
+                "$ref": "#/definitions/aDef"
+              }
+            },
+            "type": "object",
+            "required": ["a"]
+          }
+        },
+        "required": ["collection"]
+      }
+    ],
     "tests": [
       {
-        "description": "should handle refDepth option",
-        "schema": {
-          "type": "object",
-          "definitions": {
-            "aDef": {
-              "properties": {
-                "subA": {
-                  "items": {
-                    "$ref": "#/definitions/aDef"
-                  },
-                  "type": "array"
-                }
-              },
-              "type": "object"
-            }
-          },
-          "properties": {
-            "collection": {
-              "properties": {
-                "a": {
-                  "$ref": "#/definitions/aDef"
-                }
-              },
-              "type": "object",
-              "required": ["a"]
-            }
-          },
-          "required": ["collection"]
-        },
+        "description": "should handle refDepthMin and refDepthMax options being equal",
+        "schema": "schemas.0",
         "equal": {
           "collection": {
             "a": {
@@ -59,7 +62,34 @@
             }
           }
         },
-        "require": "core/option/refDepth"
+        "require": "core/option/refDepth",
+        "set": {
+          "refDepthMin": 6,
+          "refDepthMax": 6
+        },
+        "repeat": 10
+      },
+      {
+        "description": "should handle refDepthMin and refDepthMax options being unequal",
+        "schema": "schemas.0",
+        "equal": {
+          "collection": {
+            "a": {
+              "subA": [
+                {
+                  "subA": []
+                }
+              ]
+            }
+          }
+        },
+        "require": "core/option/refDepth",
+        "set": {
+          "refDepthMin": 1,
+          "refDepthMax": 3
+        },
+        "valid": true,
+        "repeat": 1
       }
     ]
   }
