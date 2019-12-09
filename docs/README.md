@@ -121,6 +121,8 @@ jsf.locate('faker');
 - `maxItems` &mdash; Override `maxItems` if it's greater than this value (default: `null`)
 - `minLength` &mdash; Override `minLength` if it's less than this value  (default: `0`)
 - `maxLength` &mdash; Override `maxLength` if it's greater than this value (default: `null`)
+- `refDepthMin` &mdash; Set a minimum circular `$ref` depth to render (default: 0)
+- `refDepthMax` &mdash; Set a maximum circular `$ref` depth to render (default: 3)
 - `resolveJsonPath` &mdash; If enabled, it will expand `jsonPath` keywords on all generated objects  (default: `false`)
 - `reuseProperties` &mdash; If enabled, it will try to generate missing properties from existing ones. Only when `fillProperties` is enabled too  (default: `false`)
 - `fillProperties` &mdash; If enabled, it will try to generate missing properties to fulfill the schema definition (default: `true`)

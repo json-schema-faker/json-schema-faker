@@ -117,6 +117,8 @@ function resolve(obj, data, values, property) {
 // TODO provide types
 function run(refs, schema, container) {
   let depth = 0;
+  const refDepthMin = optionAPI('refDepthMin') || 0;
+  const refDepthMax = optionAPI('refDepthMax') || 3;
   let lastRef;
 
   try {
@@ -135,8 +137,10 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
+        const maxDepth = random.number(Math.min(refDepthMin, refDepthMax), Math.max(refDepthMin, refDepthMax)) - 1;
+
         // increasing depth only for repeated refs seems to be fixing #258
-        if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > random.number(0, 3))) {
+        if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > maxDepth)) {
           delete sub.$ref;
           return sub;
         }

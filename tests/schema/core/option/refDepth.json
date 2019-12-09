@@ -1,0 +1,126 @@
+[
+  {
+    "description": "refDepth option",
+    "schemas": [
+      {
+        "type": "object",
+        "definitions": {
+          "aDef": {
+            "properties": {
+              "subA": {
+                "items": {
+                  "$ref": "#/definitions/aDef"
+                },
+                "type": "array"
+              }
+            },
+            "type": "object"
+          }
+        },
+        "properties": {
+          "collection": {
+            "properties": {
+              "a": {
+                "$ref": "#/definitions/aDef"
+              }
+            },
+            "type": "object",
+            "required": ["a"]
+          }
+        },
+        "required": ["collection"]
+      }
+    ],
+    "tests": [
+      {
+        "description": "should handle refDepthMin and refDepthMax options being equal",
+        "schema": "schemas.0",
+        "equal": {
+          "collection": {
+            "a": {
+              "subA": [
+                {
+                  "subA": [
+                    {
+                      "subA": [
+                        {
+                          "subA": [
+                            {
+                              "subA": [
+                                {
+                                  "subA": []
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "require": "core/option/refDepth",
+        "set": {
+          "refDepthMin": 6,
+          "refDepthMax": 6
+        },
+        "repeat": 10
+      },
+      {
+        "description": "should handle refDepthMin and refDepthMax options being unequal",
+        "schema": "schemas.0",
+        "equal": {
+          "collection": {
+            "a": {
+              "subA": [
+                {
+                  "subA": [
+                    {
+                      "subA": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "require": "core/option/refDepth",
+        "set": {
+          "refDepthMin": 1,
+          "refDepthMax": 3
+        },
+        "valid": true,
+        "repeat": 1
+      },
+      {
+        "description": "should handle refDepthMin being larger than refDepthMax",
+        "schema": "schemas.0",
+        "equal": {
+          "collection": {
+            "a": {
+              "subA": [
+                {
+                  "subA": [
+                    {
+                      "subA": []
+                    }
+                  ]
+                }
+              ]
+            }
+          }
+        },
+        "require": "core/option/refDepth",
+        "set": {
+          "refDepthMin": 3,
+          "refDepthMax": 1
+        },
+        "valid": true,
+        "repeat": 1
+      }
+    ]
+  }
+]
