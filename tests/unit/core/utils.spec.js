@@ -76,28 +76,45 @@ describe('Utils', () => {
       });
     });
 
-    it('should normalize constraints with global options', () => {
+    it('should use global options when not defined in the schema', () => {
       optionAPI({
+        minLength: 3,
         maxLength: 4,
       });
 
       utils.typecast(null, {
         type: 'string',
+      }, opts => {
+        expect(opts).to.eql({ minLength: 3, maxLength: 4 });
+      });
+    });
+
+    it('should normalize constraints with global options', () => {
+      optionAPI({
+        minLength: 3,
+        maxLength: 4,
+      });
+
+      utils.typecast(null, {
+        type: 'string',
+        minLength: 2,
         maxLength: 10,
       }, opts => {
-        expect(opts).to.eql({ maxLength: 4 });
+        expect(opts).to.eql({ minLength: 3, maxLength: 4 });
       });
     });
 
     it('should accept custom types for typecasting', () => {
       optionAPI({
-        maxLength: 5,
+        minLength: 2,
+        maxLength: 10,
       });
 
       utils.typecast('string', {
-        maxLength: 10,
+        minLength: 5,
+        maxLength: 8,
       }, opts => {
-        expect(opts).to.eql({ maxLength: 5 });
+        expect(opts).to.eql({ minLength:5, maxLength: 8 });
       });
     });
   });
