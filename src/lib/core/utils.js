@@ -82,25 +82,15 @@ function typecast(type, schema, callback) {
       break;
 
     case 'string': {
+      params.minLength = optionAPI('minLength') || 0;
+      params.maxLength = optionAPI('maxLength') || Number.MAX_SAFE_INTEGER;
+
       if (typeof schema.minLength !== 'undefined') {
-        params.minLength = schema.minLength;
+        params.minLength = Math.max(params.minLength, schema.minLength);
       }
 
       if (typeof schema.maxLength !== 'undefined') {
-        params.maxLength = schema.maxLength;
-      }
-
-      const _maxLength = optionAPI('maxLength');
-      const _minLength = optionAPI('minLength');
-
-      // Don't allow user to set max length above our maximum
-      if (_maxLength && params.maxLength > _maxLength) {
-        params.maxLength = _maxLength;
-      }
-
-      // Don't allow user to set min length above our maximum
-      if (_minLength && params.minLength < _minLength) {
-        params.minLength = _minLength;
+        params.maxLength = Math.min(params.maxLength, schema.maxLength);
       }
 
       break;
