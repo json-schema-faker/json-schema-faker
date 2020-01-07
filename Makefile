@@ -36,6 +36,9 @@ dev: deps ## Watch and start development server
 test: deps ## Run tests like if we're in CI ;-)
 	@npm run test:schema
 
+build: deps ## Build scripts for dist
+	@VERSION=$(shell cat package.json | jq .version) npm run build
+
 dist: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
