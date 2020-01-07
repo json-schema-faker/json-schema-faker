@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import ipv4Generator from '../../../src/generators/ipv4';
+import ipv4Generator from '../../../src/lib/generators/ipv4';
 
 /* global describe, it */
 

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import nullGenerator from '../../../src/generators/null';
+import nullGenerator from '../../../src/lib/generators/null';
 
 /* global describe, it */
 

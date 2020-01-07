@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import booleanGenerator from '../../../src/generators/boolean';
+import booleanGenerator from '../../../src/lib/generators/boolean';
 
 /* global describe, it */
 

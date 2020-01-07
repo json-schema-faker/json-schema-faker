@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import infer from '../../../src/core/infer';
+import infer from '../../../src/lib/core/infer';
 
 /* global describe, it */
 

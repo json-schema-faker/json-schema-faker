@@ -1,6 +1,6 @@
 import { expect } from 'chai';
-import utils from '../../../src/core/utils';
-import optionAPI from '../../../src/api/option';
+import utils from '../../../src/lib/core/utils';
+import optionAPI from '../../../src/lib/api/option';
 
 /* global describe, it */
 
@@ -114,7 +114,7 @@ describe('Utils', () => {
         minLength: 5,
         maxLength: 8,
       }, opts => {
-        expect(opts).to.eql({ minLength:5, maxLength: 8 });
+        expect(opts).to.eql({ minLength: 5, maxLength: 8 });
       });
     });
   });

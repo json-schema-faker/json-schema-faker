@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import numberType from '../../../src/types/number';
+import numberType from '../../../src/lib/types/number';
 
 /* global describe, it */
 
