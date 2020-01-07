@@ -46,7 +46,8 @@ if (typeof argv.flags.ignoreProperties === 'string') {
   argv.flags.ignoreProperties = [argv.flags.ignoreProperties];
 }
 
-jsf.option(argv.flags);
+// FIXME: enable flags...
+// jsf.option(argv.flags);
 
 const { inspect } = require('util');
 const { Transform } = require('stream');
