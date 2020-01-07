@@ -28,8 +28,8 @@
     "_prepublish": "npm run build",
     "_graphviz": "madge src --dot > structure.gv",
     "watch": "tarima watch",
-    "pretest": "npm run lint",
     "build": "tarima -mfqe production",
+    "pretest": "npm run lint && npm run build",
     "postbuild": "concat -o dist/bundle.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js dist/main.umd.js"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
