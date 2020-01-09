@@ -6,10 +6,10 @@
   "bin": {
     "jsf": "./bin/gen.js"
   },
-  "main": "dist/main.js",
-  "module": "dist/main.js",
-  "unpkg": "dist/bundle.js",
+  "main": "dist/main.cjs.js",
+  "module": "dist/main.esm.js",
   "browser": "dist/main.umd.js",
+  "unpkg": "dist/bundle.js",
   "scripts": {
     "dev": "npm run test:schema -- -w",
     "test": "npm run test:unit -- && npm run test:schema",
@@ -78,7 +78,9 @@
       "extensions": {
         "js": "es6",
         "css": "less",
-        "umd": false
+        "esm": false,
+        "umd": false,
+        "cjs": false
       },
       "rollup": {
         "format": "es",

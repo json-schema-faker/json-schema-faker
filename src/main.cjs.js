@@ -1,7 +1,6 @@
 /**
 ---
-$format: umd
-$bundle: JSONSchemaFaker
+$format: cjs
 ---
 */
 
