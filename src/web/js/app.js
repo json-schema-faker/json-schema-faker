@@ -1,16 +1,5 @@
-import App from './_views/App.vue';
-import Core from './_core';
+import App from './lib/App.svelte';
 
-/* global Vue */
-/* eslint-disable no-new */
-
-const vm = new Vue({
-  el: '#app',
-  render(h) {
-    return h(App, {
-      ref: 'UI',
-    });
-  },
+new App({
+  target: document.getElementById('app'),
 });
-
-Core.init(vm.$refs.UI);
