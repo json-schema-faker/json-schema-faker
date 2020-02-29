@@ -8,7 +8,31 @@ html
     link(rel='stylesheet' href='css/app.css')
     link(rel='shortcut icon' type='image/icon' href='img/favicon.ico')
   body
-    div#app
+    .Toolbar.f
+      .rel
+        a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
+        .md-flx.flx-c
+          .p
+            h1.jsf-logo: a.dib(href='/') JSON Schema Faker
+          div
+            .pl.pr
+              p.pr.mb #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
+              a.tdn(href=`https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=${BUTTON_ID}` target='_blank')
+                img.mr(src='https://img.shields.io/badge/Donate-PayPal-green.svg')
+              img.mr(src='https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master')
+              img.mr(src='https://badge.fury.io/js/json-schema-faker.svg')
+              iframe.mt(src='//ghbtns.com/github-btn.html?user=json-schema-faker&repo=json-schema-faker&type=star&count=true' frameborder=0 scrolling=0 width=120 height=20)
+
+            include _/menu
+
+    .sm-flx.flx-m.p
+      #target.flx-a.flx-lt
+        h3 Tasks
+        ul
+          li gist login pre-setup...
+          li link options with state (jsfOptions)
+          li memoize application state on gist (with options!)
+
     script(src='bundle.js')
     script(src='js/app.js')
 

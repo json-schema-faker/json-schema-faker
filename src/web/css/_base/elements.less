@@ -322,15 +322,17 @@
 }
 
 .f { box-shadow: 1px 1px 1px @shadow-color; }
-
-.num {
-  border: 1px solid @shadow-color;
-  width: 6em;
-}
+.txt, .num { border: 1px solid @shadow-color;  }
+.num { width: 6em; }
 
 /* misc */
 
 .cln {
   border: 0;
   border-top: 1px dotted @border-color;
+}
+
+.ar {
+  position: absolute;
+  right: @padding;
 }

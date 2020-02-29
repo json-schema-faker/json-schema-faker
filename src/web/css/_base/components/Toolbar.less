@@ -8,6 +8,7 @@
   width: 100%;
   background-image: url(/img/logo.svg);
   background-repeat: no-repeat;
+  background-position: 33.3%;
 
   &:hover { opacity: .8; }
 
@@ -20,6 +21,11 @@
 }
 
 .jsf-about {
+  .ar {
+    .menu {
+      right: 0;
+    }
+  }
   li {
     > .menu {
       display: none;
@@ -57,11 +63,14 @@
     }
 
     a {
+      padding: 0 @padding / 3;
       color: @BLUE;
+      display: block;
       text-decoration: none;
-      border-bottom: 1px dotted @border-color;
 
-      &:hover { border-bottom: 1px dotted @BLUE; }
+      &:hover {
+        color: @TEAL;
+      }
     }
   }
 
