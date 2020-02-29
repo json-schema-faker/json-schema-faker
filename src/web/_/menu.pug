@@ -2,7 +2,7 @@ ul.p.lr.ln.mt.rel.jsf-about
   li.sp.pd.dib
     a.a Options
     .z5.menu
-      p Reference: #[a(href='https://github.com/json-schema-faker/json-schema-faker/tree/master/docs#available-options' target='_blank') available options]
+      p Reference: #[a(href='//github.com/json-schema-faker/json-schema-faker/tree/master/docs#available-options' target='_blank') available options]
 
       .sm-flx.flx-m
         ul.lr.flx-a
@@ -36,7 +36,10 @@ ul.p.lr.ln.mt.rel.jsf-about
 
           li: label
             span ignoreProperties
-            textarea.f.txt(rows=1 cols=10 name='jsfOptions.ignoreProperties')
+            input.f.num(type='text' name='jsfOptions.ignoreProperties')
+
+          li
+            button.pa(name='jsfOptions.reset') Reset to defaults
 
         ul.lr.flx-a
           li: label
