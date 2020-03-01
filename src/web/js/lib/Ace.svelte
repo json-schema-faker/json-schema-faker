@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from 'svelte';
+  import { onMount, createEventDispatcher } from 'svelte';
 
   let cssClass = '';
 
@@ -13,17 +13,26 @@
   let target;
   let targetElement;
 
+  const dispatch = createEventDispatcher();
+
   /* global ace */
   onMount(() => {
     targetElement = ace.edit(target);
     targetElement.session.setTabSize(2);
     targetElement.setShowPrintMargin(false);
+
     if (readonly) targetElement.setReadOnly(true);
+
+    targetElement.session.on('change', () => {
+      dispatch('change', targetElement.getValue());
+    });
+
     return () => targetElement.destroy();
   });
 
   $: if (targetElement) {
     targetElement.setValue(value);
+    targetElement.clearSelection();
     targetElement.setTheme(`ace/theme/${theme}`);
     targetElement.session.setMode(`ace/mode/${mode}`);
   }

@@ -1,11 +1,12 @@
 .Tabs {
+  padding-left: @padding / 2;
   background-color: @SILVER;
-  background-image: linear-gradient(@SILVER, lighten(@SILVER, 7.5));
+  background-image: linear-gradient(@SILVER, #e8e8e8);
 
   > * {
+    line-height: 1.3;
     background: inherit;
-    padding: @padding;
-    cursor: pointer;
+    padding: (@padding / 2) @padding;
     color: @GRAY;
     border: 0;
 
@@ -13,11 +14,16 @@
       color: @BLUE;
       cursor: default;
       background: white;
+      line-height: inherit;
       border-radius: 3px 3px 0 0;
       box-shadow: 0 -1px 3px rgba(0, 0, 0, .1);
 
-      button {
-        cursor: inherit;
+      button, input {
+        line-height: inherit;
+      }
+
+      span {
+        border-bottom: 1px dotted @BLUE;
       }
     }
   }
