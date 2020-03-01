@@ -1,9 +1,13 @@
-.AceEditor {
+.Ace {
+  z-index: 1;
+  min-width: 50%;
   min-height: 200px;
   transition: border .3s;
   border-radius: @radius;
 
-  &.ace_focus { border: 1px solid @BLUE; }
+  + .Ace {
+    border-top: 1px solid @SILVER;
+  }
 
   ~ .abs {
     padding: @padding / 2;

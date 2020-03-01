@@ -10,13 +10,13 @@ html
   body
     .Toolbar.f
       .rel
-        a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
         .md-flx.flx-c
-          .p
+          .p.oh.nosl
             h1.jsf-logo: a.dib(href='/') JSON Schema Faker
+            a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
           div
             .pl.pr
-              p.pr.mb #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
+              p.pr.mt #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
               a.tdn(href=`//www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=${BUTTON_ID}` target='_blank')
                 img.mr(src='//img.shields.io/badge/Donate-PayPal-green.svg')
               img.mr(src='//travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master')
@@ -25,9 +25,10 @@ html
 
             include _/menu
 
-    .sm-flx.flx-m.p
+    .sm-flx.flx-m
       #editor.flx-a.flx-lt
 
+    script(src='https://ace.c9.io/build/src/ace.js')
     script(src='bundle.js')
     script(src='js/app.js')
 

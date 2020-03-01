@@ -48,8 +48,8 @@
 <svelte:window on:change={set} />
 
 {#if $loggedIn}
-  <span>{$session.fullname || $session.username}</span>
-  <ul class="lr menu">
+  <span class="nosl">{$session.fullname || $session.username}</span>
+  <ul class="lr z2 nosl menu">
     <li><Link href="/save">Save as...</Link></li>
     <li><Link href="/gists">Schemas</Link></li>
     <li><Link href="/logout" on:click={exit}>Log out</Link></li>
