@@ -99,6 +99,10 @@
     }
 
     data = await loadFrom(info.path.substr(1));
+    buffer = editInput = '';
+    pending = false;
+    isAdding = false;
+
     $schemas = Object.keys(data.files).filter(x => data.files[x].type === 'text/plain')
       .reduce((prev, cur) => {
         prev.push(data.files[cur]);
@@ -106,7 +110,6 @@
       }, []);
 
     $current = $schemas[0];
-    pending = false;
   });
 
   $: if ($current) {
