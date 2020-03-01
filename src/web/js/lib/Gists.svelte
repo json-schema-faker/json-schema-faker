@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { navigateTo } from 'yrv';
   import Modal from './Modal.svelte';
   import { all, loggedIn } from './gists';
 
@@ -18,20 +19,20 @@
     || Object.keys(x.files).some(k => k.toLowerCase().includes(term.toLowerCase())));
 </script>
 <Modal>
+  <label class="mb flx flx-c">
+    <span>Filter gists:</span>
+    <input class="f txt ml flx-a" type="search" bind:value={term} />
+  </label>
   {#if $loggedIn}
     {#if pending}
       Loading gists...
     {:else}
-      <label class="mb flx flx-c">
-        <span>Filter gists:</span>
-        <input class="f txt ml flx-a" type="search" bind:value={term} />
-      </label>
       <ol class="lr zb max">
         {#each filtered as item}
           <li class="mb ni">
             <div class="flx flx-c">
               <a class="tdn flx-a" target="_blank" href="{item.html_url}">{item.description || item.id}</a>
-              <button class="bu">Load gist</button>
+              <button class="bu ml" on:click={() => navigateTo(`/#gist/${item.id}`)}>Load gist</button>
             </div>
             <ul class="ml lr">
               {#each Object.entries(item.files) as [file, info]}
