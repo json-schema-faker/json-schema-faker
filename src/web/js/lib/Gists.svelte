@@ -1,6 +1,48 @@
 <script>
+  import { onMount } from 'svelte';
   import Modal from './Modal.svelte';
+  import { all, loggedIn } from './gists';
+
+  let term = '';
+  let data = [];
+  let pending = true;
+
+  onMount(async () => {
+    if ($loggedIn) data = await all();
+    pending = false;
+  });
+
+  $: filtered = data.filter(x =>
+    !term
+    || x.description.toLowerCase().includes(term.toLowerCase())
+    || Object.keys(x.files).some(k => k.toLowerCase().includes(term.toLowerCase())));
 </script>
 <Modal>
-  GISTS
+  {#if $loggedIn}
+    {#if pending}
+      Loading gists...
+    {:else}
+      <label class="mb flx flx-c">
+        <span>Filter gists:</span>
+        <input class="f txt ml flx-a" type="search" bind:value={term} />
+      </label>
+      <ol class="lr zb max">
+        {#each filtered as item}
+          <li class="mb ni">
+            <div class="flx flx-c">
+              <a class="tdn flx-a" target="_blank" href="{item.html_url}">{item.description || item.id}</a>
+              <button class="bu">Load gist</button>
+            </div>
+            <ul class="ml lr">
+              {#each Object.entries(item.files) as [file, info]}
+                <li class="ni">
+                  <a class="bl" title="Type: {info.type}" target="_blank" href="{info.raw_url}">{file} &mdash; {(info.size / 1024).toFixed(2)}KB</a>
+                </li>
+              {/each}
+            </ul>
+          </li>
+        {/each}
+      </ol>
+    {/if}
+  {/if}
 </Modal>

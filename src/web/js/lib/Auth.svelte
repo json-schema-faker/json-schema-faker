@@ -24,9 +24,7 @@
   }
 
   function set(e) {
-    if (e.target.name.indexOf('jsfOptions.') === 0
-      && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')
-    ) {
+    if (e.target.name.indexOf('jsfOptions.') === 0 && e.target.tagName === 'INPUT') {
       const opts = window.localStorage._OPTS ? JSON.parse(window.localStorage._OPTS) : {};
       const key = e.target.name.split('.')[1];
 
@@ -52,8 +50,8 @@
 {#if $loggedIn}
   <span>{$session.fullname || $session.username}</span>
   <ul class="lr menu">
-    <li><Link href="/save">Save schemas...</Link></li>
-    <li><Link href="/gists">My schemas</Link></li>
+    <li><Link href="/save">Save as...</Link></li>
+    <li><Link href="/gists">Schemas</Link></li>
     <li><Link href="/logout" on:click={exit}>Log out</Link></li>
   </ul>
 {:else}

@@ -132,7 +132,7 @@
     "semver": "^7.1.1",
     "serialize-javascript": ">=2.1.1",
     "svelte": "^3.19.1",
-    "svql": "^0.0.26",
+    "svql": "^0.0.27",
     "tarima": "^4.7.2",
     "terser": "^4.3.9",
     "tv4": "^1.3.0",

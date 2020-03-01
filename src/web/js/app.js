@@ -1,6 +1,9 @@
-import App from './lib/App.svelte';
 import { auth } from './lib/gists';
 
+import Auth from './lib/Auth.svelte';
+import Editor from './lib/Editor.svelte';
+
+// handles authoentication through github-api
 if (window.location.search.includes('?code=')) {
   auth(window.location.search.split('?code=')[1], () => {
     const cleanUrl = window.location.href.split('?')[0];
@@ -13,11 +16,12 @@ if (window.location.search.includes('?code=')) {
   });
 }
 
-function reset() {
+// handles optiona menu nuances
+function resetOptions() {
   window.localStorage._OPTS = JSON.stringify(JSONSchemaFaker.option.getDefaults());
 }
 
-function reload() {
+function reloadOptions() {
   const options = document.querySelectorAll('[name^=jsfOptions]');
   const defaults = JSON.parse(window.localStorage._OPTS);
 
@@ -32,16 +36,16 @@ function reload() {
 }
 
 if (!window.localStorage._OPTS && typeof JSONSchemaFaker !== 'undefined') {
-  reset();
+  resetOptions();
 }
 
-reload();
+reloadOptions();
 
 document.querySelector('[name="jsfOptions.reset"]').addEventListener('click', () => {
-  reset();
-  reload();
+  resetOptions();
+  reloadOptions();
 });
 
-new App({
-  target: document.getElementById('auth'),
-});
+// initialize modules
+new Auth({ target: document.getElementById('auth') });
+new Editor({ target: document.getElementById('editor') });

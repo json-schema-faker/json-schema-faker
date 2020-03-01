@@ -39,7 +39,7 @@
       display: block;
     }
 
-    li ~ li { margin-top: @margin; }
+    li ~ li { margin-top: @margin / 2; }
 
     li:hover:before {
       color: @BLUE;
@@ -60,6 +60,11 @@
       white-space: nowrap;
       position: relative;
       padding-left: 10px;
+
+      &.ni {
+        padding-left: 0;
+        &:before { content: ''; }
+      }
     }
 
     a {

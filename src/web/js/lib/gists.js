@@ -6,9 +6,13 @@ export const API_URL = 'https://api.github.com';
 /* global AUTH_ID, AUTH_SECRET, PROXY_URL */
 /* global Promise, fetch */
 
-export const loggedIn = writable(!!window.localStorage._DATA);
-export const session = writable(window.localStorage._DATA ? JSON.parse(window.localStorage._DATA) : {});
+const data = window.localStorage._DATA;
 
+// shared state
+export const loggedIn = writable(!!data);
+export const session = writable(data ? JSON.parse(data) : {});
+
+// builds a fixed URL for github.api calls
 export function getUrl(x, path, params) {
   const url = `${x}${path}?client_id=${AUTH_ID}&client_secret=${AUTH_SECRET}`;
   const redirect = `redirect_uri=${encodeURIComponent(`${location.protocol}//${location.host}/`)}`;
@@ -16,6 +20,15 @@ export function getUrl(x, path, params) {
   return params
     ? `${url}&${Object.keys(params).map(k => `${k}=${params[k]}`).join('&')}&${redirect}`
     : `${url}${params !== false ? `&${redirect}` : ''}`;
+}
+
+export function getJSON(path, params, options) {
+  return fetch(`${PROXY_URL}${getUrl(API_URL, path, options)}`, {
+    ...params,
+    headers: {
+      Authorization: `bearer ${window.localStorage._AUTH}`,
+    },
+  }).then(res => res.json());
 }
 
 export function loadFrom(uri) {
@@ -59,44 +72,40 @@ export function loadFrom(uri) {
 
 export function save(schemas) {
   const _files = {
-    'package.json': {
-      content: JSON.stringify({
-        options: window.localStorage._OPTS
-          ? JSON.parse(window.localStorage._OPTS)
-          : {},
-      }),
+    // fresh copy of current options
+    '_options.json': {
+      content: JSON.stringify(window.localStorage._OPTS
+        ? JSON.parse(window.localStorage._OPTS)
+        : {}),
     },
   };
 
+  // store each given schema
   Object.keys(schemas).forEach(key => {
     _files[key] = { content: schemas[key].value };
   });
 
-  const tokenId = window.localStorage._AUTH;
+  const url = getUrl(API_URL, '/gists', false);
+  const fixedUrl = `${PROXY_URL}${url}`;
 
-  if (tokenId) {
-    const url = getUrl(API_URL, '/gists', false);
-    const fixedUrl = `${PROXY_URL}${url}`;
+  return fetch(fixedUrl, {
+    method: 'POST',
+    headers: {
+      Authorization: `bearer ${tokenId}`,
+      Accept: 'application/json',
+    },
+    body: JSON.stringify({
+      description: 'Schemas created by http://json-schema-faker.js.org',
+      files: _files,
+    }),
+  }).then(res => res.json())
+    .then(data => {
+      if (data.message) {
+        throw new Error(data.message);
+      }
 
-    return fetch(fixedUrl, {
-      method: 'POST',
-      headers: {
-        Authorization: `bearer ${tokenId}`,
-        Accept: 'application/json',
-      },
-      body: JSON.stringify({
-        description: 'JSON Schema created by http://json-schema-faker.js.org',
-        files: _files,
-      }),
-    }).then(res => res.json())
-      .then(data => {
-        if (data.message) {
-          throw new Error(data.message);
-        }
-
-        return data;
-      });
-  }
+      return data;
+    });
 }
 
 export function auth(tokenId, callback) {
@@ -106,9 +115,7 @@ export function auth(tokenId, callback) {
     code: tokenId,
   });
 
-  const fixedUrl = `${PROXY_URL}${url}`;
-
-  fetch(fixedUrl, {
+  fetch(`${PROXY_URL}${url}`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',
@@ -128,12 +135,10 @@ export function url() {
   });
 }
 
-export function me() {
-  const tokenId = window.localStorage._AUTH;
+export function all() {
+  return getJSON('/gists');
+}
 
-  return fetch(getUrl(API_URL, '/user'), {
-    headers: {
-      Authorization: `bearer ${tokenId}`,
-    },
-  }).then(res => res.json());
+export function me() {
+  return getJSON('/user');
 }

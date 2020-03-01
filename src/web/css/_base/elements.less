@@ -210,7 +210,6 @@
 .ml { margin-left: @margin; }
 .mxa { margin-left: auto; margin-right: auto; }
 
-.pa { padding: @padding / 3; }
 .p { padding: @padding; }
 .p ~ .p { padding-top: 0; }
 
@@ -336,4 +335,25 @@
 .ar {
   position: absolute;
   right: @padding;
+}
+
+.bl {
+  color: @BLUE;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.zb {
+  > li + li {
+    border-top: 1px solid @SILVER;
+    padding-top: @padding;
+  }
+}
+
+.max {
+  max-height: 640px;
+  overflow: auto;
 }
