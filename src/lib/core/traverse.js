@@ -61,8 +61,8 @@ function traverse(schema, path, resolve, rootSchema) {
     return utils.typecast(null, schema, () => schema.generate(rootSchema));
   }
 
-  if (schema.pattern) {
-    return utils.typecast(schema.type, schema, () => random.randexp(schema.pattern));
+  if (typeof schema.pattern === 'string') {
+    return utils.typecast('string', schema, () => random.randexp(schema.pattern));
   }
 
   // short-circuit as we don't plan generate more values!
