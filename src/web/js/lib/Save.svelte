@@ -2,5 +2,5 @@
   import Modal from './Modal.svelte';
 </script>
 <Modal>
-  SAVE
+  Not yet implemented...
 </Modal>

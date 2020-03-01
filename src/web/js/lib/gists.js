@@ -11,6 +11,8 @@ const data = window.localStorage._DATA;
 // shared state
 export const loggedIn = writable(!!data);
 export const session = writable(data ? JSON.parse(data) : {});
+export const schemas = writable([]);
+export const current = writable({});
 
 // builds a fixed URL for github.api calls
 export function getUrl(x, path, params) {

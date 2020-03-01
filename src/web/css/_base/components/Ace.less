@@ -2,19 +2,17 @@
   z-index: 1;
   min-width: 50%;
   min-height: 200px;
-  transition: border .3s;
-  border-radius: @radius;
 
-  + .Ace {
-    border-top: 1px solid @SILVER;
-    box-shadow: 0 -2px 3px rgba(0, 0, 0, .1);
+  &-wrapper {
+    + .Ace-wrapper {
+      border-top: 1px solid @SILVER;
+      box-shadow: 0 -2px 3px rgba(0, 0, 0, .1);
+    }
   }
 
   ~ .abs {
     padding: @padding / 2;
-    transition: all .3s;
     opacity: .5;
-    top: 5px;
 
     &:hover {
       opacity: 1;

@@ -35,8 +35,13 @@ function reloadOptions() {
   }
 }
 
-if (!window.localStorage._OPTS && typeof JSONSchemaFaker !== 'undefined') {
-  resetOptions();
+if (typeof JSONSchemaFaker !== 'undefined') {
+  JSONSchemaFaker.extend('faker', () => window.faker);
+  JSONSchemaFaker.extend('chance', () => window.chance);
+
+  if (!window.localStorage._OPTS) {
+    resetOptions();
+  }
 }
 
 reloadOptions();

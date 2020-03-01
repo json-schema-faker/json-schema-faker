@@ -31,11 +31,17 @@
   });
 
   $: if (targetElement) {
-    targetElement.setValue(value);
-    targetElement.clearSelection();
+    if (targetElement.getValue() !== value) {
+      targetElement.setValue(value);
+      targetElement.clearSelection();
+    }
+
     targetElement.setTheme(`ace/theme/${theme}`);
     targetElement.session.setMode(`ace/mode/${mode}`);
   }
 </script>
 
-<div class="Ace {cssClass}" bind:this={target} />
+<div class="Ace-wrapper rel z1">
+  <div class="Ace {cssClass}" bind:this={target} />
+  <slot />
+</div>

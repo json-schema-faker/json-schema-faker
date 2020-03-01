@@ -1,31 +1,31 @@
 <script>
   import { router } from 'yrv';
   import Ace from './Ace.svelte';
-  import { loadFrom } from './gists';
+  import { schemas, current, loadFrom } from './gists';
 
   let data;
   let input;
   let buffer;
-  let current;
   let isAdding;
   let selected;
-  let schemas = [];
+
   let pending = true;
-  let editInput = '{\n  "type": "string"\n}';
+  let editInput = '{}';
   let jsonOutput = '{}';
 
   function select(e) {
-    current = e;
+    $current = e;
     isAdding = false;
   }
 
   function remove(e) {
     if (!confirm('Are you sure?')) return;
 
-    const offset = schemas.indexOf(current);
+    const offset = $schemas.indexOf($current);
 
-    schemas = schemas.filter(x => x !== e);
-    current = offset > 0 ? schemas[Math.max(0, offset - 1)] : current;
+    buffer = editInput = '';
+    $schemas = $schemas.filter(x => x !== e);
+    $current = null;
   }
 
   function submit(e) {
@@ -38,14 +38,14 @@
     }
 
     if (isValid && e.keyCode === 13) {
-      schemas = schemas.concat({ filename: e.target.value, content: buffer });
-      current = schemas[schemas.length - 1];
+      $schemas = $schemas.concat({ filename: e.target.value, content: buffer });
+      $current = $schemas[$schemas.length - 1];
       isAdding = false;
       e.target.value = '';
     }
 
     if (e.keyCode === 27) {
-      current = selected;
+      $current = selected;
       isAdding = false;
     }
   }
@@ -53,41 +53,72 @@
   function sync(e) {
     buffer = e.detail;
 
-    if (current) {
-      current.content = buffer;
+    if ($current) {
+      $current.content = buffer;
     }
   }
 
   function add() {
     buffer = editInput = '';
-    selected = current;
+    selected = $current;
     isAdding = true;
-    current = null;
+    $current = null;
 
     setTimeout(() => {
       input.focus();
     }, 60);
   }
 
-  router.subscribe(async info => {
-    if (window.location.hash) data = await loadFrom(info.path.substr(1));
+  function gen() {
+    const opts = JSON.parse(window.localStorage._OPTS);
+    const value = opts.random;
 
-    schemas = Object.keys(data.files).filter(x => data.files[x].type === 'text/plain')
+    opts.random = value
+      ? (() => value)
+      : Math.random;
+
+    let schema = {};
+    let refs = [];
+
+    try {
+      schema = JSON.parse($current.content);
+      refs = $schemas.map(x => JSON.parse(x.content));
+    } catch (e) {
+      // do nothing
+    }
+
+    JSONSchemaFaker.option(opts);
+    JSONSchemaFaker.resolve(schema, refs)
+      .then(result => { jsonOutput = JSON.stringify(result, null, 2); });
+  }
+
+  router.subscribe(async info => {
+    if (!window.location.hash) {
+      pending = false;
+      return;
+    }
+
+    data = await loadFrom(info.path.substr(1));
+    $schemas = Object.keys(data.files).filter(x => data.files[x].type === 'text/plain')
       .reduce((prev, cur) => {
         prev.push(data.files[cur]);
         return prev;
       }, []);
 
-    current = schemas[0];
+    $current = $schemas[0];
     pending = false;
   });
 
-  $: if (current) {
+  $: if ($current) {
     try {
-      editInput = JSON.stringify(JSON.parse(current.content), null, 2);
+      editInput = JSON.stringify(JSON.parse($current.content), null, 2);
     } catch (e) {
-      editInput = current.content;
+      editInput = $current.content;
     }
+  } else {
+    jsonOutput = '{}';
+    buffer = editInput = '';
+    $current = { content: '' };
   }
 </script>
 
@@ -96,8 +127,8 @@
     Loading gist...
   {:else}
     <div class="flx Tabs">
-      {#each schemas as info}
-        {#if current === info}
+      {#each $schemas as info}
+        {#if $current === info}
           <span class="sel">
             <span>{info.filename}</span>
             <button class="a nb ml" on:click={() => remove(info)}>&times;</button>
@@ -108,7 +139,14 @@
       {/each}
         {#if isAdding}
           <span class="sel">
-            <input class="nb" type="text" on:keyup={submit} bind:this={input} placeholder="Add ..." />
+            <input
+              class="nb"
+              on:keyup={submit}
+              bind:this={input}
+              type="text"
+              spellcheck="false"
+              placeholder="Add ..."
+            />
           </span>
         {:else}
           <span>
@@ -118,7 +156,11 @@
     </div>
     <div class="md-flx">
       <Ace mode="json" value={editInput} on:change={sync} />
-      <Ace mode="json" value={jsonOutput} readonly />
+      <Ace mode="json" value={jsonOutput} readonly>
+        <span class="abs r0 b0 z1">
+          <button class="bu" on:click={gen}>Generate</button>
+        </span>
+      </Ace>
     </div>
   {/if}
 </div>

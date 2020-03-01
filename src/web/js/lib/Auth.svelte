@@ -1,6 +1,8 @@
 <script>
   import { Router, Route, Link, navigateTo } from 'yrv';
-  import { me, url, session, loggedIn } from './gists';
+  import {
+    me, url, schemas, current, session, loggedIn,
+  } from './gists';
 
   import Save from './Save.svelte';
   import Gists from './Gists.svelte';
@@ -43,6 +45,12 @@
       window.localStorage._OPTS = JSON.stringify(opts);
     }
   }
+
+  function add() {
+    $schemas = [];
+    $current = null;
+    navigateTo('/');
+  }
 </script>
 
 <svelte:window on:change={set} />
@@ -50,7 +58,8 @@
 {#if $loggedIn}
   <span class="nosl">{$session.fullname || $session.username}</span>
   <ul class="lr z2 nosl menu">
-    <li><Link href="/save">Save gist...</Link></li>
+    <li><Link href="/save">Save project...</Link></li>
+    <li><Link href="/new" on:click={add}>New project</Link></li>
     <li><Link href="/gists">Schemas</Link></li>
     <li><Link href="/logout" on:click={exit}>Log out</Link></li>
   </ul>
