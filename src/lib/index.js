@@ -11,9 +11,6 @@ import run from './core/run';
 const container = new Container();
 
 function setupKeywords() {
-  // built-in support
-  container.define('pattern', random.randexp);
-
   // safe auto-increment values
   container.define('autoIncrement', function autoIncrement(value, schema) {
     if (!this.offset) {
