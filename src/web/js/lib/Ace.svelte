@@ -20,6 +20,7 @@
     targetElement = ace.edit(target);
     targetElement.session.setTabSize(2);
     targetElement.setShowPrintMargin(false);
+    targetElement.setOption('showLineNumbers', false);
 
     if (readonly) targetElement.setReadOnly(true);
 

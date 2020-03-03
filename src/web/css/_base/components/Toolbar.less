@@ -41,11 +41,11 @@
 
     li ~ li { margin-top: @margin / 2; }
 
-    li:hover:before {
+    li:hover::before {
       color: @BLUE;
     }
 
-    li:before {
+    li::before {
       top: 4px;
       left: -5px;
       position: absolute;
@@ -63,7 +63,7 @@
 
       &.ni {
         padding-left: 0;
-        &:before { content: ''; }
+        &::before { content: ''; }
       }
     }
 

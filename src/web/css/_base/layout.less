@@ -4,6 +4,10 @@
   100% { opacity: .5; }
 }
 
+body {
+  overflow-x: hidden;
+}
+
 .debug {
   outline: 1px dashed red;
   * { outline: 1px dashed red; }
@@ -12,7 +16,7 @@
 .-dis {
   position: relative;
 
-  &:before, &:after {
+  &::before, &::after {
     position: absolute;
     z-index: 5;
     bottom: 0;
@@ -21,13 +25,13 @@
     top: 0;
   }
 
-  &:before {
+  &::before {
     background-color: rgba(255, 255, 255, .7);
     animation: flick 1.6s infinite;
     content: ' ';
   }
 
-  &:after {
+  &::after {
     background-color: rgba(255, 255, 255, .9);
     content: 'Loading...';
     margin: auto;

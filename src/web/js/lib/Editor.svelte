@@ -1,6 +1,7 @@
 <script>
   import { router } from 'yrv';
   import Ace from './Ace.svelte';
+  import Toggle from './Toggle.svelte';
   import { schemas, current, loadFrom } from './gists';
 
   let data;
@@ -9,9 +10,13 @@
   let isAdding;
   let selected;
 
+  let value = null;
+  let isYAML = false;
+  let Encoder = JSON;
   let pending = true;
   let editInput = '{}';
-  let jsonOutput = '{}';
+  let outputMode = 'json';
+  let objectOutput = '{}';
 
   function select(e) {
     $current = e;
@@ -50,6 +55,32 @@
     }
   }
 
+  // FIXME: how formatting should work?
+  // it should not affect current state, just formatting!
+  function refresh() {
+    try {
+      editInput = JSON.stringify(JSON.parse($current.content), null, 2);
+      // if (isYAML) {
+      //   // outputMode = 'yaml';
+      //   // Encoder = YAML;
+      // } else {
+      //   editInput = JSON.stringify(value, null, 2);
+      //   // outputMode = 'json';
+      //   // Encoder = JSON;
+      // }
+    } catch (e) {
+      editInput = $current.content;
+      // outputMode = 'json';
+      // Encoder = JSON;
+    }
+  }
+
+  function format(e) {
+    value = Encoder.parse($current.content);
+    isYAML = e.detail;
+    refresh();
+  }
+
   function sync(e) {
     buffer = e.detail;
 
@@ -81,15 +112,15 @@
     let refs = [];
 
     try {
-      schema = JSON.parse($current.content);
-      refs = $schemas.map(x => JSON.parse(x.content));
+      schema = Encoder.parse($current.content);
+      refs = $schemas.map(x => Encoder.parse(x.content));
     } catch (e) {
       // do nothing
     }
 
     JSONSchemaFaker.option(opts);
     JSONSchemaFaker.resolve(schema, refs)
-      .then(result => { jsonOutput = JSON.stringify(result, null, 2); });
+      .then(result => { objectOutput = Encoder.stringify(result, null, 2); });
   }
 
   router.subscribe(async info => {
@@ -113,13 +144,9 @@
   });
 
   $: if ($current) {
-    try {
-      editInput = JSON.stringify(JSON.parse($current.content), null, 2);
-    } catch (e) {
-      editInput = $current.content;
-    }
+    refresh();
   } else {
-    jsonOutput = '{}';
+    objectOutput = '{}';
     buffer = editInput = '';
     $current = { content: '' };
   }
@@ -158,9 +185,13 @@
         {/if}
     </div>
     <div class="md-flx">
-      <Ace mode="json" value={editInput} on:change={sync} />
-      <Ace mode="json" value={jsonOutput} readonly>
-        <span class="abs r0 b0 z1">
+      <Ace mode={outputMode} value={editInput} on:change={sync}>
+        <div class="abs r0 t0 z1">
+          <Toggle on="YAML" off="JSON" on:change={format} value={isYAML} />
+        </div>
+      </Ace>
+      <Ace mode={outputMode} value={objectOutput} readonly>
+        <span class="abs r0 t0 z1">
           <button class="bu" on:click={gen}>Generate</button>
         </span>
       </Ace>

@@ -30,7 +30,8 @@
     "watch": "tarima watch",
     "build": "tarima -mfqe production",
     "pretest": "npm run lint && npm run build",
-    "postbuild": "concat -o dist/bundle.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js dist/main.umd.js"
+    "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js",
+    "postbuild": "npm run copy:vendor && concat -o dist/bundle.js dist/vendor.js dist/main.umd.min.js"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [

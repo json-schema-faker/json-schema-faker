@@ -1,12 +1,31 @@
 .Ace {
   z-index: 1;
-  min-width: 50%;
-  min-height: 200px;
+  min-height: 5em;
 
   &-wrapper {
+    min-width: 50%;
+    position: relative;
+
     + .Ace-wrapper {
-      border-top: 1px solid @SILVER;
-      box-shadow: 0 -2px 3px rgba(0, 0, 0, .1);
+      &::before {
+        content: ' ';
+        position: absolute;
+        border-top: 1px solid @SILVER;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: 2;
+        box-shadow: 0 0 3px rgba(0, 0, 0, .1);
+      }
+
+      @media screen and (min-width: 720px) {
+        &::before {
+          width: 0;
+          height: 100%;
+          border-top: 0;
+          border-left: 1px solid @SILVER;
+        }
+      }
     }
   }
 
@@ -37,14 +56,10 @@
   }
 
   @media screen and (min-width: 280px) {
-    min-height: 300px;
+    min-height: calc((100vh - 250px) / 2);
   }
 
   @media screen and (min-width: 720px) {
-    min-height: 600px;
-  }
-
-  @media screen and (min-width: 830px) {
-    min-height: 700px;
+    min-height: calc(100vh - 130px);
   }
 }

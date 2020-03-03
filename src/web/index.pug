@@ -9,29 +9,31 @@ html
     link(rel='shortcut icon' type='image/icon' href='img/favicon.ico')
   body
     .Toolbar.f
-      .rel
-        .md-flx.flx-c
-          .p.oh.nosl
-            h1.jsf-logo: a.dib(href='/') JSON Schema Faker
-            a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
-          div
-            .pl.pr
-              p.pr.mt #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
+      a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
+      .md-flx.flx-c
+        .p.nosl
+          h1.jsf-logo: a.dib(href='/') JSON Schema Faker
+        div.mt
+          .pl.pr
+            p.pr #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
+            .mt
               a.tdn(href=`//www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=${BUTTON_ID}` target='_blank')
                 img.mr(src='//img.shields.io/badge/Donate-PayPal-green.svg')
               img.mr(src='//travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master')
               img.mr(src='//badge.fury.io/js/json-schema-faker.svg')
               iframe.mt(src='//ghbtns.com/github-btn.html?user=json-schema-faker&repo=json-schema-faker&type=star&count=true' frameborder=0 scrolling=0 width=120 height=20)
 
-            include _/menu
+          include _/menu
 
     .sm-flx.flx-m
       #editor.flx-a.flx-lt
 
     script(src='//cdnjs.cloudflare.com/ajax/libs/Faker/3.1.0/faker.min.js')
+    script(src='//cdnjs.cloudflare.com/ajax/libs/yamljs/0.3.0/yaml.min.js')
     script(src='//ace.c9.io/build/src/ace.js')
     script(src='//unpkg.com/chance')
-    script(src='bundle.js')
+    script(src='vendor.js')
+    script(src='main.umd.js')
     script(src='js/app.js')
 
     if env.NODE_ENV === 'production'

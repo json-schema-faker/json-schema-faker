@@ -8,8 +8,8 @@ target := gh-pages
 message := Release: $(shell date)
 
 # environment vars
-PORT ?= 3000
-VERSION=0.5.0-rc23
+PORT ?= 8080
+VERSION ?= =0.5.0-rc23
 NODE_ENV ?= development
 
 # export vars
