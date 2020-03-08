@@ -73,6 +73,8 @@
       "!**/lib/**"
     ],
     "bundleOptions": {
+      "bundleCache": true,
+      "entryCache": true,
       "extensions": {
         "js": "es6",
         "css": "less"
@@ -125,7 +127,6 @@
     "mocha": "^7.0.0",
     "nyc": "^15.0.0",
     "pug": "^2.0.4",
-    "rollup": "^1.25.1",
     "rollup-plugin-commonjs": "^10.0.0",
     "rollup-plugin-node-resolve": "^5.0.0",
     "rollup-plugin-svelte": "^5.1.1",
