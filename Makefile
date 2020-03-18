@@ -9,8 +9,8 @@ message := Release: $(shell date)
 
 # environment vars
 PORT ?= 8080
-VERSION ?= =0.5.0-rc23
 NODE_ENV ?= development
+VERSION ?= $(shell cat package.json | jq .version)
 
 # export vars
 .EXPORT_ALL_VARIABLES:
@@ -37,7 +37,7 @@ test: deps ## Run tests like if we're in CI ;-)
 	@npm run test:schema
 
 build: deps ## Build scripts for dist
-	@VERSION=$(shell cat package.json | jq .version) npm run build
+	@npm run build
 
 dist: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
