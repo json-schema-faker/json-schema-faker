@@ -47,7 +47,7 @@ function numberType(value) {
 
     // FIXME: https://github.com/json-schema-faker/json-schema-faker/issues/379
 
-    return num;
+    return min + num;
   }
 
   return random.number(min, max, undefined, undefined, true);
