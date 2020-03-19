@@ -33,6 +33,10 @@ function traverse(schema, path, resolve, rootSchema) {
     if ('template' in schema) {
       return utils.template(schema.template, rootSchema);
     }
+
+    if ('const' in schema) {
+      return schema.const;
+    }
   }
 
   if (schema.not && typeof schema.not === 'object') {
@@ -42,10 +46,6 @@ function traverse(schema, path, resolve, rootSchema) {
     if (schema.type && schema.type === 'object') {
       return traverse(schema, path.concat(['not']), resolve, rootSchema);
     }
-  }
-
-  if ('const' in schema) {
-    return schema.const;
   }
 
   // thunks can return sub-schemas
