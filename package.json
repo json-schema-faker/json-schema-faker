@@ -125,6 +125,7 @@
     "less-plugin-autoprefix": "^2.0.0",
     "minimist": ">=1.2.2",
     "mocha": "^7.0.0",
+    "mockjs": "^1.1.0",
     "nyc": "^15.0.0",
     "pug": "^2.0.4",
     "rollup-plugin-commonjs": "^10.0.0",

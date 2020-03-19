@@ -48,10 +48,6 @@ function traverse(schema, path, resolve, rootSchema) {
     return schema.const;
   }
 
-  if (Array.isArray(schema.enum)) {
-    return utils.typecast(null, schema, () => random.pick(schema.enum));
-  }
-
   // thunks can return sub-schemas
   if (typeof schema.thunk === 'function') {
     return traverse(schema.thunk(rootSchema), path, resolve);
@@ -63,6 +59,10 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (typeof schema.pattern === 'string') {
     return utils.typecast('string', schema, () => random.randexp(schema.pattern));
+  }
+
+  if (Array.isArray(schema.enum)) {
+    return utils.typecast(null, schema, () => random.pick(schema.enum));
   }
 
   // short-circuit as we don't plan generate more values!

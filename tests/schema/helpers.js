@@ -82,6 +82,10 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       throw _e;
     }
 
+    if (test.check) {
+      checkSchema(sample, test.check, refs);
+    }
+
     if (test.length) {
       expect(sample.length).to.eql(test.length);
     }
