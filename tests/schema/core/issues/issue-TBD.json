@@ -8,7 +8,7 @@
           "definitions": {},
           "properties": {
             "person": {
-              "type": "string"
+              "$ref": "issue-TBD-external-schema.json#vocabulary/externalExample"
             }
           },
           "type": "object"
