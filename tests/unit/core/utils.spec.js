@@ -140,4 +140,27 @@ describe('Utils', () => {
       expect(clone[0][0]).to.eql(clone);
     });
   });
+
+  describe('clean function', () => {
+    it('should remove undefined values', () => {
+      const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
+
+      const cleaned = utils.clean(a);
+      expect(cleaned).to.eql({ c: { d: 'string value', e: [] } });
+    });
+
+    it('should return same value if not passed an object', () => {
+      expect(utils.clean(null)).to.eql(null);
+      expect(utils.clean('string value')).to.eql('string value');
+      expect(utils.clean(undefined)).to.eql(undefined);
+      expect(utils.clean(123)).to.eql(123);
+    });
+
+    it('should respect required keys when removing empty objects', () => {
+      const a = { b: {}, c: { d: 'string value' }, e: {} };
+
+      const cleaned = utils.clean(a, ['b']);
+      expect(cleaned).to.eql({ b: {}, c: { d: 'string value' } });
+    });
+  });
 });

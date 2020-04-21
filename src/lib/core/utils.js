@@ -312,7 +312,7 @@ function validate(value, schemas) {
 }
 
 function isKey(prop) {
-  return ['enum', 'const', 'default', 'examples', 'required', 'definitions'].indexOf(prop) !== -1;
+  return ['enum', 'const', 'default', 'examples', 'required', 'definitions', 'items', 'properties'].indexOf(prop) !== -1;
 }
 
 function omitProps(obj, props) {
@@ -345,6 +345,60 @@ function template(value, schema) {
   return value;
 }
 
+/**
+ * Checks if given object is empty (has no properties)
+ *
+ * @param value
+ * @returns {boolean}
+ */
+function isEmpty(value) {
+  return Object.prototype.toString.call(value) === '[object Object]' && !Object.keys(value).length;
+}
+
+/**
+ * Cleans up the source object removing empty objects and undefined values
+ * Will not remove values which are specified as `required`
+ *
+ * @param obj
+ * @param required
+ * @param isArray
+ * @returns {any}
+ */
+function clean(obj, required = [], isArray = false) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj
+      .map(value => clean(value, required, true))
+      .filter(value => typeof value !== 'undefined');
+  }
+
+  Object.keys(obj).forEach(k => {
+    if (isEmpty(obj[k])) {
+      if (!required.includes(k)) {
+        delete obj[k];
+      }
+    } else {
+      const value = clean(obj[k]);
+
+      if (!isEmpty(value)) {
+        obj[k] = value;
+      }
+    }
+    if (typeof obj[k] === 'undefined') {
+      delete obj[k];
+    }
+  });
+
+  if (!Object.keys(obj).length && isArray) {
+    return undefined;
+  }
+
+  return obj;
+}
+
 export default {
   getSubAttribute,
   hasProperties,
@@ -358,4 +412,6 @@ export default {
   validate,
   isKey,
   template,
+  clean,
+  isEmpty,
 };
