@@ -1,0 +1,20 @@
+[
+  {
+    "description": "External file $refs not resolving",
+    "tests": [
+      {
+        "description": "make sure external file $ref does not cause an error",
+        "schema": {
+          "definitions": {},
+          "properties": {
+            "person": {
+              "type": "string"
+            }
+          },
+          "type": "object"
+        },
+        "valid": true
+      }
+    ]
+  }
+]
