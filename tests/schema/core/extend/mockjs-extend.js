@@ -1,11 +1,11 @@
 module.exports = {
   extend() {
-    var Mock = require('mockjs');
+    let Mock = require('mockjs');
 
     return {
-      mock: function (xx) {
+      mock(xx) {
         return Mock.mock(xx);
-      }
+      },
     };
   },
   register(jsf) {

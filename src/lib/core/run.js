@@ -5,10 +5,6 @@ import traverse from './traverse';
 import random from './random';
 import utils from './utils';
 
-function isEmpty(value) {
-  return Object.prototype.toString.call(value) === '[object Object]' && !Object.keys(value).length;
-}
-
 function pick(data) {
   return Array.isArray(data)
     ? random.pick(data)
@@ -31,36 +27,6 @@ function cycle(data, reverse) {
   }
 
   return value;
-}
-
-function clean(obj, isArray) {
-  if (!obj || typeof obj !== 'object') {
-    return obj;
-  }
-
-  if (Array.isArray(obj)) {
-    return obj
-      .map(value => clean(value, true))
-      .filter(value => typeof value !== 'undefined');
-  }
-
-  Object.keys(obj).forEach(k => {
-    if (!isEmpty(obj[k])) {
-      const value = clean(obj[k]);
-
-      if (!isEmpty(value)) {
-        obj[k] = value;
-      }
-    } else {
-      delete obj[k];
-    }
-  });
-
-  if (!Object.keys(obj).length && isArray) {
-    return undefined;
-  }
-
-  return obj;
 }
 
 function resolve(obj, data, values, property) {
@@ -137,7 +103,7 @@ function run(refs, schema, container) {
       }
 
       if (typeof sub.$ref === 'string') {
-        const maxDepth = random.number(Math.min(refDepthMin, refDepthMax), Math.max(refDepthMin, refDepthMax)) - 1;
+        const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
 
         // increasing depth only for repeated refs seems to be fixing #258
         if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > maxDepth)) {
@@ -242,10 +208,10 @@ function run(refs, schema, container) {
     });
 
     if (optionAPI('resolveJsonPath')) {
-      return resolve(clean(result));
+      return resolve(result);
     }
 
-    return clean(result);
+    return result;
   } catch (e) {
     if (e.path) {
       throw new Error(`${e.message} in /${e.path.join('/')}`);

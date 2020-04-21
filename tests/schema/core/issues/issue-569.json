@@ -1,0 +1,61 @@
+{
+    "description": "keep empty required objects",
+    "tests": [
+        {
+            "description": "should not remove empty objects defined with additionalProperties",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "requiredProperty": {
+                        "type": "object",
+                        "additionalProperties": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "requiredProperty"
+                ]
+            },
+            "valid": true
+        },
+        {
+            "description": "should not remove empty arrays",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "requiredProperty": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "requiredProperty"
+                ]
+            },
+            "valid": true
+        },
+        {
+            "description": "should not remove empty objects",
+            "schema": {
+                "type": "object",
+                "properties": {
+                    "requiredProperty": {
+                        "type": "object",
+                        "properties": {
+                            "optionalProperty": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
+                "required": [
+                    "requiredProperty"
+                ]
+            },
+            "valid": true
+        }
+    ]
+}
