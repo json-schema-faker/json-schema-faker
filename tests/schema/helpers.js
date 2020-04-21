@@ -22,7 +22,7 @@ export function getTests(srcDir) {
   const only = [];
   const all = [];
 
-  glob.sync(`${srcDir}/**/*.json`).forEach(file => {
+  glob.sync(`${srcDir}/**/*.json`, { ignore: ['**/external-ref-files/*'] }).forEach(file => {
     let suite;
 
     try {

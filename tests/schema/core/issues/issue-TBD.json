@@ -5,10 +5,9 @@
       {
         "description": "make sure external file $ref does not cause an error",
         "schema": {
-          "definitions": {},
           "properties": {
             "person": {
-              "$ref": "issue-TBD-external-schema.json#vocabulary/externalExample"
+              "$ref": "../../../external-ref-files/issue-TBD-external-ref.json"
             }
           },
           "type": "object"
