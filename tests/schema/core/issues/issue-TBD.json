@@ -7,7 +7,7 @@
         "schema": {
           "properties": {
             "person": {
-              "$ref": "../../../external-ref-files/issue-TBD-external-ref.json"
+              "$ref": "../../../external-ref-files/issue-TBD-external-ref.json#/definitions/externalExample"
             }
           },
           "type": "object"

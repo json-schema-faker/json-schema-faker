@@ -1,5 +1,7 @@
 {
-  "externalExample": {
-    "type": "string"
+  "definitions": {
+    "externalExample": {
+      "type": "string"
+    }
   }
 }
