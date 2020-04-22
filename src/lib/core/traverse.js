@@ -45,7 +45,7 @@ function traverse(schema, path, resolve, rootSchema) {
     // build new object value from not-schema!
     if (schema.type && schema.type === 'object') {
       const traverseResult = traverse(schema, path.concat(['not']), resolve, rootSchema);
-      return utils.clean(traverseResult, schema.required || [], false);
+      return utils.clean(traverseResult, schema, false);
     }
   }
 
@@ -113,7 +113,8 @@ function traverse(schema, path, resolve, rootSchema) {
 
   Object.keys(schema).forEach(prop => {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
-      copy[prop] = utils.clean(traverse(schema[prop], path.concat([prop]), resolve, copy), schema[prop].required || [], false);
+      const traverseResult = traverse(schema[prop], path.concat([prop]), resolve, copy);
+      copy[prop] = utils.clean(traverseResult, schema[prop], false);
     } else {
       copy[prop] = schema[prop];
     }

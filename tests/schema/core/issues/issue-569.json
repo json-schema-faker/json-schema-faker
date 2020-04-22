@@ -88,6 +88,41 @@
                 ]
             },
             "valid": true
+        },
+        {
+            "description": "should not remove empty objects described in additionalProperties",
+            "schema": {
+                "type": "object",
+                "minProperties": 1,
+                "additionalProperties": {
+                    "required": [
+                        "id"
+                    ],
+                    "properties": {
+                        "id": {
+                            "type": "string"
+                        }
+                    },
+                    "oneOf": [
+                        {
+                            "properties": {
+                                "type": {
+                                    "type": "object",
+                                    "properties": {}
+                                },
+                                "name": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "type",
+                                "name"
+                            ]
+                        }
+                    ]
+                }
+            },
+            "valid": true
         }
     ]
 }
