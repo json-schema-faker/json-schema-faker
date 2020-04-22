@@ -96,7 +96,9 @@ jsf.resolve = (schema, refs, cwd) => {
   // identical setup as json-schema-sequelizer
   const fixedRefs = {
     order: 1,
-    canRead: true,
+    canRead(file) {
+      return $refs[file.url] || $refs[file.url.split('/').pop()];
+    },
     read(file, callback) {
       try {
         callback(null, $refs[file.url] || $refs[file.url.split('/').pop()]);
