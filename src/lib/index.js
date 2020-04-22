@@ -101,8 +101,6 @@ jsf.resolve = (schema, refs, cwd) => {
     },
     read(file, callback) {
       try {
-        console.log({ line: 102, refs: $refs, ex: $refs[file.url.split('/').pop()] });
-
         callback(null, $refs[file.url] || $refs[file.url.split('/').pop()]);
       } catch (e) {
         callback(e);
