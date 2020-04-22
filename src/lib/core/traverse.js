@@ -51,8 +51,8 @@ function traverse(schema, path, resolve, rootSchema) {
 
   // thunks can return sub-schemas
   if (typeof schema.thunk === 'function') {
-    const traverseResult = traverse(schema.thunk(rootSchema), path, resolve);
-    return utils.clean(traverseResult, schema.required || [], false);
+    // result is already cleaned in thunk
+    return traverse(schema.thunk(rootSchema), path, resolve);
   }
 
   if (typeof schema.generate === 'function') {
