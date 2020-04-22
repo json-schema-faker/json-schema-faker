@@ -56,6 +56,38 @@
                 ]
             },
             "valid": true
+        },
+        {
+            "description": "should not remove empty objects when required by oneOf but not by root schema",
+            "schema": {
+                "type": "object",
+                "required": [
+                    "id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "string"
+                    }
+                },
+                "oneOf": [
+                    {
+                        "properties": {
+                            "type": {
+                                "type": "object",
+                                "properties": {}
+                            },
+                            "name": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "type",
+                            "name"
+                        ]
+                    }
+                ]
+            },
+            "valid": true
         }
     ]
 }

@@ -173,7 +173,8 @@ function run(refs, schema, container) {
             mix.forEach(omit => {
               if (omit.required && omit !== fixed) {
                 omit.required.forEach(key => {
-                  if (copy.properties && !copy.required.includes(key)) {
+                  const includesKey = copy.required && copy.required.includes(key);
+                  if (copy.properties && !includesKey) {
                     delete copy.properties[key];
                   }
 
