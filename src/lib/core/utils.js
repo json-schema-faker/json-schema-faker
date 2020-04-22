@@ -356,32 +356,46 @@ function isEmpty(value) {
 }
 
 /**
+ * Checks given key is required or if source object was created by a subroutine (already cleaned)
+ *
+ * @param key
+ * @param schema
+ * @returns {boolean}
+ */
+function shouldClean(key, schema) {
+  const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
+  const wasCleaned = typeof schema.thunk === 'function' || (schema.additionalProperties && typeof schema.additionalProperties.thunk === 'function');
+
+  return !isRequired && !wasCleaned;
+}
+
+/**
  * Cleans up the source object removing empty objects and undefined values
  * Will not remove values which are specified as `required`
  *
  * @param obj
- * @param required
+ * @param schema
  * @param isArray
  * @returns {any}
  */
-function clean(obj, required = [], isArray = false) {
+function clean(obj, schema, isArray = false) {
   if (!obj || typeof obj !== 'object') {
     return obj;
   }
 
   if (Array.isArray(obj)) {
     return obj
-      .map(value => clean(value, required, true))
+      .map(value => clean(value, schema, true))
       .filter(value => typeof value !== 'undefined');
   }
 
   Object.keys(obj).forEach(k => {
     if (isEmpty(obj[k])) {
-      if (!required.includes(k)) {
+      if (shouldClean(k, schema)) {
         delete obj[k];
       }
     } else {
-      const value = clean(obj[k]);
+      const value = clean(obj[k], schema);
 
       if (!isEmpty(value)) {
         obj[k] = value;

@@ -159,7 +159,7 @@ describe('Utils', () => {
     it('should respect required keys when removing empty objects', () => {
       const a = { b: {}, c: { d: 'string value' }, e: {} };
 
-      const cleaned = utils.clean(a, ['b']);
+      const cleaned = utils.clean(a, { required: ['b'] });
       expect(cleaned).to.eql({ b: {}, c: { d: 'string value' } });
     });
   });
