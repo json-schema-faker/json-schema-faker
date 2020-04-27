@@ -16,7 +16,7 @@ VERSION ?= $(shell cat package.json | jq .version)
 .EXPORT_ALL_VARIABLES:
 
 # targets
-.PHONY: ? deps purge dist clean deploy
+.PHONY: ? deps purge all clean deploy
 
 # utils
 define iif
@@ -39,7 +39,7 @@ test: deps ## Run tests like if we're in CI ;-)
 build: deps ## Build scripts for dist
 	@npm run build
 
-dist: deps ## Build artifact for production envs
+all: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
 	@cd $(src) && rm -rf * && git checkout -- vendor
