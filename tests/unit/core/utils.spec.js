@@ -2,8 +2,6 @@ import { expect } from 'chai';
 import utils from '../../../src/lib/core/utils';
 import optionAPI from '../../../src/lib/api/option';
 
-/* global describe, it */
-
 describe('Utils', () => {
   describe('hasProperties function', () => {
     const bigObject = {
