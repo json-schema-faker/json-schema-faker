@@ -312,7 +312,7 @@ function validate(value, schemas) {
 }
 
 function isKey(prop) {
-  return ['enum', 'const', 'default', 'examples', 'required', 'definitions', 'items', 'properties'].indexOf(prop) !== -1;
+  return ['enum', 'const', 'default', 'examples', 'required', 'definitions', 'items', 'properties'].includes(prop);
 }
 
 function omitProps(obj, props) {
