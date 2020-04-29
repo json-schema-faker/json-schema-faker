@@ -120,15 +120,58 @@ describe('Utils', () => {
   });
 
   describe('clone function', () => {
+    it('should handle falsy objects', () => {
+      expect(utils.clone(undefined)).to.be.undefined;
+    });
+
+    it('should handle non object arguments', () => {
+      expect(utils.clone(2)).to.equal(2);
+    });
+
+    it('should handle cached objects', () => {
+      const object = {};
+      const cache = new Map();
+      cache.set(object, 'hello');
+
+      const clone = utils.clone(object, cache);
+      expect(clone).to.equal('hello');
+    });
+
+    it('should handle cached arrays', () => {
+      const array = [];
+      const cache = new Map();
+      cache.set(array, 'hello');
+
+      const clone = utils.clone(array, cache);
+      expect(clone).to.equal('hello');
+    });
+
+    it('should handle objects', () => {
+      const original = {
+        prop1: 1,
+        prop2: 2,
+      };
+      const clone = utils.clone(original);
+
+      expect(clone).to.not.equal(original);
+      expect(clone).to.eql(original);
+    });
+
+    it('should handle arrays', () => {
+      const original = [1, 2, 3];
+      const clone = utils.clone(original);
+
+      expect(clone).to.not.equal(original);
+      expect(clone).to.eql(original);
+    });
+
     it('should handle circular refs in objects', () => {
       const a = {};
-      const b = {
-        a,
-      };
+      const b = { a };
       a.b = b;
 
       const clone = utils.clone(a);
-      expect(clone.b.a).to.eql(clone);
+      expect(clone.b.a).to.equal(clone);
     });
 
     it('should handle circular refs in arrays', () => {
@@ -137,7 +180,7 @@ describe('Utils', () => {
       a.push(b);
 
       const clone = utils.clone(a);
-      expect(clone[0][0]).to.eql(clone);
+      expect(clone[0][0]).to.equal(clone);
     });
   });
 
