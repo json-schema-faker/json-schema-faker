@@ -117,6 +117,117 @@ describe('Utils', () => {
     });
   });
 
+  describe('merge function', () => {
+    context('when a and b have primitive properties of the same type', () => {
+      it('should overwrite the key with b\'s value', () => {
+        const a = { c: 1 };
+        const b = { c: 2 };
+
+        expect(utils.merge(a, b)).to.eql({ c: 2 });
+      });
+    });
+
+    context('when a and b have primitive properties of a different type', () => {
+      it('should overwrite the key with b\'s value', () => {
+        const a = { c: 1 };
+        const b = { c: '2' };
+
+        expect(utils.merge(a, b)).to.eql({ c: '2' });
+      });
+    });
+
+    context('when a and b have the same property but b\'s is null', () => {
+      it('should overwrite the key with null', () => {
+        const a = { c: [] };
+        const b = { c: null };
+
+        expect(utils.merge(a, b)).to.eql({ c: null });
+      });
+    });
+
+    context('when b has an array property that a does not have', () => {
+      it('should copy the array into a', () => {
+        const a = {};
+        const b = { c: [1, 2, 3] };
+
+        const merged = utils.merge(a, b);
+        expect(merged).to.eql({ c: [1, 2, 3] });
+        expect(merged.c).to.not.equal(b.c);
+      });
+    });
+
+    context('when b has an array property that is a different type in a', () => {
+      it('should not modify a\'s property', () => {
+        const a = { c: 'test' };
+        const b = { c: [1, 2, 3] };
+
+        expect(utils.merge(a, b)).to.eql({ c: 'test' });
+      });
+    });
+
+    context('when b and a have the same array property', () => {
+      it('should modify a\'s property to be the union of both arrays', () => {
+        const a = { c: [1, 3, 5] };
+        const b = { c: [1, 2, 4, 5] };
+
+        expect(utils.merge(a, b)).to.eql({ c: [1, 3, 5, 2, 4] });
+      });
+    });
+
+    context('when a and b have the same property but b\'s is an object and a\'s is a primitive', () => {
+      it('should set a\'s property to a copy of b', () => {
+        const a = { c: 2 };
+        const b = { c: { d: 1 } };
+
+        const merged = utils.merge(a, b);
+        expect(merged).to.eql({ c: { d: 1 } });
+        expect(merged.c).to.not.equal(b.c);
+      });
+    });
+
+    context('when a and b have the same property but b\'s is an object and a\'s is null', () => {
+      it('should set a\'s property to a copy of b', () => {
+        const a = { c: null };
+        const b = { c: { d: 1 } };
+
+        const merged = utils.merge(a, b);
+        expect(merged).to.eql({ c: { d: 1 } });
+        expect(merged.c).to.not.equal(b.c);
+      });
+    });
+
+    context('when a and b have the same property but b\'s is an object and a\'s is an array', () => {
+      it('should set a\'s property to a copy of b', () => {
+        const a = { c: [1, 2, 3] };
+        const b = { c: { d: 4 } };
+
+        const merged = utils.merge(a, b);
+        expect(merged).to.eql({ c: { d: 4 } });
+        expect(merged.c).to.not.equal(b.c);
+      });
+    });
+
+    context('when a and be have the same object property', () => {
+      it('should merge the objects', () => {
+        const a = { c: { d: 1 } };
+        const b = { c: { d: 2 } };
+
+        const merged = utils.merge(a, b);
+        expect(merged).to.eql({ c: { d: 2 } });
+        expect(merged.c).to.not.equal(b.c);
+      });
+    });
+
+    context('when a has properties that b does not have', () => {
+      it('should not modify those properties', () => {
+        const a = { c: 1, d: 2 };
+        const b = { d: 3 };
+
+        expect(utils.merge(a, b)).to.eql({ c: 1, d: 3 });
+      });
+    });
+  });
+
   describe('clone function', () => {
     it('should handle falsy objects', () => {
       expect(utils.clone(undefined)).to.be.undefined;
