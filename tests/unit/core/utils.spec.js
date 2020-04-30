@@ -412,6 +412,57 @@ describe('Utils', () => {
     });
   });
 
+  describe('omitProps function', () => {
+    context('with an empty object', () => {
+      it('should return a different empty object', () => {
+        const obj = {};
+        const copy = utils.omitProps(obj, []);
+
+        expect(copy).to.eql({});
+        expect(copy).to.not.equal(obj);
+      });
+    });
+
+    context('when a property key matches a prop', () => {
+      it('should omit the property', () => {
+        const obj = {
+          a: 1,
+          b: 2,
+        };
+
+        expect(utils.omitProps(obj, ['a', 'b'])).to.eql({});
+      });
+    });
+
+    context('when an array property is not in props', () => {
+      it('should shallow copy the array', () => {
+        const innerObj1 = {};
+        const innerObj2 = {};
+
+        const obj = {
+          a: [innerObj1, innerObj2],
+        };
+
+        const copy = utils.omitProps(obj, []);
+        expect(copy).to.eql({ a: [{}, {}] });
+        expect(copy.a[0]).to.equal(innerObj1);
+        expect(copy.a[1]).to.equal(innerObj2);
+      });
+    });
+
+    context('when an object property is not in props', () => {
+      it.skip('should deep copy the object', () => {
+        // TODO: if utils.omitProps calls utils.merge then we can use sinon to make this assertion
+      });
+    });
+
+    context('when a primitive property is not in props', () => {
+      it('should keep the property', () => {
+        expect(utils.omitProps({ a: 1 }, [])).to.eql({ a: 1 });
+      });
+    });
+  });
+
   describe('clean function', () => {
     it('should remove undefined values', () => {
       const a = { b: undefined, c: { d: 'string value', e: [undefined] } };

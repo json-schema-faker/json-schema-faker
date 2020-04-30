@@ -318,10 +318,9 @@ function isKey(prop) {
 }
 
 function omitProps(obj, props) {
-  const copy = {};
-
-  Object.keys(obj).forEach(k => {
-    if (props.indexOf(k) === -1) {
+  return Object.keys(obj)
+    .filter(key => !props.includes(key))
+    .reduce((copy, k) => {
       if (Array.isArray(obj[k])) {
         copy[k] = obj[k].slice();
       } else {
@@ -329,10 +328,9 @@ function omitProps(obj, props) {
           ? merge({}, obj[k])
           : obj[k];
       }
-    }
-  });
 
-  return copy;
+      return copy;
+    }, {});
 }
 
 function template(value, schema) {
