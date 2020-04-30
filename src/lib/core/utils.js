@@ -296,19 +296,21 @@ function notValue(schema, parent) {
   return copy;
 }
 
+function validateValueForSchema(value, schema) {
+  if (typeof schema.minimum !== 'undefined' && value >= schema.minimum) {
+    return true;
+  }
+
+  if (typeof schema.maximum !== 'undefined' && value <= schema.maximum) {
+    return true;
+  }
+
+  return false;
+}
+
 // FIXME: evaluate more constraints?
 function validate(value, schemas) {
-  return !schemas.every(x => {
-    if (typeof x.minimum !== 'undefined' && value >= x.minimum) {
-      return true;
-    }
-
-    if (typeof x.maximum !== 'undefined' && value <= x.maximum) {
-      return true;
-    }
-
-    return false;
-  });
+  return !schemas.every(schema => validateValueForSchema(value, schema));
 }
 
 function isKey(prop) {
@@ -423,6 +425,7 @@ export default {
   short,
   notValue,
   anyValue,
+  validateValueForSchema,
   validate,
   isKey,
   template,

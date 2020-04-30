@@ -293,6 +293,125 @@ describe('Utils', () => {
     });
   });
 
+  describe('validateValueForSchema function ', () => {
+    context('when a schema has a minimum and maximum', () => {
+      const schema = {
+        minimum: 2,
+        maximum: 4,
+      };
+
+      // TODO: verify that this behavior is correct
+      context('and the value is less than the minimum', () => {
+        it('should return true?', () => {
+          expect(utils.validateValueForSchema(1, schema)).to.be.true;
+        });
+      });
+
+      context('and the value is equal to the minimum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(2, schema)).to.be.true;
+        });
+      });
+
+      context('and the value is between the minimum and maximum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(3, schema)).to.be.true;
+        });
+      });
+
+      context('and the value is equal to the maximum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(4, schema)).to.be.true;
+        });
+      });
+
+      // TODO: verify that this behavior is correct
+      context('and the value is greater than the maximum', () => {
+        it('should return true?', () => {
+          expect(utils.validateValueForSchema(5, schema)).to.be.true;
+        });
+      });
+    });
+
+    context('when a schema only has a minimum', () => {
+      const schema = { minimum: 2 };
+
+      context('and the value is less than the minimum', () => {
+        it('should return false', () => {
+          expect(utils.validateValueForSchema(1, schema)).to.be.false;
+        });
+      });
+
+      context('and the value is equal to the minimum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(2, schema)).to.be.true;
+        });
+      });
+
+      context('and the value is greater than the minimum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(3, schema)).to.be.true;
+        });
+      });
+    });
+
+    context('when a schema only has a maximum', () => {
+      const schema = { maximum: 4 };
+
+      context('and the value is less than the maximum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(3, schema)).to.be.true;
+        });
+      });
+
+      context('and the value is equal to the maximum', () => {
+        it('should return true', () => {
+          expect(utils.validateValueForSchema(4, schema)).to.be.true;
+        });
+      });
+
+      context('and the value is greater than the maximum', () => {
+        it('should return false', () => {
+          expect(utils.validateValueForSchema(5, schema)).to.be.false;
+        });
+      });
+    });
+
+    context('when a schema does not have a minimum or maximum', () => {
+      const schema = {};
+
+      it('should return false', () => {
+        expect(utils.validateValueForSchema(0, schema)).to.be.false;
+      });
+    });
+  });
+
+  describe('validate function', () => {
+    context('with 0 schemas', () => {
+      it('should return false', () => {
+        expect(utils.validate(0, [])).to.be.false;
+      });
+    });
+
+    context('when the value is valid for every schema', () => {
+      it('should return false', () => {
+        expect(utils.validate(1, [{ maximum: 1 }, { maximum: 2 }])).to.be.false;
+      });
+    });
+
+    context('when the value is invalid for at least one schema', () => {
+      it('should return true', () => {
+        expect(utils.validate(2, [{ maximum: 1 }, { maximum: 2 }])).to.be.true;
+      });
+    });
+
+    context('when the value is invalid for at least one schema', () => {
+      it('should return true', () => {
+        expect(utils.validate(3, [{ maximum: 1 }, { maximum: 2 }])).to.be.true;
+      });
+    });
+  });
+
   describe('clean function', () => {
     it('should remove undefined values', () => {
       const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
