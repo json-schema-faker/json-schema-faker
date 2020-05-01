@@ -427,6 +427,7 @@ export default {
   validate,
   isKey,
   template,
+  shouldClean,
   clean,
   isEmpty,
 };

@@ -473,19 +473,43 @@ describe('Utils', () => {
     });
   });
 
-  describe('clean function', () => {
-    it('should remove undefined values', () => {
-      const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
-
-      const cleaned = utils.clean(a);
-      expect(cleaned).to.eql({ c: { d: 'string value', e: [] } });
+  describe('shouldClean function', () => {
+    it('should return true when the key is not required and the schema does not have a thunk', () => {
+      expect(utils.shouldClean('a', {})).to.be.true;
     });
 
+    it('should return false when the key is required', () => {
+      const schema = { required: ['a'] };
+      expect(utils.shouldClean('a', schema)).to.be.false;
+    });
+
+    it('should return false when the schema has a thunk', () => {
+      const schema = { thunk: () => {} };
+      expect(utils.shouldClean('a', schema)).to.be.false;
+    });
+
+    it('should return false when the schema\'s additional properties has a thunk', () => {
+      const schema = {
+        additionalProperties: { thunk: () => {} },
+      };
+      expect(utils.shouldClean('a', schema)).to.be.false;
+    });
+  });
+
+  describe('clean function', () => {
     it('should return same value if not passed an object', () => {
       expect(utils.clean(null)).to.eql(null);
       expect(utils.clean('string value')).to.eql('string value');
       expect(utils.clean(undefined)).to.eql(undefined);
       expect(utils.clean(123)).to.eql(123);
+      expect(utils.clean(true)).to.be.true;
+    });
+
+    it('should remove undefined values', () => {
+      const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
+
+      const cleaned = utils.clean(a);
+      expect(cleaned).to.eql({ c: { d: 'string value', e: [] } });
     });
 
     it('should respect required keys when removing empty objects', () => {
