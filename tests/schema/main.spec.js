@@ -4,8 +4,6 @@ import {
 
 const { only, all } = getTests(__dirname);
 
-/* global describe, it */
-
 const seeds = [];
 
 function seed() {

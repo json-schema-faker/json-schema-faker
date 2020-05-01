@@ -1,8 +1,6 @@
 import { expect } from 'chai';
 import jsf from '../../../src/lib';
 
-/* global describe, it */
-
 describe('Random Generation', () => {
   it('should generate all the fields with alwaysFakeOptionals option and additionalProperties: true', () => {
     jsf.option({

@@ -296,30 +296,31 @@ function notValue(schema, parent) {
   return copy;
 }
 
+function validateValueForSchema(value, schema) {
+  if (typeof schema.minimum !== 'undefined' && value >= schema.minimum) {
+    return true;
+  }
+
+  if (typeof schema.maximum !== 'undefined' && value <= schema.maximum) {
+    return true;
+  }
+
+  return false;
+}
+
 // FIXME: evaluate more constraints?
 function validate(value, schemas) {
-  return !schemas.every(x => {
-    if (typeof x.minimum !== 'undefined' && value >= x.minimum) {
-      return true;
-    }
-
-    if (typeof x.maximum !== 'undefined' && value <= x.maximum) {
-      return true;
-    }
-
-    return false;
-  });
+  return !schemas.every(schema => validateValueForSchema(value, schema));
 }
 
 function isKey(prop) {
-  return ['enum', 'const', 'default', 'examples', 'required', 'definitions', 'items', 'properties'].indexOf(prop) !== -1;
+  return ['enum', 'const', 'default', 'examples', 'required', 'definitions', 'items', 'properties'].includes(prop);
 }
 
 function omitProps(obj, props) {
-  const copy = {};
-
-  Object.keys(obj).forEach(k => {
-    if (props.indexOf(k) === -1) {
+  return Object.keys(obj)
+    .filter(key => !props.includes(key))
+    .reduce((copy, k) => {
       if (Array.isArray(obj[k])) {
         copy[k] = obj[k].slice();
       } else {
@@ -327,10 +328,9 @@ function omitProps(obj, props) {
           ? merge({}, obj[k])
           : obj[k];
       }
-    }
-  });
 
-  return copy;
+      return copy;
+    }, {});
 }
 
 function template(value, schema) {
@@ -423,9 +423,11 @@ export default {
   short,
   notValue,
   anyValue,
+  validateValueForSchema,
   validate,
   isKey,
   template,
+  shouldClean,
   clean,
   isEmpty,
 };
