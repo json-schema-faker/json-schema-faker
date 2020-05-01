@@ -463,6 +463,16 @@ describe('Utils', () => {
     });
   });
 
+  describe('isEmpty function', () => {
+    it('should return true for an empty object', () => {
+      expect(utils.isEmpty({})).to.be.true;
+    });
+
+    it('should return false for an object with properties', () => {
+      expect(utils.isEmpty({ abc: 1 })).to.be.false;
+    });
+  });
+
   describe('clean function', () => {
     it('should remove undefined values', () => {
       const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
