@@ -131,6 +131,14 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       expect(sample).to.eql(test.equal);
     }
 
+    if (test.throws) {
+      delete test.throws;
+
+      const message = typeof test.throws === 'string' ? `: "${test.throws}"` : '';
+
+      throw new Error(`Expected test to throw${message}`);
+    }
+
     if (callback) {
       callback(sample);
     }
