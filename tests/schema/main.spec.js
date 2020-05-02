@@ -1,3 +1,4 @@
+import path from 'path';
 import {
   jsf, pick, tryTest, getTests,
 } from './helpers';
@@ -13,7 +14,10 @@ function seed() {
 }
 
 (only.length ? only : all).forEach(suite => {
-  describe(`${suite.description} (${suite.file.replace(`${process.cwd()}/`, '')})`, () => {
+  const normalizedFilename = path.normalize(suite.file);
+  const relativeFilename = normalizedFilename.replace(`${process.cwd()}${path.sep}`, '');
+
+  describe(`${suite.description} (${relativeFilename})`, () => {
     suite.tests.forEach(test => {
       if (!process.env.CI && test.online) return;
       if (process.argv.includes('--skip')) {
