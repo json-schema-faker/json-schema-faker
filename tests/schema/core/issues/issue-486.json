@@ -13,6 +13,7 @@
         "valid": true
       },
       {
+        "skip": true,
         "description": "would fail on complex patterns",
         "schema": {
           "type": "string",

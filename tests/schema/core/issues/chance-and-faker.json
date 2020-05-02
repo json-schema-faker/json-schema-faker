@@ -3,6 +3,7 @@
     "description": "chance and faker",
     "tests": [
       {
+        "skip": true,
         "description": "should throw error when both defined",
         "schema": {
           "chance": "url",

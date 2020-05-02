@@ -117,6 +117,7 @@
         "throws": "Error: unknown registry key .+?"
       },
       {
+        "skip": true,
         "description": "should validate custom formats",
         "schema": {
           "type": "object",
