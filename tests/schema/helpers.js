@@ -63,7 +63,10 @@ export function tryTest(nth, max, test, refs, schema, callback) {
   return _jsf.resolve(schema, refs).then(sample => {
     if (test.dump) {
       console.log(JSON.stringify(sample, null, 2));
-      return;
+
+      if (test.dump === 'bail') {
+        return;
+      }
     }
 
     try {
@@ -91,11 +94,11 @@ export function tryTest(nth, max, test, refs, schema, callback) {
     }
 
     if (test.notEmpty) {
-      test.notEmpty.forEach(x => {
-        const value = pick(sample, x);
+      test.notEmpty.forEach(objectPath => {
+        const value = pick(sample, objectPath);
 
         if (value === undefined || (Array.isArray(value) && !value.length)) {
-          throw new Error(`${x} should not be empty`);
+          throw new Error(`${objectPath} should not be empty`);
         }
       });
     }
