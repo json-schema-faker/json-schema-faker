@@ -143,15 +143,16 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       callback(sample);
     }
   }).catch(error => {
-    if (typeof test.throws === 'string') {
-      expect(error).to.match(new RegExp(test.throws, 'im'));
+    const throwsValue = test.throws || test.throwsSometimes;
+
+    if (typeof throwsValue === 'string') {
+      expect(error).to.match(new RegExp(throwsValue, 'im'));
+      test.throwCount++;
       return;
     }
 
-    if (typeof test.throws === 'boolean') {
-      if (test.throws !== true) {
-        throw error;
-      }
+    if (throwsValue === true) {
+      test.throwCount++;
       return;
     }
 

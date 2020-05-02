@@ -73,6 +73,10 @@ function seed() {
           return prev;
         }, {}) : null;
 
+        if (test.throwsSometimes) {
+          test.throwCount = 0;
+        }
+
         while (nth) {
           if (!test.skip) {
             tasks.push(tryTest(nth, max, test, refs, schema, sample => {
@@ -104,6 +108,10 @@ function seed() {
         }).then(() => {
           if (props && Object.values(props).some(x => x === 0)) {
             throw new Error(`minProps failed, got: ${JSON.stringify(props)}`);
+          }
+
+          if (test.throwsSometimes && !(test.throwCount > 0)) {
+            throw new Error('Expected some tests to throw');
           }
         });
       }).timeout(suite.timeout || test.timeout || (process.CI ? 30000 : 10000));

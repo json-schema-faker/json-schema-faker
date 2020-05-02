@@ -65,6 +65,7 @@ The properties below are used to setup the test and execute the assertions:
   - `notEmpty{Array<String>}`: asserts that each object property is not undefined or an empty array. Use strings with '.' for asserting on nested object properties
   - `onlyProps:{Array<String>}` &mdash; asserts that the object only has these properties
   - `throws:{String|Boolean}` &mdash; assert on error message or that an error was thrown or not thrown
+  - `throwsSometimes:{String|Boolean}` &mdash; assert on error message or that an error was thrown. Will fail if it throws the wrong error or if it never throws
   - `type:{String}` &mdash; used for primitives, it will perform a `toHaveType()` test
   - `valid:{true}` &mdash; tests the generated data against the original schema
 
