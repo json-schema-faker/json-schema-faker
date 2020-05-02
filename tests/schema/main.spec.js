@@ -25,6 +25,11 @@ function seed() {
         delete test.skip;
       }
 
+      if (test.skip) {
+        it.skip(test.description);
+        return;
+      }
+
       it(test.description, () => {
         jsf.option(jsf.option.getDefaults());
 
