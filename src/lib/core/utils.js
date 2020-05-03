@@ -297,20 +297,20 @@ function notValue(schema, parent) {
 }
 
 function validateValueForSchema(value, schema) {
-  if (typeof schema.minimum !== 'undefined' && value >= schema.minimum) {
-    return true;
-  }
+  const schemaHasMin = schema.minimum !== undefined;
+  const schemaHasMax = schema.maximum !== undefined;
 
-  if (typeof schema.maximum !== 'undefined' && value <= schema.maximum) {
-    return true;
-  }
-
-  return false;
+  return (
+    (schemaHasMin || schemaHasMax)
+    && (!schemaHasMin || value >= schema.minimum)
+    && (!schemaHasMax || value <= schema.maximum)
+  );
 }
 
 // FIXME: evaluate more constraints?
-function validate(value, schemas) {
-  return !schemas.every(schema => validateValueForSchema(value, schema));
+function validateValueForOneOf(value, oneOf) {
+  const validCount = oneOf.reduce((count, schema) => (count + ((validateValueForSchema(value, schema)) ? 1 : 0)), 0);
+  return validCount === 1;
 }
 
 function isKey(prop) {
@@ -424,7 +424,7 @@ export default {
   notValue,
   anyValue,
   validateValueForSchema,
-  validate,
+  validateValueForOneOf,
   isKey,
   template,
   shouldClean,

@@ -159,7 +159,7 @@ function run(refs, schema, container) {
         // test every value from the enum against each-oneOf
         // schema, only values that validate once are kept
         if (sub.enum && sub.oneOf) {
-          sub.enum = sub.enum.filter(x => utils.validate(x, mix));
+          sub.enum = sub.enum.filter(enumValue => utils.validateValueForOneOf(enumValue, mix));
         }
 
         return {

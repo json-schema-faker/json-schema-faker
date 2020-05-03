@@ -300,10 +300,9 @@ describe('Utils', () => {
         maximum: 4,
       };
 
-      // TODO: verify that this behavior is correct
       context('and the value is less than the minimum', () => {
-        it('should return true?', () => {
-          expect(utils.validateValueForSchema(1, schema)).to.be.true;
+        it('should return false', () => {
+          expect(utils.validateValueForSchema(1, schema)).to.be.false;
         });
       });
 
@@ -325,10 +324,9 @@ describe('Utils', () => {
         });
       });
 
-      // TODO: verify that this behavior is correct
       context('and the value is greater than the maximum', () => {
-        it('should return true?', () => {
-          expect(utils.validateValueForSchema(5, schema)).to.be.true;
+        it('should return false', () => {
+          expect(utils.validateValueForSchema(5, schema)).to.be.false;
         });
       });
     });
@@ -386,28 +384,28 @@ describe('Utils', () => {
     });
   });
 
-  describe('validate function', () => {
+  describe('validateValueForOneOf function', () => {
     context('with 0 schemas', () => {
       it('should return false', () => {
-        expect(utils.validate(0, [])).to.be.false;
+        expect(utils.validateValueForOneOf(0, [])).to.be.false;
       });
     });
 
     context('when the value is valid for every schema', () => {
       it('should return false', () => {
-        expect(utils.validate(1, [{ maximum: 1 }, { maximum: 2 }])).to.be.false;
+        expect(utils.validateValueForOneOf(1, [{ maximum: 1 }, { maximum: 2 }, { maximum: 3 }])).to.be.false;
       });
     });
 
-    context('when the value is invalid for at least one schema', () => {
-      it('should return true', () => {
-        expect(utils.validate(2, [{ maximum: 1 }, { maximum: 2 }])).to.be.true;
+    context('when the value is valid for more than one, but not all schemas', () => {
+      it('should return false', () => {
+        expect(utils.validateValueForOneOf(2, [{ maximum: 1 }, { maximum: 2 }, { maximum: 3 }])).to.be.false;
       });
     });
 
-    context('when the value is invalid for at least one schema', () => {
+    context('when the value is valid for only one schema', () => {
       it('should return true', () => {
-        expect(utils.validate(3, [{ maximum: 1 }, { maximum: 2 }])).to.be.true;
+        expect(utils.validateValueForOneOf(3, [{ maximum: 1 }, { maximum: 2 }, { maximum: 3 }])).to.be.true;
       });
     });
   });
