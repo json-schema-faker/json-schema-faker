@@ -150,6 +150,9 @@ function run(refs, schema, container) {
           utils.merge(sub, typeof _sub.thunk === 'function'
             ? _sub.thunk(sub)
             : _sub);
+          if (Array.isArray(sub.allOf)) {
+            reduce(sub, index, rootPath);
+          }
         });
       }
 
