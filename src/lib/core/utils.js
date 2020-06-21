@@ -308,6 +308,10 @@ function validateValueForSchema(value, schema) {
 }
 
 // FIXME: evaluate more constraints?
+function validate(value, schemas) {
+  return !schemas.every(schema => validateValueForSchema(value, schema));
+}
+
 function validateValueForOneOf(value, oneOf) {
   const validCount = oneOf.reduce((count, schema) => (count + ((validateValueForSchema(value, schema)) ? 1 : 0)), 0);
   return validCount === 1;
@@ -423,6 +427,7 @@ export default {
   short,
   notValue,
   anyValue,
+  validate,
   validateValueForSchema,
   validateValueForOneOf,
   isKey,
