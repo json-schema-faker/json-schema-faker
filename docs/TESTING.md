@@ -47,21 +47,36 @@ describe('Feature or issue description', () => {
 
 The properties below are used to setup the test and execute the assertions:
 
-- `require` &mdash; a relative to the spec directory
-- `schema` &mdash; the main used schema to fake and test
-- `refs` &mdash; are for resolving used `$ref`'s on the faked schema
-- `throws` &mdash; test if the an error was expected, can be a boolean or string
-- `hasNot` &mdash; used for primitives, it will perform a `not.toContain()` test
-- `hasProps` &mdash; ensure given props exists on the generated value
-- `onlyProps` &mdash; ensure given props matches the generated value
-- `type` &mdash; used for primitives, it will perform a `toHaveType()` test
-- `valid` &mdash; will test the generated json against the original schema
-- `equal` &mdash; will test equality for the given schema and the generated one
-- `repeat` &mdash; will execute the same test many times as given
-- `seed` &mdash; provide the given seed to the `random()` generator
-- `count` &mdash; will match arrays/strings length or object props, etc.
-- `set` &mdash; configure given options through `jsf.option()`
-- `skip` &mdash; skip individual tests
-- `only` &mdash; run this test only
+- setup
+  - `refs` &mdash; are for resolving used `$ref`'s on the faked schema
+  - `require:{String|Array<String>}` &mdash; a path or list of paths relative to the spec directory
+  - `schema:{Object}` &mdash; the main used schema to fake and test
+  - `seed` &mdash; provide the given seed to the `random()` generator
+  - `set` &mdash; configure given options through `jsf.option()`
+
+- assertion
+  - `check:{Object}` &mdash; asserts the output matches a custom schema. Use `valid` to check against the original `schema` property
+  - `count:{Integer}` &mdash; asserts against array length or the number of object properties
+  - `equal:{Any}` &mdash; performs a deep equal assertion between generated data and the given value
+  - `hasNot:{Any}` &mdash; performs a `not.toContain()` test
+  - `hasProps:{Array<String>}` &mdash; asserts object has all props or each object of array has all props
+  - `length:{Integer}` &mdash; asserts on array length
+  - `minProps{Array<Integer>}`: will count the number of object properties on each test iteration. For each integer provided, if that count was not reached at least, once then the test will fail
+  - `notEmpty{Array<String>}`: asserts that each object property is not undefined or an empty array. Use strings with '.' for asserting on nested object properties
+  - `onlyProps:{Array<String>}` &mdash; asserts that the object only has these properties
+  - `throws:{String|Boolean}` &mdash; assert on error message or that an error was thrown or not thrown
+  - `throwsSometimes:{String|Boolean}` &mdash; assert on error message or that an error was thrown. Will fail if it throws the wrong error or if it never throws
+  - `type:{String}` &mdash; used for primitives, it will perform a `toHaveType()` test
+  - `valid:{true}` &mdash; tests the generated data against the original schema
+
+- debug
+  - `dump:{true|'bail'}` &mdash; prints the generated data. Will return immediately if set to 'bail'
+
+- execution
+  - `only:{true}` &mdash; run this test only
+  - `repeat:{Integer}` &mdash; will execute the same test many times as given
+  - `skip:{true}` &mdash; skip individual tests
+  - `timeout:{Integer}` &mdash; set a custom timeout for the test
+
 
 > Use these tests as reference of how things works, if you found an edge-case please add it as test and open an issue for.

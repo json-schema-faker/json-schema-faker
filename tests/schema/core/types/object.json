@@ -55,6 +55,7 @@
         "valid": true
       },
       {
+        "skip": true,
         "description": "addP === false && !props && !patternProps && minProperties",
         "schema": {
           "type": "object",
@@ -187,6 +188,7 @@
         "valid": true
       },
       {
+        "skip": true,
         "description": "should handle required properties with empty properties field",
         "schema": {
           "type": "object",
@@ -254,6 +256,7 @@
         "valid": true
       },
       {
+        "skip": true,
         "description": "should validate properties using all options",
         "schema": {
           "type": "object",
@@ -264,6 +267,7 @@
         "throws": "missing properties for:\n[\\s\\S]+? in \\/"
       },
       {
+        "skip": true,
         "description": "should throw if it couldnt generate enough keys",
         "schema": {
           "type": "object",
