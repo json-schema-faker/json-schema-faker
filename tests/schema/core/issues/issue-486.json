@@ -13,13 +13,14 @@
         "valid": true
       },
       {
-        "description": "would fail on complex patterns",
+        "description": "should sometimes fail on complex patterns",
         "schema": {
           "type": "string",
           "pattern": "^A[CD]{1,6}B$",
           "minLength": 6
         },
-        "throws": "String does not match pattern"
+        "valid": "true",
+        "throwsSometimes": "Given sample does not match schema"
       }
     ]
   }
