@@ -102,6 +102,11 @@ function typecast(type, schema, callback) {
   // execute generator
   let value = callback(params);
 
+  // allow null values to be returned
+  if (value === null || value === undefined) {
+    return null;
+  }
+
   // normalize output value
   switch (type || schema.type) {
     case 'number':
