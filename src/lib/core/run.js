@@ -123,6 +123,11 @@ function run(refs, schema, container) {
 
   try {
     const result = traverse(utils.clone(schema), [], function reduce(sub, index, rootPath) {
+      // prevent null sub from default/example null values to throw
+      if (sub === null || sub === undefined) {
+        return null;
+      }
+
       if (typeof sub.generate === 'function') {
         return sub;
       }
