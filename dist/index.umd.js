@@ -1,5 +1,5 @@
 /*!
- * json-schema-faker v0.5.0-rc17
+ * json-schema-faker v0.5.2
  * (c) Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)
  * Released under the MIT License.
  */
@@ -9387,25 +9387,39 @@
       Number.isFinite(val) ? parseInt(val, 10) : 0;
   }
 
-  var name = "estraverse";
-  var description = "ECMAScript JS AST traversal functions";
-  var homepage = "https://github.com/estools/estraverse";
-  var main = "estraverse.js";
-  var version = "4.2.0";
-  var engines = {
-  	node: ">=0.10.0"
-  };
-  var maintainers = [
-  	{
-  		name: "Yusuke Suzuki",
-  		email: "utatane.tea@gmail.com",
-  		web: "http://github.com/Constellation"
-  	}
+  var _args = [
+  	[
+  		"estraverse@4.2.0",
+  		"/Users/johncarnell/work2/json-schema-faker"
+  	]
   ];
-  var repository = {
-  	type: "git",
-  	url: "http://github.com/estools/estraverse.git"
+  var _from = "estraverse@4.2.0";
+  var _id = "estraverse@4.2.0";
+  var _inBundle = false;
+  var _integrity = "sha1-De4/7TH81GlhjOc0IJn8GvoL2xM=";
+  var _location = "/static-eval/estraverse";
+  var _phantomChildren = {
   };
+  var _requested = {
+  	type: "version",
+  	registry: true,
+  	raw: "estraverse@4.2.0",
+  	name: "estraverse",
+  	escapedName: "estraverse",
+  	rawSpec: "4.2.0",
+  	saveSpec: null,
+  	fetchSpec: "4.2.0"
+  };
+  var _requiredBy = [
+  	"/static-eval/escodegen"
+  ];
+  var _resolved = "https://registry.npmjs.org/estraverse/-/estraverse-4.2.0.tgz";
+  var _spec = "4.2.0";
+  var _where = "/Users/johncarnell/work2/json-schema-faker";
+  var bugs = {
+  	url: "https://github.com/estools/estraverse/issues"
+  };
+  var description = "ECMAScript JS AST traversal functions";
   var devDependencies = {
   	"babel-preset-es2015": "^6.3.13",
   	"babel-register": "^6.3.13",
@@ -9419,47 +9433,82 @@
   	jshint: "^2.5.6",
   	mocha: "^2.1.0"
   };
+  var engines = {
+  	node: ">=0.10.0"
+  };
+  var homepage = "https://github.com/estools/estraverse";
   var license = "BSD-2-Clause";
+  var main = "estraverse.js";
+  var maintainers = [
+  	{
+  		name: "Yusuke Suzuki",
+  		email: "utatane.tea@gmail.com",
+  		url: "http://github.com/Constellation"
+  	}
+  ];
+  var name = "estraverse";
+  var repository = {
+  	type: "git",
+  	url: "git+ssh://git@github.com/estools/estraverse.git"
+  };
   var scripts = {
-  	test: "npm run-script lint && npm run-script unit-test",
   	lint: "jshint estraverse.js",
+  	test: "npm run-script lint && npm run-script unit-test",
   	"unit-test": "mocha --compilers js:babel-register"
   };
-  var _resolved = "https://registry.npmjs.org/estraverse/-/estraverse-4.2.0.tgz";
-  var _integrity = "sha1-De4/7TH81GlhjOc0IJn8GvoL2xM=";
-  var _from = "estraverse@4.2.0";
+  var version = "4.2.0";
   var _package = {
-  	name: name,
-  	description: description,
-  	homepage: homepage,
-  	main: main,
-  	version: version,
-  	engines: engines,
-  	maintainers: maintainers,
-  	repository: repository,
-  	devDependencies: devDependencies,
-  	license: license,
-  	scripts: scripts,
-  	_resolved: _resolved,
+  	_args: _args,
+  	_from: _from,
+  	_id: _id,
+  	_inBundle: _inBundle,
   	_integrity: _integrity,
-  	_from: _from
+  	_location: _location,
+  	_phantomChildren: _phantomChildren,
+  	_requested: _requested,
+  	_requiredBy: _requiredBy,
+  	_resolved: _resolved,
+  	_spec: _spec,
+  	_where: _where,
+  	bugs: bugs,
+  	description: description,
+  	devDependencies: devDependencies,
+  	engines: engines,
+  	homepage: homepage,
+  	license: license,
+  	main: main,
+  	maintainers: maintainers,
+  	name: name,
+  	repository: repository,
+  	scripts: scripts,
+  	version: version
   };
 
   var _package$1 = /*#__PURE__*/Object.freeze({
-    name: name,
-    description: description,
-    homepage: homepage,
-    main: main,
-    version: version,
-    engines: engines,
-    maintainers: maintainers,
-    repository: repository,
-    devDependencies: devDependencies,
-    license: license,
-    scripts: scripts,
-    _resolved: _resolved,
-    _integrity: _integrity,
+    _args: _args,
     _from: _from,
+    _id: _id,
+    _inBundle: _inBundle,
+    _integrity: _integrity,
+    _location: _location,
+    _phantomChildren: _phantomChildren,
+    _requested: _requested,
+    _requiredBy: _requiredBy,
+    _resolved: _resolved,
+    _spec: _spec,
+    _where: _where,
+    bugs: bugs,
+    description: description,
+    devDependencies: devDependencies,
+    engines: engines,
+    homepage: homepage,
+    license: license,
+    main: main,
+    maintainers: maintainers,
+    name: name,
+    repository: repository,
+    scripts: scripts,
+    version: version,
     default: _package
   });
 
@@ -13980,45 +14029,50 @@
   	SourceNode: SourceNode$1
   };
 
-  var name$1 = "escodegen";
-  var description$1 = "ECMAScript code generator";
-  var homepage$1 = "http://github.com/estools/escodegen";
-  var main$1 = "escodegen.js";
+  var _args$1 = [
+  	[
+  		"escodegen@1.11.1",
+  		"/Users/johncarnell/work2/json-schema-faker"
+  	]
+  ];
+  var _from$1 = "escodegen@1.11.1";
+  var _id$1 = "escodegen@1.11.1";
+  var _inBundle$1 = false;
+  var _integrity$1 = "sha512-JwiqFD9KdGVVpeuRa68yU3zZnBEOcPs0nKW7wZzXky8Z7tffdYUHbe11bPCV5jYlK6DVdKLWLm0f5I/QlL0Kmw==";
+  var _location$1 = "/static-eval/escodegen";
+  var _phantomChildren$1 = {
+  };
+  var _requested$1 = {
+  	type: "version",
+  	registry: true,
+  	raw: "escodegen@1.11.1",
+  	name: "escodegen",
+  	escapedName: "escodegen",
+  	rawSpec: "1.11.1",
+  	saveSpec: null,
+  	fetchSpec: "1.11.1"
+  };
+  var _requiredBy$1 = [
+  	"/static-eval"
+  ];
+  var _resolved$1 = "https://registry.npmjs.org/escodegen/-/escodegen-1.11.1.tgz";
+  var _spec$1 = "1.11.1";
+  var _where$1 = "/Users/johncarnell/work2/json-schema-faker";
   var bin = {
-  	esgenerate: "./bin/esgenerate.js",
-  	escodegen: "./bin/escodegen.js"
+  	esgenerate: "bin/esgenerate.js",
+  	escodegen: "bin/escodegen.js"
   };
-  var files = [
-  	"LICENSE.BSD",
-  	"README.md",
-  	"bin",
-  	"escodegen.js",
-  	"package.json"
-  ];
-  var version$1 = "1.11.1";
-  var engines$1 = {
-  	node: ">=4.0"
-  };
-  var maintainers$1 = [
-  	{
-  		name: "Yusuke Suzuki",
-  		email: "utatane.tea@gmail.com",
-  		web: "http://github.com/Constellation"
-  	}
-  ];
-  var repository$1 = {
-  	type: "git",
-  	url: "http://github.com/estools/escodegen.git"
+  var bugs$1 = {
+  	url: "https://github.com/estools/escodegen/issues"
   };
   var dependencies = {
+  	esprima: "^3.1.3",
   	estraverse: "^4.2.0",
   	esutils: "^2.0.2",
-  	esprima: "^3.1.3",
-  	optionator: "^0.8.1"
-  };
-  var optionalDependencies = {
+  	optionator: "^0.8.1",
   	"source-map": "~0.6.1"
   };
+  var description$1 = "ECMAScript code generator";
   var devDependencies$1 = {
   	acorn: "^4.0.4",
   	bluebird: "^3.4.7",
@@ -14030,58 +14084,103 @@
   	"gulp-mocha": "^3.0.1",
   	semver: "^5.1.0"
   };
+  var engines$1 = {
+  	node: ">=4.0"
+  };
+  var files = [
+  	"LICENSE.BSD",
+  	"README.md",
+  	"bin",
+  	"escodegen.js",
+  	"package.json"
+  ];
+  var homepage$1 = "http://github.com/estools/escodegen";
   var license$1 = "BSD-2-Clause";
+  var main$1 = "escodegen.js";
+  var maintainers$1 = [
+  	{
+  		name: "Yusuke Suzuki",
+  		email: "utatane.tea@gmail.com",
+  		url: "http://github.com/Constellation"
+  	}
+  ];
+  var name$1 = "escodegen";
+  var optionalDependencies = {
+  	"source-map": "~0.6.1"
+  };
+  var repository$1 = {
+  	type: "git",
+  	url: "git+ssh://git@github.com/estools/escodegen.git"
+  };
   var scripts$1 = {
-  	test: "gulp travis",
-  	"unit-test": "gulp test",
+  	build: "cjsify -a path: tools/entry-point.js > escodegen.browser.js",
+  	"build-min": "cjsify -ma path: tools/entry-point.js > escodegen.browser.min.js",
   	lint: "gulp lint",
   	release: "node tools/release.js",
-  	"build-min": "./node_modules/.bin/cjsify -ma path: tools/entry-point.js > escodegen.browser.min.js",
-  	build: "./node_modules/.bin/cjsify -a path: tools/entry-point.js > escodegen.browser.js"
+  	test: "gulp travis",
+  	"unit-test": "gulp test"
   };
-  var _resolved$1 = "https://registry.npmjs.org/escodegen/-/escodegen-1.11.1.tgz";
-  var _integrity$1 = "sha512-JwiqFD9KdGVVpeuRa68yU3zZnBEOcPs0nKW7wZzXky8Z7tffdYUHbe11bPCV5jYlK6DVdKLWLm0f5I/QlL0Kmw==";
-  var _from$1 = "escodegen@1.11.1";
+  var version$1 = "1.11.1";
   var _package$2 = {
-  	name: name$1,
-  	description: description$1,
-  	homepage: homepage$1,
-  	main: main$1,
-  	bin: bin,
-  	files: files,
-  	version: version$1,
-  	engines: engines$1,
-  	maintainers: maintainers$1,
-  	repository: repository$1,
-  	dependencies: dependencies,
-  	optionalDependencies: optionalDependencies,
-  	devDependencies: devDependencies$1,
-  	license: license$1,
-  	scripts: scripts$1,
-  	_resolved: _resolved$1,
+  	_args: _args$1,
+  	_from: _from$1,
+  	_id: _id$1,
+  	_inBundle: _inBundle$1,
   	_integrity: _integrity$1,
-  	_from: _from$1
+  	_location: _location$1,
+  	_phantomChildren: _phantomChildren$1,
+  	_requested: _requested$1,
+  	_requiredBy: _requiredBy$1,
+  	_resolved: _resolved$1,
+  	_spec: _spec$1,
+  	_where: _where$1,
+  	bin: bin,
+  	bugs: bugs$1,
+  	dependencies: dependencies,
+  	description: description$1,
+  	devDependencies: devDependencies$1,
+  	engines: engines$1,
+  	files: files,
+  	homepage: homepage$1,
+  	license: license$1,
+  	main: main$1,
+  	maintainers: maintainers$1,
+  	name: name$1,
+  	optionalDependencies: optionalDependencies,
+  	repository: repository$1,
+  	scripts: scripts$1,
+  	version: version$1
   };
 
   var _package$3 = /*#__PURE__*/Object.freeze({
-    name: name$1,
-    description: description$1,
-    homepage: homepage$1,
-    main: main$1,
-    bin: bin,
-    files: files,
-    version: version$1,
-    engines: engines$1,
-    maintainers: maintainers$1,
-    repository: repository$1,
-    dependencies: dependencies,
-    optionalDependencies: optionalDependencies,
-    devDependencies: devDependencies$1,
-    license: license$1,
-    scripts: scripts$1,
-    _resolved: _resolved$1,
-    _integrity: _integrity$1,
+    _args: _args$1,
     _from: _from$1,
+    _id: _id$1,
+    _inBundle: _inBundle$1,
+    _integrity: _integrity$1,
+    _location: _location$1,
+    _phantomChildren: _phantomChildren$1,
+    _requested: _requested$1,
+    _requiredBy: _requiredBy$1,
+    _resolved: _resolved$1,
+    _spec: _spec$1,
+    _where: _where$1,
+    bin: bin,
+    bugs: bugs$1,
+    dependencies: dependencies,
+    description: description$1,
+    devDependencies: devDependencies$1,
+    engines: engines$1,
+    files: files,
+    homepage: homepage$1,
+    license: license$1,
+    main: main$1,
+    maintainers: maintainers$1,
+    name: name$1,
+    optionalDependencies: optionalDependencies,
+    repository: repository$1,
+    scripts: scripts$1,
+    version: version$1,
     default: _package$2
   });
 
