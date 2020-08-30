@@ -122,6 +122,7 @@
     "faker": "^4.1.0",
     "fs-extra": "^8.0.1",
     "glob": "^7.1.2",
+    "html-minifier": "^4.0.0",
     "is-my-json-valid": "^2.19.0",
     "less": "^3.10.3",
     "less-plugin-autoprefix": "^2.0.0",
