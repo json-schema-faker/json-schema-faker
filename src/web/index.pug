@@ -32,8 +32,13 @@ html
     script(src='//cdnjs.cloudflare.com/ajax/libs/yamljs/0.3.0/yaml.min.js')
     script(src='//ace.c9.io/build/src/ace.js')
     script(src='//unpkg.com/chance')
-    script(src='vendor.js')
-    script(src='main.umd.js')
+
+    if env.NODE_ENV === 'production'
+      script(src='bundle.js')
+    else
+      script(src='vendor.js')
+      script(src='main.umd.js')
+
     script(src='js/app.js')
 
     if env.NODE_ENV === 'production'
