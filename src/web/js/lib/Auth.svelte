@@ -9,6 +9,8 @@
 
   function done() {
     me().then(data => {
+      if (!data.login) return;
+
       $loggedIn = true;
       $session = {
         username: data.login,

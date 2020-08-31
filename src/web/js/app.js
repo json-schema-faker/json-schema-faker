@@ -16,6 +16,13 @@ if (window.location.search.includes('?code=')) {
       window.close();
     }
   });
+} else if (window.location.search.includes('?error=')) {
+  const message = window.location.search.split('error_description=')[1];
+
+  document.querySelector('.loading-overlay .tac').innerHTML = `
+    <p>${message.split('&')[0].replace(/\+/g, ' ')}</p>
+    <br /><button onclick="window.close()">Close window</button>
+  `;
 } else {
   setTimeout(() => {
     document.querySelector('.loading-overlay').classList.add('fade-out');
