@@ -5,6 +5,8 @@ import Editor from './lib/Editor.svelte';
 
 // handles authoentication through github-api
 if (window.location.search.includes('?code=')) {
+  document.querySelector('.loading-overlay .tac').innerText = 'Authenticating...';
+
   auth(window.location.search.split('?code=')[1], () => {
     const cleanUrl = window.location.href.split('?')[0];
 
@@ -14,6 +16,11 @@ if (window.location.search.includes('?code=')) {
       window.close();
     }
   });
+} else {
+  setTimeout(() => {
+    document.querySelector('.loading-overlay').classList.add('fade-out');
+    main();
+  }, 1260);
 }
 
 // handles optiona menu nuances
@@ -35,22 +42,24 @@ function reloadOptions() {
   }
 }
 
-if (typeof JSONSchemaFaker !== 'undefined') {
-  JSONSchemaFaker.extend('faker', () => window.faker);
-  JSONSchemaFaker.extend('chance', () => window.chance);
+function main() {
+  if (typeof JSONSchemaFaker !== 'undefined') {
+    JSONSchemaFaker.extend('faker', () => window.faker);
+    JSONSchemaFaker.extend('chance', () => window.chance);
 
-  if (!window.localStorage._OPTS) {
-    resetOptions();
+    if (!window.localStorage._OPTS) {
+      resetOptions();
+    }
   }
-}
 
-reloadOptions();
-
-document.querySelector('[name="jsfOptions.reset"]').addEventListener('click', () => {
-  resetOptions();
   reloadOptions();
-});
 
-// initialize modules
-new Auth({ target: document.getElementById('auth') });
-new Editor({ target: document.getElementById('editor') });
+  document.querySelector('[name="jsfOptions.reset"]').addEventListener('click', () => {
+    resetOptions();
+    reloadOptions();
+  });
+
+  // initialize modules
+  new Auth({ target: document.getElementById('auth') });
+  new Editor({ target: document.getElementById('editor') });
+}
