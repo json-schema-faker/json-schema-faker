@@ -13,6 +13,7 @@ export const loggedIn = writable(!!data);
 export const session = writable(data ? JSON.parse(data) : {});
 export const schemas = writable([]);
 export const current = writable({});
+export const options = writable(null);
 
 // builds a fixed URL for github.api calls
 export function getUrl(x, path, params) {
@@ -24,8 +25,8 @@ export function getUrl(x, path, params) {
     : `${url}${params !== false ? `&${redirect}` : ''}`;
 }
 
-export function getJSON(path, params, options) {
-  return fetch(`${PROXY_URL}${getUrl(API_URL, path, options)}`, {
+export function getJSON(path, params, _options) {
+  return fetch(`${PROXY_URL}${getUrl(API_URL, path, _options)}`, {
     ...params,
     headers: {
       Authorization: `bearer ${window.localStorage._AUTH}`,
@@ -76,9 +77,7 @@ export function save(schemas) {
   const _files = {
     // fresh copy of current options
     '_options.json': {
-      content: JSON.stringify(window.localStorage._OPTS
-        ? JSON.parse(window.localStorage._OPTS)
-        : {}),
+      content: JSON.stringify($options),
     },
   };
 
@@ -86,6 +85,8 @@ export function save(schemas) {
   Object.keys(schemas).forEach(key => {
     _files[key] = { content: schemas[key].value };
   });
+
+  // FIXME: patch gist if owner matches?
 
   const url = getUrl(API_URL, '/gists', false);
   const fixedUrl = `${PROXY_URL}${url}`;
