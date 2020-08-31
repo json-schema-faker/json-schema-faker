@@ -569,7 +569,7 @@
     var BASE_URL = 'https://github.com';
     var API_URL = 'https://api.github.com';
 
-    var AUTH_ID="fcfd0d144cddb6b070e7", AUTH_SECRET="2aaeecfab4de40d4db3fa7e7cc7466750a51dcdb", PROXY_URL="https://cors-anywhere.herokuapp.com/";
+    var AUTH_ID="9685733337524132a430", AUTH_SECRET="bb8e95e2d20291d29eda90f8a35e0572092b37f9", PROXY_URL="https://cors-anywhere.herokuapp.com/";
     
 
     var data = window.localStorage._DATA;
