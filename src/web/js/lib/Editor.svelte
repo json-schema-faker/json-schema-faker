@@ -8,6 +8,7 @@
   let input;
   let buffer;
   let isAdding;
+  let isEditing;
   let selected;
 
   let value = null;
@@ -18,9 +19,16 @@
   let outputMode = 'json';
   let objectOutput = '{}';
 
-  function select(e) {
+  function select(e, edit) {
     $current = e;
     isAdding = false;
+    isEditing = !!edit;
+
+    if (edit) {
+      setTimeout(() => {
+        input.focus();
+      }, 60);
+    }
   }
 
   function remove(e) {
@@ -33,16 +41,34 @@
     $current = null;
   }
 
-  function submit(e) {
+  function validate(e) {
     const isValid = /^[a-zA-Z0-9_#$%][\w.]*?$/.test(e.target.value);
 
     if (isValid) {
       e.target.classList.remove('invalid');
-    } else if (!e.target.classList.contains('invalid')) {
-      e.target.classList.add('invalid');
+      return true;
     }
 
-    if (isValid && e.keyCode === 13) {
+    if (!e.target.classList.contains('invalid')) {
+      e.target.classList.add('invalid');
+      return false;
+    }
+  }
+
+  function update(e) {
+    if (validate(e) && e.keyCode === 13) {
+      $current.filename = e.target.value;
+      isEditing = false;
+      e.target.value = '';
+    }
+
+    if (e.keyCode === 27) {
+      isEditing = false;
+    }
+  }
+
+  function submit(e) {
+    if (validate(e) && e.keyCode === 13) {
       $schemas = $schemas.concat({ filename: e.target.value, content: buffer });
       $current = $schemas[$schemas.length - 1];
       isAdding = false;
@@ -133,6 +159,7 @@
     buffer = editInput = '';
     pending = false;
     isAdding = false;
+    isEditing = false;
 
     $schemas = Object.keys(data.files).filter(x => data.files[x].type === 'text/plain')
       .reduce((prev, cur) => {
@@ -160,7 +187,18 @@
       {#each $schemas as info}
         {#if $current === info}
           <span class="sel">
-            <span>{info.filename}</span>
+            {#if isEditing}
+              <input
+                class="nb"
+                on:keyup={update}
+                bind:this={input}
+                type="text"
+                spellcheck="false"
+                placeholder={info.filename}
+              />
+            {:else}
+              <span on:dblclick={() => select(info, true)}>{info.filename}</span>
+            {/if}
             <button class="a nb ml" on:click={() => remove(info)}>&times;</button>
           </span>
         {:else}
