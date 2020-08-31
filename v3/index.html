@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Fake your JSON-Schemas!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Dosis">
+    <link rel="shortcut icon" type="image/icon" href="img/favicon.ico">
+    <link rel="stylesheet" href="css/app.css">
+    <script src="vendor/chance/dist/chance.min.js"></script>
+    <script src="vendor/Faker/build/build/faker.js"></script>
+    <script src="vendor/yaml.js/dist/yaml.js"></script>
+    <script src="vendor/vue/dist/vue.runtime.js"></script>
+    <script src="vendor/ace-builds/src-min/ace.js"></script>
+    <script src="vendor/ace-builds/src-min/mode-json.js"></script>
+    <script src="vendor/ace-builds/src-min/worker-json.js"></script>
+    <script src="vendor/ace-builds/src-min/theme-github.js"></script>
+    <script>
+      window.Buffer = Function
+      window.TIME = new Date()
+      window.AUTH_ID = '9685733337524132a430';
+      window.AUTH_SECRET = 'bb8e95e2d20291d29eda90f8a35e0572092b37f9';
+    </script>
+    <script src="js/app.js" defer></script>
+    <script src="//unpkg.com/json-schema-faker"></script>
+  </head>
+  <body>
+    <div class="Toolbar f">
+      <div class="p oh rel"><a class="tdn tac github-ribbon" href="//github.com/json-schema-faker/json-schema-faker">Fork me on GitHub</a>
+        <h1 class="jsf-logo"><a class="dib" href="/">JSON Schema Faker</a></h1>
+        <p class="pr"><b>JSON Schema Faker</b> combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.</p><a class="tdn" href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&amp;hosted_button_id=undefined" target="_blank"><img class="mr" src="https://img.shields.io/badge/Donate-PayPal-green.svg"></a><img class="mr" src="https://travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master"><img class="mr" src="https://badge.fury.io/js/json-schema-faker.svg">
+        <iframe class="mt" src="//ghbtns.com/github-btn.html?user=json-schema-faker&amp;repo=json-schema-faker&amp;type=star&amp;count=true" frameborder="0" scrolling="0" width="120" height="20"></iframe>
+      </div>
+      <div class="p sm-flx nosl">
+        <ul class="lr ln mt jsf-about">
+          <li class="sp pd dib"><a class="a">Options</a>
+            <div class="z5 menu">
+              <p>Reference: <a href="https://github.com/json-schema-faker/json-schema-faker/tree/master/docs#available-options" target="_blank">available options</a></p>
+              <div class="sm-flx flx-m">
+                <ul class="lr flx-a">
+                  <li>
+                    <label><span>defaultRandExpMax</span>
+                      <input class="f num" type="number" name="jsfOptions.defaultRandExpMax">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>optionalsProbability</span>
+                      <input class="f num" type="number" name="jsfOptions.optionalsProbability" step="0.1">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>minItems</span>
+                      <input class="f num" type="number" name="jsfOptions.minItems">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>maxItems</span>
+                      <input class="f num" type="number" name="jsfOptions.maxItems">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>minLength</span>
+                      <input class="f num" type="number" name="jsfOptions.minLength">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>maxLength</span>
+                      <input class="f num" type="number" name="jsfOptions.maxLength">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>random</span>
+                      <input class="f num" type="number" name="jsfOptions.random">
+                    </label>
+                  </li>
+                </ul>
+                <ul class="lr flx-a">
+                  <li>
+                    <label><span>resolveJsonPath</span>
+                      <input type="checkbox" name="jsfOptions.resolveJsonPath">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>ignoreMissingRefs</span>
+                      <input type="checkbox" name="jsfOptions.ignoreMissingRefs">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>failOnInvalidTypes</span>
+                      <input checked type="checkbox" name="jsfOptions.failOnInvalidTypes">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>failOnInvalidFormat</span>
+                      <input checked type="checkbox" name="jsfOptions.failOnInvalidFormat">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>alwaysFakeOptionals</span>
+                      <input type="checkbox" name="jsfOptions.alwaysFakeOptionals">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>fixedProbabilities</span>
+                      <input type="checkbox" name="jsfOptions.fixedProbabilities">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>useExamplesValue</span>
+                      <input type="checkbox" name="jsfOptions.useExamplesValue">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>useDefaultValue</span>
+                      <input type="checkbox" name="jsfOptions.useDefaultValue">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>requiredOnly</span>
+                      <input type="checkbox" name="jsfOptions.requiredOnly">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>reuseProperties</span>
+                      <input type="checkbox" name="jsfOptions.reuseProperties">
+                    </label>
+                  </li>
+                  <li>
+                    <label><span>fillProperties</span>
+                      <input checked type="checkbox" name="jsfOptions.fillProperties">
+                    </label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </li>
+          <li class="sp pd dib"><a class="a">Examples</a>
+            <ul class="lr z5 menu">
+              <li><a href="#gist/da0af4611cb5622b54aff57283560da3">boolean</a></li>
+              <li><a href="#gist/4199ca90fb5cd05337824b0695d17b5e">integer</a></li>
+              <li><a href="#gist/d9e27543d84157c1672f87e93ac250cc">inner-references</a></li>
+              <li><a href="#gist/5f81f118fbd4eac01ccacf23a061a8b9">external-references</a></li>
+              <li><a href="#gist/cbb4871d1d2f44760ddafdaa056e1926">enums</a></li>
+              <li><a href="#gist/1f1196844bead96e021ffbd597edcffa">fixed values</a></li>
+              <li><a href="#gist/f4ad1818735f0d0babdc1f12b92013f1">n-times repeated</a></li>
+              <li><a href="#gist/1902737e7bef9573af02a3fc49761c13">faker-properties</a></li>
+              <li><a href="#gist/1a7db173362b127a826a5c2fa7de7561">faker.fake()</a></li>
+              <li><a href="#gist/5dd364aad2d48729efff686c5f7c44b2">chance-guid</a></li>
+              <li><a href="#gist/682f97a2e28e230b51810c55b92f4cdc">chance-name</a></li>
+              <li><a href="#gist/426c2d177243cd2c52594f92c1a7862e">chance-properties</a></li>
+              <li><a href="#gist/d3e75b22ad33e4440df19e0cc060c9f3/0.5.0-rc3">remote-schemas (^0.5.x)</a></li>
+            </ul>
+          </li>
+          <li class="sp pd dib"><a class="a">Community</a>
+            <ul class="lr z5 menu">
+              <li><a href="http://json-schema.org" target="_blank">JSON-Schema.org</a></li>
+              <li><a href="//github.com/json-schema-faker/json-schema-faker/" target="_blank">GitHub / <a href="//travis-ci.org/json-schema-faker/json-schema-faker" target="_blank">CI</a></a></li>
+              <li><a href="//github.com/json-schema-faker/json-schema-faker/issues/new" target="_blank">Contribution</a></li>
+              <li><a href="//github.com/json-schema-faker/angular-jsf" target="_blank">AngularJS module</a></li>
+              <li><a href="//github.com/json-schema-faker/grunt-jsonschema-faker" target="_blank">Grunt plugin</a></li>
+              <li><a href="//github.com/json-schema-faker/json-schema-server" target="_blank">JSF Server</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="sm-flx flx-m p">
+      <div class="flx-a flx-lt">
+        <div id="app"></div>
+      </div>
+    </div>
+    <script>
+      (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+      m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+      })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+      ga('create', '', 'auto');
+      ga('send', 'pageview');
+    </script>
+  </body>
+</html>
