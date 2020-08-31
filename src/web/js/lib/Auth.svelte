@@ -56,7 +56,7 @@
 <svelte:window on:change={set} />
 
 {#if $loggedIn}
-  <span class="nosl">{$session.fullname || $session.username}</span>
+  <span class="nosl github-icon">{$session.fullname || $session.username}</span>
   <ul class="lr z2 nosl menu">
     <li><Link href="/save">Save project...</Link></li>
     <li><Link href="/new" on:click={add}>New project</Link></li>
@@ -64,7 +64,7 @@
     <li><Link href="/logout" on:click={exit}>Log out</Link></li>
   </ul>
 {:else}
-  <Link open="width=400,height=640" href={url()} on:close={done} class="a">Share link? Log in</Link>
+  <Link open="width=400,height=640" href={url()} on:close={done} class="a github-icon">Share link? Log in</Link>
 {/if}
 
 <Router>
