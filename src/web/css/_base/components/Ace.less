@@ -1,6 +1,6 @@
 .Ace {
   z-index: 1;
-  min-height: 5em;
+  min-height: calc((100vh - 12em) / 2);
 
   &-wrapper {
     min-width: 50%;
@@ -55,11 +55,7 @@
     }
   }
 
-  @media screen and (min-width: 280px) {
-    min-height: calc((100vh - 250px) / 2);
-  }
-
   @media screen and (min-width: 720px) {
-    min-height: calc(100vh - 130px);
+    min-height: calc(100vh - 12em);
   }
 }
