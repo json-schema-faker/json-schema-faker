@@ -4519,7 +4519,7 @@
     	};
     }
 
-    // (58:0) {#if $loggedIn}
+    // (60:0) {#if $loggedIn}
     function create_if_block$5(ctx) {
     	let span;
     	let t0_value = (/*$session*/ ctx[1].fullname || /*$session*/ ctx[1].username) + "";
@@ -4667,7 +4667,7 @@
     	};
     }
 
-    // (67:2) <Link open="width=400,height=640" href={url()} on:close={done} class="a github-icon">
+    // (69:2) <Link open="width=400,height=640" href={url()} on:close={done} class="a github-icon">
     function create_default_slot_5(ctx) {
     	let t;
 
@@ -4684,7 +4684,7 @@
     	};
     }
 
-    // (61:8) <Link href="/save">
+    // (63:8) <Link href="/save">
     function create_default_slot_4(ctx) {
     	let t;
 
@@ -4701,7 +4701,7 @@
     	};
     }
 
-    // (62:8) <Link href="/" on:click={add}>
+    // (64:8) <Link href="/" on:click={add}>
     function create_default_slot_3(ctx) {
     	let t;
 
@@ -4718,7 +4718,7 @@
     	};
     }
 
-    // (63:8) <Link href="/gists">
+    // (65:8) <Link href="/gists">
     function create_default_slot_2(ctx) {
     	let t;
 
@@ -4735,7 +4735,7 @@
     	};
     }
 
-    // (64:8) <Link href="/logout" on:click={exit}>
+    // (66:8) <Link href="/logout" on:click={exit}>
     function create_default_slot_1(ctx) {
     	let t;
 
@@ -4752,7 +4752,7 @@
     	};
     }
 
-    // (70:0) <Router>
+    // (72:0) <Router>
     function create_default_slot$3(ctx) {
     	let t;
     	let current;
@@ -4923,6 +4923,7 @@
 
     	function done() {
     		me().then(data => {
+    			if (!data.login) return;
     			set_store_value(loggedIn, $loggedIn = true);
 
     			set_store_value(session, $session = {
@@ -5884,6 +5885,10 @@
           window.close();
         }
       });
+    } else if (window.location.search.includes('?error=')) {
+      var message = window.location.search.split('error_description=')[1];
+
+      document.querySelector('.loading-overlay .tac').innerHTML = "\n    <p>" + (message.split('&')[0].replace(/\+/g, ' ')) + "</p>\n    <br /><button onclick=\"window.close()\">Close window</button>\n  ";
     } else {
       setTimeout(function () {
         document.querySelector('.loading-overlay').classList.add('fade-out');
