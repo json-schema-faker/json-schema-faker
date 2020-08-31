@@ -3,7 +3,6 @@
 @import '_base/layout';
 @import '_base/elements';
 
-@import '_base/components/Toast';
+@import '_base/components/Ace';
+@import '_base/components/Tabs';
 @import '_base/components/Toolbar';
-@import '_base/components/Dropdown';
-@import '_base/components/AceEditor';

@@ -26,11 +26,32 @@
         "valid": true
       },
       {
+        "issue": 580,
+        "description": "should apply oneOf for overlapping minimum/maximum",
+        "schema": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9],
+          "oneOf": [
+            {
+              "minimum": 2,
+              "maximum": 6
+            },
+            {
+              "minimum": 4,
+              "maximum": 8
+            }
+          ]
+        },
+        "repeat": 10,
+        "valid": true
+      },
+      {
         "description": "should filter out non valid values",
         "schema": {
           "type":  "number",
           "enum": [1, 2, 3, 4, 5, 6, 7, 8],
-          "minimum": 3.5
+          "minimum": 3.5,
+          "maximum": 6.5
         },
         "repeat": 10,
         "valid": true

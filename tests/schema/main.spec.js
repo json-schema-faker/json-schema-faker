@@ -1,10 +1,9 @@
+import path from 'path';
 import {
   jsf, pick, tryTest, getTests,
 } from './helpers';
 
 const { only, all } = getTests(__dirname);
-
-/* global describe, it */
 
 const seeds = [];
 
@@ -15,12 +14,20 @@ function seed() {
 }
 
 (only.length ? only : all).forEach(suite => {
-  describe(`${suite.description} (${suite.file.replace(`${process.cwd()}/`, '')})`, () => {
+  const normalizedFilename = path.normalize(suite.file);
+  const relativeFilename = normalizedFilename.replace(`${process.cwd()}${path.sep}`, '');
+
+  describe(`${suite.description} (${relativeFilename})`, () => {
     suite.tests.forEach(test => {
       if (!process.env.CI && test.online) return;
       if (process.argv.includes('--skip')) {
         if (!test.skip) return;
         delete test.skip;
+      }
+
+      if (test.skip) {
+        it.skip(test.description);
+        return;
       }
 
       it(test.description, () => {
@@ -66,6 +73,10 @@ function seed() {
           return prev;
         }, {}) : null;
 
+        if (test.throwsSometimes) {
+          test.throwCount = 0;
+        }
+
         while (nth) {
           if (!test.skip) {
             tasks.push(tryTest(nth, max, test, refs, schema, sample => {
@@ -97,6 +108,10 @@ function seed() {
         }).then(() => {
           if (props && Object.values(props).some(x => x === 0)) {
             throw new Error(`minProps failed, got: ${JSON.stringify(props)}`);
+          }
+
+          if (test.throwsSometimes && !(test.throwCount > 0)) {
+            throw new Error('Expected some tests to throw');
           }
         });
       }).timeout(suite.timeout || test.timeout || (process.CI ? 30000 : 10000));

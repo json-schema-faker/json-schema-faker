@@ -11,9 +11,6 @@ import run from './core/run';
 const container = new Container();
 
 function setupKeywords() {
-  // built-in support
-  container.define('pattern', random.randexp);
-
   // safe auto-increment values
   container.define('autoIncrement', function autoIncrement(value, schema) {
     if (!this.offset) {
@@ -98,8 +95,10 @@ jsf.resolve = (schema, refs, cwd) => {
 
   // identical setup as json-schema-sequelizer
   const fixedRefs = {
-    order: 300,
-    canRead: true,
+    order: 1,
+    canRead(file) {
+      return $refs[file.url] || $refs[file.url.split('/').pop()];
+    },
     read(file, callback) {
       try {
         callback(null, $refs[file.url] || $refs[file.url.split('/').pop()]);

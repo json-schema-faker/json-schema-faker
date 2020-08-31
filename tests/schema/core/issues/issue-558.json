@@ -1,0 +1,23 @@
+[
+  {
+    "description": "[BUG] `const` as a property",
+    "tests": [
+      {
+        "description": "should allow use const as valid property",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "const": {
+              "type": "string",
+              "pattern": "\\d\\w\\d\\w+"
+            }
+          },
+          "required": [
+            "const"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

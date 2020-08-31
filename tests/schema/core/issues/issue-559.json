@@ -1,0 +1,22 @@
+[
+  {
+    "description": "Change Order so that custom generate to be superior than enum",
+    "tests": [
+      {
+        "description": "make sure generators run before keywords",
+        "schema": {
+          "type": "integer",
+          "enum": [1, 2, 3, 4, 5],
+          "mock": {
+            "mock": "@integer(1,3)"
+          }
+        },
+        "valid": true,
+        "check": {
+          "maximum": 3
+        },
+        "require": "core/extend/mockjs-extend"
+      }
+    ]
+  }
+]

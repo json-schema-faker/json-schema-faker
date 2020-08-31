@@ -1,0 +1,65 @@
+.Ace {
+  z-index: 1;
+  min-height: 5em;
+
+  &-wrapper {
+    min-width: 50%;
+    position: relative;
+
+    + .Ace-wrapper {
+      &::before {
+        content: ' ';
+        position: absolute;
+        border-top: 1px solid @SILVER;
+        left: 0;
+        top: 0;
+        width: 100%;
+        z-index: 2;
+        box-shadow: 0 0 3px rgba(0, 0, 0, .1);
+      }
+
+      @media screen and (min-width: 720px) {
+        &::before {
+          width: 0;
+          height: 100%;
+          border-top: 0;
+          border-left: 1px solid @SILVER;
+        }
+      }
+    }
+  }
+
+  ~ .abs {
+    padding: @padding / 2;
+    opacity: .5;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    a {
+      background-color: white;
+      padding: @padding / 2;
+      text-decoration: none;
+      font-size: 13px;
+      color: @GRAY;
+
+      &.-on {
+        color: @BLUE;
+      }
+    }
+
+    .sp {
+      &:first-child a { border-radius: @radius 0 0 @radius; }
+      &:last-child a { border-radius: 0 @radius @radius 0; }
+    }
+  }
+
+  @media screen and (min-width: 280px) {
+    min-height: calc((100vh - 250px) / 2);
+  }
+
+  @media screen and (min-width: 720px) {
+    min-height: calc(100vh - 130px);
+  }
+}

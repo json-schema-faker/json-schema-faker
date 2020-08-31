@@ -301,30 +301,35 @@ function notValue(schema, parent) {
   return copy;
 }
 
+function validateValueForSchema(value, schema) {
+  const schemaHasMin = schema.minimum !== undefined;
+  const schemaHasMax = schema.maximum !== undefined;
+
+  return (
+    (schemaHasMin || schemaHasMax)
+    && (!schemaHasMin || value >= schema.minimum)
+    && (!schemaHasMax || value <= schema.maximum)
+  );
+}
+
 // FIXME: evaluate more constraints?
 function validate(value, schemas) {
-  return !schemas.every(x => {
-    if (typeof x.minimum !== 'undefined' && value >= x.minimum) {
-      return true;
-    }
+  return !schemas.every(schema => validateValueForSchema(value, schema));
+}
 
-    if (typeof x.maximum !== 'undefined' && value <= x.maximum) {
-      return true;
-    }
-
-    return false;
-  });
+function validateValueForOneOf(value, oneOf) {
+  const validCount = oneOf.reduce((count, schema) => (count + ((validateValueForSchema(value, schema)) ? 1 : 0)), 0);
+  return validCount === 1;
 }
 
 function isKey(prop) {
-  return ['enum', 'const', 'default', 'examples', 'required', 'definitions'].indexOf(prop) !== -1;
+  return ['enum', 'const', 'default', 'examples', 'required', 'definitions', 'items', 'properties'].includes(prop);
 }
 
 function omitProps(obj, props) {
-  const copy = {};
-
-  Object.keys(obj).forEach(k => {
-    if (props.indexOf(k) === -1) {
+  return Object.keys(obj)
+    .filter(key => !props.includes(key))
+    .reduce((copy, k) => {
       if (Array.isArray(obj[k])) {
         copy[k] = obj[k].slice();
       } else {
@@ -332,10 +337,9 @@ function omitProps(obj, props) {
           ? merge({}, obj[k])
           : obj[k];
       }
-    }
-  });
 
-  return copy;
+      return copy;
+    }, {});
 }
 
 function template(value, schema) {
@@ -350,6 +354,74 @@ function template(value, schema) {
   return value;
 }
 
+/**
+ * Checks if given object is empty (has no properties)
+ *
+ * @param value
+ * @returns {boolean}
+ */
+function isEmpty(value) {
+  return Object.prototype.toString.call(value) === '[object Object]' && !Object.keys(value).length;
+}
+
+/**
+ * Checks given key is required or if source object was created by a subroutine (already cleaned)
+ *
+ * @param key
+ * @param schema
+ * @returns {boolean}
+ */
+function shouldClean(key, schema) {
+  const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
+  const wasCleaned = typeof schema.thunk === 'function' || (schema.additionalProperties && typeof schema.additionalProperties.thunk === 'function');
+
+  return !isRequired && !wasCleaned;
+}
+
+/**
+ * Cleans up the source object removing empty objects and undefined values
+ * Will not remove values which are specified as `required`
+ *
+ * @param obj
+ * @param schema
+ * @param isArray
+ * @returns {any}
+ */
+function clean(obj, schema, isArray = false) {
+  if (!obj || typeof obj !== 'object') {
+    return obj;
+  }
+
+  if (Array.isArray(obj)) {
+    return obj
+      .map(value => clean(value, schema, true))
+      .filter(value => typeof value !== 'undefined');
+  }
+
+  Object.keys(obj).forEach(k => {
+    if (isEmpty(obj[k])) {
+      if (shouldClean(k, schema)) {
+        delete obj[k];
+      }
+    } else {
+      const value = clean(obj[k], schema);
+
+      if (!isEmpty(value)) {
+        obj[k] = value;
+      }
+    }
+    if (typeof obj[k] === 'undefined') {
+      delete obj[k];
+    }
+  });
+
+  if (!Object.keys(obj).length && isArray) {
+    return undefined;
+  }
+
+  return obj;
+}
+
 export default {
   getSubAttribute,
   hasProperties,
@@ -361,6 +433,11 @@ export default {
   notValue,
   anyValue,
   validate,
+  validateValueForSchema,
+  validateValueForOneOf,
   isKey,
   template,
+  shouldClean,
+  clean,
+  isEmpty,
 };

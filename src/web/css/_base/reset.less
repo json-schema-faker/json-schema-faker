@@ -22,8 +22,8 @@ html {
 }
 
 *,
-*:before,
-*:after {
+*::before,
+*::after {
   box-sizing: inherit;
 }
 
@@ -84,7 +84,7 @@ svg, img, input {
 
 select, textarea { line-height: 1.75; }
 
-a, input, button {
+a, input, button, textarea {
   &:focus {
     outline: 0;
   }

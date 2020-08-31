@@ -3,20 +3,19 @@ PWD=$(shell pwd)
 
 # defaults
 src := build
-from := master
 target := gh-pages
 message := Release: $(shell date)
 
 # environment vars
-PORT ?= 3000
-VERSION=0.5.0-rc23
+PORT ?= 8080
 NODE_ENV ?= development
+VERSION ?= $(shell cat package.json | jq .version | xargs)
 
 # export vars
 .EXPORT_ALL_VARIABLES:
 
 # targets
-.PHONY: ? deps purge dist clean deploy
+.PHONY: ? deps purge all clean deploy
 
 # utils
 define iif
@@ -37,20 +36,20 @@ test: deps ## Run tests like if we're in CI ;-)
 	@npm run test:schema
 
 build: deps ## Build scripts for dist
-	@VERSION=$(shell cat package.json | jq .version) npm run build
+	@npm run build
 
-dist: deps ## Build artifact for production envs
+all: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
 	@cd $(src) && rm -rf * && git checkout -- vendor
-	@cp -r public/* build
+	@cp -r public/* $(src)
 	@npm run build
 
 clean: ## Remove cache and generated artifacts
 	@$(call iif,rm -r $(src) dist,Built artifacts were deleted,Artifacts already deleted)
 	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
 
-deploy: $(src) ## Push built artifacts to github!
+deploy: ## Push built artifacts to github!
 	@cd $(src) && git add . && git commit -m "$(message)"
 	@git push origin $(target) -f
 

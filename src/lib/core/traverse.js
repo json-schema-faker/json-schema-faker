@@ -33,6 +33,10 @@ function traverse(schema, path, resolve, rootSchema) {
     if ('template' in schema) {
       return utils.template(schema.template, rootSchema);
     }
+
+    if ('const' in schema) {
+      return schema.const;
+    }
   }
 
   if (schema.not && typeof schema.not === 'object') {
@@ -40,25 +44,27 @@ function traverse(schema, path, resolve, rootSchema) {
 
     // build new object value from not-schema!
     if (schema.type && schema.type === 'object') {
-      return traverse(schema, path.concat(['not']), resolve, rootSchema);
+      const traverseResult = traverse(schema, path.concat(['not']), resolve, rootSchema);
+      return utils.clean(traverseResult, schema, false);
     }
-  }
-
-  if ('const' in schema) {
-    return schema.const;
-  }
-
-  if (Array.isArray(schema.enum)) {
-    return utils.typecast(null, schema, () => random.pick(schema.enum));
   }
 
   // thunks can return sub-schemas
   if (typeof schema.thunk === 'function') {
+    // result is already cleaned in thunk
     return traverse(schema.thunk(rootSchema), path, resolve);
   }
 
   if (typeof schema.generate === 'function') {
     return utils.typecast(null, schema, () => schema.generate(rootSchema));
+  }
+
+  if (typeof schema.pattern === 'string') {
+    return utils.typecast('string', schema, () => random.randexp(schema.pattern));
+  }
+
+  if (Array.isArray(schema.enum)) {
+    return utils.typecast(null, schema, () => random.pick(schema.enum));
   }
 
   // short-circuit as we don't plan generate more values!
@@ -107,7 +113,8 @@ function traverse(schema, path, resolve, rootSchema) {
 
   Object.keys(schema).forEach(prop => {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
-      copy[prop] = traverse(schema[prop], path.concat([prop]), resolve, copy);
+      const traverseResult = traverse(schema[prop], path.concat([prop]), resolve, copy);
+      copy[prop] = utils.clean(traverseResult, schema[prop], false);
     } else {
       copy[prop] = schema[prop];
     }

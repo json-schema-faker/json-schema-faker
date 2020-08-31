@@ -58,7 +58,7 @@
             }
           }
         },
-        "throws": "Reference not found"
+        "throws": "ENOENT: no such file or directory"
       }
     ]
   }

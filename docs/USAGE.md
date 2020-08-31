@@ -4,7 +4,6 @@
   - [Overview](#overview)
   - [Example usage](#example-usage)
     - [More examples](#more-examples)
-    - [Gist demos](#gist-demos)
   - [Automation](#automation)
     - [Angular-jsf (AngularJS plugin)](#angular-jsf)
     - [Grunt plugin](#grunt-plugin)
@@ -350,7 +349,7 @@ jsf.option('alwaysFakeOptionals', true);
 
 ## Extending dependencies
 
-You may extend [Faker.js](http://marak.com/faker.js/):
+You may extend [Faker.js](https://github.com/Marak/faker.js):
 
 ```javascript
 import jsf from 'json-schema-faker';

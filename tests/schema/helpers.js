@@ -22,7 +22,7 @@ export function getTests(srcDir) {
   const only = [];
   const all = [];
 
-  glob.sync(`${srcDir}/**/*.json`).forEach(file => {
+  glob.sync(`${srcDir}/**/*.json`, { ignore: ['**/external-ref-files/*'] }).forEach(file => {
     let suite;
 
     try {
@@ -63,7 +63,10 @@ export function tryTest(nth, max, test, refs, schema, callback) {
   return _jsf.resolve(schema, refs).then(sample => {
     if (test.dump) {
       console.log(JSON.stringify(sample, null, 2));
-      return;
+
+      if (test.dump === 'bail') {
+        return;
+      }
     }
 
     try {
@@ -82,16 +85,20 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       throw _e;
     }
 
+    if (test.check) {
+      checkSchema(sample, test.check, refs);
+    }
+
     if (test.length) {
       expect(sample.length).to.eql(test.length);
     }
 
     if (test.notEmpty) {
-      test.notEmpty.forEach(x => {
-        const value = pick(sample, x);
+      test.notEmpty.forEach(objectPath => {
+        const value = pick(sample, objectPath);
 
         if (value === undefined || (Array.isArray(value) && !value.length)) {
-          throw new Error(`${x} should not be empty`);
+          throw new Error(`${objectPath} should not be empty`);
         }
       });
     }
@@ -124,19 +131,28 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       expect(sample).to.eql(test.equal);
     }
 
+    if (test.throws) {
+      delete test.throws;
+
+      const message = typeof test.throws === 'string' ? `: "${test.throws}"` : '';
+
+      throw new Error(`Expected test to throw${message}`);
+    }
+
     if (callback) {
       callback(sample);
     }
   }).catch(error => {
-    if (typeof test.throws === 'string') {
-      expect(error).to.match(new RegExp(test.throws, 'im'));
+    const throwsValue = test.throws || test.throwsSometimes;
+
+    if (typeof throwsValue === 'string') {
+      expect(error).to.match(new RegExp(throwsValue, 'im'));
+      test.throwCount++;
       return;
     }
 
-    if (typeof test.throws === 'boolean') {
-      if (test.throws !== true) {
-        throw error;
-      }
+    if (throwsValue === true) {
+      test.throwCount++;
       return;
     }
 

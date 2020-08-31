@@ -1,6 +1,5 @@
 /**
 ---
-$format: umd
 $bundle: JSONSchemaFaker
 ---
 */

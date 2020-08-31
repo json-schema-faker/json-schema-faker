@@ -2,12 +2,20 @@
   position: relative;
 }
 
+.github-icon {
+  background-image: url(../img/github.svg);
+  background-repeat: no-repeat;
+  background-position: 100% 50%;
+  padding-right: 1.5em;
+}
+
 .jsf-logo {
   transition: all .3s;
   height: 80px;
   width: 100%;
-  background-image: url(/img/logo.svg);
+  background-image: url(../img/logo.svg);
   background-repeat: no-repeat;
+  background-position: 33.3%;
 
   &:hover { opacity: .8; }
 
@@ -20,6 +28,11 @@
 }
 
 .jsf-about {
+  .ar {
+    .menu {
+      right: 0;
+    }
+  }
   li {
     > .menu {
       display: none;
@@ -33,13 +46,13 @@
       display: block;
     }
 
-    li ~ li { margin-top: @margin; }
+    li ~ li { margin-top: @margin / 2; }
 
-    li:hover:before {
+    li:hover::before {
       color: @BLUE;
     }
 
-    li:before {
+    li::before {
       top: 4px;
       left: -5px;
       position: absolute;
@@ -54,14 +67,20 @@
       white-space: nowrap;
       position: relative;
       padding-left: 10px;
+
+      &.ni {
+        padding-left: 0;
+        &::before { content: ''; }
+      }
     }
 
     a {
-      color: @BLUE;
       text-decoration: none;
-      border-bottom: 1px dotted @border-color;
+      color: @BLUE;
 
-      &:hover { border-bottom: 1px dotted @BLUE; }
+      &:hover {
+        color: @TEAL;
+      }
     }
   }
 
@@ -78,7 +97,6 @@
   height: 30px;
   line-height: 30px;
   position: absolute;
-  z-index: 999;
   right: -50px;
   top: 35px;
 }
