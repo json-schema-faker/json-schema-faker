@@ -5108,7 +5108,7 @@
     	return child_ctx;
     }
 
-    // (185:2) {:else}
+    // (186:2) {:else}
     function create_else_block$4(ctx) {
     	let div0;
     	let t0;
@@ -5262,7 +5262,7 @@
     	};
     }
 
-    // (183:2) {#if pending}
+    // (184:2) {#if pending}
     function create_if_block$6(ctx) {
     	let t;
 
@@ -5282,7 +5282,7 @@
     	};
     }
 
-    // (204:8) {:else}
+    // (205:8) {:else}
     function create_else_block_3(ctx) {
     	let button;
     	let t_value = /*info*/ ctx[28].filename + "";
@@ -5315,7 +5315,7 @@
     	};
     }
 
-    // (188:8) {#if $current === info}
+    // (189:8) {#if $current === info}
     function create_if_block_2$1(ctx) {
     	let span;
     	let t0;
@@ -5374,7 +5374,7 @@
     	};
     }
 
-    // (199:12) {:else}
+    // (200:12) {:else}
     function create_else_block_2(ctx) {
     	let span;
     	let t_value = /*info*/ ctx[28].filename + "";
@@ -5406,7 +5406,7 @@
     	};
     }
 
-    // (190:12) {#if isEditing}
+    // (191:12) {#if isEditing}
     function create_if_block_3$1(ctx) {
     	let input_1;
     	let input_1_placeholder_value;
@@ -5438,7 +5438,7 @@
     	};
     }
 
-    // (187:6) {#each $schemas as info}
+    // (188:6) {#each $schemas as info}
     function create_each_block$1(ctx) {
     	let if_block_anchor;
 
@@ -5479,7 +5479,7 @@
     	};
     }
 
-    // (219:8) {:else}
+    // (220:8) {:else}
     function create_else_block_1(ctx) {
     	let span;
     	let button;
@@ -5505,7 +5505,7 @@
     	};
     }
 
-    // (208:8) {#if isAdding}
+    // (209:8) {#if isAdding}
     function create_if_block_1$3(ctx) {
     	let span;
     	let input_1;
@@ -5536,12 +5536,12 @@
     	};
     }
 
-    // (226:6) <Ace mode={outputMode} value={editInput} on:change={sync}>
+    // (227:6) <Ace mode={outputMode} value={editInput} on:change={sync}>
     function create_default_slot_1$1(ctx) {
     	return { c: noop, m: noop, d: noop };
     }
 
-    // (231:6) <Ace mode={outputMode} value={objectOutput} readonly>
+    // (232:6) <Ace mode={outputMode} value={objectOutput} readonly>
     function create_default_slot$4(ctx) {
     	let span;
     	let button;
@@ -5794,7 +5794,7 @@
     		$$invalidate(1, isAdding = false);
     		$$invalidate(2, isEditing = false);
 
-    		set_store_value(schemas, $schemas = Object.keys(data.files).filter(x => data.files[x].type === "text/plain").reduce(
+    		set_store_value(schemas, $schemas = Object.keys(data.files).filter(x => ["text/plain", "application/json"].includes(data.files[x].type)).reduce(
     			(prev, cur) => {
     				prev.push(data.files[cur]);
     				return prev;
