@@ -40,7 +40,7 @@ html
     script(src='//unpkg.com/chance')
 
     if env.NODE_ENV === 'production'
-      script(src='bundle.js')
+      script(src='//unpkg.com/json-schema-faker')
     else
       script(src='vendor.js')
       script(src='main.umd.js')

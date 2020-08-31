@@ -59,7 +59,7 @@
   <span class="nosl github-icon">{$session.fullname || $session.username}</span>
   <ul class="lr z2 nosl menu">
     <li><Link href="/save">Save project...</Link></li>
-    <li><Link href="/new" on:click={add}>New project</Link></li>
+    <li><Link href="/" on:click={add}>New project</Link></li>
     <li><Link href="/gists">Schemas</Link></li>
     <li><Link href="/logout" on:click={exit}>Log out</Link></li>
   </ul>

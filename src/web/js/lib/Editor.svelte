@@ -224,9 +224,9 @@
     </div>
     <div class="md-flx">
       <Ace mode={outputMode} value={editInput} on:change={sync}>
-        <div class="abs r0 t0 z1">
+        <!--<div class="abs r0 t0 z1">
           <Toggle on="YAML" off="JSON" on:change={format} value={isYAML} />
-        </div>
+        </div>-->
       </Ace>
       <Ace mode={outputMode} value={objectOutput} readonly>
         <span class="abs r0 t0 z1">
