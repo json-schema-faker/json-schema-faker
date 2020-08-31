@@ -81,8 +81,12 @@ function resolve(obj, data, values, property) {
   return obj;
 }
 
-// TODO provide types
+// TODO provide types?
 function run(refs, schema, container) {
+  if (Object.prototype.toString.call(schema) !== '[object Object]') {
+    throw new Error(`Invalid input, expecting object but given ${typeof schema}`);
+  }
+
   const refDepthMin = optionAPI('refDepthMin') || 0;
   const refDepthMax = optionAPI('refDepthMax') || 3;
 
