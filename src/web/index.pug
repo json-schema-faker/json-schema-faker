@@ -14,21 +14,23 @@ html
         .tac Loading...
 
     .Toolbar.f
-      a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
+      //- FIXME: redesign ribbon...
+      //- a.tdn.tac.github-ribbon(href='//github.com/json-schema-faker/json-schema-faker') Fork me on GitHub
       .md-flx.flx-c
-        .p.nosl
+        .p.nosl.h-sm
+          //- on small screens hide large logo... but enable a small one above... i.e. before desc
           h1.jsf-logo: a.dib(href='/') JSON Schema Faker
         div.mt
           .pl.pr
-            p.pr #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
-            .mt
-              a.tdn(href=`//www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=${BUTTON_ID}` target='_blank')
-                img.mr(src='//img.shields.io/badge/Donate-PayPal-green.svg')
+            .mb
+              //- a.tdn(href=`//www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=${BUTTON_ID}` target='_blank')
+              //-   img.mr(src='//img.shields.io/badge/Donate-PayPal-green.svg')
               img.mr(src='//travis-ci.org/json-schema-faker/json-schema-faker.svg?branch=master')
               img.mr(src='//badge.fury.io/js/json-schema-faker.svg')
               iframe.mt(src='//ghbtns.com/github-btn.html?user=json-schema-faker&repo=json-schema-faker&type=star&count=true' frameborder=0 scrolling=0 width=120 height=20)
+            p.pr.jsf-logo-image #[b JSON Schema Faker] combines JSON Schema standard with fake data generators, allowing users to generate fake data that conform to the schema.
 
-          include _/menu
+          #auth
 
     .sm-flx.flx-m
       #editor.flx-a.flx-lt
