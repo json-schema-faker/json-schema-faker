@@ -89,7 +89,7 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   let length = random.number(minItems, maxItems, 1, 5);
 
-  if (optionalsProbability !== false) {
+  if (optionalsProbability !== null) {
     length = Math.max(fixedProbabilities
       ? Math.round((maxItems || length) * optionalsProbability)
       : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
