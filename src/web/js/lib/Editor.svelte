@@ -161,7 +161,8 @@
     isAdding = false;
     isEditing = false;
 
-    $schemas = Object.keys(data.files).filter(x => data.files[x].type === 'text/plain')
+    $schemas = Object.keys(data.files)
+      .filter(x => ['text/plain', 'application/json'].includes(data.files[x].type))
       .reduce((prev, cur) => {
         prev.push(data.files[cur]);
         return prev;
