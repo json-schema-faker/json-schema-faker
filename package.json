@@ -146,6 +146,7 @@
     "tv4": "^1.3.0",
     "vue-template-compiler": "^2.6.10",
     "wargs": "^0.9.0",
+    "yargs-parser": ">=13.1.2",
     "yrv": "^0.0.24",
     "z-schema": "^4.1.0",
     "kind-of": ">=6.0.3"
