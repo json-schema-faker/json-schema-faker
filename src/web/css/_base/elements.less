@@ -45,6 +45,10 @@
   > .flx-a ~ .flx-ml { margin-left: @margin; }
 }
 
+.h-sm {
+  display: none;
+}
+
 @media screen and (min-width: 480px) {
   .sm-no-flx { display: block; }
   .sm-flx {
@@ -59,6 +63,10 @@
 }
 
 @media screen and (min-width: 720px) {
+  .h-sm {
+    display: block;
+  }
+
   .md-flx {
     display: flex;
 

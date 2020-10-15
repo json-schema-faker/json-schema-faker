@@ -1,0 +1,30 @@
+[
+  {
+    "description": "defaultInvalidTypeProduct option (requires failOnInvalidTypes=false)",
+    "tests": [
+      {
+        "description": "should return static values if they are not well-known strings",
+        "schema": {
+          "type": "undef"
+        },
+        "equal": -1,
+        "set": {
+          "failOnInvalidTypes": false,
+          "defaultInvalidTypeProduct": -1
+        }
+      },
+      {
+        "description": "should generate values if they are well-known strings",
+        "schema": {
+          "type": "undef"
+        },
+        "equal": false,
+        "seed": 0.01,
+        "set": {
+          "failOnInvalidTypes": false,
+          "defaultInvalidTypeProduct": "boolean"
+        }
+      }
+    ]
+  }
+]

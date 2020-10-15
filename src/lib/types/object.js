@@ -59,7 +59,7 @@ function objectType(value, path, resolve, traverseCallback) {
     neededExtras = random.number(neededExtras, allProperties.length + (allProperties.length - min));
   }
 
-  if (optionalsProbability !== false) {
+  if (optionalsProbability !== null) {
     if (fixedProbabilities === true) {
       neededExtras = Math.round((min - requiredProperties.length) + (optionalsProbability * (allProperties.length - min)));
     } else {
@@ -73,7 +73,7 @@ function objectType(value, path, resolve, traverseCallback) {
   });
 
   // properties are read from right-to-left
-  const _limit = optionalsProbability !== false ? max : random.number(0, max);
+  const _limit = optionalsProbability !== null ? max : random.number(0, max);
   const _props = requiredProperties.concat(extraProperties.slice(0, _limit));
   const _defns = [];
 

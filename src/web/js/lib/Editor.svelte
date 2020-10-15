@@ -2,14 +2,17 @@
   import { router } from 'yrv';
   import Ace from './Ace.svelte';
   import Toggle from './Toggle.svelte';
-  import { schemas, current, loadFrom } from './gists';
+  import { schemas, current, options, loadFrom } from './gists';
+
+  const initialLocationHash = window.location.hash;
 
   let data;
   let input;
   let buffer;
+  let selected;
   let isAdding;
   let isEditing;
-  let selected;
+  let previusURL;
 
   let value = null;
   let isYAML = false;
@@ -19,26 +22,36 @@
   let outputMode = 'json';
   let objectOutput = '{}';
 
-  function select(e, edit) {
-    $current = e;
-    isAdding = false;
-    isEditing = !!edit;
+  function close(e) {
+    if (input && (isAdding || isEditing)) {
+      if (isAdding) {
+        $current = selected || $schemas[$schemas.length - 1];
+      }
 
-    if (edit) {
-      setTimeout(() => {
-        input.focus();
-      }, 60);
+      isAdding = false;
+      isEditing = false;
     }
   }
 
+  function select(e, edit) {
+    $current = selected = e;
+    isAdding = false;
+    isEditing = !!edit;
+
+    if (edit) setTimeout(() => input.select(), 60);
+  }
+
   function remove(e) {
-    if (!confirm('Are you sure?')) return;
+    if (!confirm(`This action will remove the '${e.filename}' file.\n\nAre you sure?`.trim())) return;
 
-    const offset = $schemas.indexOf($current);
+    const offset = $schemas.indexOf(e);
 
-    buffer = editInput = '';
     $schemas = $schemas.filter(x => x !== e);
-    $current = null;
+
+    if (e.filename === $current.filename) {
+      buffer = editInput = '';
+      $current = null;
+    }
   }
 
   function validate(e) {
@@ -56,28 +69,21 @@
   }
 
   function update(e) {
+    if (e.keyCode === 27) close();
     if (validate(e) && e.keyCode === 13) {
       $current.filename = e.target.value;
       isEditing = false;
       e.target.value = '';
     }
-
-    if (e.keyCode === 27) {
-      isEditing = false;
-    }
   }
 
   function submit(e) {
+    if (e.keyCode === 27) close();
     if (validate(e) && e.keyCode === 13) {
       $schemas = $schemas.concat({ filename: e.target.value, content: buffer });
       $current = $schemas[$schemas.length - 1];
       isAdding = false;
       e.target.value = '';
-    }
-
-    if (e.keyCode === 27) {
-      $current = selected;
-      isAdding = false;
     }
   }
 
@@ -109,10 +115,7 @@
 
   function sync(e) {
     buffer = e.detail;
-
-    if ($current) {
-      $current.content = buffer;
-    }
+    if ($current) $current.content = buffer;
   }
 
   function add() {
@@ -121,13 +124,11 @@
     isAdding = true;
     $current = null;
 
-    setTimeout(() => {
-      input.focus();
-    }, 60);
+    setTimeout(() => input.focus(), 60);
   }
 
   function gen() {
-    const opts = JSON.parse(window.localStorage._OPTS);
+    const opts = { ...$options };
     const value = opts.random;
 
     opts.random = value
@@ -146,14 +147,18 @@
 
     JSONSchemaFaker.option(opts);
     JSONSchemaFaker.resolve(schema, refs)
-      .then(result => { objectOutput = Encoder.stringify(result, null, 2); });
+      .then(result => { objectOutput = Encoder.stringify(result, null, 2); })
+      .catch(error => alert(error.message));
   }
 
   router.subscribe(async info => {
-    if (!window.location.hash) {
+    if (!window.location.hash || window.location.hash.match(/^#(options|session)/)) {
       pending = false;
       return;
     }
+
+    if (info.path === previusURL) return;
+    previusURL = info.path;
 
     data = await loadFrom(info.path.substr(1));
     buffer = editInput = '';
@@ -161,7 +166,8 @@
     isAdding = false;
     isEditing = false;
 
-    $schemas = Object.keys(data.files).filter(x => data.files[x].type === 'text/plain')
+    $schemas = Object.keys(data.files)
+      .filter(x => ['text/plain', 'application/json'].includes(data.files[x].type))
       .reduce((prev, cur) => {
         prev.push(data.files[cur]);
         return prev;
@@ -188,37 +194,26 @@
         {#if $current === info}
           <span class="sel">
             {#if isEditing}
-              <input
-                class="nb"
-                on:keyup={update}
-                bind:this={input}
-                type="text"
-                spellcheck="false"
-                placeholder={info.filename}
-              />
+              <input class="nb" on:blur={close} on:keyup={update} bind:this={input} type="text" spellcheck="false" value={info.filename} />
             {:else}
-              <span on:dblclick={() => select(info, true)}>{info.filename}</span>
+              <span class="dib" on:dblclick={() => select(info, true)}>{info.filename}</span>
             {/if}
-            <button class="a nb ml" on:click={() => remove(info)}>&times;</button>
+            <button class="nb x-close" on:click={() => remove(info)}>&times;</button>
           </span>
         {:else}
-          <button class="a" on:click={() => select(info)}>{info.filename}</button>
+          <span class="flx">
+            <button on:click={() => select(info)}>{info.filename}</button>
+            <button class="nb x-close" on:click={() => remove(info)}>&times;</button>
+          </span>
         {/if}
       {/each}
         {#if isAdding}
           <span class="sel">
-            <input
-              class="nb"
-              on:keyup={submit}
-              bind:this={input}
-              type="text"
-              spellcheck="false"
-              placeholder="Add ..."
-            />
+            <input class="nb" on:blur={close} on:keyup={submit} bind:this={input} type="text" spellcheck="false" />
           </span>
         {:else}
           <span>
-            <button class="a nb nbk" on:click={add}>Add ...</button>
+            <button class="a nb nbk plus-icon" on:click={add} />
           </span>
         {/if}
     </div>

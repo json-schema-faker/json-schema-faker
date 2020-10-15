@@ -91,7 +91,13 @@ function traverse(schema, path, resolve, rootSchema) {
       if (optionAPI('failOnInvalidTypes')) {
         throw new ParseError(`unknown primitive ${utils.short(type)}`, path.concat(['type']));
       } else {
-        return optionAPI('defaultInvalidTypeProduct');
+        const value = optionAPI('defaultInvalidTypeProduct');
+
+        if (typeof value === 'string' && types[value]) {
+          return types[value](schema, path, resolve, traverse);
+        }
+
+        return value;
       }
     } else {
       try {

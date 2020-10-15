@@ -118,7 +118,10 @@ jsf.resolve = (schema, refs, cwd) => {
       dereference: {
         circular: 'ignore',
       },
-    }).then(sub => run($refs, sub, container));
+    }).then(sub => run($refs, sub, container))
+    .catch(e => {
+      throw new Error(`Error while resolving schema (${e.message})`);
+    });
 };
 
 setupKeywords();

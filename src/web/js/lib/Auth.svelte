@@ -4,8 +4,10 @@
     me, url, schemas, current, session, loggedIn,
   } from './gists';
 
+  import Opts from './Opts.svelte';
   import Save from './Save.svelte';
   import Gists from './Gists.svelte';
+  import Modal from './Modal.svelte';
 
   function done() {
     me().then(data => {
@@ -27,27 +29,6 @@
     navigateTo('/');
   }
 
-  function set(e) {
-    if (e.target.name.indexOf('jsfOptions.') === 0 && e.target.tagName === 'INPUT') {
-      const opts = window.localStorage._OPTS ? JSON.parse(window.localStorage._OPTS) : {};
-      const key = e.target.name.split('.')[1];
-
-      let val = e.target.type === 'checkbox'
-        ? e.target.checked
-        : e.target.value;
-
-      if (key === 'ignoreProperties') {
-        val = val.split(/\W+/);
-      }
-
-      opts[key] = typeof val === 'string' && /^\d+(\.\d+)?$/.test(val)
-        ? parseFloat(val)
-        : val;
-
-      window.localStorage._OPTS = JSON.stringify(opts);
-    }
-  }
-
   function add() {
     $schemas = [];
     $current = null;
@@ -55,21 +36,29 @@
   }
 </script>
 
-<svelte:window on:change={set} />
-
-{#if $loggedIn}
-  <span class="nosl github-icon">{$session.fullname || $session.username}</span>
-  <ul class="lr z2 nosl menu">
-    <li><Link href="/save">Save project...</Link></li>
-    <li><Link href="/" on:click={add}>New project</Link></li>
-    <li><Link href="/gists">Schemas</Link></li>
-    <li><Link href="/logout" on:click={exit}>Log out</Link></li>
-  </ul>
-{:else}
-  <Link open="width=400,height=640" href={url()} on:close={done} class="a github-icon">Share link? Log in</Link>
-{/if}
+<ul class="p lr ln mt rel jsf-about">
+  <li class="sp pd dib nosl">
+    <Link href="#options" class="a gear-icon">Options</Link>
+  </li>
+  <li class="ar dib">
+    {#if $loggedIn}
+      <Link href="#session" class="a nosl github-icon" title={$session.fullname}>{$session.username}</Link>
+    {:else}
+      <Link open="width=400,height=640" href={url()} on:close={done} class="a github-icon">Share link? Log in</Link>
+    {/if}
+  </li>
+</ul>
 
 <Router>
-  <Route path="/gists" component={Gists} />
-  <Route path="/save" component={Save} />
+  <Route path="#options" component={Opts} />
+  <Route path="#session">
+    <Modal>
+      <Link href="/" on:click={add}>New project</Link> |
+      <Link href="/logout" on:click={exit}>Log out</Link>
+      <Link href="#session/save">Save project...</Link> |
+      <Link href="#session/open">Schemas</Link> |
+      <Route path="/open" component={Gists} />
+      <Route path="/save" component={Save} />
+    </Modal>
+  </Route>
 </Router>
