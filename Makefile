@@ -11,6 +11,10 @@ PORT ?= 8080
 NODE_ENV ?= development
 VERSION ?= $(shell cat package.json | jq .version | xargs)
 
+ifneq ($(wildcard .env),)
+include .env
+endif
+
 # export vars
 .EXPORT_ALL_VARIABLES:
 
@@ -25,6 +29,9 @@ endef
 # display all targets-with-help in this file
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
+
+ci:
+	@npm run test:ci && npm run codecov
 
 lib: deps ## Build library output only
 	@npm run build -- -y main

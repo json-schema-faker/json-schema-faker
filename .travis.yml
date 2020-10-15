@@ -13,8 +13,6 @@ node_js:
 before_script:
   - make lib
 script:
-  - make test
-after_success:
-  - npm run codecov
+  - make ci
 notifications:
   email: false
