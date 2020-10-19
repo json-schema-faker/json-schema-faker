@@ -1,0 +1,77 @@
+[
+  {
+    "description": "inner-references",
+    "tests": [
+      {
+        "description": "should register inner-references by id",
+        "schema": {
+          "type": "object",
+          "id": "urn:jsonschema:spacerockk:habari:ws:som:LotAggregate",
+          "properties": {
+            "id": {
+              "type": "string",
+              "required": true
+            },
+            "CreateDate": {
+              "type": "string"
+            },
+            "LastUpdate": {
+              "type": "string"
+            },
+            "ItemCode": {
+              "type": "object",
+              "id": "urn:jsonschema:spacerockk:habari:ws:som:ItemCode",
+              "properties": {
+                "logger": {
+                  "type": "object",
+                  "id": "urn:jsonschema:com:spacerockk:log:TLScalaLogger",
+                  "properties": {
+                    "logger": {
+                      "type": "object",
+                      "id": "urn:jsonschema:org:slf4j:Logger",
+                      "properties": {
+                        "name": {
+                          "type": "string"
+                        },
+                        "traceEnabled": {
+                          "type": "boolean"
+                        },
+                        "debugEnabled": {
+                          "type": "boolean"
+                        },
+                        "infoEnabled": {
+                          "type": "boolean"
+                        },
+                        "warnEnabled": {
+                          "type": "boolean"
+                        },
+                        "errorEnabled": {
+                          "type": "boolean"
+                        }
+                      }
+                    },
+                    "debugEnabled": {
+                      "type": "boolean"
+                    }
+                  }
+                },
+                "ic": {
+                  "type": "string"
+                },
+                "ict": {
+                  "type": "string"
+                }
+              }
+            },
+            "ItemCodeProspects": {
+              "type": "array",
+              "items": {
+                "$ref": "urn:jsonschema:spacerockk:habari:ws:som:ItemCode"
+              }
+            }
+          }
+        }
+      }
+    ]
+  }
+]
