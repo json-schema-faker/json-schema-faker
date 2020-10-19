@@ -60,5 +60,41 @@
         "valid": true
       }
     ]
+  },
+  {
+    "description": "inner-references",
+    "tests": [
+      {
+        "description": "should register inner-references by id",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "object",
+              "properties": {
+                "id": "foo:bar",
+                "foo": {
+                  "type": "string",
+                  "enum": ["x"]
+                }
+              },
+              "required": ["foo"]
+            },
+            "other": {
+              "$ref": "foo:bar"
+            }
+          },
+          "required": ["test", "other"]
+        },
+        "equal": {
+          "test": {
+            "foo": "x"
+          },
+          "other": {
+            "foo": "x"
+          }
+        }
+      }
+    ]
   }
 ]

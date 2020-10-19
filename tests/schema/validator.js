@@ -90,7 +90,7 @@ export function checkSchema(sample, schema, refs) {
   const errors = validator.getLastErrors();
 
   if (errors || !valid) {
-    fail.push(errors.map(e => {
+    fail.push((errors || []).map(e => {
       if (e.code === 'PARENT_SCHEMA_VALIDATION_FAILED') {
         return e.inner.map(x => `[z-schema] ${x.message}`).join('\n');
       }

@@ -51,16 +51,31 @@ function setupKeywords() {
   });
 }
 
-function getRefs(refs) {
+function getRefs(refs, schema) {
   let $refs = {};
 
   if (Array.isArray(refs)) {
-    refs.forEach(schema => {
-      $refs[schema.$id || schema.id] = schema;
+    refs.forEach(_schema => {
+      $refs[_schema.$id || _schema.id] = _schema;
     });
   } else {
     $refs = refs || {};
   }
+
+  function walk(obj) {
+    if (!obj || typeof obj !== 'object') return;
+    if (Array.isArray(obj)) return obj.forEach(walk);
+    if (typeof obj.id === 'string' && !$refs[obj.id]) {
+      $refs[obj.id] = obj;
+    }
+
+    Object.keys(obj).forEach(key => {
+      walk(obj[key]);
+    });
+  }
+
+  walk(refs);
+  walk(schema);
 
   return $refs;
 }
@@ -76,7 +91,7 @@ const jsf = (schema, refs, cwd) => {
 };
 
 jsf.generate = (schema, refs) => {
-  const $refs = getRefs(refs);
+  const $refs = getRefs(refs, schema);
 
   return run($refs, schema, container);
 };
@@ -91,17 +106,19 @@ jsf.resolve = (schema, refs, cwd) => {
   cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
   cwd = `${cwd.replace(/\/+$/, '')}/`;
 
-  const $refs = getRefs(refs);
+  const $refs = getRefs(refs, schema);
 
   // identical setup as json-schema-sequelizer
   const fixedRefs = {
     order: 1,
     canRead(file) {
-      return $refs[file.url] || $refs[file.url.split('/').pop()];
+      const key = file.url.replace('/:', ':');
+
+      return $refs[key] || $refs[key.split('/').pop()];
     },
     read(file, callback) {
       try {
-        callback(null, $refs[file.url] || $refs[file.url.split('/').pop()]);
+        callback(null, this.canRead(file));
       } catch (e) {
         callback(e);
       }
