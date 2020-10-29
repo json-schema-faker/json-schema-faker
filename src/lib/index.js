@@ -65,8 +65,11 @@ function getRefs(refs, schema) {
   function walk(obj) {
     if (!obj || typeof obj !== 'object') return;
     if (Array.isArray(obj)) return obj.forEach(walk);
-    if (typeof obj.id === 'string' && !$refs[obj.id]) {
-      $refs[obj.id] = obj;
+
+    const _id = obj.$id || obj.id;
+
+    if (typeof _id === 'string' && !$refs[_id]) {
+      $refs[_id] = obj;
     }
 
     Object.keys(obj).forEach(key => {
