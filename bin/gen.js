@@ -10,6 +10,8 @@ const sample = process.argv.slice(2)[0];
 const argv = require('wargs')(process.argv.slice(2), {
   boolean: 'DXMTFOxedrJUSE',
   alias: {
+    c: 'currentWorkingDirectory',
+
     D: 'defaultInvalidTypeProduct',
     X: 'defaultRandExpMax',
 
@@ -46,9 +48,6 @@ if (typeof argv.flags.ignoreProperties === 'string') {
   argv.flags.ignoreProperties = [argv.flags.ignoreProperties];
 }
 
-// FIXME: enable flags...
-// jsf.option(argv.flags);
-
 const { inspect } = require('util');
 const { Transform } = require('stream');
 const { readFileSync } = require('fs');
@@ -56,12 +55,15 @@ const { readFileSync } = require('fs');
 const pretty = process.argv.indexOf('--pretty') !== -1;
 const noColor = process.argv.indexOf('--no-color') !== -1;
 
+// FIXME: enable flags...
 jsf.option({
-  alwaysFakeOptionals: true,
+  alwaysFakeOptionals: argv.flags.alwaysFakeOptionals,
 });
 
+const cwd = argv.flags.currentWorkingDirectory || process.cwd();
+
 function generate(schema, callback) {
-  jsf.resolve(JSON.parse(schema)).then(result => {
+  jsf.resolve(JSON.parse(schema), cwd).then(result => {
     let sample;
 
     if (pretty) {
