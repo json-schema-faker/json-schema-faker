@@ -49,7 +49,7 @@ const buildResolveSchema = ({
         ref = refs[sub.$ref] || null;
       }
 
-      if (sub.$ref.indexOf('#/definitions/') === 0) {
+      if (sub.$ref.indexOf('#/definitions/') >= 0) {
         ref = schema.definitions[sub.$ref.split('#/definitions/')[1]] || null;
       }
 

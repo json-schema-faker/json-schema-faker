@@ -91,6 +91,9 @@ const jsf = (schema, refs, cwd) => {
 };
 
 jsf.generate = (schema, refs) => {
+  if (Array.isArray(schema)) {
+    schema = Object.assign(...schema)
+  }
   const $refs = getRefs(refs, schema);
 
   return run($refs, schema, container);
