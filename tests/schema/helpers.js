@@ -11,11 +11,11 @@ export function pick(obj, key) {
 
   let out = obj;
 
-  while (parts.length) {
+  while (parts.length > 1) {
     out = out[parts.shift()];
   }
 
-  return out;
+  return out && out[parts.shift()];
 }
 
 export function getTests(srcDir) {
@@ -60,7 +60,9 @@ export function getTests(srcDir) {
 }
 
 export function tryTest(nth, max, test, refs, schema, callback) {
-  return _jsf.resolve(schema, refs).then(sample => {
+  return Promise.resolve()
+  .then(() => _jsf[test.sync ? 'generate' : 'resolve'](schema, refs))
+  .then(sample => {
     if (test.dump) {
       console.log(JSON.stringify(sample, null, 2));
 
@@ -107,10 +109,14 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       test.hasProps.forEach(prop => {
         if (Array.isArray(sample)) {
           sample.forEach(s => {
-            expect(s[prop]).not.to.eql(undefined);
+            if (typeof pick(s, prop) === 'undefined') {
+              throw new Error(`Property '${prop}' is not present`);
+            }
           });
         } else {
-          expect(sample[prop]).not.to.eql(undefined);
+          if (typeof pick(sample, prop) === 'undefined') {
+            throw new Error(`Property '${prop}' is not present`);
+          }
         }
       });
     }
