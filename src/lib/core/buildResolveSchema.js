@@ -9,11 +9,13 @@ const buildResolveSchema = ({
   refDepthMax,
   refDepthMin,
 }) => {
+  const recursiveUtil = {};
+  const seenRefs = {};
+
   let depth = 0;
   let lastRef;
 
-  const seenRefs = {};
-  const resolveSchema = (sub, index, rootPath) => {
+  recursiveUtil.resolveSchema = (sub, index, rootPath) => {
     // prevent null sub from default/example null values to throw
     if (sub === null || sub === undefined) {
       return null;
@@ -77,14 +79,14 @@ const buildResolveSchema = ({
       // this is the only case where all sub-schemas
       // must be resolved before any merge
       schemas.forEach(subSchema => {
-        const _sub = resolveSchema(subSchema, null, rootPath);
+        const _sub = recursiveUtil.resolveSchema(subSchema, null, rootPath);
 
         // call given thunks if present
         utils.merge(sub, typeof _sub.thunk === 'function'
           ? _sub.thunk(sub)
           : _sub);
         if (Array.isArray(sub.allOf)) {
-          resolveSchema(sub, index, rootPath);
+          recursiveUtil.resolveSchema(sub, index, rootPath);
         }
       });
     }
@@ -128,7 +130,7 @@ const buildResolveSchema = ({
 
     Object.keys(sub).forEach(prop => {
       if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-        sub[prop] = resolveSchema(sub[prop], prop, rootPath.concat(prop));
+        sub[prop] = recursiveUtil.resolveSchema(sub[prop], prop, rootPath.concat(prop));
       }
     });
 
@@ -144,7 +146,7 @@ const buildResolveSchema = ({
     return container.wrap(sub);
   };
 
-  return resolveSchema;
+  return recursiveUtil;
 };
 
 export default buildResolveSchema;
