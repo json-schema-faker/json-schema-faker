@@ -91,7 +91,7 @@ function run(refs, schema, container) {
   const refDepthMax = optionAPI('refDepthMax') || 3;
 
   try {
-    const resolveSchema = buildResolveSchema({
+    const { resolveSchema } = buildResolveSchema({
       refs,
       schema,
       container,
