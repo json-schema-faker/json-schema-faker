@@ -28,6 +28,7 @@
         "description": "should generate randomly otherwise",
         "schema": {
           "type": "object",
+          "additionalProperties": false,
           "properties": {
             "a": {
               "type": "string"
@@ -43,7 +44,6 @@
             "a"
           ]
         },
-        "minProps": [1, 2, 3],
         "valid": true
       }
     ]

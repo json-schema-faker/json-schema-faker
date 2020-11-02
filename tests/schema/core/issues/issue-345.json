@@ -13,7 +13,6 @@
                 "type": "integer"
               },
               "me": {
-                "type": "object",
                 "$ref": "#/definitions/DefaultCyclic_106"
               }
             },
@@ -28,7 +27,6 @@
             "type": "integer"
           },
           "me": {
-            "type": "object",
             "$ref": "#/definitions/DefaultCyclic_106"
           }
         },

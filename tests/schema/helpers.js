@@ -59,7 +59,7 @@ export function getTests(srcDir) {
   return { only, all };
 }
 
-export function tryTest(nth, max, test, refs, schema, callback) {
+export function tryTest(nth, max, test, refs, schema) {
   return Promise.resolve()
   .then(() => _jsf[test.sync ? 'generate' : 'resolve'](schema, refs))
   .then(sample => {
@@ -122,7 +122,7 @@ export function tryTest(nth, max, test, refs, schema, callback) {
     }
 
     if (test.onlyProps) {
-      expect(Object.keys(sample)).to.eql(test.onlyProps);
+      expect(Object.keys(sample).sort()).to.eql(test.onlyProps.sort());
     }
 
     if (test.count) {
@@ -143,10 +143,6 @@ export function tryTest(nth, max, test, refs, schema, callback) {
       const message = typeof test.throws === 'string' ? `: "${test.throws}"` : '';
 
       throw new Error(`Expected test to throw${message}`);
-    }
-
-    if (callback) {
-      callback(sample);
     }
   }).catch(error => {
     const throwsValue = test.throws || test.throwsSometimes;

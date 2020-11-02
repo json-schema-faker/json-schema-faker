@@ -13,6 +13,7 @@
               "properties": {
                 "foo": {
                   "type": "object",
+                  "additionalProperties": false,
                   "properties": {}
                 }
               },
