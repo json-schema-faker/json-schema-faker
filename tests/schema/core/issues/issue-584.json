@@ -1,0 +1,44 @@
+[
+  {
+    "description": "Maximum call stack size & refDepthMax not work",
+    "tests": [
+      {
+        "description": "should create items recursively",
+        "schema": {
+          "$ref": "#/definitions/A",
+          "definitions": {
+            "A": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "nodeA": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/A"
+                  }
+                },
+                "nodeB": {
+                  "$ref": "#/definitions/B"
+                }
+              }
+            },
+            "B": {
+              "type": "object",
+              "additionalProperties": false,
+              "properties": {
+                "nodeB": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/B"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "repeat": 50,
+        "valid": true
+      }
+    ]
+  }
+]
