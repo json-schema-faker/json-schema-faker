@@ -9,10 +9,12 @@ const buildResolveSchema = ({
   refDepthMax,
   refDepthMin,
 }) => {
+  const recursiveUtil = {};
+  const seenRefs = {};
+
   let depth = 0;
   let lastRef;
 
-  const recursiveUtil = {};
   recursiveUtil.resolveSchema = (sub, index, rootPath) => {
     // prevent null sub from default/example null values to throw
     if (sub === null || sub === undefined) {
@@ -36,9 +38,13 @@ const buildResolveSchema = ({
       const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
 
       // increasing depth only for repeated refs seems to be fixing #258
-      if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > maxDepth)) {
+      if (sub.$ref === '#' || seenRefs[sub.$ref] < 0 || (lastRef === sub.$ref && ++depth > maxDepth)) {
         delete sub.$ref;
         return sub;
+      }
+
+      if (typeof seenRefs[sub.$ref] === 'undefined') {
+        seenRefs[sub.$ref] = random.number(refDepthMin, refDepthMax) - 1;
       }
 
       lastRef = sub.$ref;
@@ -48,7 +54,7 @@ const buildResolveSchema = ({
       if (sub.$ref.indexOf('#/') === -1) {
         ref = refs[sub.$ref] || null;
       } else {
-        ref =  utils.getLocalRef(schema, sub.$ref) || null;
+        ref = utils.getLocalRef(schema, sub.$ref) || null;
       }
 
       if (typeof ref !== 'undefined') {
@@ -56,6 +62,7 @@ const buildResolveSchema = ({
           throw new Error(`Reference not found: ${sub.$ref}`);
         }
 
+        seenRefs[sub.$ref] -= 1;
         utils.merge(sub, ref || {});
       }
 
