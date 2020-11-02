@@ -3,6 +3,36 @@
     "description": "Empty required objects are not generated",
     "tests": [
       {
+        "description": "should generate empty objects for required props",
+        "schema": {
+          "id": "Profile",
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "object",
+              "properties": {
+                "foo": {
+                  "type": "object",
+                  "properties": {}
+                }
+              },
+              "required": [
+                "foo"
+              ]
+            }
+          },
+          "required": [
+            "firstName"
+          ]
+        },
+        "equal": {
+          "firstName": {
+            "foo": {}
+          }
+        },
+        "valid": true
+      },
+      {
         "description": "should generate non-empty objects if additionalProperties is given",
         "schema": {
           "additionalProperties": false,
