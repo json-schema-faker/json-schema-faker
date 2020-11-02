@@ -2,14 +2,14 @@ import optionAPI from '../api/option';
 import env from './constants';
 import random from './random';
 
-function getSubAttribute(obj, dotSeparatedKey) {
-  const keyElements = dotSeparatedKey.split('.');
+function getLocalRef(obj, path) {
+  const keyElements = path.replace('#/', '').split('/');
 
   while (keyElements.length) {
     const prop = keyElements.shift();
 
     if (!obj[prop]) {
-      break;
+      throw new Error(`Prop not found: ${prop} (${path})`);
     }
 
     obj = obj[prop];
@@ -423,8 +423,8 @@ function clean(obj, schema, isArray = false) {
 }
 
 export default {
-  getSubAttribute,
   hasProperties,
+  getLocalRef,
   omitProps,
   typecast,
   merge,

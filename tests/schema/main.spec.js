@@ -61,17 +61,11 @@ function seed() {
 
         // support for "exhaustive" testing, increase or set in .json spec
         // for detecting more bugs quickly by executing the same test N-times
-        const max = test.repeat || (process.CI ? 250 : 50);
+        const max = test.repeat || (process.CI ? 250 : 1);
 
         let nth = max;
 
         const tasks = [];
-
-        // count prescence of props...
-        const props = test.minProps ? test.minProps.reduce((prev, cur) => {
-          prev[String(cur)] = 0;
-          return prev;
-        }, {}) : null;
 
         if (test.throwsSometimes) {
           test.throwCount = 0;
@@ -79,17 +73,7 @@ function seed() {
 
         while (nth) {
           if (!test.skip) {
-            tasks.push(tryTest(nth, max, test, refs, schema, sample => {
-              if (props) {
-                const length = String(Object.keys(sample).length);
-
-                if (typeof props[length] === 'undefined') {
-                  throw new Error(`Unexpected length(${length}), given '${test.minProps.join(', ')}'`);
-                }
-
-                props[length] += 1;
-              }
-            }));
+            tasks.push(tryTest(max - nth + 1, max, test, refs, schema));
           }
 
           nth -= 1;
@@ -106,10 +90,6 @@ function seed() {
           console.log('---> Used seeds:', seeds.slice(-10).join(', ') || test.seed);
           throw e;
         }).then(() => {
-          if (props && Object.values(props).some(x => x === 0)) {
-            throw new Error(`minProps failed, got: ${JSON.stringify(props)}`);
-          }
-
           if (test.throwsSometimes && !(test.throwCount > 0)) {
             throw new Error('Expected some tests to throw');
           }

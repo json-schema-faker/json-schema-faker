@@ -19,6 +19,7 @@
           "pattern": "^A[CD]{1,6}B$",
           "minLength": 6
         },
+        "repeat": 10,
         "valid": "true",
         "throwsSometimes": "Given sample does not match schema"
       }

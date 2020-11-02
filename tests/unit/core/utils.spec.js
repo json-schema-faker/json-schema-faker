@@ -32,7 +32,7 @@ describe('Utils', () => {
     });
   });
 
-  describe('getSubAttribute function', () => {
+  describe('getLocalRef function', () => {
     const object = {
       outer: {
         inner: {
@@ -41,18 +41,12 @@ describe('Utils', () => {
       },
     };
 
-    it('should return a leaf if chain is long enough', () => {
-      expect(utils.getSubAttribute(object, 'outer.inner.key')).to.eql('value');
-      expect(utils.getSubAttribute(object, 'outer.inner.key.help.me')).to.eql('value');
+    it('should fail resolving missing refs', () => {
+      expect(() => utils.getLocalRef(object, '#/foo/bar')).to.throw('Prop not found');
     });
 
-    it('should return a subobject if the chain doesn\'t reach a leaf (is shorter)', () => {
-      expect(utils.getSubAttribute(object, 'outer.inner')).to.eql({ key: 'value' });
-    });
-
-    it('should return a subobject of the valid chain part (and ignore the invalid chain part)', () => {
-      expect(utils.getSubAttribute(object, 'outer.help.me')).to.eql({ inner: { key: 'value' } });
-      expect(utils.getSubAttribute(object, 'help.me')).to.eql(object);
+    it('should resolve local-references', () => {
+      expect(utils.getLocalRef(object, '#/outer/inner/key')).to.eql('value');
     });
   });
 
