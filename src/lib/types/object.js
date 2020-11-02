@@ -49,8 +49,10 @@ function objectType(value, path, resolve, traverseCallback) {
   const optionalsProbability = optionAPI('alwaysFakeOptionals') === true ? 1.0 : optionAPI('optionalsProbability');
   const fixedProbabilities = optionAPI('alwaysFakeOptionals') || optionAPI('fixedProbabilities') || false;
   const ignoreProperties = optionAPI('ignoreProperties') || [];
+  const reuseProps = optionAPI('reuseProperties');
+  const fillProps = optionAPI('fillProperties');
 
-  const min = Math.max(value.minProperties || 0, requiredProperties.length);
+  const min = Math.max(value.minProperties || 0, requiredProperties.length, additionalProperties ? random.number(fillProps ? 1 : 0, 3) : 0);
   const max = value.maxProperties || (allProperties.length + (allowsAdditional ? random.number(1, 5) : 0));
 
   let neededExtras = Math.max(0, allProperties.length - min);
@@ -157,9 +159,6 @@ function objectType(value, path, resolve, traverseCallback) {
       }
     }
   });
-
-  const fillProps = optionAPI('fillProperties');
-  const reuseProps = optionAPI('reuseProperties');
 
   // discard already ignored props if they're not required to be filled...
   let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
