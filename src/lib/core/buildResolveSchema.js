@@ -79,14 +79,14 @@ const buildResolveSchema = ({
       // this is the only case where all sub-schemas
       // must be resolved before any merge
       schemas.forEach(subSchema => {
-        const _sub = recursiveUtil.resolveSchema(subSchema, null, rootPath);
+        const _sub = resolveSchema(subSchema, null, rootPath);
 
         // call given thunks if present
         utils.merge(sub, typeof _sub.thunk === 'function'
           ? _sub.thunk(sub)
           : _sub);
         if (Array.isArray(sub.allOf)) {
-          recursiveUtil.resolveSchema(sub, index, rootPath);
+          resolveSchema(sub, index, rootPath);
         }
       });
     }
@@ -130,7 +130,7 @@ const buildResolveSchema = ({
 
     Object.keys(sub).forEach(prop => {
       if ((Array.isArray(sub[prop]) || typeof sub[prop] === 'object') && !utils.isKey(prop)) {
-        sub[prop] = recursiveUtil.resolveSchema(sub[prop], prop, rootPath.concat(prop));
+        sub[prop] = resolveSchema(sub[prop], prop, rootPath.concat(prop));
       }
     });
 
@@ -146,7 +146,7 @@ const buildResolveSchema = ({
     return container.wrap(sub);
   };
 
-  return recursiveUtil;
+  return resolveSchema;
 };
 
 export default buildResolveSchema;
