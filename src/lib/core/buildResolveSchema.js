@@ -36,9 +36,13 @@ const buildResolveSchema = ({
       const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
 
       // increasing depth only for repeated refs seems to be fixing #258
-      if (sub.$ref === '#' || (lastRef === sub.$ref && ++depth > maxDepth)) {
+      if (sub.$ref === '#' || seenRefs[sub.$ref] < 0 || (lastRef === sub.$ref && ++depth > maxDepth)) {
         delete sub.$ref;
         return sub;
+      }
+
+      if (typeof seenRefs[sub.$ref] === 'undefined') {
+        seenRefs[sub.$ref] = random.number(refDepthMin, refDepthMax) - 1;
       }
 
       lastRef = sub.$ref;
@@ -54,14 +58,6 @@ const buildResolveSchema = ({
       if (typeof ref !== 'undefined') {
         if (!ref && optionAPI('ignoreMissingRefs') !== true) {
           throw new Error(`Reference not found: ${sub.$ref}`);
-        }
-
-        // this allows multiple calls to same refs, but not too much!
-        seenRefs[sub.$ref] = seenRefs[sub.$ref] || (depth ? random.number(0, 1) : 1);
-
-        if (seenRefs[sub.$ref] < 0) {
-          delete sub.$ref;
-          return sub;
         }
 
         seenRefs[sub.$ref] -= 1;

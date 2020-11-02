@@ -94,6 +94,8 @@
       "set": {
         "optionalsProbability": 0.6
       },
+      "throwsSometimes": "Given sample does not match schema",
+      "repeat": 100,
       "valid": true
     }
   ]

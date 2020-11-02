@@ -28,10 +28,14 @@
               }
             },
             "type": "object",
-            "required": ["a"]
+            "required": [
+              "a"
+            ]
           }
         },
-        "required": ["collection"]
+        "required": [
+          "collection"
+        ]
       }
     ],
     "tests": [
@@ -49,7 +53,11 @@
                         {
                           "subA": [
                             {
-                              "subA": []
+                              "subA": [
+                                {
+                                  "subA": []
+                                }
+                              ]
                             }
                           ]
                         }
@@ -74,15 +82,7 @@
         "equal": {
           "collection": {
             "a": {
-              "subA": [
-                {
-                  "subA": [
-                    {
-                      "subA": []
-                    }
-                  ]
-                }
-              ]
+              "subA": []
             }
           }
         },

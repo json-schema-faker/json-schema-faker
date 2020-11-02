@@ -1,0 +1,302 @@
+[
+  {
+    "description": "Data is not getting generated for all the properties, few properties are missing",
+    "tests": [
+      {
+        "description": "should eventually generate most props without hanging out",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "definitions": {
+            "MaterialClass": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "Description": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "AssemblyType": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "AssemblyRelationship": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "LastUpdateDateTimeUtc": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "MaterialClassProperties": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/MaterialClassProperty"
+                  }
+                },
+                "ExternalReference": {
+                  "type": "string",
+                  "maxLength": 150
+                }
+              }
+            },
+            "MaterialClassProperty": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "Key": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "EntityId": {
+                  "type": "integer"
+                },
+                "Entity": {
+                  "$ref": "#/definitions/MaterialClass"
+                },
+                "Value": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "IsReadOnly": {
+                  "type": "boolean"
+                },
+                "IsMandatory": {
+                  "type": "boolean"
+                },
+                "Type": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ]
+                },
+                "Description": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "Unit": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "LastUpdateDateTimeUtc": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "MaterialDefinitionProperty": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "Key": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "EntityId": {
+                  "type": "integer"
+                },
+                "Entity": {
+                  "$ref": "#"
+                },
+                "Value": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "IsReadOnly": {
+                  "type": "boolean"
+                },
+                "IsMandatory": {
+                  "type": "boolean"
+                },
+                "Type": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ]
+                },
+                "Description": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "Unit": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "LastUpdateDateTimeUtc": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            },
+            "MaterialLot": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "Description": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "AssemblyType": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "AssemblyRelationship": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "StorageLocation": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "Quantity": {
+                  "type": "integer"
+                },
+                "QuantityUnitOfMeasure": {
+                  "type": "string",
+                  "maxLength": 50
+                },
+                "LastUpdateDateTimeUtc": {
+                  "type": "string",
+                  "format": "date-time"
+                },
+                "MaterialLotProperties": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/MaterialLotProperty"
+                  }
+                },
+                "ExternalReference": {
+                  "type": "string",
+                  "maxLength": 150
+                }
+              }
+            },
+            "MaterialLotProperty": {
+              "type": "object",
+              "properties": {
+                "Name": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "Key": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "EntityId": {
+                  "type": "integer"
+                },
+                "Entity": {
+                  "$ref": "#/definitions/MaterialLot"
+                },
+                "Value": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "IsReadOnly": {
+                  "type": "boolean"
+                },
+                "IsMandatory": {
+                  "type": "boolean"
+                },
+                "Type": {
+                  "type": "integer",
+                  "enum": [
+                    0,
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                  ]
+                },
+                "Description": {
+                  "type": "string",
+                  "maxLength": 500
+                },
+                "Unit": {
+                  "type": "string",
+                  "maxLength": 150
+                },
+                "LastUpdateDateTimeUtc": {
+                  "type": "string",
+                  "format": "date-time"
+                }
+              }
+            }
+          },
+          "type": "object",
+          "properties": {
+            "Name": {
+              "type": "string",
+              "maxLength": 150
+            },
+            "Description": {
+              "type": "string",
+              "maxLength": 500
+            },
+            "AssemblyType": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "AssemblyRelationship": {
+              "type": "string",
+              "maxLength": 50
+            },
+            "LastUpdateDateTimeUtc": {
+              "type": "string",
+              "format": "date-time"
+            },
+            "MaterialDefinitionProperties": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MaterialDefinitionProperty"
+              }
+            },
+            "MaterialLots": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MaterialLot"
+              }
+            },
+            "MaterialClasses": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/MaterialClass"
+              }
+            },
+            "ExternalReference": {
+              "type": "string",
+              "maxLength": 150
+            },
+            "ExternalReferenceSource": {
+              "type": "string",
+              "maxLength": 150
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]
