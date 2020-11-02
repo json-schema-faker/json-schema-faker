@@ -57,6 +57,7 @@ const noColor = process.argv.indexOf('--no-color') !== -1;
 
 // FIXME: enable flags...
 jsf.option({
+  resolveJsonPath: argv.flags.resolveJsonPath,
   alwaysFakeOptionals: argv.flags.alwaysFakeOptionals,
 });
 
