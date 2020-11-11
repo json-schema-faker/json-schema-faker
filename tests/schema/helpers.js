@@ -113,10 +113,8 @@ export function tryTest(nth, max, test, refs, schema) {
               throw new Error(`Property '${prop}' is not present`);
             }
           });
-        } else {
-          if (typeof pick(sample, prop) === 'undefined') {
-            throw new Error(`Property '${prop}' is not present`);
-          }
+        } else if (typeof pick(sample, prop) === 'undefined') {
+          throw new Error(`Property '${prop}' is not present`);
         }
       });
     }
