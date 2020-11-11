@@ -9,6 +9,8 @@ import Container from '../../../src/lib/class/Container';
 chai.use(sinonChai);
 const { expect } = chai;
 
+/* global describe, context, before, it */
+
 describe('lib/core/buildResolveSchema->resolveSchema', () => {
   const { resolveSchema: basicResolveSchema } = buildResolveSchema({
     container: new Container(),

@@ -13,6 +13,8 @@ function seed() {
   return value;
 }
 
+/* global describe, it */
+
 (only.length ? only : all).forEach(suite => {
   const normalizedFilename = path.normalize(suite.file);
   const relativeFilename = normalizedFilename.replace(`${process.cwd()}${path.sep}`, '');
