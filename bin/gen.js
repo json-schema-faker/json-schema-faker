@@ -7,7 +7,7 @@ const jsf = require('../dist/main.cjs.js');
 const sample = process.argv.slice(2)[0];
 
 // FIXME: validate types on given input....
-const argv = require('wargs')(process.argv.slice(2), {
+const argv = require('../dist/wargs.min.js')(process.argv.slice(2), {
   boolean: 'DXMTFOxedrJUSE',
   alias: {
     c: 'currentWorkingDirectory',
