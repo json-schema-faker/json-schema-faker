@@ -8,9 +8,10 @@ html
     link(rel='stylesheet' href='css/app.css')
     link(rel='shortcut icon' type='image/icon' href='img/favicon.ico')
   body
+    import(from='sprites.svg')
     .loading-overlay
       .cnt
-        h1.float.jsf-logo: a.dib JSON Schema Faker
+        h1.float: a.dib: icon(src='#logo' height="60")
         .tac Loading...
 
     .Toolbar.f
@@ -19,7 +20,7 @@ html
       .md-flx.flx-c
         .p.nosl.h-sm
           //- on small screens hide large logo... but enable a small one above... i.e. before desc
-          h1.jsf-logo: a.dib(href='/') JSON Schema Faker
+          h1: a.dib(href='/'): icon(src='#logo' height="60")
         div.mt
           .pl.pr
             .mb
@@ -40,15 +41,9 @@ html
     script(src='//ace.c9.io/build/src/ace.js')
     script(src='//unpkg.com/chance')
 
-    if env.NODE_ENV === 'production'
-      script(src='//unpkg.com/json-schema-faker')
-    else
-      script(src='vendor.js')
-      script(src='main.umd.js')
+    import(from='vendor.js main.iife.js js/app.js')
 
-    script(src='js/app.js')
-
-    if env.NODE_ENV === 'production'
+    if NODE_ENV === 'production'
       script.
         (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
         (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),

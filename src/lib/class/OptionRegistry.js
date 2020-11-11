@@ -7,12 +7,12 @@ import defaults from '../api/defaults';
 class OptionRegistry extends Registry {
   constructor() {
     super();
-    this.data = Object.assign({}, defaults);
+    this.data = { ...defaults };
     this._defaults = defaults;
   }
 
   get defaults() {
-    return Object.assign({}, this._defaults);
+    return { ...this._defaults };
   }
 }
 

@@ -129,7 +129,7 @@ function typecast(type, schema, callback) {
 
       let prev;
       let noChangeCount = 0;
-      
+
       while (value.length < min) {
         prev = value;
 

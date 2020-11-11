@@ -38,8 +38,7 @@ export function getTests(srcDir) {
 
       let _only = false;
 
-      suite = Object.assign({ file }, x);
-
+      suite = { file, ...x };
       suite.tests = suite.tests.sort((a, b) => {
         if (a.only) return -1;
         if (b.only) return 1;

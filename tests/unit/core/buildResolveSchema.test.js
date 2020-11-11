@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import chai from 'chai';
 import sinonChai from 'sinon-chai';
 import sinon from 'sinon';
@@ -6,6 +8,8 @@ import Container from '../../../src/lib/class/Container';
 
 chai.use(sinonChai);
 const { expect } = chai;
+
+/* global describe, context, before, it */
 
 describe('lib/core/buildResolveSchema->resolveSchema', () => {
   const { resolveSchema: basicResolveSchema } = buildResolveSchema({

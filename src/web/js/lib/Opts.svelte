@@ -89,7 +89,8 @@
 
   <hr />
 
-  <form on:submit|preventDefault>
+  <h4>Formator</h4>
+  <!-- <form on:submit|preventDefault>
     <ul class="lr">
       {#each opts as option}
         <li class="nosl flx mb">
@@ -110,7 +111,7 @@
     </ul>
     <button class="bu" on:click={reset} disabled={$options === null}>Reset to defaults</button>
     <button class="bu" on:click={back}>Apply</button>
-  </form>
+  </form> -->
 
   <hr />
 

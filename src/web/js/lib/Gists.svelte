@@ -29,13 +29,13 @@
       {#each filtered as item}
         <li class="mb ni">
           <div class="flx flx-c">
-            <a class="tdn flx-a" target="_blank" href="{item.html_url}">{item.description || item.id}</a>
-            <button class="bu ml nosl" on:click={() => navigateTo(`/#gist/${item.id}`)}>Load gist</button>
+            <a class="tdn tr flx-a" target="_blank" href="{item.html_url}">{item.description || item.id}</a>
+            <button class="bu min tr nosl" on:click={() => navigateTo(`/#gist/${item.id}`)}>Load gist</button>
           </div>
-          <ul class="ml lr">
+          <ul class="lr">
             {#each Object.entries(item.files) as [file, info]}
               <li class="ni">
-                <a class="bl" title="Type: {info.type}" target="_blank" href="{info.raw_url}">{file} &mdash; {(info.size / 1024).toFixed(2)}KB</a>
+                <a class="arr bl" title="Type: {info.type}" target="_blank" href="{info.raw_url}">{file} &mdash; {(info.size / 1024).toFixed(2)}KB</a>
               </li>
             {/each}
           </ul>

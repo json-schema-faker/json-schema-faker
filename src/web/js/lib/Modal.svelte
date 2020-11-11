@@ -1,6 +1,6 @@
 <script>
   import { navigateTo } from 'yrv';
-  import { In } from 'svql';
+  import { Fence } from 'smoo';
 
   function back() {
     if (window.history.length > 1) {
@@ -11,6 +11,8 @@
     navigateTo('/');
   }
 </script>
-<In autofocus visible modal on:cancel={back}>
-  <slot {back} />
-</In>
+<Fence noform autofocus visible modal on:cancel={back}>
+  <div class="formator p" slot="main">
+    <slot {back} />
+  </div>
+</Fence>

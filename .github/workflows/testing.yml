@@ -1,17 +1,19 @@
-name: ci
+name: build
 
 on:
   push:
     branches:
-    - master
+    - develop
   pull_request:
     branches:
     - master
+    - develop
 
 jobs:
-  test:
+  build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - run: |
-          make test ci CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}
+      - uses: actions/checkout@v1
+      - uses: tacoss/nodejs@master
+        with:
+          args: make ci

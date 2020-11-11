@@ -1,5 +1,4 @@
-import $RefParser from 'json-schema-ref-parser';
-
+import { $RefParser } from './vendor';
 import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';

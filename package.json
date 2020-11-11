@@ -8,11 +8,11 @@
   },
   "main": "dist/main.cjs.js",
   "module": "dist/main.esm.js",
-  "browser": "dist/main.umd.js",
+  "browser": "dist/main.iife.js",
   "unpkg": "dist/bundle.js",
   "scripts": {
     "dev": "npm run test:schema -- -w",
-    "test": "npm run test:unit -- && npm run test:schema",
+    "test": "npm run test:schema && npm run test:ci",
     "test:ci": "npm run coverage:unit && npm run report -- -r lcov",
     "test:all": "npm run coverage:all && npm run report -- -r html",
     "test:run": "cross-env NODE_ENV=test _mocha --exit --colors --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
@@ -22,17 +22,18 @@
     "coverage:all": "npm run coverage -- npm run test:all",
     "coverage:unit": "npm run coverage -- npm run test:unit",
     "report": "nyc report",
-    "lint": "eslint src tests",
+    "lint": "eslint --ext js,svelte src tests",
     "_pretest": "npm run lint",
     "_prepublish": "npm run build",
     "_graphviz": "madge src --dot > structure.gv",
-    "watch": "tarima watch",
-    "build": "tarima -mfqe production",
-    "pretest": "npm run lint && npm run build",
+    "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less -Njsonpath-plus -Njson-schema-ref-parser",
+    "watch": "npm run mortero -- -w",
+    "build": "npm run mortero -- -f _NODE_ENV=production",
+    "pretest": "npm run lint && npm run build -- -ymain",
     "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js",
     "copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
-    "postbuild": "npm run copy:vendor && npm run copy:wargs && concat -o dist/bundle.js dist/vendor.js dist/main.umd.js",
-    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
+    "postbuild": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
+    "prebuild": "npm run copy:vendor && npm run copy:wargs"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
@@ -51,49 +52,16 @@
     "fake",
     "mocks"
   ],
-  "tarima": {
-    "from": "src",
-    "output": ".",
-    "public": "build",
-    "serve": [
-      "dist",
-      "public"
-    ],
+  "mortero": {
     "rename": [
-      "**/web/**:build/{fullpath/2}",
-      "**/main*js:dist/{fullpath/1}"
+      "**/src/**:{filepath/1}",
+      "**/web/**:{filepath/1}"
     ],
     "bundle": [
       "**/main*.js",
       "**/app.js"
     ],
-    "filter": [
-      "!_*",
-      "!**/_*",
-      "!**/_*/**",
-      "!**/lib/**"
-    ],
-    "bundleOptions": {
-      "bundleCache": true,
-      "entryCache": true,
-      "extensions": {
-        "js": "es6",
-        "css": "less"
-      },
-      "rollup": {
-        "external": [
-          "jsonpath-plus",
-          "json-schema-ref-parser"
-        ],
-        "plugins": [
-          "rollup-plugin-svelte",
-          "rollup-plugin-commonjs",
-          "rollup-plugin-node-resolve"
-        ]
-      },
-      "buble": {
-        "objectAssign": "Object.assign"
-      },
+    "options": {
       "less": {
         "plugins": [
           "less-plugin-autoprefix"
@@ -102,60 +70,46 @@
     }
   },
   "files": [
-    "dist/*.*"
+    "dist/*.js"
   ],
   "devDependencies": {
-    "acorn": ">=6.4.1",
-    "ajv": "^6.5.3",
-    "buble": "^0.19.8",
+    "ajv": "^8.6.0",
     "chai": "^4.1.2",
     "chance": "^1.0.9",
     "codecov": "^3.8.1",
     "concat": "^1.0.3",
-    "cross-env": "7.0.2",
-    "csso": "^4.0.1",
-    "eslint": "^6.0.1",
+    "eslint": "^7.27.0",
     "eslint-config-airbnb-base": "^14.0.0",
-    "eslint-plugin-import": "^2.18.0",
-    "eslint-plugin-mocha": "6.3.0",
-    "eslint-plugin-svelte3": "^2.7.3",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-svelte3": "^3.2.0",
+    "eslint-utils": ">=1.4.1",
     "esm": ">=3.1.0",
-    "faker": "^5.4.0",
-    "fs-extra": "^8.0.1",
+    "faker": "^5.5.3",
+    "fs-extra": "^10.0.0",
     "glob": "^7.1.2",
-    "html-minifier": "^4.0.0",
+    "glob-parent": ">=5.1.2",
     "is-my-json-valid": "^2.19.0",
-    "kind-of": ">=6.0.3",
-    "less": "^3.10.3",
+    "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "minimist": ">=1.2.2",
-    "mocha": "^7.0.0",
+    "mocha": "^9.0.1",
     "mockjs": "^1.1.0",
+    "mortero": "^0.0.37",
     "nyc": "^15.0.0",
-    "pug": "^3.0.1",
-    "rollup-plugin-commonjs": "^10.0.0",
-    "rollup-plugin-node-resolve": "^5.0.0",
-    "rollup-plugin-svelte": "^5.1.1",
+    "pug": "^3.0.2",
     "seedrandom": "^3.0.1",
     "semver": "^7.1.1",
-    "serialize-javascript": ">=2.1.1",
-    "sinon": "9.0.2",
-    "sinon-chai": "3.5.0",
-    "svelte": "^3.19.1",
-    "svql": "^0.0.27",
-    "tarima": "^4.9.7",
-    "terser": "^4.3.9",
+    "sinon": "^11.1.1",
+    "sinon-chai": "^3.7.0",
+    "smoo": "^0.0.14",
+    "svelte": "^3.38.2",
     "tv4": "^1.3.0",
-    "vue-template-compiler": "^2.6.10",
     "wargs": "^0.9.2",
-    "yargs-parser": ">=13.1.2",
-    "yrv": "^0.0.24",
-    "z-schema": "^4.1.0"
+    "yrv": "^0.0.47",
+    "z-schema": "^5.0.1"
   },
   "dependencies": {
     "json-schema-ref-parser": "^6.1.0",
-    "jsonpath-plus": "^3.0.0",
-    "randexp": "^0.5.3",
-    "yaml": "^1.10.2"
+    "jsonpath-plus": "^5.1.0",
+    "randexp": "^0.5.3"
   }
 }

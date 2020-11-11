@@ -1,5 +1,4 @@
-import { JSONPath } from 'jsonpath-plus';
-
+import { JSONPath } from '../vendor';
 import optionAPI from '../api/option';
 import traverse from './traverse';
 import random from './random';

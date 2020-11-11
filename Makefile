@@ -2,7 +2,7 @@
 PWD=$(shell pwd)
 
 # defaults
-src := build
+src := dist
 target := gh-pages
 message := Release: $(shell date)
 
@@ -30,12 +30,14 @@ endef
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
-ci: deps
-	@npm run test:ci
+ci: deps clean
+	@npm test
+ifneq ($(CI),)
 	@npm run codecov
+endif
 
 lib: deps ## Build library output only
-	@npm run build -- -y main
+	@npm run build -- -ymain
 
 dev: deps ## Watch and start development server
 	@npm run watch
@@ -54,8 +56,8 @@ all: deps ## Build artifact for production envs
 	@npm run build
 
 clean: ## Remove cache and generated artifacts
-	@$(call iif,rm -r $(src) dist,Built artifacts were deleted,Artifacts already deleted)
-	@$(call iif,unlink .tarima,Cache file was deleted,Cache file already deleted)
+	@$(call iif,rm -r $(src),Built artifacts were deleted,Artifacts already deleted)
+	@$(call iif,unlink cache.json,Cache file was deleted,Cache file already deleted)
 
 deploy: ## Push built artifacts to github!
 	@cd $(src) && git add . && git commit -m "$(message)"
@@ -63,10 +65,15 @@ deploy: ## Push built artifacts to github!
 
 deps: ## Check for installed dependencies
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
-	@(((ls dist | grep main.umd.js) > /dev/null 2>&1) || npm run build) || true
 
 prune: clean ## Remove all from node_modules/*
 	@printf "\r* Removing all dependencies... "
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
 	@echo "OK"
+
+release: deps
+ifneq ($(CI),)
+	@echo '//registry.npmjs.org/:_authToken=$${NODE_AUTH_TOKEN}' > .npmrc
+	@npm version patch
+endif

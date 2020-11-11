@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-const jsf = require('../dist/main.cjs.js');
+const jsf = require('../dist/main.cjs.js').default;
 
 // FIXME: load faker/chance on startup?
 
