@@ -63,13 +63,13 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (optionAPI('minItems')) {
     // fix boundaries
-    minItems = !maxItems
+    minItems = !!maxItems
       ? optionAPI('minItems')
       : Math.min(optionAPI('minItems'), maxItems);
   }
 
   if (optionAPI('maxItems')) {
-    maxItems = !minItems
+    maxItems = !!minItems
       ? optionAPI('maxItems')
       : Math.min(optionAPI('maxItems'), minItems);
 
