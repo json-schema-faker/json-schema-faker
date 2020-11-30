@@ -61,8 +61,8 @@ function arrayType(value, path, resolve, traverseCallback) {
   let minItems = value.minItems;
   let maxItems = value.maxItems;
 
-  const defaultMinItems = optionAPI('minItems')
-  const defaultMaxItems = optionAPI('maxItems')
+  const defaultMinItems = optionAPI('minItems');
+  const defaultMaxItems = optionAPI('maxItems');
 
   if (defaultMinItems) {
     // fix boundaries
