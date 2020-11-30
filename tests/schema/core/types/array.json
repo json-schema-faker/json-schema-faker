@@ -88,10 +88,10 @@
           "type": "array",
           "items": {
             "type": "integer",
-            "default": 1,
-            "minItems": 0,
-            "maxItems": 5
-          }
+            "default": 1
+          },
+          "minItems": 0,
+          "maxItems": 5
         },
         "valid": true,
         "set": {
