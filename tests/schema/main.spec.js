@@ -61,7 +61,7 @@ function seed() {
 
         // support for "exhaustive" testing, increase or set in .json spec
         // for detecting more bugs quickly by executing the same test N-times
-        const max = test.repeat || (process.CI ? 250 : 1);
+        const max = process.CI ? 250 : (test.repeat || 1);
 
         let nth = max;
 
