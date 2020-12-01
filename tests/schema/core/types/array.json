@@ -83,6 +83,25 @@
         "equal": [1, 1, 1, 1, 1, 1, 1]
       },
       {
+        "description": "should handle minItems and maxItems passed as arguments to JSF, and minItems is 0",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "default": 1
+          },
+          "minItems": 0,
+          "maxItems": 5
+        },
+        "valid": true,
+        "set": {
+          "minItems": 7,
+          "maxItems": 7,
+          "useDefaultValue": true
+        },
+        "lessThan": 7
+      },      
+      {
         "description": "should handle uniqueItems",
         "schema": {
           "type": "array",

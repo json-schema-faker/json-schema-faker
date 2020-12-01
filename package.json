@@ -4,7 +4,7 @@
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "bin": {
-    "jsf": "./bin/gen.js"
+    "jsf": "bin/gen.js"
   },
   "main": "dist/main.cjs.js",
   "module": "dist/main.esm.js",
