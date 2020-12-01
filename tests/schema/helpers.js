@@ -131,6 +131,10 @@ export function tryTest(nth, max, test, refs, schema) {
         expect(sample.length).to.be.below(test.lessThan);
       }
 
+      if (test.atLeast) {
+        expect(sample.length).to.be.above(test.atLeast - 1);
+      }
+
       if (test.hasNot) {
         expect(JSON.stringify(sample)).not.to.contain(test.hasNot);
       }

@@ -66,15 +66,15 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (defaultMinItems) {
     // fix boundaries
-    minItems = typeof maxItems === 'undefined'
+    minItems = typeof minItems === 'undefined'
       ? defaultMinItems
-      : Math.min(defaultMinItems, maxItems);
+      : Math.min(defaultMinItems, minItems);
   }
 
   if (defaultMaxItems) {
-    maxItems = typeof minItems === 'undefined'
+    maxItems = typeof maxItems === 'undefined'
       ? defaultMaxItems
-      : Math.min(defaultMaxItems, minItems);
+      : Math.min(defaultMaxItems, maxItems);
 
     // Don't allow user to set max items above our maximum
     if (maxItems && maxItems > defaultMaxItems) {
