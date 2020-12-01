@@ -15,7 +15,7 @@
     "test": "npm run test:unit -- && npm run test:schema",
     "test:ci": "npm run coverage:unit && npm run report -- -r lcov",
     "test:all": "npm run coverage:all && npm run report -- -r html",
-    "test:run": "cross-env NODE_ENV=test _mocha --exit --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
+    "test:run": "cross-env NODE_ENV=test _mocha --exit --colors --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
     "test:unit": "npm run test:run tests/unit --",
     "test:schema": "npm run test:run tests/schema --",
     "coverage": "nyc -x '**/tests/**' -x '**/*.spec.js'",
