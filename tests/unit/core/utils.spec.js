@@ -42,7 +42,7 @@ describe('Utils', () => {
     };
 
     it('should fail resolving missing refs', () => {
-      expect(() => utils.getLocalRef(object, '#/foo/bar')).to.throw('Prop not found');
+      expect(() => utils.getLocalRef(object, '#/foo/bar')).to.throw("Prop 'foo' not found in [outer] (#/foo/bar)");
     });
 
     it('should resolve local-references', () => {
