@@ -5,195 +5,74 @@
       {
         "description": "should resolve the schema (without $refs)",
         "timeout": 30000,
-        "online": true,
         "schema": {
-          "$schema": "http://redfish.dmtf.org/schemas/v1/redfish-schema.v1_2_0.json",
-          "title": "#AccountService.v1_2_1.AccountService",
-          "$ref": "#/definitions/AccountService",
+          "type": "object",
+          "$schema": "http://redfish.dmtf.org/schemas/v1/redfish-schema.v1_2_0",
+          "title": "Redfish Schema Extension",
+          "description": "The properties defined in this schema shall adhere to the requirements of the Redfish Specification and the semantics of the descriptions in this file.",
           "definitions": {
-            "AccountService": {
+            "readonly": {
+              "type": "boolean",
+              "description": "This property shall designate a property to be readonly when set to true."
+            },
+            "requiredOnCreate": {
+              "type": "array",
+              "items": {
+                "type": "boolean"
+              },
+              "description": "This property is required to be specified in the body of a POST request to create the resource."
+            },
+            "longDescription": {
+              "type": "string",
+              "description": "This attribute shall contain normative language relating to the Redfish Specification and documentation."
+            },
+            "copyright": {
+              "type": "string",
+              "description": "This attribute shall contain the copyright notice for the schema."
+            },
+            "deprecated": {
+              "type": "string",
+              "description": "The term shall be applied to a property in order to specify that the property is deprecated.  The value of the string should explain the deprecation, including new property or properties to be used. The property can be supported in new and existing implementations, but usage in new implementations is discouraged.  Deprecated properties are likely to be removed in a future major version of the schema."
+            },
+            "enumDescriptions": {
               "type": "object",
-              "patternProperties": {
-                "^([a-zA-Z_][a-zA-Z0-9_]*)?@(odata|Redfish|Message|Privileges)\\.[a-zA-Z_][a-zA-Z0-9_.]+$": {
-                  "type": [
-                    "array",
-                    "boolean",
-                    "number",
-                    "null",
-                    "object",
-                    "string"
-                  ],
-                  "description": "This property shall specify a valid odata or Redfish property."
-                }
-              },
-              "additionalProperties": false,
-              "properties": {
-                "@odata.context": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/odata.4.0.0.json#/definitions/context"
-                },
-                "@odata.id": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/odata.4.0.0.json#/definitions/id"
-                },
-                "@odata.type": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/odata.4.0.0.json#/definitions/type"
-                },
-                "Oem": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/Resource.json#/definitions/Oem",
-                  "description": "This is the manufacturer/provider specific extension moniker used to divide the Oem object into sections.",
-                  "longDescription": "The value of this string shall be of the format for the reserved word *Oem*."
-                },
-                "Id": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/Resource.json#/definitions/Id",
-                  "readonly": true
-                },
-                "Description": {
-                  "anyOf": [
-                    {
-                      "$ref": "http://redfish.dmtf.org/schemas/v1/Resource.json#/definitions/Description"
-                    },
-                    {
-                      "type": "null"
-                    }
-                  ],
-                  "readonly": true
-                },
-                "Name": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/Resource.json#/definitions/Name",
-                  "readonly": true
-                },
-                "Status": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/Resource.json#/definitions/Status"
-                },
-                "ServiceEnabled": {
-                  "type": [
-                    "boolean",
-                    "null"
-                  ],
-                  "readonly": false,
-                  "description": "This indicates whether this service is enabled.  If this is set to false, the AccountService is disabled.  This means no users can be created, deleted or modified.  Any service attempting to access the Account Service, like the Session Service, will fail accessing.  Thus new sessions cannot be started with the service disabled (though established sessions may still continue operating).  Note: this does not affect Basic AUTH connections.",
-                  "longDescription": "The value of this property shall be a boolean indicating whether this service is enabled.  If this is set to false, the AccountService is disabled.  This means no users can be created, deleted or modified.  Any service attempting to access the Account Service, like the Session Service, will fail accessing.  Thus new sessions cannot be started with the service disabled (though established sessions may still continue operating).  Note: this does not affect Basic AUTH connections."
-                },
-                "AuthFailureLoggingThreshold": {
-                  "type": "number",
-                  "minimum": 0,
-                  "readonly": false,
-                  "description": "This is the number of authorization failures that need to occur before the failure attempt is logged to the manager log.",
-                  "longDescription": "This property shall reference the threshold for when an authorization failure is logged.  This represents a modulo function value, thus the failure shall be logged every nth occurrence where n represents the value of this property."
-                },
-                "MinPasswordLength": {
-                  "type": "number",
-                  "minimum": 0,
-                  "readonly": true,
-                  "description": "This is the minimum password length for this service.",
-                  "longDescription": "This property shall reference the minimum password length that the implementation will allow a password to be set to."
-                },
-                "MaxPasswordLength": {
-                  "type": "number",
-                  "minimum": 0,
-                  "readonly": true,
-                  "description": "This is the maximum password length for this service.",
-                  "longDescription": "This property shall reference the maximum password length that the implementation will allow a password to be set to."
-                },
-                "AccountLockoutThreshold": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "minimum": 0,
-                  "readonly": false,
-                  "description": "The number of failed login attempts before a user account is locked for a specified duration (0=never locked).",
-                  "longDescription": "This property shall reference the threshold of failed login attempts at which point the user's account is locked.  If set to 0, no lockout shall ever occur."
-                },
-                "AccountLockoutDuration": {
-                  "type": [
-                    "number",
-                    "null"
-                  ],
-                  "minimum": 0,
-                  "units": "s",
-                  "readonly": false,
-                  "description": "The time in seconds an account is locked after the account lockout threshold is met. Must be >= AccountLockoutResetAfter. If set to 0, no lockout will occur.",
-                  "longDescription": "This property shall reference the period of time in seconds that an account is locked after the number of failed login attempts reaches the threshold referenced by AccountLockoutThreshold, within the window of time referenced by AccountLockoutCounterResetAfter.  The value shall be greater than or equal to the value of AccountLockoutResetAfter.  If set to 0, no lockout shall occur."
-                },
-                "AccountLockoutCounterResetAfter": {
-                  "type": "number",
-                  "minimum": 0,
-                  "units": "s",
-                  "readonly": false,
-                  "description": "The interval of time in seconds since the last failed login attempt at which point the lockout threshold counter for the account is reset to zero. Must be less than or equal to AccountLockoutDuration.",
-                  "longDescription": "This property shall reference the threshold of time in seconds from the last failed login attempt at which point the AccountLockoutThreshold counter (that counts number of failed login attempts) is reset back to zero (at which point AccountLockoutThreshold failures would be required before the account is locked).  This value shall be less than or equal to AccountLockoutDuration. The threshold counter also resets to zero after each successful login."
-                },
-                "Accounts": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/ManagerAccountCollection.json#/definitions/ManagerAccountCollection",
-                  "readonly": true,
-                  "description": "Link to a collection of Manager Accounts.",
-                  "longDescription": "This property shall contain the link to a collection of type ManagerAccountCollection."
-                },
-                "Roles": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/RoleCollection.json#/definitions/RoleCollection",
-                  "readonly": true,
-                  "description": "Link to a collection of Roles.",
-                  "longDescription": "This property shall contain the link to a collection of type RoleCollection."
-                },
-                "PrivilegeMap": {
-                  "$ref": "http://redfish.dmtf.org/schemas/v1/PrivilegeRegistry.json#/definitions/PrivilegeRegistry",
-                  "readonly": true,
-                  "description": "A reference to the Privilege mapping defining the privileges needed to perform a requested operation on a URI associated with this service.",
-                  "longDescription": "The value of this property shall be a link to a resource of type PrivilegeMappoing that defines the privileges a user context needs in order to perform a requested operation on a URI associated with this service."
-                },
-                "Actions": {
-                  "type": "object",
-                  "patternProperties": {
-                    "^([a-zA-Z_][a-zA-Z0-9_]*)?@(odata|Redfish|Message|Privileges)\\.[a-zA-Z_][a-zA-Z0-9_.]+$": {
-                      "type": [
-                        "array",
-                        "boolean",
-                        "number",
-                        "null",
-                        "object",
-                        "string"
-                      ],
-                      "description": "This property shall specify a valid odata or Redfish property."
-                    }
-                  },
-                  "additionalProperties": false,
-                  "properties": {
-                    "Oem": {
-                      "type": "object",
-                      "patternProperties": {
-                        "^([a-zA-Z_][a-zA-Z0-9_]*)?@(odata|Redfish|Message|Privileges)\\.[a-zA-Z_][a-zA-Z0-9_.]+$": {
-                          "type": [
-                            "array",
-                            "boolean",
-                            "number",
-                            "null",
-                            "object",
-                            "string"
-                          ],
-                          "description": "This property shall specify a valid odata or Redfish property."
-                        }
-                      },
-                      "additionalProperties": true,
-                      "properties": {},
-                      "description": "The available OEM specific actions for this resource.",
-                      "longDescription": "This type shall contain any additional OEM actions for this resource."
-                    }
-                  },
-                  "description": "The available actions for this resource.",
-                  "longDescription": "The Actions property shall contain the available actions for this resource."
-                }
-              },
-              "required": [
-                "Id",
-                "Name"
-              ],
-              "description": "Account Service contains properties common to all user accounts, such as password requirements, and control features such as account lockout.  It also contains links to the collections of Manager Accounts and Roles.",
-              "longDescription": "This resource shall be used to represent a management account service for a Redfish implementation."
+              "description": "This attribute shall contain informative language related to the enumeration values of the property."
+            },
+            "enumLongDescriptions": {
+              "type": "object",
+              "description": "This attribute shall contain normative language relating to the enumeration values of the property."
+            },
+            "enumDeprecated": {
+              "type": "object",
+              "description": "The term shall be applied to a value in order to specify that the value is deprecated.  The value of the string should explain the deprecation, including new value to be used.  The value can be supported in new and existing implementations, but usage in new implementations is discouraged.  Deprecated values are likely to be removed in a future major version of the schema."
+            },
+            "units": {
+              "type": "string",
+              "description": "This attribute shall contain the units of measure used by the value of the property."
             }
           },
-          "copyright": "Copyright 2014-2017 Distributed Management Task Force, Inc. (DMTF). For the full DMTF copyright policy, see http://www.dmtf.org/about/policies/copyright"
+          "properties": {
+            "readonly": {
+              "$ref": "#/definitions/readonly"
+            },
+            "longDescription": {
+              "$ref": "#/definitions/longDescription"
+            },
+            "copyright": {
+              "$ref": "#/definitions/copyright"
+            },
+            "enumDescriptions": {
+              "$ref": "#/definitions/enumDescriptions"
+            },
+            "enumLongDescriptions": {
+              "$ref": "#/definitions/enumLongDescriptions"
+            },
+            "units": {
+              "$ref": "#/definitions/units"
+            }
+          }
         },
-        "hasProps": ["Id", "Name"]
+        "valid": true
       }
     ]
   }
