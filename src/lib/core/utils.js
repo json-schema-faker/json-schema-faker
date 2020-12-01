@@ -3,13 +3,13 @@ import env from './constants';
 import random from './random';
 
 function getLocalRef(obj, path) {
-  const keyElements = path.replace('#/', '').split('/');
+  const keyElements = path.replace(/^.*#\//, '').split('/');
 
   while (keyElements.length) {
     const prop = keyElements.shift();
 
     if (!obj[prop]) {
-      throw new Error(`Prop not found: ${prop} (${path})`);
+      throw new Error(`Prop '${prop}' not found in [${Object.keys(obj).join(', ')}] (${path})`);
     }
 
     obj = obj[prop];
