@@ -127,7 +127,7 @@ jsf.locate('faker');
 - `reuseProperties` &mdash; If enabled, it will try to generate missing properties from existing ones. Only when `fillProperties` is enabled too  (default: `false`)
 - `fillProperties` &mdash; If enabled, it will try to generate missing properties to fulfill the schema definition (default: `true`)
 - `random` &mdash; Setup a custom _randonmess_ generator, useful for getting deterministic results (default: `Math.random`)
-- `replaceEmptyByRandomValue` &mdash; Remplace default empty value by a random value (default: `false`)
+- `replaceEmptyByRandomValue` &mdash; Replace default empty value by a random value (default: `false`)
 
 ## Building
 
