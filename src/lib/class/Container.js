@@ -134,7 +134,7 @@ class Container {
           configurable: false,
           enumerable: false,
           writable: false,
-          value: rootSchema => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema), // eslint-disable-line
+          value: (rootSchema, key) => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema, key.slice()), // eslint-disable-line
         });
         break;
       }
