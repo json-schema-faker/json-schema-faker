@@ -1,10 +1,11 @@
+import constants from '../core/constants';
 import random from '../core/random';
 import words from '../generators/words';
 import utils from '../core/utils';
 import optionAPI from '../api/option';
 
 // fallback generator
-const anyType = { type: ['string', 'number', 'integer', 'boolean'] };
+const anyType = { type: constants.ALLOWED_TYPES };
 
 // TODO provide types
 function objectType(value, path, resolve, traverseCallback) {
