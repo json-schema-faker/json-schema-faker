@@ -1,0 +1,59 @@
+[
+  {
+    "description": "unexpected `allOf` behavior with pointer and minProperties",
+    "schemas": [
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "countries": { "$ref": "#/definitions/countries" },
+          "countries_priority": {
+            "allOf": [
+              { "$ref": "#/definitions/countries" },
+              { "maxProperties": 3 }
+            ]
+          }
+        },
+        "required": [
+          "countries",
+          "countries_priority"
+        ],
+        "additionalProperties": false,
+        "definitions": {
+          "countries": {
+            "type": "object",
+            "properties": {
+              "AL": { "enum": ["Albania"] },
+              "CA": { "enum": ["Canada"] },
+              "KY": { "enum": ["Cayman Islands"] },
+              "MR": { "enum": ["Mauritania"] },
+              "YT": { "enum": ["Mayotte"] },
+              "VI": { "enum": ["U.S. Virgin Islands"] },
+              "GB": { "enum": ["United Kingdom"] },
+              "US": { "enum": ["United States"] },
+              "UY": { "enum": ["Uruguay"] }
+            },
+            "required": ["US", "CA"],
+            "additionalProperties": false
+          }
+        }
+      }
+    ],
+    "tests": [
+      {
+        "description": "should generate an object with either 2 or 3 properties with `alwaysFakeOptionals: false`",
+        "set": { "alwaysFakeOptionals": false },
+        "schema": "schemas.0",
+        "valid": true,
+        "repeat": 100
+      },
+      {
+        "description": "should generate exactly 3 properties with `alwaysFakeOptionals: true`",
+        "set": { "alwaysFakeOptionals": true },
+        "schema": "schemas.0",
+        "valid": true,
+        "repeat": 100
+      }
+    ]
+  }
+]
