@@ -75,8 +75,8 @@ function objectType(value, path, resolve, traverseCallback) {
   });
 
   // properties are read from right-to-left
-  const _limit = optionalsProbability !== null ? max : random.number(0, max);
-  const _props = requiredProperties.concat(random.shuffle(extraProperties).slice(0, _limit));
+  const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random.number(0, max);
+  const _props = requiredProperties.concat(random.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
   const _defns = [];
 
   if (value.dependencies) {
