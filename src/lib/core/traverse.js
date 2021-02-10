@@ -57,8 +57,9 @@ function traverse(schema, path, resolve, rootSchema) {
 
   if (typeof schema.generate === 'function') {
     const retval = utils.typecast(null, schema, () => schema.generate(rootSchema, path));
+    const type = typeof retval;
 
-    if (typeof retval === schema.type || (typeof retval === 'number' && schema.type === 'integer')) {
+    if (type === schema.type || (type === 'number' && schema.type === 'integer')) {
       return retval;
     }
   }
