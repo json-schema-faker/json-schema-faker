@@ -14,6 +14,7 @@ const buildResolveSchema = ({
 
   let depth = 0;
   let lastRef;
+  let lastPath;
 
   recursiveUtil.resolveSchema = (sub, index, rootPath) => {
     // prevent null sub from default/example null values to throw
@@ -39,6 +40,9 @@ const buildResolveSchema = ({
 
       // increasing depth only for repeated refs seems to be fixing #258
       if (sub.$ref === '#' || seenRefs[sub.$ref] < 0 || (lastRef === sub.$ref && ++depth > maxDepth)) {
+        if (sub.$ref !== '#' && lastPath && lastPath.length === rootPath.length) {
+          return utils.getLocalRef(schema, sub.$ref);
+        }
         delete sub.$ref;
         return sub;
       }
@@ -47,6 +51,7 @@ const buildResolveSchema = ({
         seenRefs[sub.$ref] = random.number(refDepthMin, refDepthMax) - 1;
       }
 
+      lastPath = rootPath;
       lastRef = sub.$ref;
 
       let ref;

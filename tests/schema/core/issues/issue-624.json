@@ -1,0 +1,38 @@
+[
+  {
+    "description": "required properties based on the same reference type aren't generated with top ref",
+    "tests": [
+      {
+        "description": "should generate all values as expected",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$ref": "#/definitions/Obj",
+          "definitions": {
+            "Obj": {
+              "type": "object",
+              "properties": {
+                "time1": {
+                  "$ref": "#/definitions/DateTimeString"
+                },
+                "time2": {
+                  "$ref": "#/definitions/DateTimeString"
+                }
+              },
+              "required": [
+                "time1",
+                "time2"
+              ],
+              "additionalProperties": false
+            },
+            "DateTimeString": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        },
+        "valid": true,
+        "repeat": 100
+      }
+    ]
+  }
+]
