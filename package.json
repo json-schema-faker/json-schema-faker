@@ -32,7 +32,7 @@
     "pretest": "npm run lint && npm run build",
     "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js",
     "copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
-    "postbuild": "npm run copy:vendor && npm run copy:wargs && concat -o dist/bundle.js dist/vendor.js dist/main.umd.min.js"
+    "postbuild": "npm run copy:vendor && npm run copy:wargs && concat -o dist/bundle.js dist/vendor.js dist/main.umd.js"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
