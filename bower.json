@@ -12,7 +12,7 @@
     "ace-builds": "^1.2.6",
     "vue": "^2.5.13",
     "yaml.js": "^0.3.0",
-    "Faker": "^4.1.0",
+    "Faker": "^5.4.0",
     "chance": "^1.0.13"
   },
   "overrides": {
