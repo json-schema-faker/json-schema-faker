@@ -62,7 +62,8 @@ function traverse(schema, path, resolve, rootSchema) {
     if (type === schema.type
        || (type === 'number' && schema.type === 'integer')
        || (Array.isArray(retval) && schema.type === 'array')
-       || (retval === null || retval === undefined)) {
+       || (retval === null
+           && (schema.type === 'null' || (Array.isArray(schema.type) && schema.type.includes('null'))))) {
       return retval;
     }
   }
