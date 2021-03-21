@@ -1,6 +1,6 @@
 [
   {
-    "description": "Allow null to be returned from custom function generators",
+    "description": "Include proper type check for values returned from custom functions",
     "tests": [
       {
         "description": "should handle null",
