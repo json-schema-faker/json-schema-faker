@@ -10,6 +10,9 @@ module.exports = {
       statement(length) {
         return `${faker.name.firstName()} has ${faker.finance.amount()} on ${faker.finance.account(length)}.`;
       },
+      returnThisValue(val) {
+        return val;
+      },
     });
 
     return faker;

@@ -1,0 +1,29 @@
+[
+  {
+    "description": "Allow null to be returned from custom function generators",
+    "tests": [
+      {
+        "description": "should handle null",
+        "schema": {
+          "type": ["string", "null"],
+          "faker": {
+            "custom.returnThisValue": [null]
+          }
+        },
+        "equal": null,
+        "require": "core/extend/faker-extend"
+      },
+      {
+        "description": "should handle string",
+        "schema": {
+          "type": ["string", "null"],
+          "faker": {
+            "custom.returnThisValue": ["something"]
+          }
+        },
+        "equal": "something",
+        "require": "core/extend/faker-extend"
+      }
+    ]
+  }
+]
