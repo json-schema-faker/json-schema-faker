@@ -1,7 +1,7 @@
 import util from '../core/utils';
 
 // dynamic proxy for custom generators
-function proxy(gen) {
+function proxy(gen, execute = true) {
   return (value, schema, property, rootSchema) => {
     let fn = value;
     let args = [];
@@ -33,8 +33,15 @@ function proxy(gen) {
     value = typeof ctx === 'object' ? ctx[props[0]] : ctx;
 
     // invoke dynamic generators
-    if (typeof value === 'function') {
-      value = value.apply(ctx, args.map(x => util.template(x, rootSchema)));
+    if (typeof value === 'function' && execute) {
+      value = value.apply(
+        ctx,
+        args.map(function unboundProxy(x) {
+          return typeof x === 'object' && x[property] !== undefined
+            ? proxy(gen, false)(x[property], schema, property, schema)
+            : util.template(x, rootSchema);
+        }),
+      );
     }
 
     // test for pending callbacks
