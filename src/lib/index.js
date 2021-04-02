@@ -7,6 +7,7 @@ import env from './core/constants';
 import random from './core/random';
 import utils from './core/utils';
 import run from './core/run';
+import { renderJS, renderYAML } from './renderers';
 
 const container = new Container();
 
@@ -93,11 +94,19 @@ const jsf = (schema, refs, cwd) => {
   return jsf.generate(schema, refs);
 };
 
-jsf.generate = (schema, refs) => {
+jsf.generateWithContext = (schema, refs) => {
   const $refs = getRefs(refs, schema);
 
   return run($refs, schema, container);
 };
+
+jsf.generate = (schema, refs) => renderJS(
+    jsf.generateWithContext(schema, refs),
+  );
+
+jsf.generateYAML = (schema, refs) => renderYAML(
+    jsf.generateWithContext(schema, refs),
+  );
 
 jsf.resolve = (schema, refs, cwd) => {
   if (typeof refs === 'string') {
