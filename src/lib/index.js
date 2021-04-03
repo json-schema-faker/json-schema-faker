@@ -108,7 +108,7 @@ jsf.generateYAML = (schema, refs) => renderYAML(
     jsf.generateWithContext(schema, refs),
   );
 
-jsf.resolve = (schema, refs, cwd) => {
+jsf.resolveWithContext = (schema, refs, cwd) => {
   if (typeof refs === 'string') {
     cwd = refs;
     refs = {};
@@ -152,6 +152,10 @@ jsf.resolve = (schema, refs, cwd) => {
       throw new Error(`Error while resolving schema (${e.message})`);
     });
 };
+
+jsf.resolve = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(renderJS);
+
+jsf.resolveYAML = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(renderYAML);
 
 setupKeywords();
 

@@ -14,6 +14,7 @@ function getMeta({ $comment: comment, title, description }) {
 
 // TODO provide types
 function traverse(schema, path, resolve, rootSchema) {
+  console.trace(schema);
   schema = resolve(schema, null, path);
 
   if (!schema) {
@@ -61,7 +62,8 @@ function traverse(schema, path, resolve, rootSchema) {
   // thunks can return sub-schemas
   if (typeof schema.thunk === 'function') {
     // result is already cleaned in thunk
-    return { value: traverse(schema.thunk(rootSchema), path, resolve), context };
+    const { value, context: innerContext } = traverse(schema.thunk(rootSchema), path, resolve);
+    return { value, context: { ...context, ...innerContext } };
   }
 
   if (typeof schema.generate === 'function') {
@@ -118,7 +120,7 @@ function traverse(schema, path, resolve, rootSchema) {
     } else {
       try {
         const innerResult = types[type](schema, path, resolve, traverse);
-        if (Array.isArray(innerResult)) {
+        if (type === 'array') {
           return {
             value: innerResult.map(({ value }) => value),
             context: {
@@ -149,6 +151,7 @@ function traverse(schema, path, resolve, rootSchema) {
   Object.keys(schema).forEach(prop => {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
       const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve, valueCopy);
+      console.log('got value', value);
       valueCopy[prop] = utils.clean(value, schema[prop], false);
       contextCopy[prop] = innerContext;
     } else {
