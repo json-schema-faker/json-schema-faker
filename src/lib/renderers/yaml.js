@@ -1,29 +1,36 @@
 import yaml from 'yaml';
+import { YAMLMap, YAMLSeq } from 'yaml/types';
 import optionAPI from '../api/option';
 
 function getIn(obj, path) {
-  return path.reduce((v, k) => (k in v ? v[k] : undefined), obj);
+  return path.reduce((v, k) => (k in v ? v[k] : {}), obj);
 }
 
-function addComments(context, path, node) {
+function addComments(context, path, commentNode, iterNode = commentNode) {
   const { title, description, comment } = getIn(context, path);
   const lines = [];
 
   if (optionAPI('renderTitle') && title) {
-    lines.push(title, '');
+    lines.push(` ${title}`, '');
   }
   if (optionAPI('renderDescription') && description) {
-    lines.push(description);
+    lines.push(` ${description}`);
   }
   if (optionAPI('renderComment') && comment) {
-    lines.push(comment);
+    lines.push(` ${comment}`);
   }
 
-  node.commentBefore = lines.join('\n');
+  commentNode.commentBefore = lines.join('\n');
 
-  (node.items || []).forEach(({ key, value }) => {
-    addComments(context, [...path, key], value);
-  });
+  if (iterNode instanceof YAMLMap) {
+    iterNode.items.forEach(n => {
+      addComments(context, [...path, 'items', n.key.value], n.key, n.value);
+    });
+  } else if (iterNode instanceof YAMLSeq) {
+    iterNode.items.forEach((n, i) => {
+      addComments(context, [...path, 'items', i], n);
+    });
+  }
 }
 
 /** Render YAML string from the generated value and context

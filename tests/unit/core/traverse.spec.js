@@ -27,9 +27,11 @@ describe('Traverse', () => {
       },
       context: {
         description: schema.description,
-        foo: {
-          title: schema.properties.foo.title,
-          description: schema.properties.foo.description,
+        items: {
+          foo: {
+            title: schema.properties.foo.title,
+            description: schema.properties.foo.description,
+          },
         },
       },
     });
@@ -51,9 +53,11 @@ describe('Traverse', () => {
       value: ['foo'],
       context: {
         title: schema.title,
-        0: {
+        items: [
+          {
           description: schema.items.description,
         },
+          ],
       },
     });
   });

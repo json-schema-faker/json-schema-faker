@@ -54,7 +54,7 @@ function traverse(schema, path, resolve, rootSchema) {
     // build new object value from not-schema!
     if (schema.type && schema.type === 'object') {
       const { value, context: innerContext } = traverse(schema, path.concat(['not']), resolve, rootSchema);
-      return { value: utils.clean(value, schema, false), context: { ...context, ...innerContext } };
+      return { value: utils.clean(value, schema, false), context: { ...context, items: innerContext } };
     }
   }
 
@@ -62,7 +62,7 @@ function traverse(schema, path, resolve, rootSchema) {
   if (typeof schema.thunk === 'function') {
     // result is already cleaned in thunk
     const { value, context: innerContext } = traverse(schema.thunk(rootSchema), path, resolve);
-    return { value, context: { ...context, ...innerContext } };
+    return { value, context: { ...context, items: innerContext } };
   }
 
   if (typeof schema.generate === 'function') {
@@ -124,11 +124,11 @@ function traverse(schema, path, resolve, rootSchema) {
             value: innerResult.map(({ value }) => value),
             context: {
               ...context,
-              ...innerResult.map(({ context: c }) => c),
+              items: innerResult.map(({ context: c }) => c),
             },
           };
         } if (type === 'object') {
-          return { value: innerResult.value, context: { ...context, ...innerResult.context } };
+          return { value: innerResult.value, context: { ...context, items: innerResult.context } };
         }
         return { value: innerResult, context };
       } catch (e) {
@@ -150,7 +150,6 @@ function traverse(schema, path, resolve, rootSchema) {
   Object.keys(schema).forEach(prop => {
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
       const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve, valueCopy);
-      console.log('got value', value);
       valueCopy[prop] = utils.clean(value, schema[prop], false);
       contextCopy[prop] = innerContext;
     } else {
