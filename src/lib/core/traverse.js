@@ -14,7 +14,6 @@ function getMeta({ $comment: comment, title, description }) {
 
 // TODO provide types
 function traverse(schema, path, resolve, rootSchema) {
-  console.trace(schema);
   schema = resolve(schema, null, path);
 
   if (!schema) {
