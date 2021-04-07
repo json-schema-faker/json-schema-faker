@@ -1,5 +1,4 @@
 function renderJS(res) {
-  console.log('got', res);
   return res.value;
 }
 
