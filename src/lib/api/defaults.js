@@ -28,3 +28,7 @@ defaults.fillProperties = true;
 defaults.replaceEmptyByRandomValue = false;
 
 defaults.random = Math.random;
+
+defaults.renderTitle = true;
+defaults.renderDescription = true;
+defaults.renderComment = false;

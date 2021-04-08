@@ -155,6 +155,7 @@
   "dependencies": {
     "json-schema-ref-parser": "^6.1.0",
     "jsonpath-plus": "^3.0.0",
-    "randexp": "^0.5.3"
+    "randexp": "^0.5.3",
+    "yaml": "^1.10.2"
   }
 }
