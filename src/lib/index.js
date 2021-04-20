@@ -108,16 +108,7 @@ jsf.generateYAML = (schema, refs) => renderYAML(
     jsf.generateWithContext(schema, refs),
   );
 
-jsf.resolveWithContext = (schema, refs, cwd) => {
-  if (typeof refs === 'string') {
-    cwd = refs;
-    refs = {};
-  }
-
-  // normalize basedir (browser aware)
-  cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
-  cwd = `${cwd.replace(/\/+$/, '')}/`;
-
+jsf.resolveWithContext = (schema, refs) => {
   const $refs = getRefs(refs, schema);
 
   // identical setup as json-schema-sequelizer
@@ -138,7 +129,7 @@ jsf.resolveWithContext = (schema, refs, cwd) => {
   };
 
   return $RefParser
-    .dereference(cwd, schema, {
+    .bundle(schema, {
       resolve: {
         file: { order: 100 },
         http: { order: 200 },
