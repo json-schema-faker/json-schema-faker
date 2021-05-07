@@ -101,7 +101,10 @@ function run(refs, schema, container) {
     const result = traverse(utils.clone(schema), [], resolveSchema);
 
     if (optionAPI('resolveJsonPath')) {
-      return resolve(result);
+      return {
+        value: resolve(result.value),
+        context: result.context,
+      };
     }
 
     return result;

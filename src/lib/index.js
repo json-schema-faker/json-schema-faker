@@ -7,6 +7,7 @@ import env from './core/constants';
 import random from './core/random';
 import utils from './core/utils';
 import run from './core/run';
+import { renderJS, renderYAML } from './renderers';
 
 const container = new Container();
 
@@ -93,13 +94,21 @@ const jsf = (schema, refs, cwd) => {
   return jsf.generate(schema, refs);
 };
 
-jsf.generate = (schema, refs) => {
+jsf.generateWithContext = (schema, refs) => {
   const $refs = getRefs(refs, schema);
 
   return run($refs, schema, container);
 };
 
-jsf.resolve = (schema, refs, cwd) => {
+jsf.generate = (schema, refs) => renderJS(
+    jsf.generateWithContext(schema, refs),
+  );
+
+jsf.generateYAML = (schema, refs) => renderYAML(
+    jsf.generateWithContext(schema, refs),
+  );
+
+jsf.resolveWithContext = (schema, refs, cwd) => {
   if (typeof refs === 'string') {
     cwd = refs;
     refs = {};
@@ -143,6 +152,10 @@ jsf.resolve = (schema, refs, cwd) => {
       throw new Error(`Error while resolving schema (${e.message})`);
     });
 };
+
+jsf.resolve = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(renderJS);
+
+jsf.resolveYAML = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(renderYAML);
 
 setupKeywords();
 
