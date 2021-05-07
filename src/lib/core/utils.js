@@ -150,11 +150,12 @@ function typecast(type, schema, callback) {
       switch (schema.format) {
         case 'date-time':
         case 'datetime':
-          value = new Date(value).toISOString().replace(/([0-9])0+Z$/, '$1Z');
+          value = new Date(clampDate(value)).toISOString().replace(/([0-9])0+Z$/, '$1Z');
           break;
 
+        case 'full-date':
         case 'date':
-          value = new Date(value).toISOString().substr(0, 10);
+          value = new Date(clampDate(value)).toISOString().substr(0, 10);
           break;
 
         case 'time':
@@ -422,6 +423,19 @@ function clean(obj, schema, isArray = false) {
   return obj;
 }
 
+/**
+ * Normalize generated date YYYY-MM-DD to not have
+ * out of range values
+ *
+ * @param value
+ * @returns {string}
+ */
+function clampDate(value) {
+  const [year, month, day] = value.split('-');
+
+  return `${year}-${Math.max(1, Math.min(12, month))}-${Math.max(1, Math.min(31, day))}`;
+}
+
 export default {
   hasProperties,
   getLocalRef,
@@ -440,4 +454,5 @@ export default {
   shouldClean,
   clean,
   isEmpty,
+  clampDate,
 };
