@@ -1,0 +1,25 @@
+[
+  {
+    "description": "High order formatters, e.g. faker + format",
+    "tests": [
+      {
+        "description": "format can be applied after any generator",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "aDate": {
+              "type": "string",
+              "faker": "date.past",
+              "format": "date"
+            }
+          },
+          "required": [
+            "aDate"
+          ]
+        },
+        "valid": true,
+        "require": "core/extend/faker-extend"
+      }
+    ]
+  }
+]
