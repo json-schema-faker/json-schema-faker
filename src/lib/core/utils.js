@@ -431,9 +431,12 @@ function clean(obj, schema, isArray = false) {
  * @returns {string}
  */
 function clampDate(value) {
-  const [year, month, day] = value.split('-');
+  let [year, month, day] = value.split('T')[0].split('-');
 
-  return `${year}-${Math.max(1, Math.min(12, month))}-${Math.max(1, Math.min(31, day))}`;
+  month = Math.max(1, Math.min(12, month));
+  day = Math.max(1, Math.min(31, day));
+
+  return `${year}-${month}-${day}`;
 }
 
 export default {
