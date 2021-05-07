@@ -431,6 +431,10 @@ function clean(obj, schema, isArray = false) {
  * @returns {string}
  */
 function clampDate(value) {
+  if (value.includes(' ')) {
+    return new Date(value).toISOString().substr(0, 10);
+  }
+
   let [year, month, day] = value.split('T')[0].split('-');
 
   month = Math.max(1, Math.min(12, month));
