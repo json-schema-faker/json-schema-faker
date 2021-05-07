@@ -6,10 +6,15 @@ import clone from 'clone';
 import semver from 'semver';
 import ZSchema from 'z-schema';
 
+function isDate(value) {
+  return !isNaN(Date.parse(value));
+}
+
 function addValidators(v) {
   const registry = v.addFormat || v.registerFormat;
   const msgOnFail = !v.registerFormat;
 
+  registry.call(v, 'full-date', isDate);
   registry.call(v, 'idn-hostname', () => true);
   registry.call(v, 'idn-email', () => true);
   registry.call(v, 'semver', value => {
@@ -55,6 +60,7 @@ export function checkSchema(sample, schema, refs) {
   const v = is(schema, {
     formats: {
       semver: semver.valid,
+      'full-date': isDate,
       'idn-hostname': () => true,
       'idn-email': () => true,
     },
@@ -126,6 +132,7 @@ export function checkSchema(sample, schema, refs) {
     logger: false,
     formats: {
       semver: semver.valid,
+      'full-date': isDate,
       'idn-hostname': () => true,
       'idn-email': () => true,
     },
