@@ -30,7 +30,7 @@ endef
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
-ci:
+ci: deps
 	@npm run test:ci
 	@npm run codecov
 
@@ -63,10 +63,9 @@ deploy: ## Push built artifacts to github!
 
 deps: ## Check for installed dependencies
 	@(((ls node_modules | grep .) > /dev/null 2>&1) || npm i) || true
-	@(((ls bower_components | grep .) > /dev/null 2>&1) || bower i) || true
 	@(((ls dist | grep main.umd.js) > /dev/null 2>&1) || npm run build) || true
 
-purge: clean ## Remove all from node_modules/*
+prune: clean ## Remove all from node_modules/*
 	@printf "\r* Removing all dependencies... "
 	@rm -rf node_modules/.{bin,cache}
 	@rm -rf node_modules/*
