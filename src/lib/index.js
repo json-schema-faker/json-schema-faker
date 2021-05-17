@@ -138,7 +138,7 @@ jsf.resolveWithContext = (schema, refs, cwd) => {
   };
 
   return $RefParser
-    .dereference(cwd, schema, {
+    .bundle(cwd, schema, {
       resolve: {
         file: { order: 100 },
         http: { order: 200 },
