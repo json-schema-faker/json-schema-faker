@@ -128,7 +128,8 @@ function typecast(type, schema, callback) {
       const max = Math.min(params.maxLength || Infinity, Infinity);
 
       let prev;
-
+      let noChangeCount = 0;
+      
       while (value.length < min) {
         prev = value;
 
@@ -140,7 +141,14 @@ function typecast(type, schema, callback) {
 
         // avoid infinite-loops while filling strings, if no changes
         // are made we just break the loop... see #540
-        if (value === prev) break;
+        if (value === prev) {
+          noChangeCount += 1;
+          if (noChangeCount === 3) {
+            break;
+          }
+        } else {
+          noChangeCount = 0;
+        }
       }
 
       if (value.length > max) {
