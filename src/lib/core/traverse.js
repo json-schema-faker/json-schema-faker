@@ -18,6 +18,10 @@ function getMeta({ $comment: comment, title, description }) {
 function traverse(schema, path, resolve, rootSchema) {
   schema = resolve(schema, null, path);
 
+  if (schema && (schema.oneOf || schema.anyOf || schema.allOf)) {
+    schema = resolve(schema, null, path);
+  }
+
   if (!schema) {
     return;
   }

@@ -127,26 +127,27 @@ class Container {
    * @param schema
    */
   wrap(schema) {
-    const keys = Object.keys(schema);
-    const context = {};
+    if (!('generate' in schema)) {
+      const keys = Object.keys(schema);
+      const context = {};
 
-    let length = keys.length;
+      let length = keys.length;
 
-    while (length--) { // eslint-disable-line
-      const fn = keys[length].replace(/^x-/, '');
-      const gen = this.support[fn];
+      while (length--) { // eslint-disable-line
+        const fn = keys[length].replace(/^x-/, '');
+        const gen = this.support[fn];
 
-      if (typeof gen === 'function') {
-        Object.defineProperty(schema, 'generate', {
-          configurable: false,
-          enumerable: false,
-          writable: false,
-          value: (rootSchema, key) => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema, key.slice()), // eslint-disable-line
-        });
-        break;
+        if (typeof gen === 'function') {
+          Object.defineProperty(schema, 'generate', {
+            configurable: false,
+            enumerable: false,
+            writable: false,
+            value: (rootSchema, key) => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema, key.slice()), // eslint-disable-line
+          });
+          break;
+        }
       }
     }
-
     return schema;
   }
 }
