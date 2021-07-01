@@ -42,7 +42,7 @@
   }
 </script>
 
-<div class="Ace-wrapper rel z1">
+<div class="Ace-wrapper rel">
   <div class="Ace {cssClass}" bind:this={target} />
   <slot />
 </div>

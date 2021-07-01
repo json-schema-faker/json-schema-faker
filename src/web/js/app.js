@@ -4,14 +4,14 @@ import Auth from './lib/Auth.svelte';
 import Editor from './lib/Editor.svelte';
 
 function main() {
-  if (typeof JSONSchemaFaker !== 'undefined') {
-    JSONSchemaFaker.extend('faker', () => window.faker);
-    JSONSchemaFaker.extend('chance', () => window.chance);
+  if (typeof window.JSONSchemaFaker !== 'undefined') {
+    window.JSONSchemaFaker.extend('faker', () => window.faker);
+    window.JSONSchemaFaker.extend('chance', () => window.chance);
   }
 
   // initialize modules
-  new Auth({ target: document.getElementById('auth') });
-  new Editor({ target: document.getElementById('editor') });
+  new Auth({ target: document.getElementById('auth') }); // eslint-disable-line
+  new Editor({ target: document.getElementById('editor') }); // eslint-disable-line
 }
 
 function debug(msg) {

@@ -11,6 +11,14 @@
   animation: spin 4s linear infinite;
 }
 
+.arr::before {
+  content: '▹ ';
+}
+
+.min {
+  min-width: 6em !important;
+}
+
 /* flexbox */
 .flx { display: flex; }
 
@@ -27,7 +35,7 @@
 .flx-jc { justify-content: center; }
 
 .flx-a {
-  flex: 1 1 auto;
+  flex: 1;
   min-width: 0;
   min-height: 0;
 }
@@ -250,42 +258,11 @@
 .l0 { left: 0; }
 .la { left: 0; }
 
-.z1 { z-index: 1; }
-.z2 { z-index: 2; }
-.z3 { z-index: 3; }
-.z4 { z-index: 4; }
-.z5 { z-index: 5; }
-
 /* borders */
 .b { border: 1px solid @border-color; }
 .b ~ .b { border-top: 0; }
 .nb { border: 0; }
 .nbk { background: transparent; }
-
-/* icons */
-.ic {
-  min-width: @h5;
-  min-height: @h5;
-
-  width: @h5;
-  height: @h5;
-
-  svg {
-    width: inherit;
-    height: inherit;
-    vertical-align: middle;
-  }
-
-  &.x2 {
-    width: @h3;
-    height: @h3;
-  }
-
-  &.x3 {
-    width: @h1;
-    height: @h1;
-  }
-}
 
 /* states */
 .ch {

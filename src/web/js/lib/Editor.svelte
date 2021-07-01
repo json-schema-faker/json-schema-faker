@@ -1,5 +1,6 @@
 <script>
   import { router } from 'yrv';
+  import Icon from './Icon.svelte';
   import Ace from './Ace.svelte';
   import Toggle from './Toggle.svelte';
   import { schemas, current, options, loadFrom } from './gists';
@@ -213,18 +214,20 @@
           </span>
         {:else}
           <span>
-            <button class="a nb nbk plus-icon" on:click={add} />
+            <button class="a nb nbk" on:click={add}>
+              <Icon name="plus" />
+            </button>
           </span>
         {/if}
     </div>
     <div class="md-flx">
       <Ace mode={outputMode} value={editInput} on:change={sync}>
-        <!--<div class="abs r0 t0 z1">
+        <!--<div class="abs r0 t0">
           <Toggle on="YAML" off="JSON" on:change={format} value={isYAML} />
         </div>-->
       </Ace>
       <Ace mode={outputMode} value={objectOutput} readonly>
-        <span class="abs r0 t0 z1">
+        <span class="abs r0 t0">
           <button class="bu" on:click={gen}>Generate</button>
         </span>
       </Ace>

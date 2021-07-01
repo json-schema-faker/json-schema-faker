@@ -4,6 +4,7 @@
     me, url, schemas, current, session, loggedIn,
   } from './gists';
 
+  import Icon from './Icon.svelte';
   import Opts from './Opts.svelte';
   import Save from './Save.svelte';
   import Gists from './Gists.svelte';
@@ -38,13 +39,19 @@
 
 <ul class="p lr ln mt rel jsf-about">
   <li class="sp pd dib nosl">
-    <Link href="#options" class="a gear-icon">Options</Link>
+    <Link href="#options" class="a">
+      <Icon name="gear" /> Options
+    </Link>
   </li>
   <li class="ar dib">
     {#if $loggedIn}
-      <Link href="#session" class="a nosl github-icon" title={$session.fullname}>{$session.username}</Link>
+      <Link href="#session" class="a nosl" title={$session.fullname}>
+        <Icon name="github" /> {$session.username}
+      </Link>
     {:else}
-      <Link open="width=400,height=640" href={url()} on:close={done} class="a github-icon">Share link? Log in</Link>
+      <Link open="width=400,height=640" href={url()} on:close={done} class="a">
+        <Icon name="github" /> Share link? Log in
+      </Link>
     {/if}
   </li>
 </ul>
