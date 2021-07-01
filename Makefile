@@ -31,6 +31,7 @@ endef
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
 ci: deps clean
+	@find src/lib -type f -name "*.js" -exec touch {} +
 	@npm test
 ifneq ($(CI),)
 	@npm run codecov
