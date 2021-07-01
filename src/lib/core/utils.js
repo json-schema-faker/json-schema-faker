@@ -2,19 +2,26 @@ import optionAPI from '../api/option';
 import env from './constants';
 import random from './random';
 
-function getLocalRef(obj, path) {
-  const keyElements = path.replace(/^.*#\//, '').split('/');
+function getLocalRef(obj, path, refs) {
+  const keyElements = path.replace('#/', '/').split('/');
 
-  while (keyElements.length) {
+  let schema = obj.$ref && refs ? refs[obj.$ref] : obj;
+  if (refs && path.includes('#/') && refs[keyElements[0]]) {
+    schema = refs[keyElements.shift()];
+  }
+
+  if (!keyElements[0]) keyElements.shift();
+
+  while (schema && keyElements.length > 0) {
     const prop = keyElements.shift();
 
-    if (!obj[prop]) {
-      throw new Error(`Prop '${prop}' not found in [${Object.keys(obj).join(', ')}] (${path})`);
+    if (!schema[prop]) {
+      throw new Error(`Prop '${prop}' not found in [${Object.keys(schema).join(', ')}] (${path})`);
     }
 
-    obj = obj[prop];
+    schema = schema[prop];
   }
-  return obj;
+  return schema;
 }
 
 /**

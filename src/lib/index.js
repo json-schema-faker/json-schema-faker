@@ -97,7 +97,7 @@ const jsf = (schema, refs, cwd) => {
 jsf.generateWithContext = (schema, refs) => {
   const $refs = getRefs(refs, schema);
 
-  return run($refs, schema, container);
+  return run($refs, schema, container, true);
 };
 
 jsf.generate = (schema, refs) => renderJS(

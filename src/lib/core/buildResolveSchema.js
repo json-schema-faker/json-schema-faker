@@ -6,6 +6,7 @@ const buildResolveSchema = ({
   refs,
   schema,
   container,
+  synchronous,
   refDepthMax,
   refDepthMin,
 }) => {
@@ -39,9 +40,9 @@ const buildResolveSchema = ({
       const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
 
       // increasing depth only for repeated refs seems to be fixing #258
-      if (sub.$ref === '#' || seenRefs[sub.$ref] < 0 || (lastRef === sub.$ref && ++depth > maxDepth)) {
+      if (sub.$ref === '#' || seenRefs[sub.$ref] < 0 || (lastRef === sub.$ref && ++depth > maxDepth)) { // eslint-disable-line
         if (sub.$ref !== '#' && lastPath && lastPath.length === rootPath.length) {
-          return utils.getLocalRef(schema, sub.$ref);
+          return utils.getLocalRef(schema, sub.$ref, synchronous && refs);
         }
         delete sub.$ref;
         return sub;
@@ -59,7 +60,7 @@ const buildResolveSchema = ({
       if (sub.$ref.indexOf('#/') === -1) {
         ref = refs[sub.$ref] || null;
       } else {
-        ref = utils.getLocalRef(schema, sub.$ref) || null;
+        ref = utils.getLocalRef(schema, sub.$ref, synchronous && refs) || null;
       }
 
       if (typeof ref !== 'undefined') {
