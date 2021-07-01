@@ -59,7 +59,7 @@ const buildResolveSchema = ({
       if (sub.$ref.indexOf('#/') === -1) {
         ref = refs[sub.$ref] || null;
       } else {
-        ref = utils.getLocalRef(schema, sub.$ref) || null;
+        ref = utils.getLocalRef(schema, sub.$ref, refs) || null;
       }
 
       if (typeof ref !== 'undefined') {
