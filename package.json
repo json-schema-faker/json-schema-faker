@@ -12,7 +12,7 @@
   "unpkg": "dist/bundle.js",
   "scripts": {
     "dev": "npm run test:schema -- -w",
-    "test": "npm run test:unit -- && npm run test:schema",
+    "test": "npm run test:ci -- && npm run test:schema",
     "test:ci": "npm run coverage:unit && npm run report -- -r lcov",
     "test:all": "npm run coverage:all && npm run report -- -r html",
     "test:run": "_mocha --exit --colors --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
