@@ -5,6 +5,8 @@ function mockResolve(schema) {
   return schema;
 }
 
+/* global describe, it */
+
 describe('Traverse', () => {
   it('basic value and context', () => {
     const schema = {
