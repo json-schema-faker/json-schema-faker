@@ -23,7 +23,7 @@
     "coverage:unit": "npm run coverage -- npm run test:unit",
     "report": "nyc report",
     "lint": "eslint --ext js,svelte src tests",
-    "_pretest": "npm run lint",
+    "_pretest": "npm run lint && npm run build",
     "_prepublish": "npm run build",
     "_graphviz": "madge src --dot > structure.gv",
     "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less -Njsonpath-plus -Njson-schema-ref-parser",
@@ -36,11 +36,27 @@
     "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
     "_watch": "tarima watch",
     "_build": "tarima -mfqe production",
-    "_pretest": "npm run lint && npm run build",
     "_copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js",
     "_copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
     "_postbuild": "npm run copy:vendor && npm run copy:wargs && concat -o dist/bundle.js dist/vendor.js dist/main.umd.js",
     "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
+  },
+  "mortero": {
+    "rename": [
+      "**/src/**:{filepath/1}",
+      "**/web/**:{filepath/1}"
+    ],
+    "bundle": [
+      "**/main*.js",
+      "**/app.js"
+    ],
+    "options": {
+      "less": {
+        "plugins": [
+          "less-plugin-autoprefix"
+        ]
+      }
+    }
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
@@ -90,6 +106,7 @@
     "minimist": ">=1.2.2",
     "mocha": "^7.0.0",
     "mockjs": "^1.1.0",
+    "mortero": "0.0.37",
     "nyc": "^15.0.0",
     "pug": "^3.0.1",
     "rollup-plugin-commonjs": "^10.0.0",
@@ -102,7 +119,6 @@
     "sinon-chai": "3.5.0",
     "svelte": "^3.19.1",
     "svql": "^0.0.27",
-    "tarima": "^4.9.7",
     "terser": "^4.3.9",
     "tv4": "^1.3.0",
     "vue-template-compiler": "^2.6.10",
@@ -113,7 +129,7 @@
   },
   "dependencies": {
     "json-schema-ref-parser": "^6.1.0",
-    "jsonpath-plus": "^3.0.0",
+    "jsonpath-plus": "^5.1.0",
     "randexp": "^0.5.3",
     "yaml": "^1.10.2"
   }
