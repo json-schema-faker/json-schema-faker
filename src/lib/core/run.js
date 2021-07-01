@@ -1,4 +1,4 @@
-import { JSONPath } from '../vendor';
+import { getDependencies } from '../vendor';
 import optionAPI from '../api/option';
 import traverse from './traverse';
 import random from './random';
@@ -47,6 +47,8 @@ function resolve(obj, data, values, property) {
   }
 
   if (obj.jsonPath) {
+    const { JSONPath } = getDependencies();
+
     const params = typeof obj.jsonPath !== 'object'
       ? { path: obj.jsonPath }
       : obj.jsonPath;
