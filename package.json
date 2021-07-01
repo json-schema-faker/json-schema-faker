@@ -33,7 +33,8 @@
     "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.js",
     "copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
     "postbuild": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
-    "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs"
+    "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
+    "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
   "contributors": [
