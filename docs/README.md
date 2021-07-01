@@ -9,9 +9,9 @@
 
 The source code is written in modern ES6-modules through `src` (for testing), but bundled versions are provided to ensure portabilty:
 
-- `main.umd.js` are emitted for general usage, but exported without dependencies (`json-schema-ref-parser` and `jsonpath`)
+- `vendor.js` required dependencies for browser usage: `json-schema-ref-parser` and `jsonpath-plus`
 - `bundle.js` is generated containing both dependencies from above, ready for the browser!
-- `main.js` is the bundled version of `./src`
+- `main.{iife,esm,cjs}.js` are the bundled versions for general usage on NodeJS
 
 Generated sources are available as an [NPM dependency](https://www.npmjs.com/package/json-schema-faker) and through [UNPKG](https://unpkg.com/json-schema-faker@0.5.0-rc16/dist/).
 
