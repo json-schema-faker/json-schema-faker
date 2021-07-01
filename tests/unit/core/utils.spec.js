@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-expressions */
+
 import { expect } from 'chai';
 import utils from '../../../src/lib/core/utils';
 import optionAPI from '../../../src/lib/api/option';
@@ -42,7 +44,7 @@ describe('Utils', () => {
     };
 
     it('should fail resolving missing refs', () => {
-      expect(() => utils.getLocalRef(object, '#/foo/bar')).to.throw("Prop 'foo' not found in [outer] (#/foo/bar)");
+      expect(() => utils.getLocalRef(object, '#/foo/bar')).to.throw('Prop not found: foo (#/foo/bar)');
     });
 
     it('should resolve local-references', () => {

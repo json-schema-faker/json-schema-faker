@@ -38,8 +38,7 @@ export function getTests(srcDir) {
 
       let _only = false;
 
-      suite = Object.assign({ file }, x);
-
+      suite = { file, ...x };
       suite.tests = suite.tests.sort((a, b) => {
         if (a.only) return -1;
         if (b.only) return 1;
@@ -155,12 +154,12 @@ export function tryTest(nth, max, test, refs, schema) {
 
       if (typeof throwsValue === 'string') {
         expect(error).to.match(new RegExp(throwsValue, 'im'));
-        test.throwCount++;
+        test.throwCount += 1;
         return;
       }
 
       if (throwsValue === true) {
-        test.throwCount++;
+        test.throwCount += 1;
         return;
       }
 

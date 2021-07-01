@@ -76,7 +76,7 @@
               "properties": {
                 "id": {
                   "type": "string",
-                  "faker": "random.uuid"
+                  "faker": "datatype.uuid"
                 }
               },
               "required": ["id"]
@@ -89,7 +89,7 @@
               "properties": {
                 "id": {
                   "type": "string",
-                  "faker": "random.uuid"
+                  "faker": "datatype.uuid"
                 },
                 "hunchIds": {
                   "type": "array",

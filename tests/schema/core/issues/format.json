@@ -31,7 +31,7 @@
             },
             "fakerNumber": {
               "type": "integer",
-              "faker": "random.number"
+              "faker": "datatype.number"
             }
           }
         },
