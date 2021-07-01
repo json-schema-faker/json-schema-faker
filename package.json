@@ -123,6 +123,7 @@
     "faker": "^5.4.0",
     "fs-extra": "^8.0.1",
     "glob": "^7.1.2",
+    "glob-parent": ">=5.1.2",
     "html-minifier": "^4.0.0",
     "is-my-json-valid": "^2.19.0",
     "kind-of": ">=6.0.3",
