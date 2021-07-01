@@ -5,12 +5,14 @@ import random from './random';
 function getLocalRef(obj, path, refs) {
   const keyElements = path.replace('#/', '/').split('/');
 
-  let schema = obj.$ref ? refs[obj.$ref] : obj;
-  if (path.includes('#/') && refs[keyElements[0]]) {
+  let schema = obj.$ref && refs ? refs[obj.$ref] : obj;
+  if (refs && path.includes('#/') && refs[keyElements[0]]) {
     schema = refs[keyElements.shift()];
   }
 
-  while (keyElements.length) {
+  if (!keyElements[0]) keyElements.shift();
+
+  while (schema && keyElements.length > 0) {
     const prop = keyElements.shift();
 
     if (!schema[prop]) {

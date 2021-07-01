@@ -81,7 +81,7 @@ function resolve(obj, data, values, property) {
 }
 
 // TODO provide types?
-function run(refs, schema, container) {
+function run(refs, schema, container, synchronous) {
   if (Object.prototype.toString.call(schema) !== '[object Object]') {
     throw new Error(`Invalid input, expecting object but given ${typeof schema}`);
   }
@@ -94,6 +94,7 @@ function run(refs, schema, container) {
       refs,
       schema,
       container,
+      synchronous,
       refDepthMin,
       refDepthMax,
     });
