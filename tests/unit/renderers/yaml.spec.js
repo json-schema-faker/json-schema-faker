@@ -2,6 +2,8 @@ import { expect } from 'chai';
 import yamlRenderer from '../../../src/lib/renderers/yaml';
 import optionAPI from '../../../src/lib/api/option';
 
+/* global describe, it */
+
 describe('YAML Renderer', () => {
   it('should render a nice document', () => {
     expect(yamlRenderer({

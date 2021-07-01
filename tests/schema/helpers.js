@@ -1,7 +1,7 @@
 import fs from 'fs';
 import glob from 'glob';
 import { expect } from 'chai';
-import _jsf from '../../src/lib';
+import _jsf from '../../src/main.esm';
 import { checkType, checkSchema } from './validator';
 
 export const jsf = _jsf;
@@ -154,12 +154,12 @@ export function tryTest(nth, max, test, refs, schema) {
 
       if (typeof throwsValue === 'string') {
         expect(error).to.match(new RegExp(throwsValue, 'im'));
-        test.throwCount++;
+        test.throwCount += 1;
         return;
       }
 
       if (throwsValue === true) {
-        test.throwCount++;
+        test.throwCount += 1;
         return;
       }
 

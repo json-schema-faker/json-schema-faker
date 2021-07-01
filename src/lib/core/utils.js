@@ -38,6 +38,26 @@ function hasProperties(obj, ...properties) {
 }
 
 /**
+ * Normalize generated date YYYY-MM-DD to not have
+ * out of range values
+ *
+ * @param value
+ * @returns {string}
+ */
+function clampDate(value) {
+  if (value.includes(' ')) {
+    return new Date(value).toISOString().substr(0, 10);
+  }
+
+  let [year, month, day] = value.split('T')[0].split('-');
+
+  month = Math.max(1, Math.min(12, month));
+  day = Math.max(1, Math.min(31, day));
+
+  return `${year}-${month}-${day}`;
+}
+
+/**
  * Returns typecasted value.
  * External generators (faker, chance, casual) may return data in non-expected formats, such as string, when you might expect an
  * integer. This function is used to force the typecast. This is the base formatter for all result values.
@@ -436,26 +456,6 @@ function clean(obj, schema, isArray = false) {
   }
 
   return obj;
-}
-
-/**
- * Normalize generated date YYYY-MM-DD to not have
- * out of range values
- *
- * @param value
- * @returns {string}
- */
-function clampDate(value) {
-  if (value.includes(' ')) {
-    return new Date(value).toISOString().substr(0, 10);
-  }
-
-  let [year, month, day] = value.split('T')[0].split('-');
-
-  month = Math.max(1, Math.min(12, month));
-  day = Math.max(1, Math.min(31, day));
-
-  return `${year}-${month}-${day}`;
 }
 
 export default {

@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import jsf from '../../../src/lib';
+import jsf from '../../../src/main.esm';
 
 /* global describe, it */
 
