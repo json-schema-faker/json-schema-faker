@@ -15,4 +15,4 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: |
-          make test ci CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}
+          make ci CODECOV_TOKEN=${{ secrets.CODECOV_TOKEN }}

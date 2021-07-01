@@ -77,7 +77,7 @@
     "ajv": "^6.5.3",
     "chai": "^4.1.2",
     "chance": "^1.0.9",
-    "codecov": "^3.8.1",
+    "codecov": "^3.8.2",
     "concat": "^1.0.3",
     "eslint": "^6.0.1",
     "eslint-config-airbnb-base": "^14.0.0",
