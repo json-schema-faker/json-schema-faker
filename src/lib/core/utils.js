@@ -16,7 +16,7 @@ function getLocalRef(obj, path, refs) {
     const prop = keyElements.shift();
 
     if (!schema[prop]) {
-      throw new Error(`Prop '${prop}' not found in [${Object.keys(schema).join(', ')}] (${path})`);
+      throw new Error(`Prop not found: ${prop} (${path})`);
     }
 
     schema = schema[prop];
@@ -35,6 +35,26 @@ function hasProperties(obj, ...properties) {
   return properties.filter(key => {
     return typeof obj[key] !== 'undefined';
   }).length > 0;
+}
+
+/**
+ * Normalize generated date YYYY-MM-DD to not have
+ * out of range values
+ *
+ * @param value
+ * @returns {string}
+ */
+function clampDate(value) {
+  if (value.includes(' ')) {
+    return new Date(value).toISOString().substr(0, 10);
+  }
+
+  let [year, month, day] = value.split('T')[0].split('-');
+
+  month = Math.max(1, Math.min(12, month));
+  day = Math.max(1, Math.min(31, day));
+
+  return `${year}-${month}-${day}`;
 }
 
 /**
@@ -135,6 +155,7 @@ function typecast(type, schema, callback) {
       const max = Math.min(params.maxLength || Infinity, Infinity);
 
       let prev;
+      let noChangeCount = 0;
 
       while (value.length < min) {
         prev = value;
@@ -147,7 +168,14 @@ function typecast(type, schema, callback) {
 
         // avoid infinite-loops while filling strings, if no changes
         // are made we just break the loop... see #540
-        if (value === prev) break;
+        if (value === prev) {
+          noChangeCount += 1;
+          if (noChangeCount === 3) {
+            break;
+          }
+        } else {
+          noChangeCount = 0;
+        }
       }
 
       if (value.length > max) {
@@ -428,26 +456,6 @@ function clean(obj, schema, isArray = false) {
   }
 
   return obj;
-}
-
-/**
- * Normalize generated date YYYY-MM-DD to not have
- * out of range values
- *
- * @param value
- * @returns {string}
- */
-function clampDate(value) {
-  if (value.includes(' ')) {
-    return new Date(value).toISOString().substr(0, 10);
-  }
-
-  let [year, month, day] = value.split('T')[0].split('-');
-
-  month = Math.max(1, Math.min(12, month));
-  day = Math.max(1, Math.min(31, day));
-
-  return `${year}-${month}-${day}`;
 }
 
 export default {

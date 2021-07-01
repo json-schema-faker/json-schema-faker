@@ -110,7 +110,8 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (value.contains && length > 0) {
     const idx = random.number(0, length - 1);
-    items[idx] = traverseCallback(value.contains, path.concat(["items",idx]), resolve);
+
+    items[idx] = traverseCallback(value.contains, path.concat(['items', idx]), resolve);
   }
 
   if (value.uniqueItems) {

@@ -1,4 +1,3 @@
-// export { default } from './main.esm';
 import { setDependencies } from './lib/vendor';
 import JSONSchemaFaker from './lib';
 

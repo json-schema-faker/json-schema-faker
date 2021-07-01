@@ -8,30 +8,38 @@
   },
   "main": "dist/main.cjs.js",
   "module": "dist/main.esm.js",
-  "browser": "dist/main.umd.js",
+  "browser": "dist/main.iife.js",
   "unpkg": "dist/bundle.js",
   "scripts": {
     "dev": "npm run test:schema -- -w",
     "test": "npm run test:unit -- && npm run test:schema",
     "test:ci": "npm run coverage:unit && npm run report -- -r lcov",
     "test:all": "npm run coverage:all && npm run report -- -r html",
-    "test:run": "cross-env NODE_ENV=test _mocha --exit --colors --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
+    "test:run": "_mocha --exit --colors --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
     "test:unit": "npm run test:run tests/unit --",
     "test:schema": "npm run test:run tests/schema --",
-    "coverage": "nyc -x '**/tests/**' -x '**/*.spec.js'",
+    "coverage": "nyc --es-modules -x '**/tests/**' -x '**/*.spec.js'",
     "coverage:all": "npm run coverage -- npm run test:all",
     "coverage:unit": "npm run coverage -- npm run test:unit",
     "report": "nyc report",
-    "lint": "eslint src tests",
+    "lint": "eslint --ext js,svelte src tests",
     "_pretest": "npm run lint",
     "_prepublish": "npm run build",
     "_graphviz": "madge src --dot > structure.gv",
-    "watch": "tarima watch",
-    "build": "tarima -mfqe production",
-    "pretest": "npm run lint && npm run build",
-    "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js",
+    "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less -Njsonpath-plus -Njson-schema-ref-parser",
+    "watch": "npm run mortero -- -w",
+    "build": "npm run mortero -- -f _NODE_ENV=production",
+    "pretest": "npm run lint && npm run build -- -ymain",
+    "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.js",
     "copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
-    "postbuild": "npm run copy:vendor && npm run copy:wargs && concat -o dist/bundle.js dist/vendor.js dist/main.umd.js",
+    "postbuild": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
+    "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
+    "_watch": "tarima watch",
+    "_build": "tarima -mfqe production",
+    "_pretest": "npm run lint && npm run build",
+    "_copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-umd.min.js",
+    "_copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
+    "_postbuild": "npm run copy:vendor && npm run copy:wargs && concat -o dist/bundle.js dist/vendor.js dist/main.umd.js",
     "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
   },
   "author": "Alvaro Cabrera <pateketrueke@gmail.com> (https://soypache.co)",
@@ -51,58 +59,8 @@
     "fake",
     "mocks"
   ],
-  "tarima": {
-    "from": "src",
-    "output": ".",
-    "public": "build",
-    "serve": [
-      "dist",
-      "public"
-    ],
-    "rename": [
-      "**/web/**:build/{fullpath/2}",
-      "**/main*js:dist/{fullpath/1}"
-    ],
-    "bundle": [
-      "**/main*.js",
-      "**/app.js"
-    ],
-    "filter": [
-      "!_*",
-      "!**/_*",
-      "!**/_*/**",
-      "!**/lib/**"
-    ],
-    "bundleOptions": {
-      "bundleCache": true,
-      "entryCache": true,
-      "extensions": {
-        "js": "es6",
-        "css": "less"
-      },
-      "rollup": {
-        "external": [
-          "jsonpath-plus",
-          "json-schema-ref-parser"
-        ],
-        "plugins": [
-          "rollup-plugin-svelte",
-          "rollup-plugin-commonjs",
-          "rollup-plugin-node-resolve"
-        ]
-      },
-      "buble": {
-        "objectAssign": "Object.assign"
-      },
-      "less": {
-        "plugins": [
-          "less-plugin-autoprefix"
-        ]
-      }
-    }
-  },
   "files": [
-    "dist/*.*"
+    "dist/*.js"
   ],
   "devDependencies": {
     "acorn": ">=6.4.1",

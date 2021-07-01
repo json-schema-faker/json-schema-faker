@@ -1,5 +1,4 @@
-import $RefParser from 'json-schema-ref-parser';
-
+import { getDependencies } from './vendor';
 import Container from './class/Container';
 import format from './api/format';
 import option from './api/option';
@@ -136,6 +135,8 @@ jsf.resolveWithContext = (schema, refs, cwd) => {
       }
     },
   };
+
+  const { $RefParser } = getDependencies();
 
   return $RefParser
     .bundle(cwd, schema, {
