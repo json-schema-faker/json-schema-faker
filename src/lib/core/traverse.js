@@ -7,11 +7,11 @@ import optionAPI from '../api/option';
 
 function getMeta({ $comment: comment, title, description }) {
   return Object.entries({ comment, title, description })
-      .filter(([, value]) => value)
-      .reduce((memo, [k, v]) => {
-        memo[k] = v;
-        return memo;
-      }, {});
+    .filter(([, value]) => value)
+    .reduce((memo, [k, v]) => {
+      memo[k] = v;
+      return memo;
+    }, {});
 }
 
 // TODO provide types
@@ -26,7 +26,10 @@ function traverse(schema, path, resolve, rootSchema) {
     return;
   }
 
-  const context = getMeta(schema);
+  const context = {
+    ...getMeta(schema),
+    schemaPath: path,
+  };
 
   // default values has higher precedence
   if (path[path.length - 1] !== 'properties') {
@@ -130,10 +133,18 @@ function traverse(schema, path, resolve, rootSchema) {
             value: innerResult.map(({ value }) => value),
             context: {
               ...context,
-              items: innerResult.map(({ context: c }) => c),
+              items: innerResult.map(
+                Array.isArray(schema.items)
+                  ? ({ context: c }) => c
+                  : ({ context: c }) => ({
+                    ...c,
+                    // we have to remove the index from the path to get the real schema path
+                    schemaPath: c.schemaPath.slice(0, -1),
+                  })),
             },
           };
-        } if (type === 'object') {
+        }
+        if (type === 'object') {
           return { value: innerResult.value, context: { ...context, items: innerResult.context } };
         }
         return { value: innerResult, context };
