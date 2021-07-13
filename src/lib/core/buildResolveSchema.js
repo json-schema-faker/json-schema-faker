@@ -70,15 +70,12 @@ const buildResolveSchema = ({
         }
 
         seenRefs[sub.$ref] -= 1;
-        fixed = ref && ref.$ref;
         utils.merge(sub, ref || {});
+        fixed = synchronous && ref && ref.$ref;
       }
 
-      if (!fixed) {
-        // just remove the reference
-        delete sub.$ref;
-      }
-
+      // just remove the reference
+      if (!fixed) delete sub.$ref;
       return sub;
     }
 
