@@ -95,7 +95,7 @@
     "less-plugin-autoprefix": "^2.0.0",
     "mocha": "^9.0.1",
     "mockjs": "^1.1.0",
-    "mortero": "^0.0.37",
+    "mortero": "^0.0.39",
     "nyc": "^15.0.0",
     "pug": "^3.0.2",
     "seedrandom": "^3.0.1",
