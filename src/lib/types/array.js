@@ -9,7 +9,7 @@ function unique(path, items, value, sample, resolve, traverseCallback) {
   const seen = [];
 
   function walk(obj) {
-    const json = JSON.stringify(obj);
+    const json = JSON.stringify(obj.value);
 
     if (seen.indexOf(json) === -1) {
       seen.push(json);
