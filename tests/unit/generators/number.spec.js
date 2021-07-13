@@ -1,8 +1,6 @@
 import { expect } from 'chai';
 import numberType from '../../../src/lib/types/number';
 
-/* global describe, it */
-
 describe('Number Generator', () => {
   it('should return number with a fractional part', () => {
     const n = numberType({});

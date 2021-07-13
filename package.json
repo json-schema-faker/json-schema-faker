@@ -83,6 +83,7 @@
     "eslint": "^7.27.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-mocha": "^9.0.0",
     "eslint-plugin-svelte3": "^3.2.0",
     "eslint-utils": ">=1.4.1",
     "esm": ">=3.1.0",
@@ -98,6 +99,7 @@
     "mortero": "^0.0.39",
     "nyc": "^15.0.0",
     "pug": "^3.0.2",
+    "randexp": "^0.5.3",
     "seedrandom": "^3.0.1",
     "semver": "^7.1.1",
     "sinon": "^11.1.1",
@@ -112,7 +114,6 @@
   },
   "dependencies": {
     "json-schema-ref-parser": "^6.1.0",
-    "jsonpath-plus": "^5.1.0",
-    "randexp": "^0.5.3"
+    "jsonpath-plus": "^5.1.0"
   }
 }
