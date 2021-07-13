@@ -63,17 +63,22 @@ const buildResolveSchema = ({
         ref = utils.getLocalRef(schema, sub.$ref, synchronous && refs) || null;
       }
 
+      let fixed;
       if (typeof ref !== 'undefined') {
         if (!ref && optionAPI('ignoreMissingRefs') !== true) {
           throw new Error(`Reference not found: ${sub.$ref}`);
         }
 
         seenRefs[sub.$ref] -= 1;
+        fixed = ref && ref.$ref;
         utils.merge(sub, ref || {});
       }
 
-      // just remove the reference
-      delete sub.$ref;
+      if (!fixed) {
+        // just remove the reference
+        delete sub.$ref;
+      }
+
       return sub;
     }
 

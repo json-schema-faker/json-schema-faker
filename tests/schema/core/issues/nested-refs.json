@@ -1,0 +1,30 @@
+{
+  "description": "nested $refs",
+  "tests": [
+    {
+      "description": "should follow nested $refs in synchronous mode",
+      "sync": true,
+      "schema": {
+        "type": "object",
+        "properties": {
+          "hello": {
+            "$ref": "#/definitions/middle"
+          }
+        },
+        "required": ["hello"],
+        "definitions": {
+          "middle": {
+            "$ref": "#/definitions/world"
+          },
+          "world": {
+            "type": "string",
+            "const": "world!"
+          }
+        }
+      },
+      "equal": {
+        "hello": "world!"
+      }
+    }
+  ]
+}
