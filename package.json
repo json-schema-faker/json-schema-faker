@@ -94,7 +94,7 @@
     "is-my-json-valid": "^2.19.0",
     "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
-    "mocha": "^9.0.1",
+    "mocha": "^7.0.0",
     "mockjs": "^1.1.0",
     "mortero": "^0.0.39",
     "nyc": "^15.0.0",
