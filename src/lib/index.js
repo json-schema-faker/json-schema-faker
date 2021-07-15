@@ -187,7 +187,7 @@ jsf.locate = name => {
 
 /* global VERSION */
 if (typeof VERSION !== 'undefined') {
-  jsf.version = VERSION;
+  jsf.VERSION = VERSION;
 }
 
 export default jsf;

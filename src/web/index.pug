@@ -41,7 +41,15 @@ html
     script(src='//ace.c9.io/build/src/ace.js')
     script(src='//unpkg.com/chance')
 
-    import(from='vendor.js main.iife.js js/app.js')
+    if NODE_ENV === 'test'
+      script(type='module').
+        import jsf from './main.esm.js';
+        window.JSONSchemaFaker = jsf;
+      import(from='js/app.js')
+    else if NODE_ENV === 'production'
+      import(from='bundle.js js/app.js')
+    else
+      import(from='vendor.js main.iife.js js/app.js')
 
     if NODE_ENV === 'production'
       script.
