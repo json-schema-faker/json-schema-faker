@@ -31,6 +31,8 @@ endef
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
 ci: deps clean
+	@npm run build -- -ymain
+	@npm run test:integration
 	@npm test
 ifneq ($(CI),)
 	@npm run codecov

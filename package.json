@@ -6,7 +6,7 @@
   "bin": {
     "jsf": "bin/gen.js"
   },
-  "main": "dist/main.cjs.js",
+  "main": "dist/index.js",
   "module": "dist/main.esm.js",
   "browser": "dist/main.iife.js",
   "unpkg": "dist/bundle.js",
@@ -18,6 +18,7 @@
     "test:run": "_mocha --exit --colors --recursive --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -r esm -bR spec",
     "test:unit": "npm run test:run tests/unit --",
     "test:schema": "npm run test:run tests/schema --",
+    "test:integration": "npm run test:run tests/integration --",
     "coverage": "nyc --es-modules -x '**/tests/**' -x '**/*.spec.js'",
     "coverage:all": "npm run coverage -- npm run test:all",
     "coverage:unit": "npm run coverage -- npm run test:unit",
@@ -26,13 +27,13 @@
     "_pretest": "npm run lint",
     "_prepublish": "npm run build",
     "_graphviz": "madge src --dot > structure.gv",
-    "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less -Njsonpath-plus -Njson-schema-ref-parser",
+    "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less",
     "watch": "npm run mortero -- -w",
     "build": "npm run mortero -- -f _NODE_ENV=production",
     "pretest": "npm run lint && npm run build -- -ymain",
     "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.js",
     "copy:wargs": "concat -o dist/wargs.min.js node_modules/wargs/dist/wargs.min.js",
-    "postbuild": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
+    "postbuild": "echo 'module.exports = require(\"./main.cjs.js\").default;' > dist/index.js",
     "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
     "codecov": "codecov --file=coverage/lcov.info -e TRAVIS_NODE_VERSION"
   },
@@ -44,6 +45,10 @@
     "bundle": [
       "**/main*.js",
       "**/app.js"
+    ],
+    "external": [
+      "json-schema-ref-parser",
+      "jsonpath-plus"
     ],
     "options": {
       "less": {
@@ -96,7 +101,7 @@
     "less-plugin-autoprefix": "^2.0.0",
     "mocha": "^7.0.0",
     "mockjs": "^1.1.0",
-    "mortero": "^0.0.39",
+    "mortero": "^0.0.41",
     "nyc": "^15.0.0",
     "pug": "^3.0.2",
     "randexp": "^0.5.3",

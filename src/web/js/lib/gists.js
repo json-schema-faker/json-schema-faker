@@ -3,8 +3,8 @@ import { writable } from 'svelte/store';
 export const BASE_URL = 'https://github.com';
 export const API_URL = 'https://api.github.com';
 
-/* global AUTH_ID, AUTH_SECRET, PROXY_URL */
 /* global Promise, fetch */
+/* global AUTH_ID, AUTH_SECRET, PROXY_URL */
 
 const data = window.localStorage._DATA;
 

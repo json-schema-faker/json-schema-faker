@@ -1,5 +1,5 @@
 import { expect } from 'chai';
-import jsf from '../../../src/main.esm';
+import jsf from '../../../src/main.cjs';
 
 describe('Random Generation', () => {
   it('should generate all the fields with alwaysFakeOptionals option and additionalProperties: true', () => {
