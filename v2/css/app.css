@@ -204,7 +204,7 @@ button:focus {
   transition: all .3s;
   height: 70px;
   width: 100%;
-  background-image: url(/img/logo.svg);
+  background-image: url(../img/logo.svg);
   background-repeat: no-repeat;
 }
 .jsf-logo:hover {
