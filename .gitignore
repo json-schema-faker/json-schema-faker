@@ -11,18 +11,11 @@ cache.json
 *.todo
 .nyc_output
 .DS_Store
-/lib
-/dist
-/build
-/package
-/reports
-/coverage
-/generated
-/nbproject
-/node_modules
-/locale
-/bower_components
-/build/index.json
+dist
+build
+coverage
+generated
+node_modules
 
 ### Vim ###
 # swap
