@@ -3,6 +3,8 @@ import env from './constants';
 import random from './random';
 
 function getLocalRef(obj, path, refs) {
+  if (refs && refs[path]) return clone(refs[path]); // eslint-disable-line
+
   const keyElements = path.replace('#/', '/').split('/');
 
   let schema = obj.$ref && refs ? refs[obj.$ref] : obj;
