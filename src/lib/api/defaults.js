@@ -5,6 +5,7 @@ export default defaults;
 defaults.defaultInvalidTypeProduct = undefined;
 defaults.defaultRandExpMax = 10;
 
+defaults.pruneProperties = [];
 defaults.ignoreProperties = [];
 defaults.ignoreMissingRefs = false;
 defaults.failOnInvalidTypes = true;

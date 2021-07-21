@@ -107,6 +107,7 @@ jsf.locate('faker');
 
 - `defaultInvalidTypeProduct` &mdash; If `failOnInvalidTypes` is disabled this value will be returned on any invalid `type` given (default: `null`)
 - `defaultRandExpMax` &mdash; Setup default value directly as `RandExp.prototype.max` (default: `10`)
+- `pruneProperties` &mdash; Remove given properties from generated objects (default: `[]`)
 - `ignoreProperties` &mdash; Skip given properties from being generated (default: `[]`)
 - `ignoreMissingRefs` &mdash; If enabled, it will resolve to `{}` for unknown references (default: `false`)
 - `failOnInvalidTypes` &mdash; If enabled, it will throw an `Error` for unknown types (default: `true`)

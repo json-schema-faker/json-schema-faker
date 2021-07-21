@@ -1,0 +1,27 @@
+[
+  {
+    "description": "pruneProperties option",
+    "tests": [
+      {
+        "description": "should remove nested keys from pruneProperties",
+        "schema": {
+          "properties": {
+            "test": {
+              "nestedProp": {
+                "foo": "bar"
+              },
+              "otherProp": true
+            }
+          },
+          "required": [
+            "test"
+          ]
+        },
+        "equal": { "test": {} },
+        "set": {
+          "pruneProperties": ["nestedProp", "otherProp"]
+        }
+      }
+    ]
+  }
+]

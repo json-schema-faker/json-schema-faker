@@ -164,7 +164,10 @@ function traverse(schema, path, resolve, rootSchema) {
     valueCopy = [];
   }
 
+  const pruneProperties = optionAPI('pruneProperties') || [];
+
   Object.keys(schema).forEach(prop => {
+    if (pruneProperties.includes(prop)) return;
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
       const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve, valueCopy);
       valueCopy[prop] = utils.clean(value, schema[prop], false);
