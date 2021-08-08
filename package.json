@@ -121,7 +121,9 @@
     "z-schema": "^4.1.0"
   },
   "dependencies": {
+    "@types/json-schema": "^7.0.9",
     "json-schema-ref-parser": "^6.1.0",
-    "jsonpath-plus": "^5.1.0"
+    "jsonpath-plus": "^5.1.0",
+    "type-fest": "^2.0.0"
   }
 }
