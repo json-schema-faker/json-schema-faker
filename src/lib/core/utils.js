@@ -8,6 +8,9 @@ function getLocalRef(obj, path, refs) {
   const keyElements = path.replace('#/', '/').split('/');
 
   let schema = obj.$ref && refs ? refs[obj.$ref] : obj;
+  if (!schema && !keyElements[0]) {
+    keyElements[0] = obj.$ref.split('#/')[0];
+  }
   if (refs && path.includes('#/') && refs[keyElements[0]]) {
     schema = refs[keyElements.shift()];
   }
