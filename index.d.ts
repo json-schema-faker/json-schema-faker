@@ -48,6 +48,7 @@ declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
 
+/** @deprecated calling JSONSchemaFaker() is deprecated, call either .generate() or .resolve()' */
 declare function JSONSchemaFaker(schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue;
 declare namespace JSONSchemaFaker {
   var VERSION: string;
