@@ -3,6 +3,7 @@
   "version": "0.5.0-rcv.38",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
+  "types": "index.d.ts",
   "bin": {
     "jsf": "bin/gen.js"
   },
@@ -79,7 +80,8 @@
     "mocks"
   ],
   "files": [
-    "dist/*.js"
+    "dist/*.js",
+    "index.d.ts"
   ],
   "devDependencies": {
     "@types/json-schema": "^7.0.9",
