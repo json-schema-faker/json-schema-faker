@@ -155,7 +155,7 @@ body {
   z-index: 5 !important;
 }
 .smoo-fence--overlay .smoo-fence--wrapper {
-  max-width: 420px;
+  max-width: 540px;
 }
 .loading-overlay {
   background-color: white;
@@ -778,6 +778,10 @@ body {
 }
 .invalid {
   border-bottom: 1px dashed #FF4136;
+}
+.opts > li {
+  max-width: 250px;
+  width: 100%;
 }
 .Ace {
   z-index: 1;
