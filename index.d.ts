@@ -1,5 +1,7 @@
 import type { JsonValue, JsonObject } from 'type-fest';
-import type { JSONSchema4 } from 'json-schema';
+import type { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
+
+type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 
 export interface JSONSchemaFakerOptions {
   defaultInvalidTypeProduct?: boolean;
@@ -29,15 +31,15 @@ export interface JSONSchemaFakerOptions {
   renderComment?: boolean;
 }
 
-export type JSONSchemaFakerRefs = JSONSchema4[] | { [k: string]: JSONSchema4 };
+export type JSONSchemaFakerRefs = Schema[] | { [k: string]: Schema };
 
 export interface JSONSchemaFakerDefine {
-  (value: JsonValue, schema: JsonObject, property: string, rootSchema: JSONSchema4, propertyPath: string[]): JsonValue;
+  (value: JsonValue, schema: JsonObject, property: string, rootSchema: Schema, propertyPath: string[]): JsonValue;
 }
 
 interface JSONSchemaFakerFormat {
-  (opts: { [k: string]: (value: JSONSchema4) => string }): void;
-  (name: string, callback: (value: JSONSchema4) => string): void;
+  (opts: { [k: string]: (value: Schema) => string }): void;
+  (name: string, callback: (value: Schema) => string): void;
 }
 
 declare function JSONSchemaFakerOption(opts: JSONSchemaFakerOptions): void;
@@ -46,15 +48,15 @@ declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
 
-declare function JSONSchemaFaker(schema: JSONSchema4, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue;
+declare function JSONSchemaFaker(schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue;
 declare namespace JSONSchemaFaker {
   var VERSION: string;
   var format: JSONSchemaFakerFormat;
   var option: typeof JSONSchemaFakerOption;
-  var generate: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => JsonValue;
-  var generateYAML: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => string;
-  var resolve: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<JsonValue>;
-  var resolveYAML: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<string>;
+  var generate: (schema: Schema, refs?: JSONSchemaFakerRefs) => JsonValue;
+  var generateYAML: (schema: Schema, refs?: JSONSchemaFakerRefs) => string;
+  var resolve: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<JsonValue>;
+  var resolveYAML: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<string>;
   var random: {
     date(step?: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): number | Date;
     pick(list: any[]): any;
