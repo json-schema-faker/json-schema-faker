@@ -30,7 +30,7 @@
     "_graphviz": "madge src --dot > structure.gv",
     "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less",
     "watch": "npm run mortero -- -w",
-    "build": "npm run mortero --",
+    "build": "NODE_ENV=production npm run mortero --",
     "pretest": "npm run lint && npm run build -- -ymain",
     "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.js",
     "copy:bundle": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
