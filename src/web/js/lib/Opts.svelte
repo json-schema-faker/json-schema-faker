@@ -89,17 +89,17 @@
 
   <hr />
 
-  <h4>Formator</h4>
-  <!-- <form on:submit|preventDefault>
-    <ul class="lr">
+  <form on:submit|preventDefault>
+    <ul class="lr flx flx-wp opts">
       {#each opts as option}
         <li class="nosl flx mb">
-          <label for={option.id} class="cl-6">{option.name}</label>
+          <label for={option.id} class="tr cl-6">{option.name}</label>
           <span>
             {#if option.type}
-              <input {...option} on:change={e => update(e, option)}>
+              <input {...option} on:change={e => update(e, option)} title={option.name}>
             {:else}
-              <select {...option} on:change={e => update(e, option)}>
+              <!-- svelte-ignore a11y-no-onchange -->
+              <select {...option} on:change={e => update(e, option)} title={option.name}>
                 {#each vals as value}
                   <option {value} selected={value === option.value}>{typeof value !== 'undefined' ? JSON.stringify(value) : ''}</option>
                 {/each}
@@ -111,7 +111,7 @@
     </ul>
     <button class="bu" on:click={reset} disabled={$options === null}>Reset to defaults</button>
     <button class="bu" on:click={back}>Apply</button>
-  </form> -->
+  </form>
 
   <hr />
 
