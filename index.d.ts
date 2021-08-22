@@ -36,12 +36,12 @@ export interface JSONSchemaFakerDefine {
 }
 
 interface JSONSchemaFakerFormat {
-  (opts: { [k: string]: string[] | boolean | number | Function }): void;
-  (name: string, callback: Function): void;
+  (opts: { [k: string]: (value: JSONSchema4) => string }): void;
+  (name: string, callback: (value: JSONSchema4) => string): void;
 }
 
-declare function JSONSchemaFakerOption(opts: { [k: string]: string[] | boolean | number | Function }): void;
-declare function JSONSchemaFakerOption(name: keyof JSONSchemaFakerOptions, value: string[] | boolean | number | Function): void;
+declare function JSONSchemaFakerOption(opts: JSONSchemaFakerOptions): void;
+declare function JSONSchemaFakerOption(name: keyof JSONSchemaFakerOptions, value: any): void;
 declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
@@ -51,10 +51,10 @@ declare namespace JSONSchemaFaker {
   var VERSION: string;
   var format: JSONSchemaFakerFormat;
   var option: typeof JSONSchemaFakerOption;
-  var generate: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => void;
-  var generateYAML: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => void;
-  var resolve: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => void;
-  var resolveYAML: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => void;
+  var generate: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => JsonValue;
+  var generateYAML: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs) => string;
+  var resolve: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<JsonValue>;
+  var resolveYAML: (schema: JSONSchema4, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<string>;
   var random: {
     date(step?: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): number | Date;
     pick(list: any[]): any;
@@ -62,8 +62,8 @@ declare namespace JSONSchemaFaker {
     number(min?: number, max?: number, defMin?: number, defMax?: number, hasPrecision?: boolean): number;
     randexp(expr: string): string;
   };
-  var extend: (name: string, cb: (generator: any) => any) => void;
-  var define: (name: string, cb: JSONSchemaFakerDefine) => void;
+  var extend: (name: string, cb: (generator: any) => any) => typeof JSONSchemaFaker;
+  var define: (name: string, cb: JSONSchemaFakerDefine) => typeof JSONSchemaFaker;
   var reset: (name: string) => typeof JSONSchemaFaker;
   var locate: (name: string) => any;
 }
