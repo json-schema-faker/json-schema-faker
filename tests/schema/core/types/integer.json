@@ -10,7 +10,6 @@
         },
         "hasNot": ".",
         "type": "number",
-        "only": true,
         "valid": true
       },
       {
@@ -22,7 +21,6 @@
         },
         "hasNot": ".",
         "type": "number",
-        "only": true,
         "valid": true
       },
       {
@@ -35,7 +33,6 @@
         },
         "hasNot": ".",
         "type": "number",
-        "only": true,
         "valid": true
       },
       {
@@ -49,7 +46,6 @@
         },
         "hasNot": ".",
         "type": "number",
-        "only": true,
         "valid": true
       },
       {
@@ -64,7 +60,6 @@
         },
         "hasNot": ".",
         "type": "number",
-        "only": true,
         "valid": true
       },
       {
@@ -81,7 +76,6 @@
           "minimum": -10,
           "maximum": -5
         },
-        "only": true,
         "valid": true
       },
       {
@@ -91,7 +85,6 @@
           "minimum": -100,
           "maximum": 0
         },
-        "only": true,
         "valid": true
       },
       {
@@ -101,7 +94,6 @@
           "minimum": -100,
           "maximum": 1
         },
-        "only": true,
         "valid": true
       },
       {
@@ -111,7 +103,6 @@
           "minimum": -1,
           "maximum": 1
         },
-        "only": true,
         "valid": true
       }
     ]

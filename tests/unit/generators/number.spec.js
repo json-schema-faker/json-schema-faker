@@ -2,11 +2,11 @@ import { expect } from 'chai';
 import is from 'is-my-json-valid';
 import numberType from '../../../src/lib/types/number';
 
-function isMultipleOf(name, multipleOf) {
-  return is(numberType({ multipleOf }))(name);
+function isMultipleOf(schema) {
+  return is(schema)(numberType(schema));
 }
 
-describe.only('Number Generator', () => {
+describe('Number Generator', () => {
   it('should return number with a fractional part', () => {
     const n = numberType({});
     const m = Math.floor(n);
@@ -15,13 +15,15 @@ describe.only('Number Generator', () => {
   });
 
   it('should handle multipleOf on integers', () => {
-    expect(isMultipleOf({ multipleOf: 1 }, 1)).to.be.true;
+    expect(isMultipleOf({ multipleOf: 1 })).to.be.true;
+    expect(isMultipleOf({ multipleOf: 1, maximum: 1e+31 })).to.be.true;
   });
 
   it('should handle multipleOf on decimals', () => {
-    expect(isMultipleOf({ multipleOf: 1e-7 }, 1e-7)).to.be.true;
-    expect(isMultipleOf({ multipleOf: 8, minimum: 80, maximum: 90 }, 8)).to.be.true;
-    expect(isMultipleOf({ multipleOf: 0.01, minimum: 0, maximum: 1 }, 8)).to.be.true;
-    expect(isMultipleOf({ multipleOf: 0.01, minimum: 7, maximum: 10 }, 8)).to.be.true;
+    expect(isMultipleOf({ multipleOf: 0.00000001, maximum: 1000000000 })).to.be.true;
+    expect(isMultipleOf({ multipleOf: 0.000001, maximum: 1000000000 })).to.be.true;
+    expect(isMultipleOf({ multipleOf: 0.01, minimum: 7, maximum: 10 })).to.be.true;
+    expect(isMultipleOf({ multipleOf: 0.01, minimum: 0, maximum: 1 })).to.be.true;
+    expect(isMultipleOf({ multipleOf: 8, minimum: 80, maximum: 90 })).to.be.true;
   });
 });

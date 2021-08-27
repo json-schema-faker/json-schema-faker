@@ -14,6 +14,9 @@ function numberType(value) {
     const result = parseFloat(number.toFixed(truncate));
     const base = random.number(min, max - 1);
 
+    if (!String(result).includes('.')) {
+      return (base + result).toExponential();
+    }
     return base + result;
   }
 
