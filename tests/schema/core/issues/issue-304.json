@@ -39,6 +39,7 @@
             }
           ]
         },
+        "only": true,
         "valid": true
       }
     ]

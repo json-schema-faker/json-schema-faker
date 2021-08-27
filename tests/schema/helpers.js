@@ -139,7 +139,11 @@ export function tryTest(nth, max, test, refs, schema) {
       }
 
       if ('equal' in test) {
-        expect(sample).to.eql(test.equal);
+        if (Array.isArray(test.equal)) {
+          expect(test.equal).to.include(sample);
+        } else {
+          expect(sample).to.eql(test.equal);
+        }
       }
 
       if (test.throws) {

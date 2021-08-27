@@ -9,6 +9,7 @@
           "minimum": 600,
           "maximum": 500
         },
+        "only": true,
         "valid": false
       },
       {
@@ -19,6 +20,7 @@
           "maximum": 500,
           "multipleOf": 7
         },
+        "only": true,
         "valid": false
       }
     ]

@@ -19,7 +19,7 @@
           ]
         },
         "repeat": 100,
-        "skip": true,
+        "only": true,
         "valid": true
       }
     ]
