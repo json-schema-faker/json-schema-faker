@@ -1,7 +1,7 @@
 import type { JsonValue, JsonObject } from 'type-fest';
 import type { JSONSchema4, JSONSchema6, JSONSchema7 } from 'json-schema';
 
-type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
+export type Schema = JSONSchema4 | JSONSchema6 | JSONSchema7;
 
 export interface JSONSchemaFakerOptions {
   defaultInvalidTypeProduct?: boolean;
@@ -37,9 +37,9 @@ export interface JSONSchemaFakerDefine {
   (value: JsonValue, schema: JsonObject, property: string, rootSchema: Schema, propertyPath: string[]): JsonValue;
 }
 
-interface JSONSchemaFakerFormat {
-  (opts: { [k: string]: (value: Schema) => string }): void;
-  (name: string, callback: (value: Schema) => string): void;
+export interface JSONSchemaFakerFormat {
+  (opts: { [k: string]: (value: Schema) => unknown }): void;
+  (name: string, callback: (value: Schema) => unknown): void;
 }
 
 declare function JSONSchemaFakerOption(opts: JSONSchemaFakerOptions): void;
