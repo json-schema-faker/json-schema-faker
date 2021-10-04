@@ -2,8 +2,8 @@ import random from '../core/random';
 import env from '../core/constants';
 
 function numberType(value) {
-  let min = typeof value.minimum === 'undefined' ? env.MIN_INTEGER : value.minimum;
-  let max = typeof value.maximum === 'undefined' ? env.MAX_INTEGER : value.maximum;
+  let min = (typeof value.minimum === 'undefined' || value.minimum === -Number.MAX_VALUE) ? env.MIN_INTEGER : value.minimum;
+  let max = (typeof value.maximum === 'undefined' || value.maximum === Number.MAX_VALUE) ? env.MAX_INTEGER : value.maximum;
 
   const multipleOf = value.multipleOf;
   const decimals = multipleOf && String(multipleOf).match(/e-(\d)|\.(\d+)$/);

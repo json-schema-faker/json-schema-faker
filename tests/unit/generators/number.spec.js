@@ -26,4 +26,30 @@ describe('Number Generator', () => {
     expect(isMultipleOf({ multipleOf: 0.01, minimum: 0, maximum: 1 })).to.be.true;
     expect(isMultipleOf({ multipleOf: 8, minimum: 80, maximum: 90 })).to.be.true;
   });
+
+  describe('should ignore min and max if using Number.MAX_VALUE in then', () => {
+    it('ignoring minimum', () => {
+      const n = numberType({ minimum: -Number.MAX_VALUE });
+
+      expect(n).to.be.a('number');
+      expect(n).to.not.be.NaN;
+      expect(n).to.not.be.eq(Infinity);
+    });
+
+    it('ignoring minimum', () => {
+      const n = numberType({ maximum: Number.MAX_VALUE });
+
+      expect(n).to.be.a('number');
+      expect(n).to.not.be.NaN;
+      expect(n).to.not.be.eq(Infinity);
+    });
+
+    it('ignoring both', () => {
+      const n = numberType({ minimum: -Number.MAX_VALUE, maximum: Number.MAX_VALUE });
+
+      expect(n).to.be.a('number');
+      expect(n).to.not.be.NaN;
+      expect(n).to.not.be.eq(Infinity);
+    });
+  });
 });
