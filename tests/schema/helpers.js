@@ -76,7 +76,7 @@ export function tryTest(nth, max, test, refs, schema) {
         }
 
         if (test.valid) {
-          checkSchema(sample, schema, refs);
+          checkSchema(sample, schema, refs, test.omit);
         }
       } catch (e) {
         const _e = new Error(`${e.message.split('\n')[0]} (${nth} of ${max})`);
@@ -136,6 +136,10 @@ export function tryTest(nth, max, test, refs, schema) {
 
       if (test.hasNot) {
         expect(JSON.stringify(sample)).not.to.contain(test.hasNot);
+      }
+
+      if (test.match) {
+        expect(new RegExp(test.match).test(sample)).to.be.true;
       }
 
       if ('equal' in test) {

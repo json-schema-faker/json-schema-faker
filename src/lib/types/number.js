@@ -6,6 +6,19 @@ function numberType(value) {
   let max = typeof value.maximum === 'undefined' ? env.MAX_INTEGER : value.maximum;
 
   const multipleOf = value.multipleOf;
+  const decimals = multipleOf && String(multipleOf).match(/e-(\d)|\.(\d+)$/);
+
+  if (decimals) {
+    const number = ((Math.random() * random.number(0, 10)) + 1) * multipleOf;
+    const truncate = decimals[1] || decimals[2].length;
+    const result = parseFloat(number.toFixed(truncate));
+    const base = random.number(min, max - 1);
+
+    if (!String(result).includes('.')) {
+      return (base + result).toExponential();
+    }
+    return base + result;
+  }
 
   if (multipleOf) {
     max = Math.floor(max / multipleOf) * multipleOf;
@@ -25,29 +38,13 @@ function numberType(value) {
   }
 
   if (multipleOf) {
-    if (String(multipleOf).indexOf('.') === -1) {
-      let base = random.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
+    let base = random.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
 
-      while (base < min) {
-        base += value.multipleOf;
-      }
-
-      return base;
+    while (base < min) {
+      base += multipleOf;
     }
 
-    const boundary = (max - min) / multipleOf;
-
-    let num;
-    let fix;
-
-    do {
-      num = random.number(0, boundary) * multipleOf;
-      fix = (num / multipleOf) % 1;
-    } while (fix !== 0);
-
-    // FIXME: https://github.com/json-schema-faker/json-schema-faker/issues/379
-
-    return min + num;
+    return base;
   }
 
   return random.number(min, max, undefined, undefined, true);

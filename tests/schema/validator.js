@@ -46,7 +46,7 @@ export function checkType(sample, type) {
   }
 }
 
-export function checkSchema(sample, schema, refs) {
+export function checkSchema(sample, schema, refs, omit = []) {
   const fail = [];
   const fixed = {};
 
@@ -77,75 +77,81 @@ export function checkSchema(sample, schema, refs) {
   }
 
   // z-schema
-  const validator = new ZSchema({
-    ignoreUnresolvableReferences: true,
-  });
+  if (!omit.includes('z-schema')) {
+    const validator = new ZSchema({
+      ignoreUnresolvableReferences: true,
+    });
 
-  Object.keys(fixed).forEach(k => {
-    validator.setRemoteReference(k, fixed[k]);
-  });
+    Object.keys(fixed).forEach(k => {
+      validator.setRemoteReference(k, fixed[k]);
+    });
 
-  let valid;
+    let valid;
 
-  try {
-    valid = validator.validate(clone(sample), clone(schema));
-  } catch (e) {
-    fail.push(`[z-schema] ${e.message}`);
-  }
+    try {
+      valid = validator.validate(clone(sample), clone(schema));
+    } catch (e) {
+      fail.push(`[z-schema] ${e.message}`);
+    }
 
-  const errors = validator.getLastErrors();
+    const errors = validator.getLastErrors();
 
-  if (errors || !valid) {
-    fail.push((errors || []).map(e => {
-      if (e.code === 'PARENT_SCHEMA_VALIDATION_FAILED') {
-        return e.inner.map(x => `[z-schema] ${x.message}`).join('\n');
-      }
+    if (errors || !valid) {
+      fail.push((errors || []).map(e => {
+        if (e.code === 'PARENT_SCHEMA_VALIDATION_FAILED') {
+          return e.inner.map(x => `[z-schema] ${x.message}`).join('\n');
+        }
 
-      return `[z-schema] ${e.message}`;
-    }).join('\n') || `[z-schema] Invalid schema ${JSON.stringify(sample)}`);
+        return `[z-schema] ${e.message}`;
+      }).join('\n') || `[z-schema] Invalid schema ${JSON.stringify(sample)}`);
+    }
   }
 
   // tv4
-  const api = tv4.freshApi();
+  if (!omit.includes('tv4')) {
+    const api = tv4.freshApi();
 
-  api.banUnknown = false;
-  api.cyclicCheck = false;
+    api.banUnknown = false;
+    api.cyclicCheck = false;
 
-  Object.keys(fixed).forEach(k => {
-    api.addSchema(k, fixed[k]);
-  });
+    Object.keys(fixed).forEach(k => {
+      api.addSchema(k, fixed[k]);
+    });
 
-  const result = api.validateResult(sample, clone(schema), api.cyclicCheck, api.banUnknown);
+    const result = api.validateResult(sample, clone(schema), api.cyclicCheck, api.banUnknown);
 
-  if (result.missing.length) {
-    fail.push(`[tv4] Missing ${result.missing.join(', ')}`);
-  }
+    if (result.missing.length) {
+      fail.push(`[tv4] Missing ${result.missing.join(', ')}`);
+    }
 
-  if (result.error) {
-    fail.push(`[tv4] ${result.error}`);
+    if (result.error) {
+      fail.push(`[tv4] ${result.error}`);
+    }
   }
 
   // ajv
-  const ajv = new Ajv({
-    validateSchema: false,
-    jsonPointers: true,
-    logger: false,
-    formats: {
-      semver: semver.valid,
-      'full-date': isDate,
-      'idn-hostname': () => true,
-      'idn-email': () => true,
-    },
-  });
-
-  Object.keys(fixed).forEach(id => {
-    ajv.addSchema(fixed[id], id);
-  });
-
-  if (!ajv.validate(schema, sample)) {
-    ajv.errors.forEach(x => {
-      fail.push(`[ajv] ${x.message}`);
+  if (!omit.includes('ajv')) {
+    const ajv = new Ajv({
+      validateSchema: false,
+      jsonPointers: true,
+      logger: false,
+      formats: {
+        semver: semver.valid,
+        'full-date': isDate,
+        'idn-hostname': () => true,
+        'idn-email': () => true,
+      },
     });
+
+    Object.keys(fixed).forEach(id => {
+      ajv.addSchema(fixed[id], id);
+    });
+
+    if (!ajv.validate(schema, sample)) {
+      ajv.errors.forEach(x => {
+        fail.push(`[ajv] ${x.message}`);
+      });
+    }
   }
 
   if (fail.length) {

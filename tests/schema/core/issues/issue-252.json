@@ -19,7 +19,7 @@
           ]
         },
         "repeat": 100,
-        "skip": true,
+        "omit": ["z-schema", "tv4", "ajv"],
         "valid": true
       }
     ]
