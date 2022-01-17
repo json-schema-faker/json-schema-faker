@@ -84,6 +84,7 @@
     "index.d.ts"
   ],
   "devDependencies": {
+    "@faker-js/faker": "^5.5.3",
     "@types/json-schema": "^7.0.9",
     "ajv": "^6.12.6",
     "chai": "^4.1.2",
@@ -98,7 +99,6 @@
     "eslint-plugin-svelte3": "^3.2.0",
     "eslint-utils": ">=1.4.1",
     "esm": ">=3.1.0",
-    "faker": "^5.4.0",
     "fs-extra": "^10.0.0",
     "glob": "^7.1.2",
     "glob-parent": ">=5.1.2",
