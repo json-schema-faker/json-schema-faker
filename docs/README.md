@@ -81,7 +81,7 @@ jsf.random; // { pick, date, shuffle, number, randexp }
 
 // 3.4 - extend keywords with external generators
 jsf.extend('chance', () => require('chance'));
-jsf.extend('faker', () => require('faker'));
+jsf.extend('faker', () => require('@faker-js/faker'));
 
 // 3.5 - extend keywords with custom generators
 jsf.define('myProp', (value, schema) => schema);

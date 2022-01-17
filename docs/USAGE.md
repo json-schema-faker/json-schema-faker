@@ -195,7 +195,7 @@ jsf.resolve(schema, refs).then(sample => {
 `jsf` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) (and others) are also supported but they require setup:
 
 ```js
-jsf.extend('faker', () => require('faker'));
+jsf.extend('faker', () => require('@faker-js/faker'));
 ```
 
 ```json
@@ -225,7 +225,7 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
 In following inline code examples the `faker` and `chance` variables are assumed to be created with, respectively:
 
 ```javascript
-import faker from 'faker';
+import faker from '@faker-js/faker';
 import Chance from 'chance';
 
 jsf.extend('faker', () => faker);
@@ -355,7 +355,7 @@ You may extend [Faker.js](https://github.com/Marak/faker.js):
 import jsf from 'json-schema-faker';
 
 jsf.extend('faker', () => {
-  const faker = require('faker');
+  const faker = require('@faker-js/faker');
 
   faker.locale = 'de'; // or any other language
   faker.custom = {
@@ -381,7 +381,7 @@ jsf.resolve(schema).then(...);
 ```js
 jsf.extend('faker', () => {
   // just ignore the passed faker instance
-  const faker = require('faker/locale/de');
+  const faker = require('@faker-js/faker/locale/de');
   // do other stuff
   return faker;
 });
