@@ -29,6 +29,8 @@ export interface JSONSchemaFakerOptions {
   renderTitle?: boolean;
   renderDescription?: boolean;
   renderComment?: boolean;
+  refDepthMax?: number;
+  refDepthMin?: number;
 }
 
 export type JSONSchemaFakerRefs = Schema[] | { [k: string]: Schema };
