@@ -12,7 +12,7 @@ export interface JSONSchemaFakerOptions {
   failOnInvalidTypes?: boolean;
   failOnInvalidFormat?: boolean;
   alwaysFakeOptionals?: boolean;
-  optionalsProbability?: boolean;
+  optionalsProbability?: number | false;
   fixedProbabilities?: boolean;
   useExamplesValue?: boolean;
   useDefaultValue?: boolean;
