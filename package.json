@@ -84,7 +84,7 @@
     "index.d.ts"
   ],
   "devDependencies": {
-    "@faker-js/faker": "^5.5.3",
+    "@faker-js/faker": "^7.3.0",
     "@types/json-schema": "^7.0.9",
     "ajv": "^6.12.6",
     "chai": "^4.1.2",
