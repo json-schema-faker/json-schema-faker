@@ -42,8 +42,8 @@ function traverse(schema, path, resolve, rootSchema) {
       return { value: utils.typecast(null, schema, () => random.pick(fixedExamples)), context };
     }
     // If schema contains single example property
-    if(optionAPI('useExamplesValue') && schema.example) {
-      return { value: utils.typecast(null, schema, () => schema.example, context };
+    if (optionAPI('useExamplesValue') && schema.example) {
+      return { value: utils.typecast(null, schema, () => schema.example), context };
     }
 
     if (optionAPI('useDefaultValue') && 'default' in schema) {
