@@ -115,7 +115,7 @@ jsf.locate('faker');
 - `alwaysFakeOptionals` &mdash; When enabled, it will set `optionalsProbability: 1.0` and ` fixedProbabilities: true` (default: `false`)
 - `optionalsProbability` &mdash; A value from `0.0` to `1.0` to generate values in a consistent way, e.g. `0.5` will generate from `0%` to `50%` of values. Using arrays it means items, on objects they're properties, etc. (default: `false`)
 - `fixedProbabilities` &mdash; If enabled, then `optionalsProbability: 0.5` will always generate the half of values (default: `false`)
-- `useExamplesValue` &mdash; If enabled, it will return a random value from `examples` if they're present (default: `false`)
+- `useExamplesValue` &mdash; If enabled, it will return a random value from `examples` or single value from `example` if present (default: `false`)
 - `useDefaultValue` &mdash; If enabled, it will return the `default` value if present (default: `false`)
 - `requiredOnly` &mdash; If enabled, only `required` properties will be generated (default: `false`)
 - `minItems` &mdash; Override `minItems` if it's less than this value (default: `0`)
