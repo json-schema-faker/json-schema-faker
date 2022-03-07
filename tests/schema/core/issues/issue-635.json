@@ -11,7 +11,8 @@
           }
         },
         "equal": null,
-        "require": "core/extend/faker-extend"
+        "require": "core/extend/faker-extend",
+        "seed": 0.9999999999999999
       },
       {
         "description": "should handle string",
@@ -22,7 +23,8 @@
           }
         },
         "equal": "something",
-        "require": "core/extend/faker-extend"
+        "require": "core/extend/faker-extend",
+        "seed": 0.0000000000000001
       }
     ]
   }
