@@ -56,8 +56,8 @@ function clampDate(value) {
 
   let [year, month, day] = value.split('T')[0].split('-');
 
-  month = Math.max(1, Math.min(12, month));
-  day = Math.max(1, Math.min(31, day));
+  month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
+  day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
 
   return `${year}-${month}-${day}`;
 }
