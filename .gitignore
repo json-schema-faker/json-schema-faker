@@ -16,6 +16,7 @@ build
 coverage
 generated
 node_modules
+package-lock.json
 
 ### Vim ###
 # swap
