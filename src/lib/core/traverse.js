@@ -78,25 +78,6 @@ function traverse(schema, path, resolve, rootSchema) {
     return { value, context: { ...context, items: innerContext } };
   }
 
-  if (typeof schema.generate === 'function') {
-    const retval = utils.typecast(null, schema, () => schema.generate(rootSchema, path));
-    const type = retval === null ? 'null' : typeof retval;
-    if (type === schema.type
-      || (Array.isArray(schema.type) && schema.type.includes(type))
-      || (type === 'number' && schema.type === 'integer')
-      || (Array.isArray(retval) && schema.type === 'array')) {
-      return { value: retval, context };
-    }
-  }
-
-  if (typeof schema.pattern === 'string') {
-    return { value: utils.typecast('string', schema, () => random.randexp(schema.pattern)), context };
-  }
-
-  if (Array.isArray(schema.enum)) {
-    return { value: utils.typecast(null, schema, () => random.pick(schema.enum)), context };
-  }
-
   // short-circuit as we don't plan generate more values!
   if (schema.jsonPath) {
     return { value: schema, context };
@@ -114,6 +95,24 @@ function traverse(schema, path, resolve, rootSchema) {
     if (type) {
       schema.type = type;
     }
+  }
+
+  if (typeof schema.generate === 'function') {
+    const retVal = utils.typecast(null, schema, () => schema.generate(rootSchema, path));
+    const retType = retVal === null ? 'null' : typeof retVal;
+    if (retType === type
+      || (retType === 'number' && type === 'integer')
+      || (Array.isArray(retVal) && type === 'array')) {
+      return { value: retVal, context };
+    }
+  }
+
+  if (typeof schema.pattern === 'string') {
+    return { value: utils.typecast('string', schema, () => random.randexp(schema.pattern)), context };
+  }
+
+  if (Array.isArray(schema.enum)) {
+    return { value: utils.typecast(null, schema, () => random.pick(schema.enum)), context };
   }
 
   if (typeof type === 'string') {
