@@ -63,6 +63,30 @@ function clampDate(value) {
 }
 
 /**
+ * Normalize generated date-time values YYYY-MM-DDTHH:mm:ss to not have
+ * out of range values
+ *
+ * @param value
+ * @returns {string}
+ */
+function clampDateTime(value) {
+  if (value.includes(' ')) {
+    return new Date(value).toISOString().substr(0, 10);
+  }
+
+  let [year, month, day] = value.split('T')[0].split('-');
+  let [hour, minute, second] = value.split('T')[1].split('.')[0].split(':');
+
+  month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
+  day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
+  hour = `0${Math.max(1, Math.min(23, hour))}`.slice(-2);
+  minute = `0${Math.max(1, Math.min(59, minute))}`.slice(-2);
+  second = `0${Math.max(1, Math.min(59, second))}`.slice(-2);
+
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}.000Z`;
+}
+
+/**
  * Returns typecasted value.
  * External generators (faker, chance, casual) may return data in non-expected formats, such as string, when you might expect an
  * integer. This function is used to force the typecast. This is the base formatter for all result values.
@@ -190,7 +214,7 @@ function typecast(type, schema, callback) {
       switch (schema.format) {
         case 'date-time':
         case 'datetime':
-          value = new Date(clampDate(value)).toISOString().replace(/([0-9])0+Z$/, '$1Z');
+          value = new Date(clampDateTime(value)).toISOString().replace(/([0-9])0+Z$/, '$1Z');
           break;
 
         case 'full-date':
