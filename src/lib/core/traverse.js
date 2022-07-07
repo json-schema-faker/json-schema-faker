@@ -23,7 +23,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   if (!schema) {
-    return;
+    throw new Error(`Cannot traverse at '${path.join('.')}', given '${JSON.stringify(rootSchema)}'`);
   }
 
   const context = {
