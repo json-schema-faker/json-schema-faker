@@ -93,6 +93,7 @@ const buildResolveSchema = ({
         utils.merge(sub, typeof _sub.thunk === 'function'
           ? _sub.thunk(sub)
           : _sub);
+
         if (Array.isArray(sub.allOf)) {
           recursiveUtil.resolveSchema(sub, index, rootPath);
         }

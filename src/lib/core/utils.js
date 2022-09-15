@@ -271,8 +271,10 @@ function merge(a, b) {
     } else if (Array.isArray(b[key])) {
       a[key] = a[key] || [];
       // fix #292 - skip duplicated values from merge object (b)
-      b[key].forEach(value => {
-        if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
+      b[key].forEach((value, i) => {
+        if (a.type === 'array') {
+          a[key][i] = merge(a[key][i] || {}, value, true);
+        } else if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
           a[key].push(value);
         }
       });
