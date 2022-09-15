@@ -274,7 +274,20 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  const result = traverseCallback(props, path.concat(['properties']), resolve, value);
+  let sortedObj = props;
+  if (optionAPI('sortProperties') !== null) {
+    const originalKeys = Object.keys(properties);
+    const sortedKeys = Object.keys(props).sort((a, b) => {
+      return optionAPI('sortProperties') ? a.localeCompare(b) : originalKeys.indexOf(b) - originalKeys.indexOf(a);
+    });
+
+    sortedObj = sortedKeys.reduce((memo, key) => {
+      memo[key] = props[key];
+      return memo;
+    }, {});
+  }
+
+  const result = traverseCallback(sortedObj, path.concat(['properties']), resolve, value);
 
   _deps.forEach(dep => {
     for (const sub of dep.values) {
