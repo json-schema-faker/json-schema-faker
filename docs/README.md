@@ -129,6 +129,7 @@ jsf.locate('faker');
 - `fillProperties` &mdash; If enabled, it will try to generate missing properties to fulfill the schema definition (default: `true`)
 - `random` &mdash; Setup a custom _randonmess_ generator, useful for getting deterministic results (default: `Math.random`)
 - `replaceEmptyByRandomValue` &mdash; Replace default empty value by a random value (default: `false`)
+- `omitNulls` &mdash; Remove any generated `null` value from the resulting value (default: `false`)
 
 ## Building
 

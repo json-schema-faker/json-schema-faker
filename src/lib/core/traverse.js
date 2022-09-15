@@ -171,10 +171,16 @@ function traverse(schema, path, resolve, rootSchema) {
 
   Object.keys(schema).forEach(prop => {
     if (pruneProperties.includes(prop)) return;
+    if (schema[prop] === null) return;
     if (typeof schema[prop] === 'object' && prop !== 'definitions') {
       const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve, valueCopy);
       valueCopy[prop] = utils.clean(value, schema[prop], false);
       contextCopy[prop] = innerContext;
+
+      if (valueCopy[prop] === null && optionAPI('omitNulls')) {
+        delete valueCopy[prop];
+        delete contextCopy[prop];
+      }
     } else {
       valueCopy[prop] = schema[prop];
     }
