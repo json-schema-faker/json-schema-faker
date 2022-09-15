@@ -117,6 +117,10 @@ function objectType(value, path, resolve, traverseCallback) {
   const missing = [];
 
   _props.forEach(key => {
+    if (properties[key] && ['{}', 'true'].includes(JSON.stringify(properties[key].not))) {
+      return;
+    }
+
     for (let i = 0; i < ignoreProperties.length; i += 1) {
       if ((ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key))
         || (typeof ignoreProperties[i] === 'string' && ignoreProperties[i] === key)
