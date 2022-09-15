@@ -2,6 +2,8 @@ import optionAPI from '../api/option';
 import env from './constants';
 import random from './random';
 
+const RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
+
 function getLocalRef(obj, path, refs) {
   if (refs && refs[path]) return clone(refs[path]); // eslint-disable-line
 
@@ -30,6 +32,26 @@ function getLocalRef(obj, path, refs) {
 }
 
 /**
+ * Returns true/false if given value can be treated as number/integer
+ *
+ * @param value
+ * @returns {boolean}
+ */
+function isNumeric(value) {
+  return typeof value === 'string' && RE_NUMERIC.test(value);
+}
+
+/**
+ * Returns true/false if given value is a number or boolean
+ *
+ * @param value
+ * @returns {boolean}
+ */
+function isScalar(value) {
+  return ['number', 'boolean'].includes(typeof value);
+}
+
+ /**
  * Returns true/false whether the object parameter has its own properties defined
  *
  * @param obj
@@ -166,11 +188,11 @@ function typecast(type, schema, callback) {
   // normalize output value
   switch (type || schema.type) {
     case 'number':
-      value = parseFloat(value);
+      value = isNumeric(value) ? parseFloat(value) : value;
       break;
 
     case 'integer':
-      value = parseInt(value, 10);
+      value = isNumeric(value) ? parseInt(value, 10) : value;
       break;
 
     case 'boolean':
@@ -178,6 +200,10 @@ function typecast(type, schema, callback) {
       break;
 
     case 'string': {
+      if (isScalar(value)) {
+        return value;
+      }
+
       value = String(value);
 
       const min = Math.max(params.minLength || 0, 0);
