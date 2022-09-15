@@ -79,6 +79,7 @@ function objectType(value, path, resolve, traverseCallback) {
   const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random.number(0, max);
   const _props = requiredProperties.concat(random.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
   const _defns = [];
+  const _deps = [];
 
   if (value.dependencies) {
     Object.keys(value.dependencies).forEach(prop => {
@@ -92,6 +93,10 @@ function objectType(value, path, resolve, traverseCallback) {
               _props.push(sub);
             }
           });
+        } else if (Array.isArray(_required.oneOf || _required.anyOf)) {
+          const values = _required.oneOf || _required.anyOf;
+
+          _deps.push({ prop, values });
         } else {
           _defns.push(_required);
         }
@@ -257,7 +262,24 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  return traverseCallback(props, path.concat(['properties']), resolve, value);
+  const result = traverseCallback(props, path.concat(['properties']), resolve, value);
+
+  _deps.forEach(dep => {
+    for (const sub of dep.values) {
+      // TODO: this would not check all possibilities, to do so, we should "validate" the
+      // generated value against every schema... however, I don't want to include a validator...
+      if (utils.hasValue(sub.properties[dep.prop], result.value[dep.prop])) {
+        Object.keys(sub.properties).forEach(next => {
+          if (next !== dep.prop) {
+            utils.merge(result.value, traverseCallback(sub.properties, path.concat(['properties']), resolve, value).value);
+          }
+        });
+        break;
+      }
+    }
+  });
+
+  return result;
 }
 
 export default objectType;

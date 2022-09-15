@@ -337,6 +337,11 @@ function anyValue() {
   ]);
 }
 
+function hasValue(schema, value) {
+  if (schema.enum) return schema.enum.includes(value);
+  if (schema.const) return schema.const === value;
+}
+
 function notValue(schema, parent) {
   const copy = merge({}, parent);
 
@@ -521,6 +526,7 @@ export default {
   merge,
   clone,
   short,
+  hasValue,
   notValue,
   anyValue,
   validate,

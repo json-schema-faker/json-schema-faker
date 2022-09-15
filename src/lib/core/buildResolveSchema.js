@@ -99,7 +99,7 @@ const buildResolveSchema = ({
       });
     }
 
-    if (Array.isArray(sub.oneOf || sub.anyOf)) {
+    if (Array.isArray(sub.oneOf || sub.anyOf) && rootPath[rootPath.length - 2] !== 'dependencies') {
       const mix = sub.oneOf || sub.anyOf;
 
       // test every value from the enum against each-oneOf
