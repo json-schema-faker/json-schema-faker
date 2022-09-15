@@ -17,6 +17,7 @@ defaults.fixedProbabilities = false;
 defaults.useExamplesValue = false;
 defaults.useDefaultValue = false;
 defaults.requiredOnly = false;
+defaults.omitNulls = false;
 
 defaults.minItems = 0;
 defaults.maxItems = null;
@@ -26,6 +27,7 @@ defaults.maxLength = null;
 defaults.resolveJsonPath = false;
 defaults.reuseProperties = false;
 defaults.fillProperties = true;
+defaults.sortProperties = null;
 defaults.replaceEmptyByRandomValue = false;
 
 defaults.random = Math.random;

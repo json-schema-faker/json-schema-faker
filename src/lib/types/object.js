@@ -79,6 +79,7 @@ function objectType(value, path, resolve, traverseCallback) {
   const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random.number(0, max);
   const _props = requiredProperties.concat(random.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
   const _defns = [];
+  const _deps = [];
 
   if (value.dependencies) {
     Object.keys(value.dependencies).forEach(prop => {
@@ -92,6 +93,10 @@ function objectType(value, path, resolve, traverseCallback) {
               _props.push(sub);
             }
           });
+        } else if (Array.isArray(_required.oneOf || _required.anyOf)) {
+          const values = _required.oneOf || _required.anyOf;
+
+          _deps.push({ prop, values });
         } else {
           _defns.push(_required);
         }
@@ -112,6 +117,10 @@ function objectType(value, path, resolve, traverseCallback) {
   const missing = [];
 
   _props.forEach(key => {
+    if (properties[key] && ['{}', 'true'].includes(JSON.stringify(properties[key].not))) {
+      return;
+    }
+
     for (let i = 0; i < ignoreProperties.length; i += 1) {
       if ((ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key))
         || (typeof ignoreProperties[i] === 'string' && ignoreProperties[i] === key)
@@ -181,6 +190,14 @@ function objectType(value, path, resolve, traverseCallback) {
   let minProps = min;
   if (allowsAdditional && !requiredProperties.length) {
     minProps = Math.max(optionalsProbability === null || additionalProperties ? random.number(fillProps ? 1 : 0, max) : 0, min);
+  }
+
+  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true) {
+    const limit = random.number(0, max);
+
+    for (let i = 0; i <= limit; i += 1) {
+      props[words(1) + hash(limit[i])] = anyType;
+    }
   }
 
   while (fillProps) {
@@ -257,7 +274,37 @@ function objectType(value, path, resolve, traverseCallback) {
     }
   }
 
-  return traverseCallback(props, path.concat(['properties']), resolve, value);
+  let sortedObj = props;
+  if (optionAPI('sortProperties') !== null) {
+    const originalKeys = Object.keys(properties);
+    const sortedKeys = Object.keys(props).sort((a, b) => {
+      return optionAPI('sortProperties') ? a.localeCompare(b) : originalKeys.indexOf(b) - originalKeys.indexOf(a);
+    });
+
+    sortedObj = sortedKeys.reduce((memo, key) => {
+      memo[key] = props[key];
+      return memo;
+    }, {});
+  }
+
+  const result = traverseCallback(sortedObj, path.concat(['properties']), resolve, value);
+
+  _deps.forEach(dep => {
+    for (const sub of dep.values) {
+      // TODO: this would not check all possibilities, to do so, we should "validate" the
+      // generated value against every schema... however, I don't want to include a validator...
+      if (utils.hasValue(sub.properties[dep.prop], result.value[dep.prop])) {
+        Object.keys(sub.properties).forEach(next => {
+          if (next !== dep.prop) {
+            utils.merge(result.value, traverseCallback(sub.properties, path.concat(['properties']), resolve, value).value);
+          }
+        });
+        break;
+      }
+    }
+  });
+
+  return result;
 }
 
 export default objectType;

@@ -93,13 +93,14 @@ const buildResolveSchema = ({
         utils.merge(sub, typeof _sub.thunk === 'function'
           ? _sub.thunk(sub)
           : _sub);
+
         if (Array.isArray(sub.allOf)) {
           recursiveUtil.resolveSchema(sub, index, rootPath);
         }
       });
     }
 
-    if (Array.isArray(sub.oneOf || sub.anyOf)) {
+    if (Array.isArray(sub.oneOf || sub.anyOf) && rootPath[rootPath.length - 2] !== 'dependencies') {
       const mix = sub.oneOf || sub.anyOf;
 
       // test every value from the enum against each-oneOf
