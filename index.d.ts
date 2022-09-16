@@ -50,7 +50,7 @@ declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
 
-/** @deprecated calling JSONSchemaFaker() is deprecated, call either .generate() or .resolve()' */
+/** @deprecated The default export is deprecated; use the named export. (Try changing import JSONSchemaFaker to import `import { JSONSchemaFaker }`).  */
 declare function JSONSchemaFaker(schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue;
 declare namespace JSONSchemaFaker {
   var VERSION: string;
@@ -74,3 +74,24 @@ declare namespace JSONSchemaFaker {
 }
 
 export default JSONSchemaFaker;
+
+export type JSONSchemaFaker = {
+  VERSION: string;
+  format: JSONSchemaFakerFormat;
+  option: typeof JSONSchemaFakerOption;
+  generate: (schema: Schema, refs?: JSONSchemaFakerRefs) => JsonValue;
+  generateYAML: (schema: Schema, refs?: JSONSchemaFakerRefs) => string;
+  resolve: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<JsonValue>;
+  resolveYAML: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<string>;
+  random: {
+    date(step?: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): number | Date;
+    pick(list: any[]): any;
+    shuffle(list: any[]): any[];
+    number(min?: number, max?: number, defMin?: number, defMax?: number, hasPrecision?: boolean): number;
+    randexp(expr: string): string;
+  };
+  extend: (name: string, cb: (generator: any) => any) => typeof JSONSchemaFaker;
+  define: (name: string, cb: JSONSchemaFakerDefine) => typeof JSONSchemaFaker;
+  reset: (name: string) => typeof JSONSchemaFaker;
+  locate: (name: string) => any;
+}

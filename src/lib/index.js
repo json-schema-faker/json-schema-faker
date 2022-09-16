@@ -190,4 +190,10 @@ if (typeof VERSION !== 'undefined') {
   jsf.VERSION = VERSION;
 }
 
+
+// Export an object that has all of jsf()'s properties and is not a function
+// Calling jsf() is deprecated in favor of JSONSchemaFaker.generate() / JSONSchemaFaker.resolve()
+export const JSONSchemaFaker = {... jsf};
+
+// For backward compatibility we still export the jsf function
 export default jsf;
