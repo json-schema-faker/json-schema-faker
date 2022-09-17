@@ -73,15 +73,10 @@ type JSONSchemaFakerObject = {
   locate: (name: string) => any;
 }
 
-
-
-type JSONSchemaFakerFunction = JSONSchemaFakerObject & {
-   (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue 
-}
-
-
 export declare const JSONSchemaFaker: JSONSchemaFakerObject;
 
 /** @deprecated The default export is deprecated; use the named export. See https://github.com/json-schema-faker/json-schema-faker/blob/master/docs/DEPRECATED.md */
-declare const jsf: JSONSchemaFakerFunction;
+declare const jsf: JSONSchemaFakerObject & {
+  (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue 
+};
 export default jsf;
