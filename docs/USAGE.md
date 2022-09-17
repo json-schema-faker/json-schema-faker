@@ -27,50 +27,50 @@
 
 JSON-Schema-faker (or `jsf` for short) combines two things:
 
- * The [JSON-schema specification](http://json-schema.org/draft-04/json-schema-core.html), that defines what is the allowed content of a JSON document
- * Fake data generators, that are used to generate basic or complex data, conforming to the schema.
+- The [JSON-schema specification](http://json-schema.org/draft-04/json-schema-core.html), that defines what is the allowed content of a JSON document
+- Fake data generators, that are used to generate basic or complex data, conforming to the schema.
 
-> Since `v0.5.x` external generators are not longer bundled with `jsf`, however built-in defaults are shipped for all basic types and formats.
+> Since `v0.5.x` external generators are not longer bundled with `JSONSchemaFaker`, however built-in defaults are shipped for all basic types and formats.
 
 ## Example usage
 
 ```javascript
-import jsf from 'json-schema-faker';
+import { JSONSchemaFaker } from "json-schema-faker";
 
 const schema = {
-  type: 'object',
+  type: "object",
   properties: {
     user: {
-      type: 'object',
+      type: "object",
       properties: {
         id: {
-          $ref: '#/definitions/positiveInt'
+          $ref: "#/definitions/positiveInt",
         },
         name: {
-          type: 'string',
-          faker: 'name.findName'
+          type: "string",
+          faker: "name.findName",
         },
         email: {
-          type: 'string',
-          format: 'email',
-          faker: 'internet.email'
-        }
+          type: "string",
+          format: "email",
+          faker: "internet.email",
+        },
       },
-      required: ['id', 'name', 'email']
-    }
+      required: ["id", "name", "email"],
+    },
   },
-  required: ['user'],
+  required: ["user"],
   definitions: {
     positiveInt: {
-      type: 'integer',
+      type: "integer",
       minimum: 0,
-      exclusiveMinimum: true
-    }
-  }
+      exclusiveMinimum: true,
+    },
+  },
 };
 
 // use the async-version (preferred way)
-jsf.resolve(schema).then(sample => {
+JSONSchemaFaker.resolve(schema).then((sample) => {
   console.log(sample);
   // "[object Object]"
 
@@ -79,19 +79,19 @@ jsf.resolve(schema).then(sample => {
 });
 
 // sync-version (blocking)
-jsf.generate(schema); // [object Object]
+JSONSchemaFaker.generate(schema); // [object Object]
 ```
 
 ### More examples
 
- * [json-schema.org/example1.html](http://json-schema.org/example1.html):
-   [warehouse location](http://json-schema-faker.js.org/#gist/bb4774bf26167360e7c5cf2a29db3e56),
-   [Product from Acme catalog](http://json-schema-faker.js.org/#gist/c7a398c537cf7befce0df67fe7feeea8)
- * [json-schema.org/example2.html](http://json-schema.org/example2.html):
-   [_diskDevice_ storage type](http://json-schema-faker.js.org/#gist/0c0d676023ea505c97eef9af0b4d95da),
-   [_diskUUID_ storage type](http://json-schema-faker.js.org/#gist/0ac23aa547acfdb2897a7afec3042534),
-   [_nfs_ storage type](http://json-schema-faker.js.org/#gist/473ac2bc364b2610f7fc703e59cfe1c9),
-   [_tmpfs_ storage type](http://json-schema-faker.js.org/#gist/de1c5f18f0d231557ce25e44f581cadf)
+- [json-schema.org/example1.html](http://json-schema.org/example1.html):
+  [warehouse location](http://json-schema-faker.js.org/#gist/bb4774bf26167360e7c5cf2a29db3e56),
+  [Product from Acme catalog](http://json-schema-faker.js.org/#gist/c7a398c537cf7befce0df67fe7feeea8)
+- [json-schema.org/example2.html](http://json-schema.org/example2.html):
+  [_diskDevice_ storage type](http://json-schema-faker.js.org/#gist/0c0d676023ea505c97eef9af0b4d95da),
+  [_diskUUID_ storage type](http://json-schema-faker.js.org/#gist/0ac23aa547acfdb2897a7afec3042534),
+  [_nfs_ storage type](http://json-schema-faker.js.org/#gist/473ac2bc364b2610f7fc703e59cfe1c9),
+  [_tmpfs_ storage type](http://json-schema-faker.js.org/#gist/de1c5f18f0d231557ce25e44f581cadf)
 
 ## Automation
 
@@ -118,7 +118,7 @@ to execute `jsf` as a [webpack](https://webpack.github.io/) loader.
 
 ## JSON-Schema specification support
 
-Currently `jsf` supports the JSON-Schema specification **draft-04** only.
+Currently `JSONSchemaFaker` supports the JSON-Schema specification **draft-04** only.
 
 If you want to use **draft-03**, you may find useful information [here](https://github.com/json-schema-faker/json-schema-faker/issues/66).
 
@@ -138,8 +138,8 @@ Below is the list of supported keywords:
   [`ipv4`](http://json-schema.org/draft-04/json-schema-validation.html#anchor117),
   [`ipv6`](http://json-schema.org/draft-04/json-schema-validation.html#anchor120)
   and [`uri`](http://json-schema.org/draft-04/json-schema-validation.html#anchor123)
-    &mdash; also `uri-reference`, `uri-template`, `json-pointer` and `uuid` are supported.
-    -- [demo »](http://json-schema-faker.js.org/#gist/f58db80cbf52c12c623166090240d964)
+  &mdash; also `uri-reference`, `uri-template`, `json-pointer` and `uuid` are supported.
+  -- [demo »](http://json-schema-faker.js.org/#gist/f58db80cbf52c12c623166090240d964)
 - `enum` &mdash; Returns any of these enumerated values.
 - `minLength`, `maxLength` &mdash; Applies length constraints to string values.
 - `minimum`, `maximum` &mdash; Applies constraints to numeric values.
@@ -161,41 +161,41 @@ Below is the list of supported keywords:
 
 ## Using references
 
-Inline references are fully supported (json-pointers) but external can't be resolved by `jsf`.
+Inline references are fully supported (json-pointers) but external can't be resolved by `JSONSchemaFaker`.
 
 Remote en local references are automatically resolved thanks to `json-schema-ref-parser`.
 
 ```javascript
 const schema = {
-  type: 'object',
+  type: "object",
   properties: {
     someValue: {
-      $ref: 'otherSchema'
-    }
-  }
+      $ref: "otherSchema",
+    },
+  },
 };
 
 const refs = [
   {
-    id: 'otherSchema',
-    type: 'string'
-  }
+    id: "otherSchema",
+    type: "string",
+  },
 ];
 
-jsf.resolve(schema, refs).then(sample => {
+JSONSchemaFaker.resolve(schema, refs).then((sample) => {
   console.log(sample.someValue);
   // "voluptatem"
 });
 ```
 
-> Local references are always resolved from the `process.cwd()`, of course you can specify a custom folder to look-up: `jsf.resolve(schema, refs, cwd)`
+> Local references are always resolved from the `process.cwd()`, of course you can specify a custom folder to look-up: `JSONSchemaFaker.resolve(schema, refs, cwd)`
 
 ## Faking values
 
-`jsf` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) (and others) are also supported but they require setup:
+`JSONSchemaFaker` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) (and others) are also supported but they require setup:
 
 ```js
-jsf.extend('faker', () => require('@faker-js/faker'));
+JSONSchemaFaker.extend("faker", () => require("@faker-js/faker"));
 ```
 
 ```json
@@ -204,6 +204,7 @@ jsf.extend('faker', () => require('@faker-js/faker'));
   "faker": "internet.email"
 }
 ```
+
 ([demo »](http://json-schema-faker.js.org/#gist/89659ebf28be89d3f860c3f80cbffe4b))
 
 The above schema will invoke [`faker.internet.email()`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/internet.js#L32).
@@ -218,6 +219,7 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
   "pattern": "yes|no|maybe|i don't know"
 }
 ```
+
 ([demo »](http://json-schema-faker.js.org/#gist/8ee282679da5a31cd7edc4cf35f37081))
 
 ### Advanced usage of faker.js and Chance.js
@@ -225,11 +227,11 @@ You can also use standard JSON Schema keywords, e.g. `pattern`:
 In following inline code examples the `faker` and `chance` variables are assumed to be created with, respectively:
 
 ```javascript
-import faker from '@faker-js/faker';
-import Chance from 'chance';
+import faker from "@faker-js/faker";
+import Chance from "chance";
 
-jsf.extend('faker', () => faker);
-jsf.extend('chance', () => new Chance());
+JSONSchemaFaker.extend("faker", () => faker);
+JSONSchemaFaker.extend("chance", () => new Chance());
 ```
 
 E.g. using `chance` to faking values while passing arguments to the generator:
@@ -244,6 +246,7 @@ E.g. using `chance` to faking values while passing arguments to the generator:
   }
 }
 ```
+
 ([demo »](http://json-schema-faker.js.org/#gist/c6ab6a0325e53fd3b38ee0293a9aeea3))
 
 ...which will invoke [`chance.email({ "domain": "fake.com" })`](https://github.com/chancejs/chancejs/blob/b4c143bf53f516dfd77a8376d0f631462458c062/chance.js#L1118).
@@ -264,11 +267,10 @@ generator which has 4 parameters. We just wrap them with an array and it's equiv
       }
     }
   },
-  "required": [
-    "cash"
-  ]
+  "required": ["cash"]
 }
 ```
+
 ([demo »](http://json-schema-faker.js.org/#gist/3a15a11d706e5b145c30f943d55c42b2))
 
 However, if you want to pass a single parameter that is an array itself, e.g.
@@ -283,21 +285,14 @@ then you need to wrap it with an array once more (twice in total). The outer bra
     "food": {
       "type": "string",
       "chance": {
-        "pickone": [
-          [
-            "banana",
-            "apple",
-            "orange"
-          ]
-        ]
+        "pickone": [["banana", "apple", "orange"]]
       }
     }
   },
-  "required": [
-    "food"
-  ]
+  "required": ["food"]
 }
 ```
+
 ([demo »](http://json-schema-faker.js.org/#gist/792d626e7d92841ded5be59b8ed001eb))
 
 ## Custom formats
@@ -305,7 +300,9 @@ then you need to wrap it with an array once more (twice in total). The outer bra
 Additionally, you can add custom generators for those:
 
 ```javascript
-jsf.format('semver', () => jsf.random.randexp('\\d\\.\\d\\.[1-9]\\d?'));
+JSONSchemaFaker.format("semver", () =>
+  JSONSchemaFaker.random.randexp("\\d\\.\\d\\.[1-9]\\d?")
+);
 ```
 
 Now that format can be generated:
@@ -337,12 +334,12 @@ Note that custom generators has lower precedence than core ones.
 You may define following options for `jsf` that alter its behavior:
 
 ```javascript
-jsf.option({
-  failOnInvalidTypes: false
+JSONSchemaFaker.option({
+  failOnInvalidTypes: false,
 });
 
 // also valid
-jsf.option('alwaysFakeOptionals', true);
+JSONSchemaFaker.option("alwaysFakeOptionals", true);
 ```
 
 > Please read the [available options here](./#available-options).
@@ -352,9 +349,9 @@ jsf.option('alwaysFakeOptionals', true);
 You may extend [Faker.js](https://github.com/Marak/faker.js):
 
 ```javascript
-import jsf from 'json-schema-faker';
+import { JSONSchemaFaker } from 'json-schema-faker';
 
-jsf.extend('faker', () => {
+JSONSchemaFaker.extend('faker', () => {
   const faker = require('@faker-js/faker');
 
   faker.locale = 'de'; // or any other language
@@ -373,15 +370,15 @@ const schema = {
   }
 }
 
-jsf.resolve(schema).then(...);
+JSONSchemaFaker.resolve(schema).then(...);
 ```
 
-...or if you want to use [faker's *individual localization packages*](https://github.com/Marak/faker.js#individual-localization-packages), simply do the following:
+...or if you want to use [faker's _individual localization packages_](https://github.com/Marak/faker.js#individual-localization-packages), simply do the following:
 
 ```js
-jsf.extend('faker', () => {
+JSONSchemaFaker.extend("faker", () => {
   // just ignore the passed faker instance
-  const faker = require('@faker-js/faker/locale/de');
+  const faker = require("@faker-js/faker/locale/de");
   // do other stuff
   return faker;
 });
@@ -390,9 +387,9 @@ jsf.extend('faker', () => {
 You can also extend [Chance.js](http://chancejs.com/), using built-in [chance.mixin](http://chancejs.com/#mixin) function:
 
 ```javascript
-import jsf from 'json-schema-faker';
+import { JSONSchemaFaker } from 'json-schema-faker';
 
-jsf.extend('chance', () => {
+JSONSchemaFaker.extend('chance', () => {
   const Chance = require('chance');
   const chance = new Chance();
 
@@ -414,7 +411,7 @@ const schema = {
   "chance": "user"
 }
 
-jsf.resolve(schema).then(...);
+JSONSchemaFaker.resolve(schema).then(...);
 ```
 
 The first parameter of `extend` function is the generator name (`faker`, `chance`, etc.). The second one is the function that **must return** the dependency library.
@@ -423,13 +420,13 @@ The first parameter of `extend` function is the generator name (`faker`, `chance
 
 JSON Schema does not require you to provide the `type` property for your JSON Schema documents and document fragments.
 
-But since `jsf` uses the `type` property to create the proper fake data, we attempt to infer the type whenever it is not provided. We do this based on the JSON Schema validation properties you use.
+But since `JSONSchemaFaker` uses the `type` property to create the proper fake data, we attempt to infer the type whenever it is not provided. We do this based on the JSON Schema validation properties you use.
 
-> Now this means that if you do not use any of the JSON Schema validation properties, jsf will not be able to infer the type for you and you will need to **explicitly** set your `type` manually.)
+> Now this means that if you do not use any of the JSON Schema validation properties, JSONSchemaFaker will not be able to infer the type for you and you will need to **explicitly** set your `type` manually.)
 
 Below is the list of JSON Schema validation properties and the inferred type based on the property:
 
-- **array** &mdash; `additionalItems`,  `items`,  `maxItems`, `minItems` and `uniqueItems`
+- **array** &mdash; `additionalItems`, `items`, `maxItems`, `minItems` and `uniqueItems`
 - **integer** &mdash; `exclusiveMaximum`, `exclusiveMinimum`, `maximum`, `minimum` and `multipleOf`
 - **number** &mdash; same as above
 - **object** &mdash; `additionalProperties`, `dependencies`, `maxProperties`, `minProperties`, `patternProperties`, `properties` and `required`
@@ -437,11 +434,11 @@ Below is the list of JSON Schema validation properties and the inferred type bas
 
 ## Resources
 
-* [JSON, JSON Schema & JSON-schema-faker](https://www.youtube.com/watch?v=TkqiUG3j_Xw) - WarsawJS meetup presentation recording, a step-by-step guide to JSON-related tools, including `jsf`
+- [JSON, JSON Schema & JSON-schema-faker](https://www.youtube.com/watch?v=TkqiUG3j_Xw) - WarsawJS meetup presentation recording, a step-by-step guide to JSON-related tools, including `JSONSchemaFaker`
 
 ## Motivation
 
-There were some existing projects or services trying to achieve similar goals as `jsf`:
+There were some existing projects or services trying to achieve similar goals as `JSONSchemaFaker`:
 
 - http://www.json-generator.com/
 - https://github.com/unindented/fake-json
@@ -452,4 +449,4 @@ There were some existing projects or services trying to achieve similar goals as
 - https://github.com/murgatroid99/json-schema-random-instance
 - https://github.com/tomarad/JSON-Schema-Instantiator
 
-...but they were either incomplete, outdated, broken or non-standard. That's why `jsf` was created.
+...but they were either incomplete, outdated, broken or non-standard. That's why `JSONSchemaFaker` was created.
