@@ -11,7 +11,7 @@ describe('CommonJS', () => {
   });
 
   it('should work as expected with named export', () => {
-    const { JSONSchemaFaker } = require('../../dist/main.cjs.js').default;
+    const { JSONSchemaFaker } = require('../../dist/main.cjs.js');
 
     expect(JSONSchemaFaker).not.to.be.undefined;
     expect(JSONSchemaFaker.VERSION).not.to.be.undefined;
