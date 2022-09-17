@@ -12,4 +12,4 @@ if (typeof $RefParser !== 'undefined' && typeof JSONPath !== 'undefined') {
   setDependencies({ ...JSONPath, $RefParser });
 }
 
-export { default } from './lib';
+export { default, JSONSchemaFaker } from './lib';
