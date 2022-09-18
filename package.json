@@ -36,7 +36,7 @@
     "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.js",
     "copy:bundle": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.cjs",
     "copy:wargs": "concat -o dist/wargs.cjs node_modules/wargs/dist/wargs.cjs",
-    "entry:cjs": "echo 'module.exports = require(\"./main.cjs.js\").default;' > dist/index.cjs",
+    "entry:cjs": "echo 'module.exports = require(\"./main.cjs\").default;' > dist/index.cjs",
     "prepublishOnly": "npm run build -- -f",
     "postbuild": "npm run copy:bundle && npm run entry:cjs",
     "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
