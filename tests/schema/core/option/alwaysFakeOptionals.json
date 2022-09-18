@@ -22,7 +22,11 @@
           "optionalProperty4": 1,
           "optionalProperty5": 1
         },
-        "require": "core/option/alwaysFakeOptionals"
+        "set": {
+          "useDefaultValue": true,
+          "fixedProbabilities": true,
+          "alwaysFakeOptionals": true
+        }
       },
       {
         "description": "should handle alwaysFakeOptionals option (= true) for arrays",
@@ -37,7 +41,11 @@
         },
         "valid": true,
         "equal": ["a", "a", "a", "a", "a"],
-        "require": "core/option/alwaysFakeOptionals"
+        "set": {
+          "useDefaultValue": true,
+          "fixedProbabilities": true,
+          "alwaysFakeOptionals": true
+        }
       }
     ]
   }

@@ -50,27 +50,33 @@ declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
 
-/** @deprecated calling JSONSchemaFaker() is deprecated, call either .generate() or .resolve()' */
-declare function JSONSchemaFaker(schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue;
-declare namespace JSONSchemaFaker {
-  var VERSION: string;
-  var format: JSONSchemaFakerFormat;
-  var option: typeof JSONSchemaFakerOption;
-  var generate: (schema: Schema, refs?: JSONSchemaFakerRefs) => JsonValue;
-  var generateYAML: (schema: Schema, refs?: JSONSchemaFakerRefs) => string;
-  var resolve: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<JsonValue>;
-  var resolveYAML: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<string>;
-  var random: {
+
+
+type JSONSchemaFakerObject = {
+  VERSION: string;
+  format: JSONSchemaFakerFormat;
+  option: typeof JSONSchemaFakerOption;
+  generate: (schema: Schema, refs?: JSONSchemaFakerRefs) => JsonValue;
+  generateYAML: (schema: Schema, refs?: JSONSchemaFakerRefs) => string;
+  resolve: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<JsonValue>;
+  resolveYAML: (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string) => Promise<string>;
+  random: {
     date(step?: 'seconds' | 'minutes' | 'hours' | 'days' | 'weeks' | 'months' | 'years'): number | Date;
     pick(list: any[]): any;
     shuffle(list: any[]): any[];
     number(min?: number, max?: number, defMin?: number, defMax?: number, hasPrecision?: boolean): number;
     randexp(expr: string): string;
   };
-  var extend: (name: string, cb: (generator: any) => any) => typeof JSONSchemaFaker;
-  var define: (name: string, cb: JSONSchemaFakerDefine) => typeof JSONSchemaFaker;
-  var reset: (name: string) => typeof JSONSchemaFaker;
-  var locate: (name: string) => any;
+  extend: (name: string, cb: (generator: any) => any) => typeof JSONSchemaFaker;
+  define: (name: string, cb: JSONSchemaFakerDefine) => typeof JSONSchemaFaker;
+  reset: (name: string) => typeof JSONSchemaFaker;
+  locate: (name: string) => any;
 }
 
-export default JSONSchemaFaker;
+export declare const JSONSchemaFaker: JSONSchemaFakerObject;
+
+/** @deprecated The default export is deprecated; use the named export. See https://github.com/json-schema-faker/json-schema-faker/blob/master/docs/DEPRECATED.md */
+declare const jsf: JSONSchemaFakerObject & {
+  (schema: Schema, refs?: JSONSchemaFakerRefs, cwd?: string): JsonValue 
+};
+export default jsf;

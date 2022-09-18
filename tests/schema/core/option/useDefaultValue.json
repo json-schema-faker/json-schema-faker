@@ -9,7 +9,9 @@
           "default": "Hello"
         },
         "equal": "Hello",
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "should handle useDefaultValue option with an empty default value",
@@ -18,7 +20,9 @@
           "default": ""
         },
         "equal": "",
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "should handle useDefaultValue & replaceEmptyByRandomValue option",
@@ -30,10 +34,10 @@
         },
         "valid": true,
         "notEmpty": ["test-response"],
-        "require": [
-          "core/option/useDefaultValue",
-          "core/option/replaceEmptyByRandomValue"
-        ]
+        "set": {
+          "useDefaultValue": true,
+          "replaceEmptyByRandomValue": true
+        }
       }
     ]
   }

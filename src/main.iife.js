@@ -16,7 +16,7 @@
  */
 
 const { setDependencies } = require('./lib/vendor');
-const JSONSchemaFaker = require('./lib');
+const JSONSchemaFaker = require('./lib').default;
 
 if (typeof window !== 'undefined') {
   setDependencies({
@@ -28,3 +28,4 @@ if (typeof window !== 'undefined') {
 }
 
 module.exports = JSONSchemaFaker;
+module.exports.JSONSchemaFaker = JSONSchemaFaker;

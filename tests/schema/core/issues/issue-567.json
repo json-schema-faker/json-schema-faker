@@ -36,7 +36,11 @@
         ]
       },
       "valid": true,
-      "require": "core/option/optionalsProbabilityEquals1"
+      "set": {
+        "useDefaultValue": true,
+        "fixedProbabilities": true,
+        "optionalsProbability": 1.0
+      }
     }
   ]
 }

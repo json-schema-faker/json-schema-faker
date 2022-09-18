@@ -69,11 +69,14 @@
             }
           }
         },
-        "require": "core/option/refDepth",
         "set": {
           "refDepthMin": 6,
-          "refDepthMax": 6
+          "refDepthMax": 6,
+          "minItems": 1,
+          "maxItems": 1,
+          "alwaysFakeOptionals": true
         },
+        "random": "some seed",
         "repeat": 1
       },
       {
@@ -86,11 +89,14 @@
             }
           }
         },
-        "require": "core/option/refDepth",
         "set": {
           "refDepthMin": 1,
-          "refDepthMax": 3
+          "refDepthMax": 3,
+          "minItems": 1,
+          "maxItems": 1,
+          "alwaysFakeOptionals": true
         },
+        "random": "some seed",
         "valid": true,
         "repeat": 1
       },
@@ -112,11 +118,14 @@
             }
           }
         },
-        "require": "core/option/refDepth",
         "set": {
           "refDepthMin": 3,
-          "refDepthMax": 1
+          "refDepthMax": 1,
+          "minItems": 1,
+          "maxItems": 1,
+          "alwaysFakeOptionals": true
         },
+        "random": "some seed",
         "valid": true,
         "repeat": 1
       }
