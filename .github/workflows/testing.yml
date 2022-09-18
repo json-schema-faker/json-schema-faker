@@ -1,9 +1,8 @@
-name: ci
+name: CI
 
 on:
   push:
     branches:
-    - master
     - develop
   pull_request:
     branches:
