@@ -39,7 +39,7 @@ ifneq ($(CI),)
 endif
 
 lib: deps ## Build library output only
-	@npm run build -- -ymain
+	@npm run build -- -fymain
 
 dev: deps ## Watch and start development server
 	@npm run watch
@@ -49,6 +49,9 @@ test: deps ## Run tests like if we're in CI ;-)
 
 build: deps ## Build scripts for dist
 	@npm run build
+
+watch: deps ## Build scripts for dist
+	@npm run build -- -xweb --watch
 
 all: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true

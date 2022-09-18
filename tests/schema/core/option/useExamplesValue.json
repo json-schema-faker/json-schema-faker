@@ -11,7 +11,9 @@
           ]
         },
         "equal": "World",
-        "require": "core/option/useExamplesValue"
+        "set": {
+         "useExamplesValue": true
+        }
       },
       {
         "description": "should handle useExamplesValue option with 'example' property",
@@ -20,7 +22,9 @@
           "example": "World"
         },
         "equal": "World",
-        "require": "core/option/useExamplesValue"
+        "set": {
+          "useExamplesValue": true
+        }
       }
     ]
   }

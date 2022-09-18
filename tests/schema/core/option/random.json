@@ -28,7 +28,7 @@
           "c": "fe228"
         },
         "repeat": 1,
-        "require": "core/option/random"
+        "random": "some seed"
       }
     ]
   }

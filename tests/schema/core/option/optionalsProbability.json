@@ -24,7 +24,10 @@
         "schema": "schemas.0",
         "valid": true,
         "equal": {},
-        "require": "core/option/optionalsProbabilityEquals0"
+        "set": {
+          "useDefaultValue": true,
+          "optionalsProbability": 0.0
+        }
       },
       {
         "description": "should handle optionalsProbability option (= 1) for objects",
@@ -37,7 +40,11 @@
           "optionalProperty4": 1,
           "optionalProperty5": 1
         },
-        "require": "core/option/optionalsProbabilityEquals1"
+        "set": {
+          "useDefaultValue": true,
+          "fixedProbabilities": true,
+          "optionalsProbability": 1.0
+        }
       },
       {
         "description": "should handle optionalsProbability option (= 1) for arrays",
@@ -52,7 +59,11 @@
         },
         "valid": true,
         "equal": ["a", "a", "a", "a", "a"],
-        "require": "core/option/optionalsProbabilityEquals1"
+        "set": {
+          "useDefaultValue": true,
+          "fixedProbabilities": true,
+          "optionalsProbability": 1.0
+        }
       },
       {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
@@ -65,7 +76,12 @@
           "optionalProperty4": 1,
           "optionalProperty5": 1
         },
-        "require": "core/option/optionalsProbabilityOverwritten"
+        "set": {
+          "useDefaultValue": true,
+          "fixedProbabilities": true,
+          "alwaysFakeOptionals": true,
+          "optionalsProbability": 0.0
+        }
       },
       {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
@@ -80,7 +96,12 @@
         },
         "valid": true,
         "equal": ["a", "a", "a", "a", "a"],
-        "require": "core/option/optionalsProbabilityOverwritten"
+        "set": {
+          "useDefaultValue": true,
+          "fixedProbabilities": true,
+          "alwaysFakeOptionals": true,
+          "optionalsProbability": 0.0
+        }
       },
       {
         "description": "should generate just zero properties if optionalsProbability is 0%",

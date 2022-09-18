@@ -5,8 +5,8 @@ import Editor from './lib/Editor.svelte';
 
 function main() {
   if (typeof window.JSONSchemaFaker !== 'undefined') {
-    window.JSONSchemaFaker.extend('faker', () => window.faker);
-    window.JSONSchemaFaker.extend('chance', () => window.chance);
+    JSONSchemaFaker.extend('faker', () => window.faker);
+    JSONSchemaFaker.extend('chance', () => window.chance);
   }
 
   // initialize modules
