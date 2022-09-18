@@ -17,15 +17,17 @@ export interface JSONSchemaFakerOptions {
   useExamplesValue?: boolean;
   useDefaultValue?: boolean;
   requiredOnly?: boolean;
+  omitNulls?: boolean;
   minItems?: number;
   maxItems?: number;
   minLength?: number;
   maxLength?: number;
   resolveJsonPath?: boolean;
   reuseProperties?: boolean;
+  sortProperties?: boolean;
   fillProperties?: boolean;
   replaceEmptyByRandomValue?: boolean;
-  random?(): number;
+  random?: () => number | number;
   renderTitle?: boolean;
   renderDescription?: boolean;
   renderComment?: boolean;
@@ -49,8 +51,6 @@ declare function JSONSchemaFakerOption(name: keyof JSONSchemaFakerOptions, value
 declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
-
-
 
 type JSONSchemaFakerObject = {
   VERSION: string;
