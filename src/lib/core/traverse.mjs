@@ -148,7 +148,9 @@ function traverse(schema, path, resolve, rootSchema) {
           };
         }
         if (type === 'object') {
-          return { value: innerResult.value, context: { ...context, items: innerResult.context } };
+          return innerResult !== null
+            ? { value: innerResult.value, context: { ...context, items: innerResult.context } }
+            : { value: {}, context };
         }
         return { value: innerResult, context };
       } catch (e) {
