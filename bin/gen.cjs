@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 
-const jsf = require('../dist/main.cjs').default;
+const { inspect } = require('util');
+const { Transform } = require('stream');
 
-const sample = process.argv.slice(2)[0];
+const { JSONSchemaFaker } = require('../dist/main.cjs');
 
 // FIXME: validate types on given input....
 const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
@@ -46,15 +47,11 @@ if (typeof argv.flags.ignoreProperties === 'string') {
   argv.flags.ignoreProperties = [argv.flags.ignoreProperties];
 }
 
-const { inspect } = require('util');
-const { Transform } = require('stream');
-const { readFileSync } = require('fs');
-
 const pretty = process.argv.indexOf('--pretty') !== -1;
 const noColor = process.argv.indexOf('--no-color') !== -1;
 
 // FIXME: enable flags...
-jsf.option({
+JSONSchemaFaker.option({
   resolveJsonPath: argv.flags.resolveJsonPath,
   alwaysFakeOptionals: argv.flags.alwaysFakeOptionals,
 });
@@ -62,7 +59,7 @@ jsf.option({
 const cwd = argv.flags.currentWorkingDirectory || process.cwd();
 
 function generate(schema, callback) {
-  jsf.resolve(JSON.parse(schema), cwd).then(result => {
+  JSONSchemaFaker.resolve(JSON.parse(schema), cwd).then(result => {
     let sample;
 
     if (pretty) {
@@ -78,5 +75,5 @@ function generate(schema, callback) {
 process.stdin.pipe(new Transform({
   transform(entry, enc, callback) {
     generate(Buffer.from(entry, enc).toString(), callback);
-  }
+  },
 })).pipe(process.stdout);
