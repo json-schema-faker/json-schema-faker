@@ -43,7 +43,7 @@
     "copy:bundle": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
     "copy:wargs": "concat -o dist/wargs.cjs node_modules/wargs/dist/wargs.cjs",
     "entry:cjs": "echo 'module.exports = require(\"./main.cjs\").default;' > dist/index.cjs",
-    "prepublishOnly": "npm run build -- -f",
+    "_prepublishOnly": "npm run build -- -f",
     "postbuild": "npm run copy:bundle && npm run entry:cjs",
     "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
     "codecov": "codecov -e TRAVIS_NODE_VERSION"
