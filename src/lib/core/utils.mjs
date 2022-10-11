@@ -5,6 +5,8 @@ import random from './random.mjs';
 const RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
 
 function getLocalRef(obj, path, refs) {
+  path = decodeURIComponent(path);
+
   if (refs && refs[path]) return clone(refs[path]); // eslint-disable-line
 
   const keyElements = path.replace('#/', '/').split('/');
