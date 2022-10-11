@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.5.0-rcv.45",
+  "version": "0.5.0-rcv.46",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "types": "index.d.ts",
@@ -17,7 +17,7 @@
       "import": "./dist/main.mjs",
       "require": "./dist/main.cjs"
     }
-} ,
+  },
   "scripts": {
     "dev": "npm run test:schema -- -w",
     "test": "npm run test:ci -- && npm run test:schema",
