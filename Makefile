@@ -78,6 +78,9 @@ prune: clean ## Remove all from node_modules/*
 	@rm -rf node_modules/*
 	@echo "OK"
 
+publish: clean
+	@VERSION=$(shell cat package.json | jq .version) make -s lib
+
 release: deps
 ifneq ($(CI),)
 	@echo '//registry.npmjs.org/:_authToken=$(NODE_AUTH_TOKEN)' > .npmrc
