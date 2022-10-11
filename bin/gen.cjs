@@ -2,6 +2,7 @@
 
 const { inspect } = require('util');
 const { Transform } = require('stream');
+const { existsSync, readFileSync } = require('fs');
 
 const { JSONSchemaFaker } = require('../dist/main.cjs');
 
@@ -14,6 +15,7 @@ const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
     D: 'defaultInvalidTypeProduct',
     X: 'defaultRandExpMax',
 
+    P: 'pruneProperties',
     p: 'ignoreProperties',
     M: 'ignoreMissingRefs',
     T: 'failOnInvalidTypes',
@@ -25,6 +27,7 @@ const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
     e: 'useExamplesValue',
     d: 'useDefaultValue',
     R: 'requiredOnly',
+    N: 'omitNulls',
     r: 'random',
 
     i: 'minItems',
@@ -35,9 +38,15 @@ const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
     J: 'resolveJsonPath',
     U: 'reuseProperties',
     S: 'fillProperties',
+    s: 'sortProperties',
     E: 'replaceEmptyByRandomValue',
   },
 });
+
+if (argv.flags.version) {
+  console.log(require('../package.json').name, JSONSchemaFaker.VERSION);
+  process.exit();
+}
 
 if (typeof argv.flags.random === 'string') {
   argv.flags.random = () => parseFloat(argv.flags.random);
@@ -72,8 +81,22 @@ function generate(schema, callback) {
   }).catch(callback);
 }
 
-process.stdin.pipe(new Transform({
-  transform(entry, enc, callback) {
-    generate(Buffer.from(entry, enc).toString(), callback);
-  },
-})).pipe(process.stdout);
+if (!process.stdin.isTTY) {
+  process.stdin.pipe(new Transform({
+    transform(entry, enc, callback) {
+      generate(Buffer.from(entry, enc).toString(), callback);
+    },
+  })).pipe(process.stdout);
+} else if (!existsSync(argv._[0])) {
+  console.error(`Missing input, given '${argv._}'`);
+  process.exit(1);
+} else {
+  generate(readFileSync(argv._[0]).toString(), (err, output) => {
+    if (err) {
+      console.error(err.message);
+      process.exit(1);
+    } else {
+      process.stdout.write(output);
+    }
+  });
+}
