@@ -31,61 +31,58 @@ function isBuffer(f){return!!f.constructor&&"function"==typeof f.constructor.isB
 var JSONSchemaFaker = (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
-  var __defProps = Object.defineProperties;
   var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
-  var __getOwnPropDescs = Object.getOwnPropertyDescriptors;
   var __getOwnPropNames = Object.getOwnPropertyNames;
-  var __getOwnPropSymbols = Object.getOwnPropertySymbols;
   var __getProtoOf = Object.getPrototypeOf;
   var __hasOwnProp = Object.prototype.hasOwnProperty;
-  var __propIsEnum = Object.prototype.propertyIsEnumerable;
-  var __defNormalProp = (obj, key, value) => key in obj ? __defProp(obj, key, { enumerable: true, configurable: true, writable: true, value }) : obj[key] = value;
-  var __spreadValues = (a, b) => {
-    for (var prop in b || (b = {}))
-      if (__hasOwnProp.call(b, prop))
-        __defNormalProp(a, prop, b[prop]);
-    if (__getOwnPropSymbols)
-      for (var prop of __getOwnPropSymbols(b)) {
-        if (__propIsEnum.call(b, prop))
-          __defNormalProp(a, prop, b[prop]);
-      }
-    return a;
+  var __esm = (fn, res) => function __init() {
+    return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
   };
-  var __spreadProps = (a, b) => __defProps(a, __getOwnPropDescs(b));
-  var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
   var __commonJS = (cb, mod) => function __require() {
-    return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+    return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
   };
-  var __reExport = (target, module, desc) => {
-    if (module && typeof module === "object" || typeof module === "function") {
-      for (let key of __getOwnPropNames(module))
-        if (!__hasOwnProp.call(target, key) && key !== "default")
-          __defProp(target, key, { get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable });
+  var __export = (target, all) => {
+    for (var name in all)
+      __defProp(target, name, { get: all[name], enumerable: true });
+  };
+  var __copyProps = (to, from, except, desc) => {
+    if (from && typeof from === "object" || typeof from === "function") {
+      for (let key of __getOwnPropNames(from))
+        if (!__hasOwnProp.call(to, key) && key !== except)
+          __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
     }
-    return target;
+    return to;
   };
-  var __toModule = (module) => {
-    return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
-  };
+  var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+    isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+    mod
+  ));
+  var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
-  // src/lib/vendor.js
-  var require_vendor = __commonJS({
-    "src/lib/vendor.js"(exports, module) {
-      var DEPENDENCIES = {};
-      var getDependencies = () => {
+  // src/lib/vendor.mjs
+  var vendor_exports = {};
+  __export(vendor_exports, {
+    getDependencies: () => getDependencies,
+    setDependencies: () => setDependencies
+  });
+  var DEPENDENCIES, getDependencies, setDependencies;
+  var init_vendor = __esm({
+    "src/lib/vendor.mjs"() {
+      DEPENDENCIES = {};
+      getDependencies = () => {
         return DEPENDENCIES;
       };
-      var setDependencies = (value) => {
+      setDependencies = (value) => {
         Object.assign(DEPENDENCIES, value);
       };
-      Object.assign(module.exports, { getDependencies, setDependencies });
     }
   });
 
-  // src/lib/class/Registry.js
-  var require_Registry = __commonJS({
-    "src/lib/class/Registry.js"(exports, module) {
-      var Registry = class {
+  // src/lib/class/Registry.mjs
+  var Registry, Registry_default;
+  var init_Registry = __esm({
+    "src/lib/class/Registry.mjs"() {
+      Registry = class {
         constructor() {
           this.data = {};
         }
@@ -112,16 +109,16 @@ var JSONSchemaFaker = (() => {
           return this.data;
         }
       };
-      var Registry_default = Registry;
-      module.exports = Registry_default;
+      Registry_default = Registry;
     }
   });
 
-  // src/lib/api/defaults.js
-  var require_defaults = __commonJS({
-    "src/lib/api/defaults.js"(exports, module) {
-      var defaults = {};
-      var defaults_default = defaults;
+  // src/lib/api/defaults.mjs
+  var defaults, defaults_default;
+  var init_defaults = __esm({
+    "src/lib/api/defaults.mjs"() {
+      defaults = {};
+      defaults_default = defaults;
       defaults.defaultInvalidTypeProduct = void 0;
       defaults.defaultRandExpMax = 10;
       defaults.pruneProperties = [];
@@ -135,6 +132,7 @@ var JSONSchemaFaker = (() => {
       defaults.useExamplesValue = false;
       defaults.useDefaultValue = false;
       defaults.requiredOnly = false;
+      defaults.omitNulls = false;
       defaults.minItems = 0;
       defaults.maxItems = null;
       defaults.minLength = 0;
@@ -142,67 +140,68 @@ var JSONSchemaFaker = (() => {
       defaults.resolveJsonPath = false;
       defaults.reuseProperties = false;
       defaults.fillProperties = true;
+      defaults.sortProperties = null;
       defaults.replaceEmptyByRandomValue = false;
       defaults.random = Math.random;
       defaults.renderTitle = true;
       defaults.renderDescription = true;
       defaults.renderComment = false;
-      module.exports = defaults_default;
     }
   });
 
-  // src/lib/class/OptionRegistry.js
-  var require_OptionRegistry = __commonJS({
-    "src/lib/class/OptionRegistry.js"(exports, module) {
-      var Registry = require_Registry();
-      var defaults = require_defaults();
-      var OptionRegistry = class extends Registry {
+  // src/lib/class/OptionRegistry.mjs
+  var OptionRegistry, OptionRegistry_default;
+  var init_OptionRegistry = __esm({
+    "src/lib/class/OptionRegistry.mjs"() {
+      init_Registry();
+      init_defaults();
+      OptionRegistry = class extends Registry_default {
         constructor() {
           super();
-          this.data = __spreadValues({}, defaults);
-          this._defaults = defaults;
+          this.data = { ...defaults_default };
+          this._defaults = defaults_default;
         }
         get defaults() {
-          return __spreadValues({}, this._defaults);
+          return { ...this._defaults };
         }
       };
-      var OptionRegistry_default = OptionRegistry;
-      module.exports = OptionRegistry_default;
+      OptionRegistry_default = OptionRegistry;
     }
   });
 
-  // src/lib/api/option.js
-  var require_option = __commonJS({
-    "src/lib/api/option.js"(exports, module) {
-      var OptionRegistry = require_OptionRegistry();
-      var registry = new OptionRegistry();
-      function optionAPI(nameOrOptionMap, optionalValue) {
-        if (typeof nameOrOptionMap === "string") {
-          if (typeof optionalValue !== "undefined") {
-            return registry.register(nameOrOptionMap, optionalValue);
-          }
-          return registry.get(nameOrOptionMap);
-        }
-        return registry.registerMany(nameOrOptionMap);
+  // src/lib/api/option.mjs
+  function optionAPI(nameOrOptionMap, optionalValue) {
+    if (typeof nameOrOptionMap === "string") {
+      if (typeof optionalValue !== "undefined") {
+        return registry.register(nameOrOptionMap, optionalValue);
       }
+      return registry.get(nameOrOptionMap);
+    }
+    return registry.registerMany(nameOrOptionMap);
+  }
+  var registry, option_default;
+  var init_option = __esm({
+    "src/lib/api/option.mjs"() {
+      init_OptionRegistry();
+      registry = new OptionRegistry_default();
       optionAPI.getDefaults = () => registry.defaults;
-      var option_default = optionAPI;
-      module.exports = option_default;
+      option_default = optionAPI;
     }
   });
 
-  // src/lib/core/constants.js
-  var require_constants = __commonJS({
-    "src/lib/core/constants.js"(exports, module) {
-      var ALLOWED_TYPES = ["integer", "number", "string", "boolean"];
-      var SCALAR_TYPES = ALLOWED_TYPES.concat(["null"]);
-      var ALL_TYPES = ["array", "object"].concat(SCALAR_TYPES);
-      var MOST_NEAR_DATETIME = 2524608e6;
-      var MIN_INTEGER = -1e8;
-      var MAX_INTEGER = 1e8;
-      var MIN_NUMBER = -100;
-      var MAX_NUMBER = 100;
-      var constants_default = {
+  // src/lib/core/constants.mjs
+  var ALLOWED_TYPES, SCALAR_TYPES, ALL_TYPES, MOST_NEAR_DATETIME, MIN_INTEGER, MAX_INTEGER, MIN_NUMBER, MAX_NUMBER, constants_default;
+  var init_constants = __esm({
+    "src/lib/core/constants.mjs"() {
+      ALLOWED_TYPES = ["integer", "number", "string", "boolean"];
+      SCALAR_TYPES = ALLOWED_TYPES.concat(["null"]);
+      ALL_TYPES = ["array", "object"].concat(SCALAR_TYPES);
+      MOST_NEAR_DATETIME = 2524608e6;
+      MIN_INTEGER = -1e8;
+      MAX_INTEGER = 1e8;
+      MIN_NUMBER = -100;
+      MAX_NUMBER = 100;
+      constants_default = {
         ALLOWED_TYPES,
         SCALAR_TYPES,
         ALL_TYPES,
@@ -212,7 +211,6 @@ var JSONSchemaFaker = (() => {
         MAX_INTEGER,
         MOST_NEAR_DATETIME
       };
-      module.exports = constants_default;
     }
   });
 
@@ -235,56 +233,56 @@ var JSONSchemaFaker = (() => {
   // node_modules/ret/lib/sets.js
   var require_sets = __commonJS({
     "node_modules/ret/lib/sets.js"(exports) {
-      var types = require_types();
-      var INTS = () => [{ type: types.RANGE, from: 48, to: 57 }];
+      var types2 = require_types();
+      var INTS = () => [{ type: types2.RANGE, from: 48, to: 57 }];
       var WORDS = () => {
         return [
-          { type: types.CHAR, value: 95 },
-          { type: types.RANGE, from: 97, to: 122 },
-          { type: types.RANGE, from: 65, to: 90 }
+          { type: types2.CHAR, value: 95 },
+          { type: types2.RANGE, from: 97, to: 122 },
+          { type: types2.RANGE, from: 65, to: 90 }
         ].concat(INTS());
       };
       var WHITESPACE = () => {
         return [
-          { type: types.CHAR, value: 9 },
-          { type: types.CHAR, value: 10 },
-          { type: types.CHAR, value: 11 },
-          { type: types.CHAR, value: 12 },
-          { type: types.CHAR, value: 13 },
-          { type: types.CHAR, value: 32 },
-          { type: types.CHAR, value: 160 },
-          { type: types.CHAR, value: 5760 },
-          { type: types.RANGE, from: 8192, to: 8202 },
-          { type: types.CHAR, value: 8232 },
-          { type: types.CHAR, value: 8233 },
-          { type: types.CHAR, value: 8239 },
-          { type: types.CHAR, value: 8287 },
-          { type: types.CHAR, value: 12288 },
-          { type: types.CHAR, value: 65279 }
+          { type: types2.CHAR, value: 9 },
+          { type: types2.CHAR, value: 10 },
+          { type: types2.CHAR, value: 11 },
+          { type: types2.CHAR, value: 12 },
+          { type: types2.CHAR, value: 13 },
+          { type: types2.CHAR, value: 32 },
+          { type: types2.CHAR, value: 160 },
+          { type: types2.CHAR, value: 5760 },
+          { type: types2.RANGE, from: 8192, to: 8202 },
+          { type: types2.CHAR, value: 8232 },
+          { type: types2.CHAR, value: 8233 },
+          { type: types2.CHAR, value: 8239 },
+          { type: types2.CHAR, value: 8287 },
+          { type: types2.CHAR, value: 12288 },
+          { type: types2.CHAR, value: 65279 }
         ];
       };
       var NOTANYCHAR = () => {
         return [
-          { type: types.CHAR, value: 10 },
-          { type: types.CHAR, value: 13 },
-          { type: types.CHAR, value: 8232 },
-          { type: types.CHAR, value: 8233 }
+          { type: types2.CHAR, value: 10 },
+          { type: types2.CHAR, value: 13 },
+          { type: types2.CHAR, value: 8232 },
+          { type: types2.CHAR, value: 8233 }
         ];
       };
-      exports.words = () => ({ type: types.SET, set: WORDS(), not: false });
-      exports.notWords = () => ({ type: types.SET, set: WORDS(), not: true });
-      exports.ints = () => ({ type: types.SET, set: INTS(), not: false });
-      exports.notInts = () => ({ type: types.SET, set: INTS(), not: true });
-      exports.whitespace = () => ({ type: types.SET, set: WHITESPACE(), not: false });
-      exports.notWhitespace = () => ({ type: types.SET, set: WHITESPACE(), not: true });
-      exports.anyChar = () => ({ type: types.SET, set: NOTANYCHAR(), not: true });
+      exports.words = () => ({ type: types2.SET, set: WORDS(), not: false });
+      exports.notWords = () => ({ type: types2.SET, set: WORDS(), not: true });
+      exports.ints = () => ({ type: types2.SET, set: INTS(), not: false });
+      exports.notInts = () => ({ type: types2.SET, set: INTS(), not: true });
+      exports.whitespace = () => ({ type: types2.SET, set: WHITESPACE(), not: false });
+      exports.notWhitespace = () => ({ type: types2.SET, set: WHITESPACE(), not: true });
+      exports.anyChar = () => ({ type: types2.SET, set: NOTANYCHAR(), not: true });
     }
   });
 
   // node_modules/ret/lib/util.js
   var require_util = __commonJS({
     "node_modules/ret/lib/util.js"(exports) {
-      var types = require_types();
+      var types2 = require_types();
       var sets = require_sets();
       var CTRL = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?";
       var SLSH = { "0": 0, "t": 9, "n": 10, "v": 11, "f": 12, "r": 13 };
@@ -322,13 +320,13 @@ var JSONSchemaFaker = (() => {
             tokens.push(sets.notWhitespace());
           } else if (rs[7]) {
             tokens.push({
-              type: types.RANGE,
+              type: types2.RANGE,
               from: (rs[8] || rs[9]).charCodeAt(0),
               to: rs[10].charCodeAt(0)
             });
           } else if (c = rs[12]) {
             tokens.push({
-              type: types.CHAR,
+              type: types2.CHAR,
               value: c.charCodeAt(0)
             });
           } else {
@@ -346,11 +344,11 @@ var JSONSchemaFaker = (() => {
   // node_modules/ret/lib/positions.js
   var require_positions = __commonJS({
     "node_modules/ret/lib/positions.js"(exports) {
-      var types = require_types();
-      exports.wordBoundary = () => ({ type: types.POSITION, value: "b" });
-      exports.nonWordBoundary = () => ({ type: types.POSITION, value: "B" });
-      exports.begin = () => ({ type: types.POSITION, value: "^" });
-      exports.end = () => ({ type: types.POSITION, value: "$" });
+      var types2 = require_types();
+      exports.wordBoundary = () => ({ type: types2.POSITION, value: "b" });
+      exports.nonWordBoundary = () => ({ type: types2.POSITION, value: "B" });
+      exports.begin = () => ({ type: types2.POSITION, value: "^" });
+      exports.end = () => ({ type: types2.POSITION, value: "$" });
     }
   });
 
@@ -358,11 +356,11 @@ var JSONSchemaFaker = (() => {
   var require_lib = __commonJS({
     "node_modules/ret/lib/index.js"(exports, module) {
       var util = require_util();
-      var types = require_types();
+      var types2 = require_types();
       var sets = require_sets();
       var positions = require_positions();
       module.exports = (regexpStr) => {
-        var i = 0, l, c, start = { type: types.ROOT, stack: [] }, lastGroup = start, last = start.stack, groupStack = [];
+        var i = 0, l, c, start = { type: types2.ROOT, stack: [] }, lastGroup = start, last = start.stack, groupStack = [];
         var repeatErr = (i2) => {
           util.error(regexpStr, `Nothing to repeat at column ${i2 - 1}`);
         };
@@ -400,9 +398,9 @@ var JSONSchemaFaker = (() => {
                   break;
                 default:
                   if (/\d/.test(c)) {
-                    last.push({ type: types.REFERENCE, value: parseInt(c, 10) });
+                    last.push({ type: types2.REFERENCE, value: parseInt(c, 10) });
                   } else {
-                    last.push({ type: types.CHAR, value: c.charCodeAt(0) });
+                    last.push({ type: types2.CHAR, value: c.charCodeAt(0) });
                   }
               }
               break;
@@ -423,7 +421,7 @@ var JSONSchemaFaker = (() => {
               var classTokens = util.tokenizeClass(str.slice(i), regexpStr);
               i += classTokens[1];
               last.push({
-                type: types.SET,
+                type: types2.SET,
                 set: classTokens[0],
                 not
               });
@@ -433,7 +431,7 @@ var JSONSchemaFaker = (() => {
               break;
             case "(":
               var group = {
-                type: types.GROUP,
+                type: types2.GROUP,
                 stack: [],
                 remember: true
               };
@@ -446,7 +444,10 @@ var JSONSchemaFaker = (() => {
                 } else if (c === "!") {
                   group.notFollowedBy = true;
                 } else if (c !== ":") {
-                  util.error(regexpStr, `Invalid group, character '${c}' after '?' at column ${i - 1}`);
+                  util.error(
+                    regexpStr,
+                    `Invalid group, character '${c}' after '?' at column ${i - 1}`
+                  );
                 }
                 group.remember = false;
               }
@@ -481,14 +482,14 @@ var JSONSchemaFaker = (() => {
                 max = rs[2] ? rs[3] ? parseInt(rs[3], 10) : Infinity : min;
                 i += rs[0].length;
                 last.push({
-                  type: types.REPETITION,
+                  type: types2.REPETITION,
                   min,
                   max,
                   value: last.pop()
                 });
               } else {
                 last.push({
-                  type: types.CHAR,
+                  type: types2.CHAR,
                   value: 123
                 });
               }
@@ -498,7 +499,7 @@ var JSONSchemaFaker = (() => {
                 repeatErr(i);
               }
               last.push({
-                type: types.REPETITION,
+                type: types2.REPETITION,
                 min: 0,
                 max: 1,
                 value: last.pop()
@@ -509,7 +510,7 @@ var JSONSchemaFaker = (() => {
                 repeatErr(i);
               }
               last.push({
-                type: types.REPETITION,
+                type: types2.REPETITION,
                 min: 1,
                 max: Infinity,
                 value: last.pop()
@@ -520,7 +521,7 @@ var JSONSchemaFaker = (() => {
                 repeatErr(i);
               }
               last.push({
-                type: types.REPETITION,
+                type: types2.REPETITION,
                 min: 0,
                 max: Infinity,
                 value: last.pop()
@@ -528,7 +529,7 @@ var JSONSchemaFaker = (() => {
               break;
             default:
               last.push({
-                type: types.CHAR,
+                type: types2.CHAR,
                 value: c.charCodeAt(0)
               });
           }
@@ -538,7 +539,7 @@ var JSONSchemaFaker = (() => {
         }
         return start;
       };
-      module.exports.types = types;
+      module.exports.types = types2;
     }
   });
 
@@ -559,7 +560,10 @@ var JSONSchemaFaker = (() => {
           return !(this.high + 1 < range.low || this.low - 1 > range.high);
         }
         add(range) {
-          return new SubRange(Math.min(this.low, range.low), Math.max(this.high, range.high));
+          return new SubRange(
+            Math.min(this.low, range.low),
+            Math.max(this.high, range.high)
+          );
         }
         subtract(range) {
           if (range.low <= this.low && range.high >= this.high) {
@@ -704,8 +708,8 @@ var JSONSchemaFaker = (() => {
     "node_modules/randexp/lib/randexp.js"(exports, module) {
       var ret = require_lib();
       var DRange = require_lib2();
-      var types = ret.types;
-      module.exports = class RandExp {
+      var types2 = ret.types;
+      module.exports = class RandExp2 {
         constructor(regexp, m) {
           this._setDefaults(regexp);
           if (regexp instanceof RegExp) {
@@ -721,7 +725,7 @@ var JSONSchemaFaker = (() => {
           this.tokens = ret(regexp);
         }
         _setDefaults(regexp) {
-          this.max = regexp.max != null ? regexp.max : RandExp.prototype.max != null ? RandExp.prototype.max : 100;
+          this.max = regexp.max != null ? regexp.max : RandExp2.prototype.max != null ? RandExp2.prototype.max : 100;
           this.defaultRange = regexp.defaultRange ? regexp.defaultRange : this.defaultRange.clone();
           if (regexp.randInt) {
             this.randInt = regexp.randInt;
@@ -733,8 +737,8 @@ var JSONSchemaFaker = (() => {
         _gen(token, groups) {
           var stack, str, n, i, l;
           switch (token.type) {
-            case types.ROOT:
-            case types.GROUP:
+            case types2.ROOT:
+            case types2.GROUP:
               if (token.followedBy || token.notFollowedBy) {
                 return "";
               }
@@ -750,24 +754,27 @@ var JSONSchemaFaker = (() => {
                 groups[token.groupNumber] = str;
               }
               return str;
-            case types.POSITION:
+            case types2.POSITION:
               return "";
-            case types.SET:
+            case types2.SET:
               var expandedSet = this._expand(token);
               if (!expandedSet.length) {
                 return "";
               }
               return String.fromCharCode(this._randSelect(expandedSet));
-            case types.REPETITION:
-              n = this.randInt(token.min, token.max === Infinity ? token.min + this.max : token.max);
+            case types2.REPETITION:
+              n = this.randInt(
+                token.min,
+                token.max === Infinity ? token.min + this.max : token.max
+              );
               str = "";
               for (i = 0; i < n; i++) {
                 str += this._gen(token.value, groups);
               }
               return str;
-            case types.REFERENCE:
+            case types2.REFERENCE:
               return groups[token.value - 1] || "";
-            case types.CHAR:
+            case types2.CHAR:
               var code = this.ignoreCase && this._randBool() ? this._toOtherCase(token.value) : token.value;
               return String.fromCharCode(code);
           }
@@ -826,7 +833,7 @@ var JSONSchemaFaker = (() => {
             regexp = new RegExp(regexp, m);
           }
           if (regexp._randexp === void 0) {
-            randexp = new RandExp(regexp, m);
+            randexp = new RandExp2(regexp, m);
             regexp._randexp = randexp;
           } else {
             randexp = regexp._randexp;
@@ -836,420 +843,453 @@ var JSONSchemaFaker = (() => {
         }
         static sugar() {
           RegExp.prototype.gen = function() {
-            return RandExp.randexp(this);
+            return RandExp2.randexp(this);
           };
         }
       };
     }
   });
 
-  // src/lib/core/random.js
-  var require_random = __commonJS({
-    "src/lib/core/random.js"(exports, module) {
-      var RandExp = require_randexp();
-      var optionAPI = require_option();
-      var env = require_constants();
-      function getRandomInteger(min, max) {
-        min = typeof min === "undefined" ? env.MIN_INTEGER : min;
-        max = typeof max === "undefined" ? env.MAX_INTEGER : max;
-        return Math.floor(optionAPI("random")() * (max - min + 1)) + min;
-      }
-      function _randexp(value) {
-        RandExp.prototype.max = optionAPI("defaultRandExpMax");
-        RandExp.prototype.randInt = (a, b) => a + Math.floor(optionAPI("random")() * (1 + (b - a)));
-        const re = new RandExp(value);
-        return re.gen();
-      }
-      function pick(collection) {
-        return collection[Math.floor(optionAPI("random")() * collection.length)];
-      }
-      function shuffle(collection) {
-        let tmp;
-        let key;
-        let length = collection.length;
-        const copy = collection.slice();
-        for (; length > 0; ) {
-          key = Math.floor(optionAPI("random")() * length);
-          length -= 1;
-          tmp = copy[length];
-          copy[length] = copy[key];
-          copy[key] = tmp;
-        }
-        return copy;
-      }
-      function getRandom(min, max) {
-        return optionAPI("random")() * (max - min) + min;
-      }
-      function number(min, max, defMin, defMax, hasPrecision = false) {
-        defMin = typeof defMin === "undefined" ? env.MIN_NUMBER : defMin;
-        defMax = typeof defMax === "undefined" ? env.MAX_NUMBER : defMax;
-        min = typeof min === "undefined" ? defMin : min;
-        max = typeof max === "undefined" ? defMax : max;
-        if (max < min) {
-          max += min;
-        }
-        if (hasPrecision) {
-          return getRandom(min, max);
-        }
-        return getRandomInteger(min, max);
-      }
-      function by(type) {
-        switch (type) {
-          case "seconds":
-            return number(0, 60) * 60;
-          case "minutes":
-            return number(15, 50) * 612;
-          case "hours":
-            return number(12, 72) * 36123;
-          case "days":
-            return number(7, 30) * 86412345;
-          case "weeks":
-            return number(4, 52) * 604812345;
-          case "months":
-            return number(2, 13) * 2592012345;
-          case "years":
-            return number(1, 20) * 31104012345;
-          default:
-            break;
-        }
-      }
-      function date(step) {
-        if (step) {
-          return by(step);
-        }
-        const now = new Date();
-        const days = number(-1e3, env.MOST_NEAR_DATETIME);
-        now.setTime(now.getTime() - days);
-        return now;
-      }
-      var random_default = {
+  // src/lib/core/random.mjs
+  function getRandomInteger(min, max) {
+    min = typeof min === "undefined" ? constants_default.MIN_INTEGER : min;
+    max = typeof max === "undefined" ? constants_default.MAX_INTEGER : max;
+    return Math.floor(option_default("random")() * (max - min + 1)) + min;
+  }
+  function _randexp(value) {
+    import_randexp.default.prototype.max = option_default("defaultRandExpMax");
+    import_randexp.default.prototype.randInt = (a, b) => a + Math.floor(option_default("random")() * (1 + (b - a)));
+    const re = new import_randexp.default(value);
+    return re.gen();
+  }
+  function pick(collection) {
+    return collection[Math.floor(option_default("random")() * collection.length)];
+  }
+  function shuffle(collection) {
+    let tmp;
+    let key;
+    let length = collection.length;
+    const copy = collection.slice();
+    for (; length > 0; ) {
+      key = Math.floor(option_default("random")() * length);
+      length -= 1;
+      tmp = copy[length];
+      copy[length] = copy[key];
+      copy[key] = tmp;
+    }
+    return copy;
+  }
+  function getRandom(min, max) {
+    return option_default("random")() * (max - min) + min;
+  }
+  function number(min, max, defMin, defMax, hasPrecision = false) {
+    defMin = typeof defMin === "undefined" ? constants_default.MIN_NUMBER : defMin;
+    defMax = typeof defMax === "undefined" ? constants_default.MAX_NUMBER : defMax;
+    min = typeof min === "undefined" ? defMin : min;
+    max = typeof max === "undefined" ? defMax : max;
+    if (max < min) {
+      max += min;
+    }
+    if (hasPrecision) {
+      return getRandom(min, max);
+    }
+    return getRandomInteger(min, max);
+  }
+  function by(type) {
+    switch (type) {
+      case "seconds":
+        return number(0, 60) * 60;
+      case "minutes":
+        return number(15, 50) * 612;
+      case "hours":
+        return number(12, 72) * 36123;
+      case "days":
+        return number(7, 30) * 86412345;
+      case "weeks":
+        return number(4, 52) * 604812345;
+      case "months":
+        return number(2, 13) * 2592012345;
+      case "years":
+        return number(1, 20) * 31104012345;
+      default:
+        break;
+    }
+  }
+  function date(step) {
+    if (step) {
+      return by(step);
+    }
+    const now = new Date();
+    const days = number(-1e3, constants_default.MOST_NEAR_DATETIME);
+    now.setTime(now.getTime() - days);
+    return now;
+  }
+  var import_randexp, random_default;
+  var init_random = __esm({
+    "src/lib/core/random.mjs"() {
+      import_randexp = __toESM(require_randexp(), 1);
+      init_option();
+      init_constants();
+      random_default = {
         pick,
         date,
         shuffle,
         number,
         randexp: _randexp
       };
-      module.exports = random_default;
     }
   });
 
-  // src/lib/core/utils.js
-  var require_utils = __commonJS({
-    "src/lib/core/utils.js"(exports, module) {
-      var optionAPI = require_option();
-      var env = require_constants();
-      var random = require_random();
-      function getLocalRef(obj, path, refs) {
-        if (refs && refs[path])
-          return clone(refs[path]);
-        const keyElements = path.replace("#/", "/").split("/");
-        let schema = obj.$ref && refs ? refs[obj.$ref] : obj;
-        if (!schema && !keyElements[0]) {
-          keyElements[0] = obj.$ref.split("#/")[0];
-        }
-        if (refs && path.includes("#/") && refs[keyElements[0]]) {
-          schema = refs[keyElements.shift()];
-        }
-        if (!keyElements[0])
-          keyElements.shift();
-        while (schema && keyElements.length > 0) {
-          const prop = keyElements.shift();
-          if (!schema[prop]) {
-            throw new Error(`Prop not found: ${prop} (${path})`);
-          }
-          schema = schema[prop];
-        }
-        return schema;
+  // src/lib/core/utils.mjs
+  function getLocalRef(obj, path, refs) {
+    path = decodeURIComponent(path);
+    if (refs && refs[path])
+      return clone(refs[path]);
+    const keyElements = path.replace("#/", "/").split("/");
+    let schema = obj.$ref && refs && refs[obj.$ref] || obj;
+    if (!schema && !keyElements[0]) {
+      keyElements[0] = obj.$ref.split("#/")[0];
+    }
+    if (refs && path.includes("#/") && refs[keyElements[0]]) {
+      schema = refs[keyElements.shift()];
+    }
+    if (!keyElements[0])
+      keyElements.shift();
+    while (schema && keyElements.length > 0) {
+      const prop = keyElements.shift();
+      if (!schema[prop]) {
+        throw new Error(`Prop not found: ${prop} (${path})`);
       }
-      function hasProperties(obj, ...properties) {
-        return properties.filter((key) => {
-          return typeof obj[key] !== "undefined";
-        }).length > 0;
-      }
-      function clampDate(value) {
-        if (value.includes(" ")) {
-          return new Date(value).toISOString().substr(0, 10);
-        }
-        let [year, month, day] = value.split("T")[0].split("-");
-        month = Math.max(1, Math.min(12, month));
-        day = Math.max(1, Math.min(31, day));
-        return `${year}-${month}-${day}`;
-      }
-      function typecast(type, schema, callback) {
-        const params = {};
-        switch (type || schema.type) {
-          case "integer":
-          case "number":
-            if (typeof schema.minimum !== "undefined") {
-              params.minimum = schema.minimum;
-            }
-            if (typeof schema.maximum !== "undefined") {
-              params.maximum = schema.maximum;
-            }
-            if (schema.enum) {
-              let min = Math.max(params.minimum || 0, 0);
-              let max = Math.min(params.maximum || Infinity, Infinity);
-              if (schema.exclusiveMinimum && min === schema.minimum) {
-                min += schema.multipleOf || 1;
-              }
-              if (schema.exclusiveMaximum && max === schema.maximum) {
-                max -= schema.multipleOf || 1;
-              }
-              if (min || max !== Infinity) {
-                schema.enum = schema.enum.filter((x) => {
-                  if (x >= min && x <= max) {
-                    return true;
-                  }
-                  return false;
-                });
-              }
-            }
-            break;
-          case "string": {
-            params.minLength = optionAPI("minLength") || 0;
-            params.maxLength = optionAPI("maxLength") || Number.MAX_SAFE_INTEGER;
-            if (typeof schema.minLength !== "undefined") {
-              params.minLength = Math.max(params.minLength, schema.minLength);
-            }
-            if (typeof schema.maxLength !== "undefined") {
-              params.maxLength = Math.min(params.maxLength, schema.maxLength);
-            }
-            break;
-          }
-          default:
-            break;
-        }
-        let value = callback(params);
-        if (value === null || value === void 0) {
-          return null;
-        }
-        switch (type || schema.type) {
-          case "number":
-            value = parseFloat(value);
-            break;
-          case "integer":
-            value = parseInt(value, 10);
-            break;
-          case "boolean":
-            value = !!value;
-            break;
-          case "string": {
-            value = String(value);
-            const min = Math.max(params.minLength || 0, 0);
-            const max = Math.min(params.maxLength || Infinity, Infinity);
-            let prev;
-            let noChangeCount = 0;
-            while (value.length < min) {
-              prev = value;
-              if (!schema.pattern) {
-                value += `${random.pick([" ", "/", "_", "-", "+", "=", "@", "^"])}${value}`;
-              } else {
-                value += random.randexp(schema.pattern);
-              }
-              if (value === prev) {
-                noChangeCount += 1;
-                if (noChangeCount === 3) {
-                  break;
-                }
-              } else {
-                noChangeCount = 0;
-              }
-            }
-            if (value.length > max) {
-              value = value.substr(0, max);
-            }
-            switch (schema.format) {
-              case "date-time":
-              case "datetime":
-                value = new Date(clampDate(value)).toISOString().replace(/([0-9])0+Z$/, "$1Z");
-                break;
-              case "full-date":
-              case "date":
-                value = new Date(clampDate(value)).toISOString().substr(0, 10);
-                break;
-              case "time":
-                value = new Date(`1969-01-01 ${value}`).toISOString().substr(11);
-                break;
-              default:
-                break;
-            }
-            break;
-          }
-          default:
-            break;
-        }
-        return value;
-      }
-      function merge(a, b) {
-        Object.keys(b).forEach((key) => {
-          if (typeof b[key] !== "object" || b[key] === null) {
-            a[key] = b[key];
-          } else if (Array.isArray(b[key])) {
-            a[key] = a[key] || [];
-            b[key].forEach((value) => {
-              if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
-                a[key].push(value);
-              }
-            });
-          } else if (typeof a[key] !== "object" || a[key] === null || Array.isArray(a[key])) {
-            a[key] = merge({}, b[key]);
-          } else {
-            a[key] = merge(a[key], b[key]);
-          }
-        });
-        return a;
-      }
-      function clone(obj, cache = new Map()) {
-        if (!obj || typeof obj !== "object") {
-          return obj;
-        }
-        if (cache.has(obj)) {
-          return cache.get(obj);
-        }
-        if (Array.isArray(obj)) {
-          const arr = [];
-          cache.set(obj, arr);
-          arr.push(...obj.map((x) => clone(x, cache)));
-          return arr;
-        }
-        const clonedObj = {};
-        cache.set(obj, clonedObj);
-        return Object.keys(obj).reduce((prev, cur) => {
-          prev[cur] = clone(obj[cur], cache);
-          return prev;
-        }, clonedObj);
-      }
-      function short(schema) {
-        const s = JSON.stringify(schema);
-        const l = JSON.stringify(schema, null, 2);
-        return s.length > 400 ? `${l.substr(0, 400)}...` : l;
-      }
-      function anyValue() {
-        return random.pick([
-          false,
-          true,
-          null,
-          -1,
-          NaN,
-          Math.PI,
-          Infinity,
-          void 0,
-          [],
-          {},
-          Math.random(),
-          Math.random().toString(36).substr(2)
-        ]);
-      }
-      function notValue(schema, parent) {
-        const copy = merge({}, parent);
+      schema = schema[prop];
+    }
+    return schema;
+  }
+  function isNumeric(value) {
+    return typeof value === "string" && RE_NUMERIC.test(value);
+  }
+  function isScalar(value) {
+    return ["number", "boolean"].includes(typeof value);
+  }
+  function hasProperties(obj, ...properties) {
+    return properties.filter((key) => {
+      return typeof obj[key] !== "undefined";
+    }).length > 0;
+  }
+  function clampDate(value) {
+    if (value.includes(" ")) {
+      return new Date(value).toISOString().substr(0, 10);
+    }
+    let [year, month, day] = value.split("T")[0].split("-");
+    month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
+    day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
+    return `${year}-${month}-${day}`;
+  }
+  function clampDateTime(value) {
+    if (value.includes(" ")) {
+      return new Date(value).toISOString().substr(0, 10);
+    }
+    let [year, month, day] = value.split("T")[0].split("-");
+    let [hour, minute, second] = value.split("T")[1].split(".")[0].split(":");
+    month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
+    day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
+    hour = `0${Math.max(1, Math.min(23, hour))}`.slice(-2);
+    minute = `0${Math.max(1, Math.min(59, minute))}`.slice(-2);
+    second = `0${Math.max(1, Math.min(59, second))}`.slice(-2);
+    return `${year}-${month}-${day}T${hour}:${minute}:${second}.000Z`;
+  }
+  function typecast(type, schema, callback) {
+    const params = {};
+    switch (type || schema.type) {
+      case "integer":
+      case "number":
         if (typeof schema.minimum !== "undefined") {
-          copy.maximum = schema.minimum;
-          copy.exclusiveMaximum = true;
+          params.minimum = schema.minimum;
         }
         if (typeof schema.maximum !== "undefined") {
-          copy.minimum = schema.maximum > copy.maximum ? 0 : schema.maximum;
-          copy.exclusiveMinimum = true;
+          params.maximum = schema.maximum;
         }
+        if (schema.enum) {
+          let min = Math.max(params.minimum || 0, 0);
+          let max = Math.min(params.maximum || Infinity, Infinity);
+          if (schema.exclusiveMinimum && min === schema.minimum) {
+            min += schema.multipleOf || 1;
+          }
+          if (schema.exclusiveMaximum && max === schema.maximum) {
+            max -= schema.multipleOf || 1;
+          }
+          if (min || max !== Infinity) {
+            schema.enum = schema.enum.filter((x) => {
+              if (x >= min && x <= max) {
+                return true;
+              }
+              return false;
+            });
+          }
+        }
+        break;
+      case "string": {
+        params.minLength = option_default("minLength") || 0;
+        params.maxLength = option_default("maxLength") || Number.MAX_SAFE_INTEGER;
         if (typeof schema.minLength !== "undefined") {
-          copy.maxLength = schema.minLength;
+          params.minLength = Math.max(params.minLength, schema.minLength);
         }
         if (typeof schema.maxLength !== "undefined") {
-          copy.minLength = schema.maxLength > copy.maxLength ? 0 : schema.maxLength;
+          params.maxLength = Math.min(params.maxLength, schema.maxLength);
         }
-        if (schema.type) {
-          copy.type = random.pick(env.SCALAR_TYPES.filter((x) => {
-            const types = Array.isArray(schema.type) ? schema.type : [schema.type];
-            return types.every((type) => {
-              if (x === "number" || x === "integer") {
-                return type !== "number" && type !== "integer";
-              }
-              return x !== type;
-            });
-          }));
-        } else if (schema.enum) {
-          let value;
-          do {
-            value = anyValue();
-          } while (schema.enum.indexOf(value) !== -1);
-          copy.enum = [value];
+        break;
+      }
+      default:
+        break;
+    }
+    let value = callback(params);
+    if (value === null || value === void 0) {
+      return null;
+    }
+    switch (type || schema.type) {
+      case "number":
+        value = isNumeric(value) ? parseFloat(value) : value;
+        break;
+      case "integer":
+        value = isNumeric(value) ? parseInt(value, 10) : value;
+        break;
+      case "boolean":
+        value = !!value;
+        break;
+      case "string": {
+        if (isScalar(value)) {
+          return value;
         }
-        if (schema.required && copy.properties) {
-          schema.required.forEach((prop) => {
-            delete copy.properties[prop];
-          });
-        }
-        return copy;
-      }
-      function validateValueForSchema(value, schema) {
-        const schemaHasMin = schema.minimum !== void 0;
-        const schemaHasMax = schema.maximum !== void 0;
-        return (schemaHasMin || schemaHasMax) && (!schemaHasMin || value >= schema.minimum) && (!schemaHasMax || value <= schema.maximum);
-      }
-      function validate(value, schemas) {
-        return !schemas.every((schema) => validateValueForSchema(value, schema));
-      }
-      function validateValueForOneOf(value, oneOf) {
-        const validCount = oneOf.reduce((count, schema) => count + (validateValueForSchema(value, schema) ? 1 : 0), 0);
-        return validCount === 1;
-      }
-      function isKey(prop) {
-        return ["enum", "const", "default", "examples", "required", "definitions", "items", "properties"].includes(prop);
-      }
-      function omitProps(obj, props) {
-        return Object.keys(obj).filter((key) => !props.includes(key)).reduce((copy, k) => {
-          if (Array.isArray(obj[k])) {
-            copy[k] = obj[k].slice();
+        value = String(value);
+        const min = Math.max(params.minLength || 0, 0);
+        const max = Math.min(params.maxLength || Infinity, Infinity);
+        let prev;
+        let noChangeCount = 0;
+        while (value.length < min) {
+          prev = value;
+          if (!schema.pattern) {
+            value += `${random_default.pick([" ", "/", "_", "-", "+", "=", "@", "^"])}${value}`;
           } else {
-            copy[k] = obj[k] instanceof Object ? merge({}, obj[k]) : obj[k];
+            value += random_default.randexp(schema.pattern);
           }
-          return copy;
-        }, {});
-      }
-      function template(value, schema) {
-        if (Array.isArray(value)) {
-          return value.map((x) => template(x, schema));
-        }
-        if (typeof value === "string") {
-          value = value.replace(/#\{([\w.-]+)\}/g, (_, $1) => schema[$1]);
-        }
-        return value;
-      }
-      function isEmpty(value) {
-        return Object.prototype.toString.call(value) === "[object Object]" && !Object.keys(value).length;
-      }
-      function shouldClean(key, schema) {
-        const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
-        const wasCleaned = typeof schema.thunk === "function" || schema.additionalProperties && typeof schema.additionalProperties.thunk === "function";
-        return !isRequired && !wasCleaned;
-      }
-      function clean(obj, schema, isArray = false) {
-        if (!obj || typeof obj !== "object") {
-          return obj;
-        }
-        if (Array.isArray(obj)) {
-          return obj.map((value) => clean(value, schema, true)).filter((value) => typeof value !== "undefined");
-        }
-        Object.keys(obj).forEach((k) => {
-          if (isEmpty(obj[k])) {
-            if (shouldClean(k, schema)) {
-              delete obj[k];
+          if (value === prev) {
+            noChangeCount += 1;
+            if (noChangeCount === 3) {
+              break;
             }
           } else {
-            const value = clean(obj[k], schema);
-            if (!isEmpty(value)) {
-              obj[k] = value;
-            }
+            noChangeCount = 0;
           }
-          if (typeof obj[k] === "undefined") {
-            delete obj[k];
+        }
+        if (value.length > max) {
+          value = value.substr(0, max);
+        }
+        switch (schema.format) {
+          case "date-time":
+          case "datetime":
+            value = new Date(clampDateTime(value)).toISOString().replace(/([0-9])0+Z$/, "$1Z");
+            break;
+          case "full-date":
+          case "date":
+            value = new Date(clampDate(value)).toISOString().substr(0, 10);
+            break;
+          case "time":
+            value = new Date(`1969-01-01 ${value}`).toISOString().substr(11);
+            break;
+          default:
+            break;
+        }
+        break;
+      }
+      default:
+        break;
+    }
+    return value;
+  }
+  function merge(a, b) {
+    Object.keys(b).forEach((key) => {
+      if (typeof b[key] !== "object" || b[key] === null) {
+        a[key] = b[key];
+      } else if (Array.isArray(b[key])) {
+        a[key] = a[key] || [];
+        b[key].forEach((value, i) => {
+          if (a.type === "array" && b.type === "array") {
+            a[key][i] = merge(a[key][i] || {}, value, true);
+          } else if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
+            a[key].push(value);
           }
         });
-        if (!Object.keys(obj).length && isArray) {
-          return void 0;
-        }
-        return obj;
+      } else if (typeof a[key] !== "object" || a[key] === null || Array.isArray(a[key])) {
+        a[key] = merge({}, b[key]);
+      } else {
+        a[key] = merge(a[key], b[key]);
       }
-      var utils_default = {
+    });
+    return a;
+  }
+  function clone(obj, cache = /* @__PURE__ */ new Map()) {
+    if (!obj || typeof obj !== "object") {
+      return obj;
+    }
+    if (cache.has(obj)) {
+      return cache.get(obj);
+    }
+    if (Array.isArray(obj)) {
+      const arr = [];
+      cache.set(obj, arr);
+      arr.push(...obj.map((x) => clone(x, cache)));
+      return arr;
+    }
+    const clonedObj = {};
+    cache.set(obj, clonedObj);
+    return Object.keys(obj).reduce((prev, cur) => {
+      prev[cur] = clone(obj[cur], cache);
+      return prev;
+    }, clonedObj);
+  }
+  function short(schema) {
+    const s = JSON.stringify(schema);
+    const l = JSON.stringify(schema, null, 2);
+    return s.length > 400 ? `${l.substr(0, 400)}...` : l;
+  }
+  function anyValue() {
+    return random_default.pick([
+      false,
+      true,
+      null,
+      -1,
+      NaN,
+      Math.PI,
+      Infinity,
+      void 0,
+      [],
+      {},
+      Math.random(),
+      Math.random().toString(36).substr(2)
+    ]);
+  }
+  function hasValue(schema, value) {
+    if (schema.enum)
+      return schema.enum.includes(value);
+    if (schema.const)
+      return schema.const === value;
+  }
+  function notValue(schema, parent) {
+    const copy = merge({}, parent);
+    if (typeof schema.minimum !== "undefined") {
+      copy.maximum = schema.minimum;
+      copy.exclusiveMaximum = true;
+    }
+    if (typeof schema.maximum !== "undefined") {
+      copy.minimum = schema.maximum > copy.maximum ? 0 : schema.maximum;
+      copy.exclusiveMinimum = true;
+    }
+    if (typeof schema.minLength !== "undefined") {
+      copy.maxLength = schema.minLength;
+    }
+    if (typeof schema.maxLength !== "undefined") {
+      copy.minLength = schema.maxLength > copy.maxLength ? 0 : schema.maxLength;
+    }
+    if (schema.type) {
+      copy.type = random_default.pick(constants_default.SCALAR_TYPES.filter((x) => {
+        const types2 = Array.isArray(schema.type) ? schema.type : [schema.type];
+        return types2.every((type) => {
+          if (x === "number" || x === "integer") {
+            return type !== "number" && type !== "integer";
+          }
+          return x !== type;
+        });
+      }));
+    } else if (schema.enum) {
+      let value;
+      do {
+        value = anyValue();
+      } while (schema.enum.indexOf(value) !== -1);
+      copy.enum = [value];
+    }
+    if (schema.required && copy.properties) {
+      schema.required.forEach((prop) => {
+        delete copy.properties[prop];
+      });
+    }
+    return copy;
+  }
+  function validateValueForSchema(value, schema) {
+    const schemaHasMin = schema.minimum !== void 0;
+    const schemaHasMax = schema.maximum !== void 0;
+    return (schemaHasMin || schemaHasMax) && (!schemaHasMin || value >= schema.minimum) && (!schemaHasMax || value <= schema.maximum);
+  }
+  function validate(value, schemas) {
+    return !schemas.every((schema) => validateValueForSchema(value, schema));
+  }
+  function validateValueForOneOf(value, oneOf) {
+    const validCount = oneOf.reduce((count, schema) => count + (validateValueForSchema(value, schema) ? 1 : 0), 0);
+    return validCount === 1;
+  }
+  function isKey(prop) {
+    return ["enum", "const", "default", "examples", "required", "definitions", "items", "properties"].includes(prop);
+  }
+  function omitProps(obj, props) {
+    return Object.keys(obj).filter((key) => !props.includes(key)).reduce((copy, k) => {
+      if (Array.isArray(obj[k])) {
+        copy[k] = obj[k].slice();
+      } else {
+        copy[k] = obj[k] instanceof Object ? merge({}, obj[k]) : obj[k];
+      }
+      return copy;
+    }, {});
+  }
+  function template(value, schema) {
+    if (Array.isArray(value)) {
+      return value.map((x) => template(x, schema));
+    }
+    if (typeof value === "string") {
+      value = value.replace(/#\{([\w.-]+)\}/g, (_, $1) => schema[$1]);
+    }
+    return value;
+  }
+  function isEmpty(value) {
+    return Object.prototype.toString.call(value) === "[object Object]" && !Object.keys(value).length;
+  }
+  function shouldClean(key, schema) {
+    const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
+    const wasCleaned = typeof schema.thunk === "function" || schema.additionalProperties && typeof schema.additionalProperties.thunk === "function";
+    return !isRequired && !wasCleaned;
+  }
+  function clean(obj, schema, isArray = false) {
+    if (!obj || typeof obj !== "object") {
+      return obj;
+    }
+    if (Array.isArray(obj)) {
+      return obj.map((value) => clean(value, schema, true)).filter((value) => typeof value !== "undefined");
+    }
+    Object.keys(obj).forEach((k) => {
+      if (isEmpty(obj[k])) {
+        if (shouldClean(k, schema)) {
+          delete obj[k];
+        }
+      } else {
+        const value = clean(obj[k], schema);
+        if (!isEmpty(value)) {
+          obj[k] = value;
+        }
+      }
+      if (typeof obj[k] === "undefined") {
+        delete obj[k];
+      }
+    });
+    if (!Object.keys(obj).length && isArray) {
+      return void 0;
+    }
+    return obj;
+  }
+  var RE_NUMERIC, utils_default;
+  var init_utils = __esm({
+    "src/lib/core/utils.mjs"() {
+      init_option();
+      init_constants();
+      init_random();
+      RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
+      utils_default = {
         hasProperties,
         getLocalRef,
         omitProps,
@@ -1257,6 +1297,7 @@ var JSONSchemaFaker = (() => {
         merge,
         clone,
         short,
+        hasValue,
         notValue,
         anyValue,
         validate,
@@ -1269,46 +1310,46 @@ var JSONSchemaFaker = (() => {
         isEmpty,
         clampDate
       };
-      module.exports = utils_default;
     }
   });
 
-  // src/lib/class/Container.js
-  var require_Container = __commonJS({
-    "src/lib/class/Container.js"(exports, module) {
-      var import_utils = __toModule(require_utils());
-      function proxy(gen) {
-        return (value, schema, property, rootSchema) => {
-          let fn = value;
-          let args = [];
-          if (typeof value === "object") {
-            fn = Object.keys(value)[0];
-            if (Array.isArray(value[fn])) {
-              args = value[fn];
-            } else {
-              args.push(value[fn]);
-            }
-          }
-          const props = fn.split(".");
-          let ctx = gen();
-          while (props.length > 1) {
-            ctx = ctx[props.shift()];
-          }
-          value = typeof ctx === "object" ? ctx[props[0]] : ctx;
-          if (typeof value === "function") {
-            value = value.apply(ctx, args.map((x) => import_utils.default.template(x, rootSchema)));
-          }
-          if (Object.prototype.toString.call(value) === "[object Object]") {
-            Object.keys(value).forEach((key) => {
-              if (typeof value[key] === "function") {
-                throw new Error(`Cannot resolve value for '${property}: ${fn}', given: ${value}`);
-              }
-            });
-          }
-          return value;
-        };
+  // src/lib/class/Container.mjs
+  function proxy(gen) {
+    return (value, schema, property, rootSchema) => {
+      let fn = value;
+      let args = [];
+      if (typeof value === "object") {
+        fn = Object.keys(value)[0];
+        if (Array.isArray(value[fn])) {
+          args = value[fn];
+        } else {
+          args.push(value[fn]);
+        }
       }
-      var Container = class {
+      const props = fn.split(".");
+      let ctx = gen();
+      while (props.length > 1) {
+        ctx = ctx[props.shift()];
+      }
+      value = typeof ctx === "object" ? ctx[props[0]] : ctx;
+      if (typeof value === "function") {
+        value = value.apply(ctx, args.map((x) => utils_default.template(x, rootSchema)));
+      }
+      if (Object.prototype.toString.call(value) === "[object Object]") {
+        Object.keys(value).forEach((key) => {
+          if (typeof value[key] === "function") {
+            throw new Error(`Cannot resolve value for '${property}: ${fn}', given: ${value}`);
+          }
+        });
+      }
+      return value;
+    };
+  }
+  var Container, Container_default;
+  var init_Container = __esm({
+    "src/lib/class/Container.mjs"() {
+      init_utils();
+      Container = class {
         constructor() {
           this.registry = {};
           this.support = {};
@@ -1359,41 +1400,41 @@ var JSONSchemaFaker = (() => {
           return schema;
         }
       };
-      var Container_default = Container;
-      module.exports = Container_default;
+      Container_default = Container;
     }
   });
 
-  // src/lib/api/format.js
-  var require_format = __commonJS({
-    "src/lib/api/format.js"(exports, module) {
-      var Registry = require_Registry();
-      var registry = new Registry();
-      function formatAPI(nameOrFormatMap, callback) {
-        if (typeof nameOrFormatMap === "undefined") {
-          return registry.list();
-        }
-        if (typeof nameOrFormatMap === "string") {
-          if (typeof callback === "function") {
-            registry.register(nameOrFormatMap, callback);
-          } else if (callback === null || callback === false) {
-            registry.unregister(nameOrFormatMap);
-          } else {
-            return registry.get(nameOrFormatMap);
-          }
-        } else {
-          registry.registerMany(nameOrFormatMap);
-        }
+  // src/lib/api/format.mjs
+  function formatAPI(nameOrFormatMap, callback) {
+    if (typeof nameOrFormatMap === "undefined") {
+      return registry2.list();
+    }
+    if (typeof nameOrFormatMap === "string") {
+      if (typeof callback === "function") {
+        registry2.register(nameOrFormatMap, callback);
+      } else if (callback === null || callback === false) {
+        registry2.unregister(nameOrFormatMap);
+      } else {
+        return registry2.get(nameOrFormatMap);
       }
-      var format_default = formatAPI;
-      module.exports = format_default;
+    } else {
+      registry2.registerMany(nameOrFormatMap);
+    }
+  }
+  var registry2, format_default;
+  var init_format = __esm({
+    "src/lib/api/format.mjs"() {
+      init_Registry();
+      registry2 = new Registry_default();
+      format_default = formatAPI;
     }
   });
 
-  // src/lib/core/error.js
-  var require_error = __commonJS({
-    "src/lib/core/error.js"(exports, module) {
-      var ParseError = class extends Error {
+  // src/lib/core/error.mjs
+  var ParseError, error_default;
+  var init_error = __esm({
+    "src/lib/core/error.mjs"() {
+      ParseError = class extends Error {
         constructor(message, path) {
           super();
           if (Error.captureStackTrace) {
@@ -1404,15 +1445,35 @@ var JSONSchemaFaker = (() => {
           this.path = path;
         }
       };
-      var error_default = ParseError;
-      module.exports = error_default;
+      error_default = ParseError;
     }
   });
 
-  // src/lib/core/infer.js
-  var require_infer = __commonJS({
-    "src/lib/core/infer.js"(exports, module) {
-      var inferredProperties = {
+  // src/lib/core/infer.mjs
+  function matchesType(obj, lastElementInPath, inferredTypeProperties) {
+    return Object.keys(obj).filter((prop) => {
+      const isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1;
+      const inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+      if (inferredPropertyFound && !isSubschema) {
+        return true;
+      }
+      return false;
+    }).length > 0;
+  }
+  function inferType(obj, schemaPath) {
+    const keys = Object.keys(inferredProperties);
+    for (let i = 0; i < keys.length; i += 1) {
+      const typeName = keys[i];
+      const lastElementInPath = schemaPath[schemaPath.length - 1];
+      if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
+        return typeName;
+      }
+    }
+  }
+  var inferredProperties, subschemaProperties, infer_default;
+  var init_infer = __esm({
+    "src/lib/core/infer.mjs"() {
+      inferredProperties = {
         array: [
           "additionalItems",
           "items",
@@ -1444,7 +1505,7 @@ var JSONSchemaFaker = (() => {
         ]
       };
       inferredProperties.number = inferredProperties.integer;
-      var subschemaProperties = [
+      subschemaProperties = [
         "additionalItems",
         "items",
         "additionalProperties",
@@ -1452,518 +1513,541 @@ var JSONSchemaFaker = (() => {
         "patternProperties",
         "properties"
       ];
-      function matchesType(obj, lastElementInPath, inferredTypeProperties) {
-        return Object.keys(obj).filter((prop) => {
-          const isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1;
-          const inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
-          if (inferredPropertyFound && !isSubschema) {
-            return true;
-          }
-          return false;
-        }).length > 0;
-      }
-      function inferType(obj, schemaPath) {
-        const keys = Object.keys(inferredProperties);
-        for (let i = 0; i < keys.length; i += 1) {
-          const typeName = keys[i];
-          const lastElementInPath = schemaPath[schemaPath.length - 1];
-          if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
-            return typeName;
-          }
-        }
-      }
-      var infer_default = inferType;
-      module.exports = infer_default;
+      infer_default = inferType;
     }
   });
 
-  // src/lib/generators/boolean.js
-  var require_boolean = __commonJS({
-    "src/lib/generators/boolean.js"(exports, module) {
-      var optionAPI = require_option();
-      function booleanGenerator() {
-        return optionAPI("random")() > 0.5;
+  // src/lib/generators/boolean.mjs
+  function booleanGenerator() {
+    return option_default("random")() > 0.5;
+  }
+  var boolean_default;
+  var init_boolean = __esm({
+    "src/lib/generators/boolean.mjs"() {
+      init_option();
+      boolean_default = booleanGenerator;
+    }
+  });
+
+  // src/lib/types/boolean.mjs
+  var booleanType, boolean_default2;
+  var init_boolean2 = __esm({
+    "src/lib/types/boolean.mjs"() {
+      init_boolean();
+      booleanType = boolean_default;
+      boolean_default2 = booleanType;
+    }
+  });
+
+  // src/lib/generators/null.mjs
+  function nullGenerator() {
+    return null;
+  }
+  var null_default;
+  var init_null = __esm({
+    "src/lib/generators/null.mjs"() {
+      null_default = nullGenerator;
+    }
+  });
+
+  // src/lib/types/null.mjs
+  var nullType, null_default2;
+  var init_null2 = __esm({
+    "src/lib/types/null.mjs"() {
+      init_null();
+      nullType = null_default;
+      null_default2 = nullType;
+    }
+  });
+
+  // src/lib/types/array.mjs
+  function unique(path, items, value, sample, resolve2, traverseCallback) {
+    const tmp = [];
+    const seen = [];
+    function walk(obj) {
+      const json = JSON.stringify(obj.value);
+      if (seen.indexOf(json) === -1) {
+        seen.push(json);
+        tmp.push(obj);
+        return true;
       }
-      var boolean_default = booleanGenerator;
-      module.exports = boolean_default;
+      return false;
     }
-  });
-
-  // src/lib/types/boolean.js
-  var require_boolean2 = __commonJS({
-    "src/lib/types/boolean.js"(exports, module) {
-      var booleanGenerator = require_boolean();
-      var booleanType = booleanGenerator;
-      var boolean_default = booleanType;
-      module.exports = boolean_default;
-    }
-  });
-
-  // src/lib/generators/null.js
-  var require_null = __commonJS({
-    "src/lib/generators/null.js"(exports, module) {
-      function nullGenerator() {
-        return null;
+    items.forEach(walk);
+    let limit = 100;
+    while (tmp.length !== items.length) {
+      if (!walk(traverseCallback(value.items || sample, path, resolve2))) {
+        limit -= 1;
       }
-      var null_default = nullGenerator;
-      module.exports = null_default;
-    }
-  });
-
-  // src/lib/types/null.js
-  var require_null2 = __commonJS({
-    "src/lib/types/null.js"(exports, module) {
-      var nullGenerator = require_null();
-      var nullType = nullGenerator;
-      var null_default = nullType;
-      module.exports = null_default;
-    }
-  });
-
-  // src/lib/types/array.js
-  var require_array = __commonJS({
-    "src/lib/types/array.js"(exports, module) {
-      var random = require_random();
-      var utils = require_utils();
-      var ParseError = require_error();
-      var optionAPI = require_option();
-      function unique(path, items, value, sample, resolve, traverseCallback) {
-        const tmp = [];
-        const seen = [];
-        function walk(obj) {
-          const json = JSON.stringify(obj.value);
-          if (seen.indexOf(json) === -1) {
-            seen.push(json);
-            tmp.push(obj);
-            return true;
-          }
-          return false;
-        }
-        items.forEach(walk);
-        let limit = 100;
-        while (tmp.length !== items.length) {
-          if (!walk(traverseCallback(value.items || sample, path, resolve))) {
-            limit -= 1;
-          }
-          if (!limit) {
-            break;
-          }
-        }
-        return tmp;
+      if (!limit) {
+        break;
       }
-      function arrayType(value, path, resolve, traverseCallback) {
-        const items = [];
-        if (!(value.items || value.additionalItems)) {
-          if (utils.hasProperties(value, "minItems", "maxItems", "uniqueItems")) {
-            throw new ParseError(`missing items for ${utils.short(value)}`, path);
-          }
-          return items;
-        }
-        if (Array.isArray(value.items)) {
-          return value.items.map((item, key) => {
-            const itemSubpath = path.concat(["items", key]);
-            return traverseCallback(item, itemSubpath, resolve);
-          });
-        }
-        let minItems = value.minItems;
-        let maxItems = value.maxItems;
-        const defaultMinItems = optionAPI("minItems");
-        const defaultMaxItems = optionAPI("maxItems");
-        if (defaultMinItems) {
-          minItems = typeof minItems === "undefined" ? defaultMinItems : Math.min(defaultMinItems, minItems);
-        }
-        if (defaultMaxItems) {
-          maxItems = typeof maxItems === "undefined" ? defaultMaxItems : Math.min(defaultMaxItems, maxItems);
-          if (maxItems && maxItems > defaultMaxItems) {
-            maxItems = defaultMaxItems;
-          }
-          if (minItems && minItems > defaultMaxItems) {
-            minItems = maxItems;
-          }
-        }
-        const optionalsProbability = optionAPI("alwaysFakeOptionals") === true ? 1 : optionAPI("optionalsProbability");
-        const fixedProbabilities = optionAPI("alwaysFakeOptionals") || optionAPI("fixedProbabilities") || false;
-        let length = random.number(minItems, maxItems, 1, 5);
-        if (optionalsProbability !== null) {
-          length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random.number(minItems, maxItems) * optionalsProbability), minItems || 0);
-        }
-        const sample = typeof value.additionalItems === "object" ? value.additionalItems : {};
-        for (let current = items.length; current < length; current += 1) {
-          const itemSubpath = path.concat(["items", current]);
-          const element = traverseCallback(value.items || sample, itemSubpath, resolve);
-          items.push(element);
-        }
-        if (value.contains && length > 0) {
-          const idx = random.number(0, length - 1);
-          items[idx] = traverseCallback(value.contains, path.concat(["items", idx]), resolve);
-        }
-        if (value.uniqueItems) {
-          return unique(path.concat(["items"]), items, value, sample, resolve, traverseCallback);
-        }
-        return items;
+    }
+    return tmp;
+  }
+  function arrayType(value, path, resolve2, traverseCallback) {
+    const items = [];
+    if (!(value.items || value.additionalItems)) {
+      if (utils_default.hasProperties(value, "minItems", "maxItems", "uniqueItems")) {
+        throw new error_default(`missing items for ${utils_default.short(value)}`, path);
       }
-      var array_default = arrayType;
-      module.exports = array_default;
+      return items;
+    }
+    if (Array.isArray(value.items)) {
+      return value.items.map((item, key) => {
+        const itemSubpath = path.concat(["items", key]);
+        return traverseCallback(item, itemSubpath, resolve2);
+      });
+    }
+    let minItems = value.minItems;
+    let maxItems = value.maxItems;
+    const defaultMinItems = option_default("minItems");
+    const defaultMaxItems = option_default("maxItems");
+    if (defaultMinItems) {
+      minItems = typeof minItems === "undefined" ? defaultMinItems : Math.min(defaultMinItems, minItems);
+    }
+    if (defaultMaxItems) {
+      maxItems = typeof maxItems === "undefined" ? defaultMaxItems : Math.min(defaultMaxItems, maxItems);
+      if (maxItems && maxItems > defaultMaxItems) {
+        maxItems = defaultMaxItems;
+      }
+      if (minItems && minItems > defaultMaxItems) {
+        minItems = maxItems;
+      }
+    }
+    const optionalsProbability = option_default("alwaysFakeOptionals") === true ? 1 : option_default("optionalsProbability");
+    const fixedProbabilities = option_default("alwaysFakeOptionals") || option_default("fixedProbabilities") || false;
+    let length = random_default.number(minItems, maxItems, 1, 5);
+    if (optionalsProbability !== null) {
+      length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random_default.number(minItems, maxItems) * optionalsProbability), minItems || 0);
+    }
+    const sample = typeof value.additionalItems === "object" ? value.additionalItems : {};
+    for (let current = items.length; current < length; current += 1) {
+      const itemSubpath = path.concat(["items", current]);
+      const element = traverseCallback(value.items || sample, itemSubpath, resolve2);
+      items.push(element);
+    }
+    if (value.contains && length > 0) {
+      const idx = random_default.number(0, length - 1);
+      items[idx] = traverseCallback(value.contains, path.concat(["items", idx]), resolve2);
+    }
+    if (value.uniqueItems) {
+      return unique(path.concat(["items"]), items, value, sample, resolve2, traverseCallback);
+    }
+    return items;
+  }
+  var array_default;
+  var init_array = __esm({
+    "src/lib/types/array.mjs"() {
+      init_random();
+      init_utils();
+      init_error();
+      init_option();
+      array_default = arrayType;
     }
   });
 
-  // src/lib/types/number.js
-  var require_number = __commonJS({
-    "src/lib/types/number.js"(exports, module) {
-      var random = require_random();
-      var env = require_constants();
-      function numberType(value) {
-        let min = typeof value.minimum === "undefined" ? env.MIN_INTEGER : value.minimum;
-        let max = typeof value.maximum === "undefined" ? env.MAX_INTEGER : value.maximum;
-        const multipleOf = value.multipleOf;
-        if (multipleOf) {
-          max = Math.floor(max / multipleOf) * multipleOf;
-          min = Math.ceil(min / multipleOf) * multipleOf;
-        }
-        if (value.exclusiveMinimum && min === value.minimum) {
-          min += multipleOf || 1;
-        }
-        if (value.exclusiveMaximum && max === value.maximum) {
-          max -= multipleOf || 1;
-        }
-        if (min > max) {
-          return NaN;
-        }
-        if (multipleOf) {
-          if (String(multipleOf).indexOf(".") === -1) {
-            let base = random.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
-            while (base < min) {
-              base += value.multipleOf;
-            }
-            return base;
-          }
-          const boundary = (max - min) / multipleOf;
-          let num;
-          let fix;
-          do {
-            num = random.number(0, boundary) * multipleOf;
-            fix = num / multipleOf % 1;
-          } while (fix !== 0);
-          return min + num;
-        }
-        return random.number(min, max, void 0, void 0, true);
+  // src/lib/types/number.mjs
+  function numberType(value) {
+    let min = typeof value.minimum === "undefined" || value.minimum === -Number.MAX_VALUE ? constants_default.MIN_INTEGER : value.minimum;
+    let max = typeof value.maximum === "undefined" || value.maximum === Number.MAX_VALUE ? constants_default.MAX_INTEGER : value.maximum;
+    const multipleOf = value.multipleOf;
+    const decimals = multipleOf && String(multipleOf).match(/e-(\d)|\.(\d+)$/);
+    if (decimals) {
+      const number2 = (Math.random() * random_default.number(0, 10) + 1) * multipleOf;
+      const truncate = decimals[1] || decimals[2].length;
+      const result = parseFloat(number2.toFixed(truncate));
+      const base = random_default.number(min, max - 1);
+      if (!String(result).includes(".")) {
+        return (base + result).toExponential();
       }
-      var number_default = numberType;
-      module.exports = number_default;
+      return base + result;
+    }
+    if (multipleOf) {
+      max = Math.floor(max / multipleOf) * multipleOf;
+      min = Math.ceil(min / multipleOf) * multipleOf;
+    }
+    if (value.exclusiveMinimum && min === value.minimum) {
+      min += multipleOf || 1;
+    }
+    if (value.exclusiveMaximum && max === value.maximum) {
+      max -= multipleOf || 1;
+    }
+    if (min > max) {
+      return NaN;
+    }
+    if (multipleOf) {
+      let base = random_default.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
+      while (base < min) {
+        base += multipleOf;
+      }
+      return base;
+    }
+    return random_default.number(min, max, void 0, void 0, true);
+  }
+  var number_default;
+  var init_number = __esm({
+    "src/lib/types/number.mjs"() {
+      init_random();
+      init_constants();
+      number_default = numberType;
     }
   });
 
-  // src/lib/types/integer.js
-  var require_integer = __commonJS({
-    "src/lib/types/integer.js"(exports, module) {
-      var number = require_number();
-      function integerType(value) {
-        return number(__spreadValues({ multipleOf: 1 }, value));
-      }
-      var integer_default = integerType;
-      module.exports = integer_default;
+  // src/lib/types/integer.mjs
+  function integerType(value) {
+    return Math.floor(number_default({ ...value }));
+  }
+  var integer_default;
+  var init_integer = __esm({
+    "src/lib/types/integer.mjs"() {
+      init_number();
+      integer_default = integerType;
     }
   });
 
-  // src/lib/generators/words.js
-  var require_words = __commonJS({
-    "src/lib/generators/words.js"(exports, module) {
-      var random = require_random();
-      var LIPSUM_WORDS = `Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore
+  // src/lib/generators/words.mjs
+  function wordsGenerator(length) {
+    const words = random_default.shuffle(LIPSUM_WORDS);
+    return words.slice(0, length);
+  }
+  var LIPSUM_WORDS, words_default;
+  var init_words = __esm({
+    "src/lib/generators/words.mjs"() {
+      init_random();
+      LIPSUM_WORDS = `Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore
 et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
 commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
 pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est
 laborum`.split(/\W/);
-      function wordsGenerator(length) {
-        const words = random.shuffle(LIPSUM_WORDS);
-        return words.slice(0, length);
-      }
-      var words_default = wordsGenerator;
-      module.exports = words_default;
+      words_default = wordsGenerator;
     }
   });
 
-  // src/lib/types/object.js
-  var require_object = __commonJS({
-    "src/lib/types/object.js"(exports, module) {
-      var constants = require_constants();
-      var random = require_random();
-      var words = require_words();
-      var utils = require_utils();
-      var optionAPI = require_option();
-      var anyType = { type: constants.ALLOWED_TYPES };
-      function objectType(value, path, resolve, traverseCallback) {
-        const props = {};
-        const properties = value.properties || {};
-        const patternProperties = value.patternProperties || {};
-        const requiredProperties = typeof value.required === "boolean" ? [] : (value.required || []).slice();
-        const allowsAdditional = value.additionalProperties !== false;
-        const propertyKeys = Object.keys(properties);
-        const patternPropertyKeys = Object.keys(patternProperties);
-        const optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce((_response, _key) => {
-          if (requiredProperties.indexOf(_key) === -1)
-            _response.push(_key);
-          return _response;
-        }, []);
-        const allProperties = requiredProperties.concat(optionalProperties);
-        const additionalProperties = allowsAdditional ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
-        if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils.hasProperties(value, "minProperties", "maxProperties", "dependencies", "required")) {
-          return null;
+  // src/lib/types/object.mjs
+  function objectType(value, path, resolve2, traverseCallback) {
+    const props = {};
+    const properties = value.properties || {};
+    const patternProperties = value.patternProperties || {};
+    const requiredProperties = typeof value.required === "boolean" ? [] : (value.required || []).slice();
+    const allowsAdditional = value.additionalProperties !== false;
+    const propertyKeys = Object.keys(properties);
+    const patternPropertyKeys = Object.keys(patternProperties);
+    const optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce((_response, _key) => {
+      if (requiredProperties.indexOf(_key) === -1)
+        _response.push(_key);
+      return _response;
+    }, []);
+    const allProperties = requiredProperties.concat(optionalProperties);
+    const additionalProperties = allowsAdditional ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
+    if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils_default.hasProperties(value, "minProperties", "maxProperties", "dependencies", "required")) {
+      return null;
+    }
+    if (option_default("requiredOnly") === true) {
+      requiredProperties.forEach((key) => {
+        if (properties[key]) {
+          props[key] = properties[key];
         }
-        if (optionAPI("requiredOnly") === true) {
-          requiredProperties.forEach((key) => {
-            if (properties[key]) {
-              props[key] = properties[key];
-            }
-          });
-          return traverseCallback(props, path.concat(["properties"]), resolve, value);
-        }
-        const optionalsProbability = optionAPI("alwaysFakeOptionals") === true ? 1 : optionAPI("optionalsProbability");
-        const fixedProbabilities = optionAPI("alwaysFakeOptionals") || optionAPI("fixedProbabilities") || false;
-        const ignoreProperties = optionAPI("ignoreProperties") || [];
-        const reuseProps = optionAPI("reuseProperties");
-        const fillProps = optionAPI("fillProperties");
-        const max = value.maxProperties || allProperties.length + (allowsAdditional ? random.number(1, 5) : 0);
-        let min = Math.max(value.minProperties || 0, requiredProperties.length);
-        let neededExtras = Math.max(0, allProperties.length - min);
-        if (allProperties.length === 1 && !requiredProperties.length) {
-          min = Math.max(random.number(fillProps ? 1 : 0, max), min);
-        }
-        if (optionalsProbability !== null) {
-          if (fixedProbabilities === true) {
-            neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (allProperties.length - min));
+      });
+      return traverseCallback(props, path.concat(["properties"]), resolve2, value);
+    }
+    const optionalsProbability = option_default("alwaysFakeOptionals") === true ? 1 : option_default("optionalsProbability");
+    const fixedProbabilities = option_default("alwaysFakeOptionals") || option_default("fixedProbabilities") || false;
+    const ignoreProperties = option_default("ignoreProperties") || [];
+    const reuseProps = option_default("reuseProperties");
+    const fillProps = option_default("fillProperties");
+    const max = value.maxProperties || allProperties.length + (allowsAdditional ? random_default.number(1, 5) : 0);
+    let min = Math.max(value.minProperties || 0, requiredProperties.length);
+    let neededExtras = Math.max(0, allProperties.length - min);
+    if (allProperties.length === 1 && !requiredProperties.length) {
+      min = Math.max(random_default.number(fillProps ? 1 : 0, max), min);
+    }
+    if (optionalsProbability !== null) {
+      if (fixedProbabilities === true) {
+        neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (allProperties.length - min));
+      } else {
+        neededExtras = random_default.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
+      }
+    }
+    const extraPropertiesRandomOrder = random_default.shuffle(optionalProperties).slice(0, neededExtras);
+    const extraProperties = optionalProperties.filter((_item) => {
+      return extraPropertiesRandomOrder.indexOf(_item) !== -1;
+    });
+    const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random_default.number(0, max);
+    const _props = requiredProperties.concat(random_default.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
+    const _defns = [];
+    const _deps = [];
+    if (value.dependencies) {
+      Object.keys(value.dependencies).forEach((prop) => {
+        const _required = value.dependencies[prop];
+        if (_props.indexOf(prop) !== -1) {
+          if (Array.isArray(_required)) {
+            _required.forEach((sub) => {
+              if (_props.indexOf(sub) === -1) {
+                _props.push(sub);
+              }
+            });
+          } else if (Array.isArray(_required.oneOf || _required.anyOf)) {
+            const values = _required.oneOf || _required.anyOf;
+            _deps.push({ prop, values });
           } else {
-            neededExtras = random.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
+            _defns.push(_required);
           }
         }
-        const extraPropertiesRandomOrder = random.shuffle(optionalProperties).slice(0, neededExtras);
-        const extraProperties = optionalProperties.filter((_item) => {
-          return extraPropertiesRandomOrder.indexOf(_item) !== -1;
-        });
-        const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random.number(0, max);
-        const _props = requiredProperties.concat(random.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
-        const _defns = [];
-        if (value.dependencies) {
-          Object.keys(value.dependencies).forEach((prop) => {
-            const _required = value.dependencies[prop];
-            if (_props.indexOf(prop) !== -1) {
-              if (Array.isArray(_required)) {
-                _required.forEach((sub) => {
-                  if (_props.indexOf(sub) === -1) {
-                    _props.push(sub);
-                  }
-                });
-              } else {
-                _defns.push(_required);
-              }
-            }
-          });
-          if (_defns.length) {
-            delete value.dependencies;
-            return traverseCallback({
-              allOf: _defns.concat(value)
-            }, path.concat(["properties"]), resolve, value);
+      });
+      if (_defns.length) {
+        delete value.dependencies;
+        return traverseCallback({
+          allOf: _defns.concat(value)
+        }, path.concat(["properties"]), resolve2, value);
+      }
+    }
+    const skipped = [];
+    const missing = [];
+    _props.forEach((key) => {
+      if (properties[key] && ["{}", "true"].includes(JSON.stringify(properties[key].not))) {
+        return;
+      }
+      for (let i = 0; i < ignoreProperties.length; i += 1) {
+        if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === "string" && ignoreProperties[i] === key || typeof ignoreProperties[i] === "function" && ignoreProperties[i](properties[key], key)) {
+          skipped.push(key);
+          return;
+        }
+      }
+      if (additionalProperties === false) {
+        if (requiredProperties.indexOf(key) !== -1) {
+          props[key] = properties[key];
+        }
+      }
+      if (properties[key]) {
+        props[key] = properties[key];
+      }
+      let found;
+      patternPropertyKeys.forEach((_key) => {
+        if (key.match(new RegExp(_key))) {
+          found = true;
+          if (props[key]) {
+            utils_default.merge(props[key], patternProperties[_key]);
+          } else {
+            props[random_default.randexp(key)] = patternProperties[_key];
           }
         }
-        const skipped = [];
-        const missing = [];
-        _props.forEach((key) => {
-          for (let i = 0; i < ignoreProperties.length; i += 1) {
-            if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === "string" && ignoreProperties[i] === key || typeof ignoreProperties[i] === "function" && ignoreProperties[i](properties[key], key)) {
-              skipped.push(key);
-              return;
-            }
-          }
-          if (additionalProperties === false) {
-            if (requiredProperties.indexOf(key) !== -1) {
-              props[key] = properties[key];
-            }
-          }
-          if (properties[key]) {
-            props[key] = properties[key];
-          }
-          let found;
-          patternPropertyKeys.forEach((_key) => {
-            if (key.match(new RegExp(_key))) {
-              found = true;
-              if (props[key]) {
-                utils.merge(props[key], patternProperties[_key]);
-              } else {
-                props[random.randexp(key)] = patternProperties[_key];
-              }
-            }
-          });
-          if (!found) {
-            const subschema = patternProperties[key] || additionalProperties;
-            if (subschema && additionalProperties !== false) {
-              props[patternProperties[key] ? random.randexp(key) : key] = properties[key] || subschema;
-            } else {
-              missing.push(key);
-            }
-          }
-        });
-        let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
-        const hash = (suffix) => random.randexp(`_?[_a-f\\d]{1,3}${suffix ? "\\$?" : ""}`);
-        function get(from) {
-          let one;
+      });
+      if (!found) {
+        const subschema = patternProperties[key] || additionalProperties;
+        if (subschema && additionalProperties !== false) {
+          props[patternProperties[key] ? random_default.randexp(key) : key] = properties[key] || subschema;
+        } else {
+          missing.push(key);
+        }
+      }
+    });
+    let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
+    const hash = (suffix) => random_default.randexp(`_?[_a-f\\d]{1,3}${suffix ? "\\$?" : ""}`);
+    function get(from) {
+      let one;
+      do {
+        if (!from.length)
+          break;
+        one = from.shift();
+      } while (props[one]);
+      return one;
+    }
+    let minProps = min;
+    if (allowsAdditional && !requiredProperties.length) {
+      minProps = Math.max(optionalsProbability === null || additionalProperties ? random_default.number(fillProps ? 1 : 0, max) : 0, min);
+    }
+    if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true) {
+      const limit = random_default.number(0, max);
+      for (let i = 0; i <= limit; i += 1) {
+        props[words_default(1) + hash(limit[i])] = anyType;
+      }
+    }
+    while (fillProps) {
+      if (!(patternPropertyKeys.length || allowsAdditional)) {
+        break;
+      }
+      if (current >= minProps) {
+        break;
+      }
+      if (allowsAdditional) {
+        if (reuseProps && propertyKeys.length - current > minProps) {
+          let count = 0;
+          let key;
           do {
-            if (!from.length)
+            count += 1;
+            if (count > 1e3) {
               break;
-            one = from.shift();
-          } while (props[one]);
-          return one;
-        }
-        let minProps = min;
-        if (allowsAdditional && !requiredProperties.length) {
-          minProps = Math.max(optionalsProbability === null || additionalProperties ? random.number(fillProps ? 1 : 0, max) : 0, min);
-        }
-        while (fillProps) {
-          if (!(patternPropertyKeys.length || allowsAdditional)) {
-            break;
-          }
-          if (current >= minProps) {
-            break;
-          }
-          if (allowsAdditional) {
-            if (reuseProps && propertyKeys.length - current > minProps) {
-              let count = 0;
-              let key;
-              do {
-                count += 1;
-                if (count > 1e3) {
-                  break;
-                }
-                key = get(requiredProperties) || random.pick(propertyKeys);
-              } while (typeof props[key] !== "undefined");
-              if (typeof props[key] === "undefined") {
-                props[key] = properties[key];
-                current += 1;
-              }
-            } else if (patternPropertyKeys.length && !additionalProperties) {
-              const prop = random.pick(patternPropertyKeys);
-              const word = random.randexp(prop);
-              if (!props[word]) {
-                props[word] = patternProperties[prop];
-                current += 1;
-              }
-            } else {
-              const word = get(requiredProperties) || words(1) + hash();
-              if (!props[word]) {
-                props[word] = additionalProperties || anyType;
-                current += 1;
-              }
             }
+            key = get(requiredProperties) || random_default.pick(propertyKeys);
+          } while (typeof props[key] !== "undefined");
+          if (typeof props[key] === "undefined") {
+            props[key] = properties[key];
+            current += 1;
           }
-          for (let i = 0; current < min && i < patternPropertyKeys.length; i += 1) {
-            const _key = patternPropertyKeys[i];
-            const word = random.randexp(_key);
-            if (!props[word]) {
-              props[word] = patternProperties[_key];
-              current += 1;
-            }
+        } else if (patternPropertyKeys.length && !additionalProperties) {
+          const prop = random_default.pick(patternPropertyKeys);
+          const word = random_default.randexp(prop);
+          if (!props[word]) {
+            props[word] = patternProperties[prop];
+            current += 1;
           }
-        }
-        if (requiredProperties.length === 0 && (!allowsAdditional || optionalsProbability === false)) {
-          const maximum = random.number(min, max);
-          for (; current < maximum; ) {
-            const word = get(propertyKeys);
-            if (word) {
-              props[word] = properties[word];
-            }
+        } else {
+          const word = get(requiredProperties) || words_default(1) + hash();
+          if (!props[word]) {
+            props[word] = additionalProperties || anyType;
             current += 1;
           }
         }
-        return traverseCallback(props, path.concat(["properties"]), resolve, value);
       }
-      var object_default = objectType;
-      module.exports = object_default;
-    }
-  });
-
-  // src/lib/generators/thunk.js
-  var require_thunk = __commonJS({
-    "src/lib/generators/thunk.js"(exports, module) {
-      var words = require_words();
-      var random = require_random();
-      function produce() {
-        const length = random.number(1, 5);
-        return words(length).join(" ");
-      }
-      function thunkGenerator(min = 0, max = 140) {
-        const _min = Math.max(0, min);
-        const _max = random.number(_min, max);
-        let result = produce();
-        while (result.length < _min) {
-          result += produce();
+      for (let i = 0; current < min && i < patternPropertyKeys.length; i += 1) {
+        const _key = patternPropertyKeys[i];
+        const word = random_default.randexp(_key);
+        if (!props[word]) {
+          props[word] = patternProperties[_key];
+          current += 1;
         }
-        if (result.length > _max) {
-          result = result.substr(0, _max);
+      }
+    }
+    if (requiredProperties.length === 0 && (!allowsAdditional || optionalsProbability === false)) {
+      const maximum = random_default.number(min, max);
+      for (; current < maximum; ) {
+        const word = get(propertyKeys);
+        if (word) {
+          props[word] = properties[word];
         }
-        return result;
+        current += 1;
       }
-      var thunk_default = thunkGenerator;
-      module.exports = thunk_default;
+    }
+    let sortedObj = props;
+    if (option_default("sortProperties") !== null) {
+      const originalKeys = Object.keys(properties);
+      const sortedKeys = Object.keys(props).sort((a, b) => {
+        return option_default("sortProperties") ? a.localeCompare(b) : originalKeys.indexOf(b) - originalKeys.indexOf(a);
+      });
+      sortedObj = sortedKeys.reduce((memo, key) => {
+        memo[key] = props[key];
+        return memo;
+      }, {});
+    }
+    const result = traverseCallback(sortedObj, path.concat(["properties"]), resolve2, value);
+    _deps.forEach((dep) => {
+      for (const sub of dep.values) {
+        if (utils_default.hasValue(sub.properties[dep.prop], result.value[dep.prop])) {
+          Object.keys(sub.properties).forEach((next) => {
+            if (next !== dep.prop) {
+              utils_default.merge(result.value, traverseCallback(sub.properties, path.concat(["properties"]), resolve2, value).value);
+            }
+          });
+          break;
+        }
+      }
+    });
+    return result;
+  }
+  var anyType, object_default;
+  var init_object = __esm({
+    "src/lib/types/object.mjs"() {
+      init_constants();
+      init_random();
+      init_words();
+      init_utils();
+      init_option();
+      anyType = { type: constants_default.ALLOWED_TYPES };
+      object_default = objectType;
     }
   });
 
-  // src/lib/generators/ipv4.js
-  var require_ipv4 = __commonJS({
-    "src/lib/generators/ipv4.js"(exports, module) {
-      var random = require_random();
-      function ipv4Generator() {
-        return [0, 0, 0, 0].map(() => {
-          return random.number(0, 255);
-        }).join(".");
-      }
-      var ipv4_default = ipv4Generator;
-      module.exports = ipv4_default;
+  // src/lib/generators/thunk.mjs
+  function produce() {
+    const length = random_default.number(1, 5);
+    return words_default(length).join(" ");
+  }
+  function thunkGenerator(min = 0, max = 140) {
+    const _min = Math.max(0, min);
+    const _max = random_default.number(_min, max);
+    let result = produce();
+    while (result.length < _min) {
+      result += produce();
+    }
+    if (result.length > _max) {
+      result = result.substr(0, _max);
+    }
+    return result;
+  }
+  var thunk_default;
+  var init_thunk = __esm({
+    "src/lib/generators/thunk.mjs"() {
+      init_words();
+      init_random();
+      thunk_default = thunkGenerator;
     }
   });
 
-  // src/lib/generators/dateTime.js
-  var require_dateTime = __commonJS({
-    "src/lib/generators/dateTime.js"(exports, module) {
-      var random = require_random();
-      function dateTimeGenerator() {
-        return random.date().toISOString();
-      }
-      var dateTime_default = dateTimeGenerator;
-      module.exports = dateTime_default;
+  // src/lib/generators/ipv4.mjs
+  function ipv4Generator() {
+    return [0, 0, 0, 0].map(() => {
+      return random_default.number(0, 255);
+    }).join(".");
+  }
+  var ipv4_default;
+  var init_ipv4 = __esm({
+    "src/lib/generators/ipv4.mjs"() {
+      init_random();
+      ipv4_default = ipv4Generator;
     }
   });
 
-  // src/lib/generators/date.js
-  var require_date = __commonJS({
-    "src/lib/generators/date.js"(exports, module) {
-      var dateTimeGenerator = require_dateTime();
-      function dateGenerator() {
-        return dateTimeGenerator().slice(0, 10);
-      }
-      var date_default = dateGenerator;
-      module.exports = date_default;
+  // src/lib/generators/dateTime.mjs
+  function dateTimeGenerator() {
+    return random_default.date().toISOString();
+  }
+  var dateTime_default;
+  var init_dateTime = __esm({
+    "src/lib/generators/dateTime.mjs"() {
+      init_random();
+      dateTime_default = dateTimeGenerator;
     }
   });
 
-  // src/lib/generators/time.js
-  var require_time = __commonJS({
-    "src/lib/generators/time.js"(exports, module) {
-      var dateTimeGenerator = require_dateTime();
-      function timeGenerator() {
-        return dateTimeGenerator().slice(11);
-      }
-      var time_default = timeGenerator;
-      module.exports = time_default;
+  // src/lib/generators/date.mjs
+  function dateGenerator() {
+    return dateTime_default().slice(0, 10);
+  }
+  var date_default;
+  var init_date = __esm({
+    "src/lib/generators/date.mjs"() {
+      init_dateTime();
+      date_default = dateGenerator;
     }
   });
 
-  // src/lib/generators/coreFormat.js
-  var require_coreFormat = __commonJS({
-    "src/lib/generators/coreFormat.js"(exports, module) {
-      var random = require_random();
-      var FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*";
-      var URI_PATTERN = `https?://{hostname}(?:${FRAGMENT})+`;
-      var PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?";
-      var regexps = {
+  // src/lib/generators/time.mjs
+  function timeGenerator() {
+    return dateTime_default().slice(11);
+  }
+  var time_default;
+  var init_time = __esm({
+    "src/lib/generators/time.mjs"() {
+      init_dateTime();
+      time_default = timeGenerator;
+    }
+  });
+
+  // src/lib/generators/coreFormat.mjs
+  function coreFormatGenerator(coreFormat) {
+    return random_default.randexp(regexps[coreFormat]).replace(ALLOWED_FORMATS, (match, key) => {
+      return random_default.randexp(regexps[key]);
+    });
+  }
+  var FRAGMENT, URI_PATTERN, PARAM_PATTERN, regexps, ALLOWED_FORMATS, coreFormat_default;
+  var init_coreFormat = __esm({
+    "src/lib/generators/coreFormat.mjs"() {
+      init_random();
+      FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*";
+      URI_PATTERN = `https?://{hostname}(?:${FRAGMENT})+`;
+      PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?";
+      regexps = {
         email: "[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}",
         hostname: "[a-zA-Z]{1,33}\\.[a-z]{2,4}",
         ipv6: "[a-f\\d]{4}(:[a-f\\d]{4}){7}",
@@ -1972,268 +2056,279 @@ laborum`.split(/\W/);
         "uri-reference": `${URI_PATTERN}${PARAM_PATTERN}`,
         "uri-template": URI_PATTERN.replace("(?:", "(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|"),
         "json-pointer": `(/(?:${FRAGMENT.replace("]*", "/]*")}|~[01]))+`,
-        uuid: "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$"
+        uuid: "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$",
+        duration: "^P(?!$)((\\d+Y)?(\\d+M)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?|(\\d+W)?)$"
       };
       regexps.iri = regexps["uri-reference"];
       regexps["iri-reference"] = regexps["uri-reference"];
       regexps["idn-email"] = regexps.email;
       regexps["idn-hostname"] = regexps.hostname;
-      var ALLOWED_FORMATS = new RegExp(`\\{(${Object.keys(regexps).join("|")})\\}`);
-      function coreFormatGenerator(coreFormat) {
-        return random.randexp(regexps[coreFormat]).replace(ALLOWED_FORMATS, (match, key) => {
-          return random.randexp(regexps[key]);
-        });
-      }
-      var coreFormat_default = coreFormatGenerator;
-      module.exports = coreFormat_default;
+      ALLOWED_FORMATS = new RegExp(`\\{(${Object.keys(regexps).join("|")})\\}`);
+      coreFormat_default = coreFormatGenerator;
     }
   });
 
-  // src/lib/types/string.js
-  var require_string = __commonJS({
-    "src/lib/types/string.js"(exports, module) {
-      var thunk = require_thunk();
-      var ipv4 = require_ipv4();
-      var dateTime = require_dateTime();
-      var date = require_date();
-      var time = require_time();
-      var coreFormat = require_coreFormat();
-      var optionAPI = require_option();
-      var format = require_format();
-      var random = require_random();
-      var utils = require_utils();
-      function generateFormat(value, invalid) {
-        const callback = format(value.format);
-        if (typeof callback === "function") {
-          return callback(value);
-        }
-        switch (value.format) {
-          case "date-time":
-          case "datetime":
-            return dateTime();
-          case "date":
-            return date();
-          case "time":
-            return time();
-          case "ipv4":
-            return ipv4();
-          case "regex":
-            return ".+?";
-          case "email":
-          case "hostname":
-          case "ipv6":
-          case "uri":
-          case "uri-reference":
-          case "iri":
-          case "iri-reference":
-          case "idn-email":
-          case "idn-hostname":
-          case "json-pointer":
-          case "slug":
-          case "uri-template":
-          case "uuid":
-            return coreFormat(value.format);
-          default:
-            if (typeof callback === "undefined") {
-              if (optionAPI("failOnInvalidFormat")) {
-                throw new Error(`unknown registry key ${utils.short(value.format)}`);
-              } else {
-                return invalid();
-              }
-            }
-            throw new Error(`unsupported format '${value.format}'`);
-        }
-      }
-      function stringType(value) {
-        const output = utils.typecast("string", value, (opts) => {
-          if (value.format) {
-            return generateFormat(value, () => thunk(opts.minLength, opts.maxLength));
+  // src/lib/types/string.mjs
+  function generateFormat(value, invalid) {
+    const callback = format_default(value.format);
+    if (typeof callback === "function") {
+      return callback(value);
+    }
+    switch (value.format) {
+      case "date-time":
+      case "datetime":
+        return dateTime_default();
+      case "date":
+        return date_default();
+      case "time":
+        return time_default();
+      case "ipv4":
+        return ipv4_default();
+      case "regex":
+        return ".+?";
+      case "email":
+      case "hostname":
+      case "ipv6":
+      case "uri":
+      case "uri-reference":
+      case "iri":
+      case "iri-reference":
+      case "idn-email":
+      case "idn-hostname":
+      case "json-pointer":
+      case "slug":
+      case "uri-template":
+      case "uuid":
+      case "duration":
+        return coreFormat_default(value.format);
+      default:
+        if (typeof callback === "undefined") {
+          if (option_default("failOnInvalidFormat")) {
+            throw new Error(`unknown registry key ${utils_default.short(value.format)}`);
+          } else {
+            return invalid();
           }
-          if (value.pattern) {
-            return random.randexp(value.pattern);
-          }
-          return thunk(opts.minLength, opts.maxLength);
-        });
-        return output;
+        }
+        throw new Error(`unsupported format '${value.format}'`);
+    }
+  }
+  function stringType(value) {
+    const output = utils_default.typecast("string", value, (opts) => {
+      if (value.format) {
+        return generateFormat(value, () => thunk_default(opts.minLength, opts.maxLength));
       }
-      var string_default = stringType;
-      module.exports = string_default;
+      if (value.pattern) {
+        return random_default.randexp(value.pattern);
+      }
+      return thunk_default(opts.minLength, opts.maxLength);
+    });
+    return output;
+  }
+  var string_default;
+  var init_string = __esm({
+    "src/lib/types/string.mjs"() {
+      init_thunk();
+      init_ipv4();
+      init_dateTime();
+      init_date();
+      init_time();
+      init_coreFormat();
+      init_option();
+      init_format();
+      init_random();
+      init_utils();
+      string_default = stringType;
     }
   });
 
-  // src/lib/types/index.js
-  var require_types2 = __commonJS({
-    "src/lib/types/index.js"(exports, module) {
-      var _boolean = require_boolean2();
-      var _null = require_null2();
-      var _array = require_array();
-      var _integer = require_integer();
-      var _number = require_number();
-      var _object = require_object();
-      var _string = require_string();
-      var typeMap = {
-        boolean: _boolean,
-        null: _null,
-        array: _array,
-        integer: _integer,
-        number: _number,
-        object: _object,
-        string: _string
+  // src/lib/types/index.mjs
+  var typeMap, types_default;
+  var init_types = __esm({
+    "src/lib/types/index.mjs"() {
+      init_boolean2();
+      init_null2();
+      init_array();
+      init_integer();
+      init_number();
+      init_object();
+      init_string();
+      typeMap = {
+        boolean: boolean_default2,
+        null: null_default2,
+        array: array_default,
+        integer: integer_default,
+        number: number_default,
+        object: object_default,
+        string: string_default
       };
-      var json_schema_faker_default = typeMap;
-      module.exports = json_schema_faker_default;
+      types_default = typeMap;
     }
   });
 
-  // src/lib/core/traverse.js
-  var require_traverse = __commonJS({
-    "src/lib/core/traverse.js"(exports, module) {
-      var utils = require_utils();
-      var random = require_random();
-      var ParseError = require_error();
-      var inferType = require_infer();
-      var types = require_types2();
-      var optionAPI = require_option();
-      function getMeta({ $comment: comment, title, description }) {
-        return Object.entries({ comment, title, description }).filter(([, value]) => value).reduce((memo, [k, v]) => {
-          memo[k] = v;
-          return memo;
-        }, {});
+  // src/lib/core/traverse.mjs
+  function getMeta({ $comment: comment, title, description }) {
+    return Object.entries({ comment, title, description }).filter(([, value]) => value).reduce((memo, [k, v]) => {
+      memo[k] = v;
+      return memo;
+    }, {});
+  }
+  function traverse(schema, path, resolve2, rootSchema) {
+    schema = resolve2(schema, null, path);
+    if (schema && (schema.oneOf || schema.anyOf || schema.allOf)) {
+      schema = resolve2(schema, null, path);
+    }
+    if (!schema) {
+      throw new Error(`Cannot traverse at '${path.join(".")}', given '${JSON.stringify(rootSchema)}'`);
+    }
+    const context = {
+      ...getMeta(schema),
+      schemaPath: path
+    };
+    if (path[path.length - 1] !== "properties") {
+      if (option_default("useExamplesValue") && Array.isArray(schema.examples)) {
+        const fixedExamples = schema.examples.concat("default" in schema ? [schema.default] : []);
+        return { value: utils_default.typecast(null, schema, () => random_default.pick(fixedExamples)), context };
       }
-      function traverse(schema, path, resolve, rootSchema) {
-        schema = resolve(schema, null, path);
-        if (schema && (schema.oneOf || schema.anyOf || schema.allOf)) {
-          schema = resolve(schema, null, path);
+      if (option_default("useExamplesValue") && schema.example) {
+        return { value: utils_default.typecast(null, schema, () => schema.example), context };
+      }
+      if (option_default("useDefaultValue") && "default" in schema) {
+        if (schema.default !== "" || !option_default("replaceEmptyByRandomValue")) {
+          return { value: schema.default, context };
         }
-        if (!schema) {
-          return;
-        }
-        const context = __spreadProps(__spreadValues({}, getMeta(schema)), {
-          schemaPath: path
-        });
-        if (path[path.length - 1] !== "properties") {
-          if (optionAPI("useExamplesValue") && Array.isArray(schema.examples)) {
-            const fixedExamples = schema.examples.concat("default" in schema ? [schema.default] : []);
-            return { value: utils.typecast(null, schema, () => random.pick(fixedExamples)), context };
+      }
+      if ("template" in schema) {
+        return { value: utils_default.template(schema.template, rootSchema), context };
+      }
+      if ("const" in schema) {
+        return { value: schema.const, context };
+      }
+    }
+    if (schema.not && typeof schema.not === "object") {
+      schema = utils_default.notValue(schema.not, utils_default.omitProps(schema, ["not"]));
+      if (schema.type && schema.type === "object") {
+        const { value, context: innerContext } = traverse(schema, path.concat(["not"]), resolve2, rootSchema);
+        return { value: utils_default.clean(value, schema, false), context: { ...context, items: innerContext } };
+      }
+    }
+    if (typeof schema.thunk === "function") {
+      const { value, context: innerContext } = traverse(schema.thunk(rootSchema), path, resolve2);
+      return { value, context: { ...context, items: innerContext } };
+    }
+    if (schema.jsonPath) {
+      return { value: schema, context };
+    }
+    let type = schema.type;
+    if (Array.isArray(type)) {
+      type = random_default.pick(type);
+    } else if (typeof type === "undefined") {
+      type = infer_default(schema, path) || type;
+      if (type) {
+        schema.type = type;
+      }
+    }
+    if (typeof schema.generate === "function") {
+      const retVal = utils_default.typecast(null, schema, () => schema.generate(rootSchema, path));
+      const retType = retVal === null ? "null" : typeof retVal;
+      if (retType === type || retType === "number" && type === "integer" || Array.isArray(retVal) && type === "array") {
+        return { value: retVal, context };
+      }
+    }
+    if (typeof schema.pattern === "string") {
+      return { value: utils_default.typecast("string", schema, () => random_default.randexp(schema.pattern)), context };
+    }
+    if (Array.isArray(schema.enum)) {
+      return { value: utils_default.typecast(null, schema, () => random_default.pick(schema.enum)), context };
+    }
+    if (typeof type === "string") {
+      if (!types_default[type]) {
+        if (option_default("failOnInvalidTypes")) {
+          throw new error_default(`unknown primitive ${utils_default.short(type)}`, path.concat(["type"]));
+        } else {
+          const value = option_default("defaultInvalidTypeProduct");
+          if (typeof value === "string" && types_default[value]) {
+            return { value: types_default[value](schema, path, resolve2, traverse), context };
           }
-          if (optionAPI("useDefaultValue") && "default" in schema) {
-            if (schema.default !== "" || !optionAPI("replaceEmptyByRandomValue")) {
-              return { value: schema.default, context };
-            }
-          }
-          if ("template" in schema) {
-            return { value: utils.template(schema.template, rootSchema), context };
-          }
-          if ("const" in schema) {
-            return { value: schema.const, context };
-          }
+          return { value, context };
         }
-        if (schema.not && typeof schema.not === "object") {
-          schema = utils.notValue(schema.not, utils.omitProps(schema, ["not"]));
-          if (schema.type && schema.type === "object") {
-            const { value, context: innerContext } = traverse(schema, path.concat(["not"]), resolve, rootSchema);
-            return { value: utils.clean(value, schema, false), context: __spreadProps(__spreadValues({}, context), { items: innerContext }) };
-          }
-        }
-        if (typeof schema.thunk === "function") {
-          const { value, context: innerContext } = traverse(schema.thunk(rootSchema), path, resolve);
-          return { value, context: __spreadProps(__spreadValues({}, context), { items: innerContext }) };
-        }
-        if (typeof schema.generate === "function") {
-          const retval = utils.typecast(null, schema, () => schema.generate(rootSchema, path));
-          const type2 = retval === null ? "null" : typeof retval;
-          if (type2 === schema.type || Array.isArray(schema.type) && schema.type.includes(type2) || type2 === "number" && schema.type === "integer" || Array.isArray(retval) && schema.type === "array") {
-            return { value: retval, context };
-          }
-        }
-        if (typeof schema.pattern === "string") {
-          return { value: utils.typecast("string", schema, () => random.randexp(schema.pattern)), context };
-        }
-        if (Array.isArray(schema.enum)) {
-          return { value: utils.typecast(null, schema, () => random.pick(schema.enum)), context };
-        }
-        if (schema.jsonPath) {
-          return { value: schema, context };
-        }
-        let type = schema.type;
-        if (Array.isArray(type)) {
-          type = random.pick(type);
-        } else if (typeof type === "undefined") {
-          type = inferType(schema, path) || type;
-          if (type) {
-            schema.type = type;
-          }
-        }
-        if (typeof type === "string") {
-          if (!types[type]) {
-            if (optionAPI("failOnInvalidTypes")) {
-              throw new ParseError(`unknown primitive ${utils.short(type)}`, path.concat(["type"]));
-            } else {
-              const value = optionAPI("defaultInvalidTypeProduct");
-              if (typeof value === "string" && types[value]) {
-                return { value: types[value](schema, path, resolve, traverse), context };
-              }
-              return { value, context };
-            }
-          } else {
-            try {
-              const innerResult = types[type](schema, path, resolve, traverse);
-              if (type === "array") {
-                return {
-                  value: innerResult.map(({ value }) => value),
-                  context: __spreadProps(__spreadValues({}, context), {
-                    items: innerResult.map(Array.isArray(schema.items) ? ({ context: c }) => c : ({ context: c }) => __spreadProps(__spreadValues({}, c), {
-                      schemaPath: c.schemaPath.slice(0, -1)
-                    }))
+      } else {
+        try {
+          const innerResult = types_default[type](schema, path, resolve2, traverse);
+          if (type === "array") {
+            return {
+              value: innerResult.map(({ value }) => value),
+              context: {
+                ...context,
+                items: innerResult.map(
+                  Array.isArray(schema.items) ? ({ context: c }) => c : ({ context: c }) => ({
+                    ...c,
+                    schemaPath: c.schemaPath.slice(0, -1)
                   })
-                };
+                )
               }
-              if (type === "object") {
-                return { value: innerResult.value, context: __spreadProps(__spreadValues({}, context), { items: innerResult.context }) };
-              }
-              return { value: innerResult, context };
-            } catch (e) {
-              if (typeof e.path === "undefined") {
-                throw new ParseError(e.stack, path);
-              }
-              throw e;
-            }
+            };
           }
-        }
-        let valueCopy = {};
-        let contextCopy = __spreadValues({}, context);
-        if (Array.isArray(schema)) {
-          valueCopy = [];
-        }
-        const pruneProperties = optionAPI("pruneProperties") || [];
-        Object.keys(schema).forEach((prop) => {
-          if (pruneProperties.includes(prop))
-            return;
-          if (typeof schema[prop] === "object" && prop !== "definitions") {
-            const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve, valueCopy);
-            valueCopy[prop] = utils.clean(value, schema[prop], false);
-            contextCopy[prop] = innerContext;
-          } else {
-            valueCopy[prop] = schema[prop];
+          if (type === "object") {
+            return innerResult !== null ? { value: innerResult.value, context: { ...context, items: innerResult.context } } : { value: {}, context };
           }
-        });
-        return { value: valueCopy, context: contextCopy };
+          return { value: innerResult, context };
+        } catch (e) {
+          if (typeof e.path === "undefined") {
+            throw new error_default(e.stack, path);
+          }
+          throw e;
+        }
       }
-      var traverse_default = traverse;
-      module.exports = traverse_default;
+    }
+    let valueCopy = {};
+    let contextCopy = { ...context };
+    if (Array.isArray(schema)) {
+      valueCopy = [];
+    }
+    const pruneProperties = option_default("pruneProperties") || [];
+    Object.keys(schema).forEach((prop) => {
+      if (pruneProperties.includes(prop))
+        return;
+      if (schema[prop] === null)
+        return;
+      if (typeof schema[prop] === "object" && prop !== "definitions") {
+        const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve2, valueCopy);
+        valueCopy[prop] = utils_default.clean(value, schema[prop], false);
+        contextCopy[prop] = innerContext;
+        if (valueCopy[prop] === null && option_default("omitNulls")) {
+          delete valueCopy[prop];
+          delete contextCopy[prop];
+        }
+      } else {
+        valueCopy[prop] = schema[prop];
+      }
+    });
+    return { value: valueCopy, context: contextCopy };
+  }
+  var traverse_default;
+  var init_traverse = __esm({
+    "src/lib/core/traverse.mjs"() {
+      init_utils();
+      init_random();
+      init_error();
+      init_infer();
+      init_types();
+      init_option();
+      traverse_default = traverse;
     }
   });
 
-  // src/lib/core/buildResolveSchema.js
-  var require_buildResolveSchema = __commonJS({
-    "src/lib/core/buildResolveSchema.js"(exports, module) {
-      var optionAPI = require_option();
-      var random = require_random();
-      var utils = require_utils();
-      var buildResolveSchema = ({
+  // src/lib/core/buildResolveSchema.mjs
+  var buildResolveSchema, buildResolveSchema_default;
+  var init_buildResolveSchema = __esm({
+    "src/lib/core/buildResolveSchema.mjs"() {
+      init_option();
+      init_random();
+      init_utils();
+      buildResolveSchema = ({
         refs,
         schema,
-        container,
+        container: container2,
         synchronous,
         refDepthMax,
         refDepthMin
@@ -2260,13 +2355,13 @@ laborum`.split(/\W/);
             const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
             if (sub.$ref === "#" || seenRefs[sub.$ref] < 0 || lastRef === sub.$ref && ++depth > maxDepth) {
               if (sub.$ref !== "#" && lastPath && lastPath.length === rootPath.length) {
-                return utils.getLocalRef(schema, sub.$ref, synchronous && refs);
+                return utils_default.getLocalRef(schema, sub.$ref, synchronous && refs);
               }
               delete sub.$ref;
               return sub;
             }
             if (typeof seenRefs[sub.$ref] === "undefined") {
-              seenRefs[sub.$ref] = random.number(refDepthMin, refDepthMax) - 1;
+              seenRefs[sub.$ref] = random_default.number(refDepthMin, refDepthMax) - 1;
             }
             lastPath = rootPath;
             lastRef = sub.$ref;
@@ -2274,15 +2369,15 @@ laborum`.split(/\W/);
             if (sub.$ref.indexOf("#/") === -1) {
               ref = refs[sub.$ref] || null;
             } else {
-              ref = utils.getLocalRef(schema, sub.$ref, synchronous && refs) || null;
+              ref = utils_default.getLocalRef(schema, sub.$ref, synchronous && refs) || null;
             }
             let fixed;
             if (typeof ref !== "undefined") {
-              if (!ref && optionAPI("ignoreMissingRefs") !== true) {
+              if (!ref && option_default("ignoreMissingRefs") !== true) {
                 throw new Error(`Reference not found: ${sub.$ref}`);
               }
               seenRefs[sub.$ref] -= 1;
-              utils.merge(sub, ref || {});
+              utils_default.merge(sub, ref || {});
               fixed = synchronous && ref && ref.$ref;
             }
             if (!fixed)
@@ -2294,22 +2389,22 @@ laborum`.split(/\W/);
             delete sub.allOf;
             schemas.forEach((subSchema) => {
               const _sub = recursiveUtil.resolveSchema(subSchema, null, rootPath);
-              utils.merge(sub, typeof _sub.thunk === "function" ? _sub.thunk(sub) : _sub);
+              utils_default.merge(sub, typeof _sub.thunk === "function" ? _sub.thunk(sub) : _sub);
               if (Array.isArray(sub.allOf)) {
                 recursiveUtil.resolveSchema(sub, index, rootPath);
               }
             });
           }
-          if (Array.isArray(sub.oneOf || sub.anyOf)) {
+          if (Array.isArray(sub.oneOf || sub.anyOf) && rootPath[rootPath.length - 2] !== "dependencies") {
             const mix = sub.oneOf || sub.anyOf;
             if (sub.enum && sub.oneOf) {
-              sub.enum = sub.enum.filter((x) => utils.validate(x, mix));
+              sub.enum = sub.enum.filter((x) => utils_default.validate(x, mix));
             }
             return {
               thunk(rootSchema) {
-                const copy = utils.omitProps(sub, ["anyOf", "oneOf"]);
-                const fixed = random.pick(mix);
-                utils.merge(copy, fixed);
+                const copy = utils_default.omitProps(sub, ["anyOf", "oneOf"]);
+                const fixed = random_default.pick(mix);
+                utils_default.merge(copy, fixed);
                 mix.forEach((omit) => {
                   if (omit.required && omit !== fixed) {
                     omit.required.forEach((key) => {
@@ -2328,7 +2423,7 @@ laborum`.split(/\W/);
             };
           }
           Object.keys(sub).forEach((prop) => {
-            if ((Array.isArray(sub[prop]) || typeof sub[prop] === "object") && !utils.isKey(prop)) {
+            if ((Array.isArray(sub[prop]) || typeof sub[prop] === "object") && !utils_default.isKey(prop)) {
               sub[prop] = recursiveUtil.resolveSchema(sub[prop], prop, rootPath.concat(prop));
             }
           });
@@ -2338,121 +2433,120 @@ laborum`.split(/\W/);
               return sub;
             }
           }
-          return container.wrap(sub);
+          return container2.wrap(sub);
         };
         return recursiveUtil;
       };
-      var buildResolveSchema_default = buildResolveSchema;
-      module.exports = buildResolveSchema_default;
+      buildResolveSchema_default = buildResolveSchema;
     }
   });
 
-  // src/lib/core/run.js
-  var require_run = __commonJS({
-    "src/lib/core/run.js"(exports, module) {
-      var { getDependencies } = require_vendor();
-      var optionAPI = require_option();
-      var traverse = require_traverse();
-      var random = require_random();
-      var utils = require_utils();
-      var buildResolveSchema = require_buildResolveSchema();
-      function pick(data) {
-        return Array.isArray(data) ? random.pick(data) : data;
-      }
-      function cycle(data, reverse) {
-        if (!Array.isArray(data)) {
-          return data;
-        }
-        const value = reverse ? data.pop() : data.shift();
-        if (reverse) {
-          data.unshift(value);
+  // src/lib/core/run.mjs
+  function pick2(data) {
+    return Array.isArray(data) ? random_default.pick(data) : data;
+  }
+  function cycle(data, reverse) {
+    if (!Array.isArray(data)) {
+      return data;
+    }
+    const value = reverse ? data.pop() : data.shift();
+    if (reverse) {
+      data.unshift(value);
+    } else {
+      data.push(value);
+    }
+    return value;
+  }
+  function resolve(obj, data, values, property) {
+    if (!obj || typeof obj !== "object") {
+      return obj;
+    }
+    if (!values) {
+      values = {};
+    }
+    if (!data) {
+      data = obj;
+    }
+    if (Array.isArray(obj)) {
+      return obj.map((x) => resolve(x, data, values, property));
+    }
+    if (obj.jsonPath) {
+      const { JSONPath } = getDependencies();
+      const params = typeof obj.jsonPath !== "object" ? { path: obj.jsonPath } : obj.jsonPath;
+      params.group = obj.group || params.group || property;
+      params.cycle = obj.cycle || params.cycle || false;
+      params.reverse = obj.reverse || params.reverse || false;
+      params.count = obj.count || params.count || 1;
+      const key = `${params.group}__${params.path}`;
+      if (!values[key]) {
+        if (params.count > 1) {
+          values[key] = JSONPath(params.path, data).slice(0, params.count);
         } else {
-          data.push(value);
-        }
-        return value;
-      }
-      function resolve(obj, data, values, property) {
-        if (!obj || typeof obj !== "object") {
-          return obj;
-        }
-        if (!values) {
-          values = {};
-        }
-        if (!data) {
-          data = obj;
-        }
-        if (Array.isArray(obj)) {
-          return obj.map((x) => resolve(x, data, values, property));
-        }
-        if (obj.jsonPath) {
-          const { JSONPath } = getDependencies();
-          const params = typeof obj.jsonPath !== "object" ? { path: obj.jsonPath } : obj.jsonPath;
-          params.group = obj.group || params.group || property;
-          params.cycle = obj.cycle || params.cycle || false;
-          params.reverse = obj.reverse || params.reverse || false;
-          params.count = obj.count || params.count || 1;
-          const key = `${params.group}__${params.path}`;
-          if (!values[key]) {
-            if (params.count > 1) {
-              values[key] = JSONPath(params.path, data).slice(0, params.count);
-            } else {
-              values[key] = JSONPath(params.path, data);
-            }
-          }
-          if (params.cycle || params.reverse) {
-            return cycle(values[key], params.reverse);
-          }
-          return pick(values[key]);
-        }
-        Object.keys(obj).forEach((k) => {
-          obj[k] = resolve(obj[k], data, values, k);
-        });
-        return obj;
-      }
-      function run(refs, schema, container, synchronous) {
-        if (Object.prototype.toString.call(schema) !== "[object Object]") {
-          throw new Error(`Invalid input, expecting object but given ${typeof schema}`);
-        }
-        const refDepthMin = optionAPI("refDepthMin") || 0;
-        const refDepthMax = optionAPI("refDepthMax") || 3;
-        try {
-          const { resolveSchema } = buildResolveSchema({
-            refs,
-            schema,
-            container,
-            synchronous,
-            refDepthMin,
-            refDepthMax
-          });
-          const result = traverse(utils.clone(schema), [], resolveSchema);
-          if (optionAPI("resolveJsonPath")) {
-            return {
-              value: resolve(result.value),
-              context: result.context
-            };
-          }
-          return result;
-        } catch (e) {
-          if (e.path) {
-            throw new Error(`${e.message} in /${e.path.join("/")}`);
-          } else {
-            throw e;
-          }
+          values[key] = JSONPath(params.path, data);
         }
       }
-      var run_default = run;
-      module.exports = run_default;
+      if (params.cycle || params.reverse) {
+        return cycle(values[key], params.reverse);
+      }
+      return pick2(values[key]);
+    }
+    Object.keys(obj).forEach((k) => {
+      obj[k] = resolve(obj[k], data, values, k);
+    });
+    return obj;
+  }
+  function run(refs, schema, container2, synchronous) {
+    if (Object.prototype.toString.call(schema) !== "[object Object]") {
+      throw new Error(`Invalid input, expecting object but given ${typeof schema}`);
+    }
+    const refDepthMin = option_default("refDepthMin") || 0;
+    const refDepthMax = option_default("refDepthMax") || 3;
+    try {
+      const { resolveSchema } = buildResolveSchema_default({
+        refs,
+        schema,
+        container: container2,
+        synchronous,
+        refDepthMin,
+        refDepthMax
+      });
+      const result = traverse_default(utils_default.clone(schema), [], resolveSchema);
+      if (option_default("resolveJsonPath")) {
+        return {
+          value: resolve(result.value),
+          context: result.context
+        };
+      }
+      return result;
+    } catch (e) {
+      if (e.path) {
+        throw new Error(`${e.message} in /${e.path.join("/")}`);
+      } else {
+        throw e;
+      }
+    }
+  }
+  var run_default;
+  var init_run = __esm({
+    "src/lib/core/run.mjs"() {
+      init_vendor();
+      init_option();
+      init_traverse();
+      init_random();
+      init_utils();
+      init_buildResolveSchema();
+      run_default = run;
     }
   });
 
-  // src/lib/renderers/js.js
-  var require_js = __commonJS({
-    "src/lib/renderers/js.js"(exports, module) {
-      function renderJS(res) {
-        return res.value;
-      }
-      var js_default = renderJS;
-      module.exports = js_default;
+  // src/lib/renderers/js.mjs
+  function renderJS(res) {
+    return res.value;
+  }
+  var js_default;
+  var init_js = __esm({
+    "src/lib/renderers/js.mjs"() {
+      js_default = renderJS;
     }
   });
 
@@ -2640,11 +2734,11 @@ ${offset}${err}${errEnd}`;
           return nextOffset;
         }
       };
-      var Node = class {
+      var Node2 = class {
         static addStringTerminator(src, offset, str) {
           if (str[str.length - 1] === "\n")
             return str;
-          const next = Node.endOfWhiteSpace(src, offset);
+          const next = Node2.endOfWhiteSpace(src, offset);
           return next >= src.length || src[next] === "\n" ? str + "\n" : str;
         }
         static atDocumentBoundary(src, offset, sep) {
@@ -2705,11 +2799,11 @@ ${offset}${err}${errEnd}`;
           return offset + 1;
         }
         static endOfBlockIndent(src, indent, lineStart) {
-          const inEnd = Node.endOfIndent(src, lineStart);
+          const inEnd = Node2.endOfIndent(src, lineStart);
           if (inEnd > lineStart + indent) {
             return inEnd;
           } else {
-            const wsEnd = Node.endOfWhiteSpace(src, inEnd);
+            const wsEnd = Node2.endOfWhiteSpace(src, inEnd);
             const ch = src[wsEnd];
             if (!ch || ch === "\n")
               return wsEnd;
@@ -2729,7 +2823,7 @@ ${offset}${err}${errEnd}`;
         }
         static normalizeOffset(src, offset) {
           const ch = src[offset];
-          return !ch ? offset : ch !== "\n" && src[offset - 1] === "\n" ? offset - 1 : Node.endOfWhiteSpace(src, offset);
+          return !ch ? offset : ch !== "\n" && src[offset - 1] === "\n" ? offset - 1 : Node2.endOfWhiteSpace(src, offset);
         }
         static foldNewline(src, offset, indent) {
           let inCount = 0;
@@ -2746,7 +2840,7 @@ ${offset}${err}${errEnd}`;
               case "	":
                 if (inCount <= indent)
                   error = true;
-                offset = Node.endOfWhiteSpace(src, offset + 2) - 1;
+                offset = Node2.endOfWhiteSpace(src, offset + 2) - 1;
                 break;
               case " ":
                 inCount += 1;
@@ -2814,7 +2908,7 @@ ${offset}${err}${errEnd}`;
           const {
             end
           } = this.valueRange;
-          return start !== end || Node.atBlank(src, end - 1);
+          return start !== end || Node2.atBlank(src, end - 1);
         }
         get hasComment() {
           if (this.context) {
@@ -2908,7 +3002,7 @@ ${offset}${err}${errEnd}`;
             src
           } = this.context;
           if (src[start] === Char.COMMENT) {
-            const end = Node.endOfLine(src, start + 1);
+            const end = Node2.endOfLine(src, start + 1);
             const commentRange = new Range(start, end);
             this.props.push(commentRange);
             return end;
@@ -2934,12 +3028,12 @@ ${offset}${err}${errEnd}`;
           if (value != null)
             return value;
           const str = src.slice(range.start, range.end);
-          return Node.addStringTerminator(src, range.end, str);
+          return Node2.addStringTerminator(src, range.end, str);
         }
       };
       var YAMLError = class extends Error {
         constructor(name, source, message) {
-          if (!message || !(source instanceof Node))
+          if (!message || !(source instanceof Node2))
             throw new Error(`Invalid arguments for new ${name}`);
           super();
           this.name = name;
@@ -3018,7 +3112,7 @@ ${ctx}
         }
         return obj;
       }
-      var PlainValue = class extends Node {
+      var PlainValue = class extends Node2 {
         static endOfLine(src, start, inFlow) {
           let ch = src[start];
           let offset = start;
@@ -3055,7 +3149,7 @@ ${ctx}
               const {
                 fold,
                 offset
-              } = Node.foldNewline(src, i, -1);
+              } = Node2.foldNewline(src, i, -1);
               str += fold;
               i = offset;
             } else if (ch2 === " " || ch2 === "	") {
@@ -3103,9 +3197,9 @@ ${ctx}
           let offset = start;
           let valueEnd = start;
           for (let ch = src[offset]; ch === "\n"; ch = src[offset]) {
-            if (Node.atDocumentBoundary(src, offset + 1))
+            if (Node2.atDocumentBoundary(src, offset + 1))
               break;
-            const end = Node.endOfBlockIndent(src, indent, offset + 1);
+            const end = Node2.endOfBlockIndent(src, indent, offset + 1);
             if (end === null || src[end] === "#")
               break;
             if (src[end] === "\n") {
@@ -3132,7 +3226,7 @@ ${ctx}
             offset = PlainValue.endOfLine(src, start, inFlow);
           }
           this.valueRange = new Range(start, offset);
-          offset = Node.endOfWhiteSpace(src, offset);
+          offset = Node2.endOfWhiteSpace(src, offset);
           offset = this.parseComment(offset);
           if (!this.hasComment || this.valueRange.isEmpty()) {
             offset = this.parseBlockValue(offset);
@@ -3141,7 +3235,7 @@ ${ctx}
         }
       };
       exports.Char = Char;
-      exports.Node = Node;
+      exports.Node = Node2;
       exports.PlainValue = PlainValue;
       exports.Range = Range;
       exports.Type = Type;
@@ -3172,7 +3266,7 @@ ${indent}${str}`;
         return !comment ? str : comment.indexOf("\n") === -1 ? `${str} #${comment}` : `${str}
 ` + comment.replace(/^/gm, `${indent || ""}#`);
       }
-      var Node = class {
+      var Node2 = class {
       };
       function toJSON(value, arg, ctx) {
         if (Array.isArray(value))
@@ -3193,7 +3287,7 @@ ${indent}${str}`;
           return Number(value);
         return value;
       }
-      var Scalar = class extends Node {
+      var Scalar2 = class extends Node2 {
         constructor(value) {
           super();
           this.value = value;
@@ -3227,7 +3321,7 @@ ${indent}${str}`;
         return schema.createNode(v, false);
       }
       var isEmptyPath = (path) => path == null || typeof path === "object" && path[Symbol.iterator]().next().done;
-      var Collection = class extends Node {
+      var Collection2 = class extends Node2 {
         constructor(schema) {
           super();
           PlainValue._defineProperty(this, "items", []);
@@ -3239,7 +3333,7 @@ ${indent}${str}`;
           else {
             const [key, ...rest] = path;
             const node = this.get(key, true);
-            if (node instanceof Collection)
+            if (node instanceof Collection2)
               node.addIn(rest, value);
             else if (node === void 0 && this.schema)
               this.set(key, collectionFromPath(this.schema, rest, value));
@@ -3251,7 +3345,7 @@ ${indent}${str}`;
           if (rest.length === 0)
             return this.delete(key);
           const node = this.get(key, true);
-          if (node instanceof Collection)
+          if (node instanceof Collection2)
             return node.deleteIn(rest);
           else
             throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
@@ -3259,30 +3353,30 @@ ${indent}${str}`;
         getIn([key, ...rest], keepScalar) {
           const node = this.get(key, true);
           if (rest.length === 0)
-            return !keepScalar && node instanceof Scalar ? node.value : node;
+            return !keepScalar && node instanceof Scalar2 ? node.value : node;
           else
-            return node instanceof Collection ? node.getIn(rest, keepScalar) : void 0;
+            return node instanceof Collection2 ? node.getIn(rest, keepScalar) : void 0;
         }
         hasAllNullValues() {
           return this.items.every((node) => {
             if (!node || node.type !== "PAIR")
               return false;
             const n = node.value;
-            return n == null || n instanceof Scalar && n.value == null && !n.commentBefore && !n.comment && !n.tag;
+            return n == null || n instanceof Scalar2 && n.value == null && !n.commentBefore && !n.comment && !n.tag;
           });
         }
         hasIn([key, ...rest]) {
           if (rest.length === 0)
             return this.has(key);
           const node = this.get(key, true);
-          return node instanceof Collection ? node.hasIn(rest) : false;
+          return node instanceof Collection2 ? node.hasIn(rest) : false;
         }
         setIn([key, ...rest], value) {
           if (rest.length === 0) {
             this.set(key, value);
           } else {
             const node = this.get(key, true);
-            if (node instanceof Collection)
+            if (node instanceof Collection2)
               node.setIn(rest, value);
             else if (node === void 0 && this.schema)
               this.set(key, collectionFromPath(this.schema, rest, value));
@@ -3360,7 +3454,7 @@ ${indent}${str}`;
               end
             } = flowChars;
             const strings = nodes.map((n) => n.str);
-            if (hasItemWithNewLine || strings.reduce((sum, str2) => sum + str2.length + 2, 2) > Collection.maxFlowStringSingleLineLength) {
+            if (hasItemWithNewLine || strings.reduce((sum, str2) => sum + str2.length + 2, 2) > Collection2.maxFlowStringSingleLineLength) {
               str = start;
               for (const s of strings) {
                 str += s ? `
@@ -3387,14 +3481,14 @@ ${indent}${s}` : "\n";
           return str;
         }
       };
-      PlainValue._defineProperty(Collection, "maxFlowStringSingleLineLength", 60);
+      PlainValue._defineProperty(Collection2, "maxFlowStringSingleLineLength", 60);
       function asItemIndex(key) {
-        let idx = key instanceof Scalar ? key.value : key;
+        let idx = key instanceof Scalar2 ? key.value : key;
         if (idx && typeof idx === "string")
           idx = Number(idx);
         return Number.isInteger(idx) && idx >= 0 ? idx : null;
       }
-      var YAMLSeq = class extends Collection {
+      var YAMLSeq2 = class extends Collection2 {
         add(value) {
           this.items.push(value);
         }
@@ -3410,7 +3504,7 @@ ${indent}${s}` : "\n";
           if (typeof idx !== "number")
             return void 0;
           const it = this.items[idx];
-          return !keepScalar && it instanceof Scalar ? it.value : it;
+          return !keepScalar && it instanceof Scalar2 ? it.value : it;
         }
         has(key) {
           const idx = asItemIndex(key);
@@ -3450,9 +3544,9 @@ ${indent}${s}` : "\n";
           return "";
         if (typeof jsKey !== "object")
           return String(jsKey);
-        if (key instanceof Node && ctx && ctx.doc)
+        if (key instanceof Node2 && ctx && ctx.doc)
           return key.toString({
-            anchors: Object.create(null),
+            anchors: /* @__PURE__ */ Object.create(null),
             doc: ctx.doc,
             indent: "",
             indentStep: ctx.indentStep,
@@ -3462,20 +3556,20 @@ ${indent}${s}` : "\n";
           });
         return JSON.stringify(jsKey);
       };
-      var Pair = class extends Node {
+      var Pair2 = class extends Node2 {
         constructor(key, value = null) {
           super();
           this.key = key;
           this.value = value;
-          this.type = Pair.Type.PAIR;
+          this.type = Pair2.Type.PAIR;
         }
         get commentBefore() {
-          return this.key instanceof Node ? this.key.commentBefore : void 0;
+          return this.key instanceof Node2 ? this.key.commentBefore : void 0;
         }
         set commentBefore(cb) {
           if (this.key == null)
-            this.key = new Scalar(null);
-          if (this.key instanceof Node)
+            this.key = new Scalar2(null);
+          if (this.key instanceof Node2)
             this.key.commentBefore = cb;
           else {
             const msg = "Pair.commentBefore is an alias for Pair.key.commentBefore. To set it, the key must be a Node.";
@@ -3505,7 +3599,7 @@ ${indent}${s}` : "\n";
           return map;
         }
         toJSON(_, ctx) {
-          const pair = ctx && ctx.mapAsMap ? new Map() : {};
+          const pair = ctx && ctx.mapAsMap ? /* @__PURE__ */ new Map() : {};
           return this.addToJSMap(ctx, pair);
         }
         toString(ctx, onComment, onChompKeep) {
@@ -3520,17 +3614,17 @@ ${indent}${s}` : "\n";
             key,
             value
           } = this;
-          let keyComment = key instanceof Node && key.comment;
+          let keyComment = key instanceof Node2 && key.comment;
           if (simpleKeys) {
             if (keyComment) {
               throw new Error("With simple keys, key nodes cannot have comments");
             }
-            if (key instanceof Collection) {
+            if (key instanceof Collection2) {
               const msg = "With simple keys, collection cannot be used as a key value";
               throw new Error(msg);
             }
           }
-          let explicitKey = !simpleKeys && (!key || keyComment || (key instanceof Node ? key instanceof Collection || key.type === PlainValue.Type.BLOCK_FOLDED || key.type === PlainValue.Type.BLOCK_LITERAL : typeof key === "object"));
+          let explicitKey = !simpleKeys && (!key || keyComment || (key instanceof Node2 ? key instanceof Collection2 || key.type === PlainValue.Type.BLOCK_FOLDED || key.type === PlainValue.Type.BLOCK_LITERAL : typeof key === "object"));
           const {
             doc,
             indent,
@@ -3567,7 +3661,7 @@ ${indent}:` : `${str}:`;
           }
           let vcb = "";
           let valueComment = null;
-          if (value instanceof Node) {
+          if (value instanceof Node2) {
             if (value.spaceBefore)
               vcb = "\n";
             if (value.commentBefore) {
@@ -3580,10 +3674,10 @@ ${cs}`;
             value = doc.schema.createNode(value, true);
           }
           ctx.implicitKey = false;
-          if (!explicitKey && !this.comment && value instanceof Scalar)
+          if (!explicitKey && !this.comment && value instanceof Scalar2)
             ctx.indentAtStart = str.length + 1;
           chompKeep = false;
-          if (!indentSeq && indentSize >= 2 && !ctx.inFlow && !explicitKey && value instanceof YAMLSeq && value.type !== PlainValue.Type.FLOW_SEQ && !value.tag && !doc.anchors.getName(value)) {
+          if (!indentSeq && indentSize >= 2 && !ctx.inFlow && !explicitKey && value instanceof YAMLSeq2 && value.type !== PlainValue.Type.FLOW_SEQ && !value.tag && !doc.anchors.getName(value)) {
             ctx.indent = ctx.indent.substr(2);
           }
           const valueStr = stringify(value, ctx, () => valueComment = null, () => chompKeep = true);
@@ -3591,7 +3685,7 @@ ${cs}`;
           if (vcb || this.comment) {
             ws = `${vcb}
 ${ctx.indent}`;
-          } else if (!explicitKey && value instanceof Collection) {
+          } else if (!explicitKey && value instanceof Collection2) {
             const flow = valueStr[0] === "[" || valueStr[0] === "{";
             if (!flow || valueStr.includes("\n"))
               ws = `
@@ -3603,15 +3697,15 @@ ${ctx.indent}`;
           return addComment(str + ws + valueStr, ctx.indent, valueComment);
         }
       };
-      PlainValue._defineProperty(Pair, "Type", {
+      PlainValue._defineProperty(Pair2, "Type", {
         PAIR: "PAIR",
         MERGE_PAIR: "MERGE_PAIR"
       });
       var getAliasCount = (node, anchors) => {
-        if (node instanceof Alias) {
+        if (node instanceof Alias2) {
           const anchor = anchors.get(node.source);
           return anchor.count * anchor.aliasCount;
-        } else if (node instanceof Collection) {
+        } else if (node instanceof Collection2) {
           let count = 0;
           for (const item of node.items) {
             const c = getAliasCount(item, anchors);
@@ -3619,14 +3713,14 @@ ${ctx.indent}`;
               count = c;
           }
           return count;
-        } else if (node instanceof Pair) {
+        } else if (node instanceof Pair2) {
           const kc = getAliasCount(node.key, anchors);
           const vc = getAliasCount(node.value, anchors);
           return Math.max(kc, vc);
         }
         return 1;
       };
-      var Alias = class extends Node {
+      var Alias2 = class extends Node2 {
         static stringify({
           range,
           source
@@ -3682,14 +3776,14 @@ ${ctx.indent}`;
           return anchor.res;
         }
         toString(ctx) {
-          return Alias.stringify(this, ctx);
+          return Alias2.stringify(this, ctx);
         }
       };
-      PlainValue._defineProperty(Alias, "default", true);
+      PlainValue._defineProperty(Alias2, "default", true);
       function findPair(items, key) {
-        const k = key instanceof Scalar ? key.value : key;
+        const k = key instanceof Scalar2 ? key.value : key;
         for (const it of items) {
-          if (it instanceof Pair) {
+          if (it instanceof Pair2) {
             if (it.key === key || it.key === k)
               return it;
             if (it.key && it.key.value === k)
@@ -3698,12 +3792,12 @@ ${ctx.indent}`;
         }
         return void 0;
       }
-      var YAMLMap = class extends Collection {
+      var YAMLMap2 = class extends Collection2 {
         add(pair, overwrite) {
           if (!pair)
-            pair = new Pair(pair);
-          else if (!(pair instanceof Pair))
-            pair = new Pair(pair.key || pair, pair.value);
+            pair = new Pair2(pair);
+          else if (!(pair instanceof Pair2))
+            pair = new Pair2(pair.key || pair, pair.value);
           const prev = findPair(this.items, pair.key);
           const sortEntries = this.schema && this.schema.sortMapEntries;
           if (prev) {
@@ -3731,16 +3825,16 @@ ${ctx.indent}`;
         get(key, keepScalar) {
           const it = findPair(this.items, key);
           const node = it && it.value;
-          return !keepScalar && node instanceof Scalar ? node.value : node;
+          return !keepScalar && node instanceof Scalar2 ? node.value : node;
         }
         has(key) {
           return !!findPair(this.items, key);
         }
         set(key, value) {
-          this.add(new Pair(key, value), true);
+          this.add(new Pair2(key, value), true);
         }
         toJSON(_, ctx, Type) {
-          const map = Type ? new Type() : ctx && ctx.mapAsMap ? new Map() : {};
+          const map = Type ? new Type() : ctx && ctx.mapAsMap ? /* @__PURE__ */ new Map() : {};
           if (ctx && ctx.onCreate)
             ctx.onCreate(map);
           for (const item of this.items)
@@ -3751,7 +3845,7 @@ ${ctx.indent}`;
           if (!ctx)
             return JSON.stringify(this);
           for (const item of this.items) {
-            if (!(item instanceof Pair))
+            if (!(item instanceof Pair2))
               throw new Error(`Map items must all be pairs; found ${JSON.stringify(item)} instead`);
           }
           return super.toString(ctx, {
@@ -3766,27 +3860,27 @@ ${ctx.indent}`;
         }
       };
       var MERGE_KEY = "<<";
-      var Merge = class extends Pair {
+      var Merge2 = class extends Pair2 {
         constructor(pair) {
-          if (pair instanceof Pair) {
+          if (pair instanceof Pair2) {
             let seq = pair.value;
-            if (!(seq instanceof YAMLSeq)) {
-              seq = new YAMLSeq();
+            if (!(seq instanceof YAMLSeq2)) {
+              seq = new YAMLSeq2();
               seq.items.push(pair.value);
               seq.range = pair.value.range;
             }
             super(pair.key, seq);
             this.range = pair.range;
           } else {
-            super(new Scalar(MERGE_KEY), new YAMLSeq());
+            super(new Scalar2(MERGE_KEY), new YAMLSeq2());
           }
-          this.type = Pair.Type.MERGE_PAIR;
+          this.type = Pair2.Type.MERGE_PAIR;
         }
         addToJSMap(ctx, map) {
           for (const {
             source
           } of this.value.items) {
-            if (!(source instanceof YAMLMap))
+            if (!(source instanceof YAMLMap2))
               throw new Error("Merge sources must be maps");
             const srcMap = source.toJSON(null, ctx, Map);
             for (const [key, value] of srcMap) {
@@ -3817,21 +3911,21 @@ ${ctx.indent}`;
           return str;
         }
       };
-      var binaryOptions = {
+      var binaryOptions2 = {
         defaultType: PlainValue.Type.BLOCK_LITERAL,
         lineWidth: 76
       };
-      var boolOptions = {
+      var boolOptions2 = {
         trueStr: "true",
         falseStr: "false"
       };
-      var intOptions = {
+      var intOptions2 = {
         asBigInt: false
       };
-      var nullOptions = {
+      var nullOptions2 = {
         nullStr: "null"
       };
-      var strOptions = {
+      var strOptions2 = {
         defaultType: PlainValue.Type.PLAIN,
         doubleQuoted: {
           jsonEncoding: false,
@@ -3846,14 +3940,14 @@ ${ctx.indent}`;
         for (const {
           format,
           test,
-          resolve
+          resolve: resolve2
         } of tags) {
           if (test) {
             const match = str.match(test);
             if (match) {
-              let res = resolve.apply(null, match);
-              if (!(res instanceof Scalar))
-                res = new Scalar(res);
+              let res = resolve2.apply(null, match);
+              if (!(res instanceof Scalar2))
+                res = new Scalar2(res);
               if (format)
                 res.format = format;
               return res;
@@ -3862,7 +3956,7 @@ ${ctx.indent}`;
         }
         if (scalarFallback)
           str = scalarFallback(str);
-        return new Scalar(str);
+        return new Scalar2(str);
       }
       var FOLD_FLOW = "flow";
       var FOLD_BLOCK = "block";
@@ -3989,7 +4083,7 @@ ${indent}${text.slice(fold + 1, end2)}`;
         indentAtStart
       }) => indentAtStart ? Object.assign({
         indentAtStart
-      }, strOptions.fold) : strOptions.fold;
+      }, strOptions2.fold) : strOptions2.fold;
       var containsDocumentMarker = (str) => /^(%|---|\.\.\.)/m.test(str);
       function lineLengthOverLimit(str, lineWidth, indentLength) {
         if (!lineWidth || lineWidth < 0)
@@ -4016,7 +4110,7 @@ ${indent}${text.slice(fold + 1, end2)}`;
         const {
           jsonEncoding,
           minMultiLineLength
-        } = strOptions.doubleQuoted;
+        } = strOptions2.doubleQuoted;
         const json = JSON.stringify(value);
         if (jsonEncoding)
           return json;
@@ -4117,7 +4211,7 @@ ${indent}`) + "'";
         }
         const indent = ctx.indent || (ctx.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
         const indentSize = indent ? "2" : "1";
-        const literal = type === PlainValue.Type.BLOCK_FOLDED ? false : type === PlainValue.Type.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, strOptions.fold.lineWidth, indent.length);
+        const literal = type === PlainValue.Type.BLOCK_FOLDED ? false : type === PlainValue.Type.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, strOptions2.fold.lineWidth, indent.length);
         let header = literal ? "|" : ">";
         if (!value)
           return header + "\n";
@@ -4164,7 +4258,7 @@ ${indent}${wsEnd}`;
 ${indent}${wsStart}${value}${wsEnd}`;
         }
         value = value.replace(/\n+/g, "\n$&").replace(/(?:^|\n)([\t ].*)(?:([\n\t ]*)\n(?![\n\t ]))?/g, "$1$2").replace(/\n+/g, `$&${indent}`);
-        const body = foldFlowLines(`${wsStart}${value}${wsEnd}`, indent, FOLD_BLOCK, strOptions.fold);
+        const body = foldFlowLines(`${wsStart}${value}${wsEnd}`, indent, FOLD_BLOCK, strOptions2.fold);
         return `${header}
 ${indent}${body}`;
       }
@@ -4214,7 +4308,7 @@ ${indent}`);
       function stringifyString(item, ctx, onComment, onChompKeep) {
         const {
           defaultType
-        } = strOptions;
+        } = strOptions2;
         const {
           implicitKey,
           inFlow
@@ -4454,7 +4548,7 @@ ${indent}`);
               matchWithTest.push(tag);
             else {
               const res = tag.resolve(doc, node);
-              return res instanceof Collection ? res : new Scalar(res);
+              return res instanceof Collection2 ? res : new Scalar2(res);
             }
           }
         }
@@ -4577,7 +4671,7 @@ ${indent}`);
             errors.push(new PlainValue.YAMLReferenceError(node, msg));
             return null;
           }
-          const res = new Alias(src);
+          const res = new Alias2(src);
           anchors._cstAliases.push(res);
           return res;
         }
@@ -4652,7 +4746,7 @@ ${ca}` : ca;
           comments,
           items
         } = cst.type === PlainValue.Type.FLOW_MAP ? resolveFlowMapItems(doc, cst) : resolveBlockMapItems(doc, cst);
-        const map = new YAMLMap();
+        const map = new YAMLMap2();
         map.items = items;
         resolveComments(map, comments);
         let hasCollectionKey = false;
@@ -4660,14 +4754,14 @@ ${ca}` : ca;
           const {
             key: iKey
           } = items[i];
-          if (iKey instanceof Collection)
+          if (iKey instanceof Collection2)
             hasCollectionKey = true;
           if (doc.schema.merge && iKey && iKey.value === MERGE_KEY) {
-            items[i] = new Merge(items[i]);
+            items[i] = new Merge2(items[i]);
             const sources = items[i].value.items;
             let error = null;
             sources.some((node) => {
-              if (node instanceof Alias) {
+              if (node instanceof Alias2) {
                 const {
                   type
                 } = node.source;
@@ -4763,7 +4857,7 @@ ${ca}` : ca;
               break;
             case PlainValue.Type.MAP_KEY:
               if (key !== void 0)
-                items.push(new Pair(key));
+                items.push(new Pair2(key));
               if (item.error)
                 doc.errors.push(item.error);
               key = resolveNode(doc, item.node);
@@ -4801,7 +4895,7 @@ ${ca}` : ca;
                     valueNode.valueRange.origStart = valueNode.valueRange.origEnd = origPos;
                   }
                 }
-                const pair = new Pair(key, resolveNode(doc, valueNode));
+                const pair = new Pair2(key, resolveNode(doc, valueNode));
                 resolvePairComment(item, pair);
                 items.push(pair);
                 if (key && typeof keyStart === "number") {
@@ -4814,7 +4908,7 @@ ${ca}` : ca;
               break;
             default:
               if (key !== void 0)
-                items.push(new Pair(key));
+                items.push(new Pair2(key));
               key = resolveNode(doc, item);
               keyStart = item.range.start;
               if (item.error)
@@ -4842,7 +4936,7 @@ ${ca}` : ca;
           }
         }
         if (key !== void 0)
-          items.push(new Pair(key));
+          items.push(new Pair2(key));
         return {
           comments,
           items
@@ -4880,7 +4974,7 @@ ${ca}` : ca;
                 explicitKey = false;
               }
               if (key !== void 0) {
-                items.push(new Pair(key));
+                items.push(new Pair2(key));
                 key = void 0;
                 if (char === ",") {
                   next = ":";
@@ -4918,14 +5012,14 @@ ${ca}` : ca;
           } else {
             if (next !== ",")
               doc.errors.push(new PlainValue.YAMLSemanticError(item, "Indicator : missing in flow map entry"));
-            items.push(new Pair(key, resolveNode(doc, item)));
+            items.push(new Pair2(key, resolveNode(doc, item)));
             key = void 0;
             explicitKey = false;
           }
         }
         checkFlowCollectionEnd(doc.errors, cst);
         if (key !== void 0)
-          items.push(new Pair(key));
+          items.push(new Pair2(key));
         return {
           comments,
           items
@@ -4941,10 +5035,10 @@ ${ca}` : ca;
           comments,
           items
         } = cst.type === PlainValue.Type.FLOW_SEQ ? resolveFlowSeqItems(doc, cst) : resolveBlockSeqItems(doc, cst);
-        const seq = new YAMLSeq();
+        const seq = new YAMLSeq2();
         seq.items = items;
         resolveComments(seq, comments);
-        if (!doc.options.mapAsMap && items.some((it) => it instanceof Pair && it.key instanceof Collection)) {
+        if (!doc.options.mapAsMap && items.some((it) => it instanceof Pair2 && it.key instanceof Collection2)) {
           const warn = "Keys with collection values will be stringified as YAML due to JS Object restrictions. Use mapAsMap: true to avoid this.";
           doc.warnings.push(new PlainValue.YAMLWarning(cst, warn));
         }
@@ -5006,7 +5100,7 @@ ${ca}` : ca;
             if (char !== ":" && (explicitKey || key !== void 0)) {
               if (explicitKey && key === void 0)
                 key = next ? items.pop() : null;
-              items.push(new Pair(key));
+              items.push(new Pair2(key));
               explicitKey = false;
               key = void 0;
               keyStart = null;
@@ -5018,7 +5112,7 @@ ${ca}` : ca;
             } else if (next !== "[" && char === ":" && key === void 0) {
               if (next === ",") {
                 key = items.pop();
-                if (key instanceof Pair) {
+                if (key instanceof Pair2) {
                   const msg = "Chaining flow sequence pairs is invalid";
                   const err = new PlainValue.YAMLSemanticError(cst, msg);
                   err.offset = offset;
@@ -5070,7 +5164,7 @@ ${ca}` : ca;
               items.push(value);
               prevItem = item;
             } else {
-              items.push(new Pair(key, value));
+              items.push(new Pair2(key, value));
               key = void 0;
             }
             keyStart = item.range.start;
@@ -5079,32 +5173,32 @@ ${ca}` : ca;
         }
         checkFlowCollectionEnd(doc.errors, cst);
         if (key !== void 0)
-          items.push(new Pair(key));
+          items.push(new Pair2(key));
         return {
           comments,
           items
         };
       }
-      exports.Alias = Alias;
-      exports.Collection = Collection;
-      exports.Merge = Merge;
-      exports.Node = Node;
-      exports.Pair = Pair;
-      exports.Scalar = Scalar;
-      exports.YAMLMap = YAMLMap;
-      exports.YAMLSeq = YAMLSeq;
+      exports.Alias = Alias2;
+      exports.Collection = Collection2;
+      exports.Merge = Merge2;
+      exports.Node = Node2;
+      exports.Pair = Pair2;
+      exports.Scalar = Scalar2;
+      exports.YAMLMap = YAMLMap2;
+      exports.YAMLSeq = YAMLSeq2;
       exports.addComment = addComment;
-      exports.binaryOptions = binaryOptions;
-      exports.boolOptions = boolOptions;
+      exports.binaryOptions = binaryOptions2;
+      exports.boolOptions = boolOptions2;
       exports.findPair = findPair;
-      exports.intOptions = intOptions;
+      exports.intOptions = intOptions2;
       exports.isEmptyPath = isEmptyPath;
-      exports.nullOptions = nullOptions;
+      exports.nullOptions = nullOptions2;
       exports.resolveMap = resolveMap;
       exports.resolveNode = resolveNode;
       exports.resolveSeq = resolveSeq;
       exports.resolveString = resolveString;
-      exports.strOptions = strOptions;
+      exports.strOptions = strOptions2;
       exports.stringifyNumber = stringifyNumber;
       exports.stringifyString = stringifyString;
       exports.toJSON = toJSON;
@@ -5243,7 +5337,7 @@ ${pair.comment}` : item.comment;
           this.tag = YAMLOMap.tag;
         }
         toJSON(_, ctx) {
-          const map = new Map();
+          const map = /* @__PURE__ */ new Map();
           if (ctx && ctx.onCreate)
             ctx.onCreate(map);
           for (const pair of this.items) {
@@ -5404,14 +5498,14 @@ ${pair.comment}` : item.comment;
         resolve: (str, year, month, day, hour, minute, second, millisec, tz) => {
           if (millisec)
             millisec = (millisec + "00").substr(1, 3);
-          let date = Date.UTC(year, month - 1, day, hour || 0, minute || 0, second || 0, millisec || 0);
+          let date2 = Date.UTC(year, month - 1, day, hour || 0, minute || 0, second || 0, millisec || 0);
           if (tz && tz !== "Z") {
             let d = parseSexagesimal(tz[0], tz.slice(1));
             if (Math.abs(d) < 30)
               d *= 60;
-            date -= 6e4 * d;
+            date2 -= 6e4 * d;
           }
-          return new Date(date);
+          return new Date(date2);
         },
         stringify: ({
           value
@@ -5891,15 +5985,15 @@ ${pair.comment}` : item.comment;
         return tags2;
       }
       var sortMapEntriesByKey = (a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
-      var Schema = class {
+      var Schema2 = class {
         constructor({
           customTags,
-          merge,
+          merge: merge2,
           schema,
           sortMapEntries,
           tags: deprecatedCustomTags
         }) {
-          this.merge = !!merge;
+          this.merge = !!merge2;
           this.name = schema;
           this.sortMapEntries = sortMapEntries === true ? sortMapEntriesByKey : sortMapEntries || null;
           if (!customTags && deprecatedCustomTags)
@@ -5908,7 +6002,7 @@ ${pair.comment}` : item.comment;
         }
         createNode(value, wrapScalars, tagName, ctx) {
           const baseCtx = {
-            defaultPrefix: Schema.defaultPrefix,
+            defaultPrefix: Schema2.defaultPrefix,
             schema: this,
             wrapScalars
           };
@@ -5925,18 +6019,18 @@ ${pair.comment}` : item.comment;
           return new resolveSeq.Pair(k, v);
         }
       };
-      PlainValue._defineProperty(Schema, "defaultPrefix", PlainValue.defaultTagPrefix);
-      PlainValue._defineProperty(Schema, "defaultTags", PlainValue.defaultTags);
-      exports.Schema = Schema;
+      PlainValue._defineProperty(Schema2, "defaultPrefix", PlainValue.defaultTagPrefix);
+      PlainValue._defineProperty(Schema2, "defaultTags", PlainValue.defaultTags);
+      exports.Schema = Schema2;
     }
   });
 
   // node_modules/yaml/dist/types.js
-  var require_types3 = __commonJS({
+  var require_types2 = __commonJS({
     "node_modules/yaml/dist/types.js"(exports) {
       "use strict";
       var resolveSeq = require_resolveSeq_d03cb037();
-      var Schema = require_Schema_88e323a7();
+      var Schema2 = require_Schema_88e323a7();
       require_PlainValue_ec8e588e();
       require_warnings_1000a372();
       exports.Alias = resolveSeq.Alias;
@@ -5952,164 +6046,174 @@ ${pair.comment}` : item.comment;
       exports.intOptions = resolveSeq.intOptions;
       exports.nullOptions = resolveSeq.nullOptions;
       exports.strOptions = resolveSeq.strOptions;
-      exports.Schema = Schema.Schema;
+      exports.Schema = Schema2.Schema;
     }
   });
 
-  // node_modules/yaml/types.js
-  var require_types4 = __commonJS({
-    "node_modules/yaml/types.js"(exports) {
-      var types = require_types3();
-      exports.binaryOptions = types.binaryOptions;
-      exports.boolOptions = types.boolOptions;
-      exports.intOptions = types.intOptions;
-      exports.nullOptions = types.nullOptions;
-      exports.strOptions = types.strOptions;
-      exports.Schema = types.Schema;
-      exports.Alias = types.Alias;
-      exports.Collection = types.Collection;
-      exports.Merge = types.Merge;
-      exports.Node = types.Node;
-      exports.Pair = types.Pair;
-      exports.Scalar = types.Scalar;
-      exports.YAMLMap = types.YAMLMap;
-      exports.YAMLSeq = types.YAMLSeq;
+  // node_modules/yaml/types.mjs
+  var import_types2, binaryOptions, boolOptions, intOptions, nullOptions, strOptions, Schema, Alias, Collection, Merge, Node, Pair, Scalar, YAMLMap, YAMLSeq;
+  var init_types2 = __esm({
+    "node_modules/yaml/types.mjs"() {
+      import_types2 = __toESM(require_types2(), 1);
+      binaryOptions = import_types2.default.binaryOptions;
+      boolOptions = import_types2.default.boolOptions;
+      intOptions = import_types2.default.intOptions;
+      nullOptions = import_types2.default.nullOptions;
+      strOptions = import_types2.default.strOptions;
+      Schema = import_types2.default.Schema;
+      Alias = import_types2.default.Alias;
+      Collection = import_types2.default.Collection;
+      Merge = import_types2.default.Merge;
+      Node = import_types2.default.Node;
+      Pair = import_types2.default.Pair;
+      Scalar = import_types2.default.Scalar;
+      YAMLMap = import_types2.default.YAMLMap;
+      YAMLSeq = import_types2.default.YAMLSeq;
     }
   });
 
-  // src/lib/renderers/yaml.js
-  var require_yaml = __commonJS({
-    "src/lib/renderers/yaml.js"(exports, module) {
-      var yaml = require_yaml();
-      var { YAMLMap, YAMLSeq } = require_types4();
-      var optionAPI = require_option();
-      function getIn(obj, path) {
-        return path.reduce((v, k) => k in v ? v[k] : {}, obj);
-      }
-      function addComments(context, path, commentNode, iterNode = commentNode) {
-        const { title, description, comment } = getIn(context, path);
-        const lines = [];
-        if (optionAPI("renderTitle") && title) {
-          lines.push(` ${title}`, "");
-        }
-        if (optionAPI("renderDescription") && description) {
-          lines.push(` ${description}`);
-        }
-        if (optionAPI("renderComment") && comment) {
-          lines.push(` ${comment}`);
-        }
-        commentNode.commentBefore = lines.join("\n");
-        if (iterNode instanceof YAMLMap) {
-          iterNode.items.forEach((n) => {
-            addComments(context, [...path, "items", n.key.value], n.key, n.value);
-          });
-        } else if (iterNode instanceof YAMLSeq) {
-          iterNode.items.forEach((n, i) => {
-            addComments(context, [...path, "items", i], n);
-          });
-        }
-      }
-      function renderYAML({ value, context }) {
-        const nodes = yaml.createNode(value);
-        addComments(context, [], nodes);
-        const doc = new yaml.Document();
-        doc.contents = nodes;
-        return doc.toString();
-      }
-      var yaml_default = renderYAML;
-      module.exports = yaml_default;
+  // src/lib/renderers/yaml.mjs
+  function getIn(obj, path) {
+    return path.reduce((v, k) => k in v ? v[k] : {}, obj);
+  }
+  function addComments(context, path, commentNode, iterNode = commentNode) {
+    const { title, description, comment } = getIn(context, path);
+    const lines = [];
+    if (option_default("renderTitle") && title) {
+      lines.push(` ${title}`, "");
+    }
+    if (option_default("renderDescription") && description) {
+      lines.push(` ${description}`);
+    }
+    if (option_default("renderComment") && comment) {
+      lines.push(` ${comment}`);
+    }
+    commentNode.commentBefore = lines.join("\n");
+    if (iterNode instanceof YAMLMap) {
+      iterNode.items.forEach((n) => {
+        addComments(context, [...path, "items", n.key.value], n.key, n.value);
+      });
+    } else if (iterNode instanceof YAMLSeq) {
+      iterNode.items.forEach((n, i) => {
+        addComments(context, [...path, "items", i], n);
+      });
+    }
+  }
+  function renderYAML({ value, context }) {
+    const nodes = yaml_default.createNode(value);
+    addComments(context, [], nodes);
+    const doc = new yaml_default.Document();
+    doc.contents = nodes;
+    return doc.toString();
+  }
+  var yaml_default;
+  var init_yaml = __esm({
+    "src/lib/renderers/yaml.mjs"() {
+      init_yaml();
+      init_types2();
+      init_option();
+      yaml_default = renderYAML;
     }
   });
 
-  // src/lib/renderers/index.js
-  var require_renderers = __commonJS({
-    "src/lib/renderers/index.js"(exports, module) {
-      var renderJS = require_js();
-      var renderYAML = require_yaml();
-      Object.assign(module.exports, { renderJS, renderYAML });
+  // src/lib/renderers/index.mjs
+  var init_renderers = __esm({
+    "src/lib/renderers/index.mjs"() {
+      init_js();
+      init_yaml();
     }
   });
 
-  // src/lib/index.js
-  var require_lib3 = __commonJS({
-    "src/lib/index.js"(exports, module) {
-      var { getDependencies } = require_vendor();
-      var Container = require_Container();
-      var format = require_format();
-      var option = require_option();
-      var env = require_constants();
-      var random = require_random();
-      var utils = require_utils();
-      var run = require_run();
-      var { renderJS, renderYAML } = require_renderers();
-      var container = new Container();
-      function setupKeywords() {
-        container.define("autoIncrement", function autoIncrement(value, schema) {
-          if (!this.offset) {
-            const min = schema.minimum || 1;
-            const max = min + env.MAX_NUMBER;
-            const offset = value.initialOffset || schema.initialOffset;
-            this.offset = offset || random.number(min, max);
-          }
-          if (value === true) {
-            return this.offset++;
-          }
-          return schema;
-        });
-        container.define("sequentialDate", function sequentialDate(value, schema) {
-          if (!this.now) {
-            this.now = random.date();
-          }
-          if (value) {
-            schema = this.now.toISOString();
-            value = value === true ? "days" : value;
-            if (["seconds", "minutes", "hours", "days", "weeks", "months", "years"].indexOf(value) === -1) {
-              throw new Error(`Unsupported increment by ${utils.short(value)}`);
-            }
-            this.now.setTime(this.now.getTime() + random.date(value));
-          }
-          return schema;
-        });
+  // src/lib/index.mjs
+  var lib_exports = {};
+  __export(lib_exports, {
+    JSONSchemaFaker: () => JSONSchemaFaker,
+    default: () => lib_default
+  });
+  function setupKeywords() {
+    container.define("autoIncrement", function autoIncrement(value, schema) {
+      if (!this.offset) {
+        const min = schema.minimum || 1;
+        const max = min + constants_default.MAX_NUMBER;
+        const offset = value.initialOffset || schema.initialOffset;
+        this.offset = offset || random_default.number(min, max);
       }
-      function getRefs(refs, schema) {
-        let $refs = {};
-        if (Array.isArray(refs)) {
-          refs.forEach((_schema) => {
-            $refs[_schema.$id || _schema.id] = _schema;
-          });
-        } else {
-          $refs = refs || {};
-        }
-        function walk(obj) {
-          if (!obj || typeof obj !== "object")
-            return;
-          if (Array.isArray(obj))
-            return obj.forEach(walk);
-          const _id = obj.$id || obj.id;
-          if (typeof _id === "string" && !$refs[_id]) {
-            $refs[_id] = obj;
-          }
-          Object.keys(obj).forEach((key) => {
-            walk(obj[key]);
-          });
-        }
-        walk(refs);
-        walk(schema);
-        return $refs;
+      if (value === true) {
+        return this.offset++;
       }
-      var jsf = (schema, refs, cwd) => {
-        console.log("[json-schema-faker] calling JsonSchemaFaker() is deprecated, call either .generate() or .resolve()");
+      return schema;
+    });
+    container.define("sequentialDate", function sequentialDate(value, schema) {
+      if (!this.now) {
+        this.now = random_default.date();
+      }
+      if (value) {
+        schema = this.now.toISOString();
+        value = value === true ? "days" : value;
+        if (["seconds", "minutes", "hours", "days", "weeks", "months", "years"].indexOf(value) === -1) {
+          throw new Error(`Unsupported increment by ${utils_default.short(value)}`);
+        }
+        this.now.setTime(this.now.getTime() + random_default.date(value));
+      }
+      return schema;
+    });
+  }
+  function getRefs(refs, schema) {
+    let $refs = {};
+    if (Array.isArray(refs)) {
+      refs.forEach((_schema) => {
+        $refs[_schema.$id || _schema.id] = _schema;
+      });
+    } else {
+      $refs = refs || {};
+    }
+    function walk(obj) {
+      if (!obj || typeof obj !== "object")
+        return;
+      if (Array.isArray(obj))
+        return obj.forEach(walk);
+      const _id = obj.$id || obj.id;
+      if (typeof _id === "string" && !$refs[_id]) {
+        $refs[_id] = obj;
+      }
+      Object.keys(obj).forEach((key) => {
+        walk(obj[key]);
+      });
+    }
+    walk(refs);
+    walk(schema);
+    return $refs;
+  }
+  var container, jsf, JSONSchemaFaker, lib_default;
+  var init_lib = __esm({
+    "src/lib/index.mjs"() {
+      init_vendor();
+      init_Container();
+      init_format();
+      init_option();
+      init_constants();
+      init_random();
+      init_utils();
+      init_run();
+      init_renderers();
+      container = new Container_default();
+      jsf = (schema, refs, cwd) => {
+        console.debug("[json-schema-faker] calling JSONSchemaFaker() is deprecated, call either .generate() or .resolve()");
         if (cwd) {
-          console.log("[json-schema-faker] references are only supported by calling .resolve()");
+          console.debug("[json-schema-faker] local references are only supported by calling .resolve()");
         }
         return jsf.generate(schema, refs);
       };
       jsf.generateWithContext = (schema, refs) => {
         const $refs = getRefs(refs, schema);
-        return run($refs, schema, container, true);
+        return run_default($refs, schema, container, true);
       };
-      jsf.generate = (schema, refs) => renderJS(jsf.generateWithContext(schema, refs));
-      jsf.generateYAML = (schema, refs) => renderYAML(jsf.generateWithContext(schema, refs));
+      jsf.generate = (schema, refs) => js_default(
+        jsf.generateWithContext(schema, refs)
+      );
+      jsf.generateYAML = (schema, refs) => yaml_default(
+        jsf.generateWithContext(schema, refs)
+      );
       jsf.resolveWithContext = (schema, refs, cwd) => {
         if (typeof refs === "string") {
           cwd = refs;
@@ -6142,16 +6246,16 @@ ${pair.comment}` : item.comment;
           dereference: {
             circular: "ignore"
           }
-        }).then((sub) => run($refs, sub, container)).catch((e) => {
+        }).then((sub) => run_default($refs, sub, container)).catch((e) => {
           throw new Error(`Error while resolving schema (${e.message})`);
         });
       };
-      jsf.resolve = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(renderJS);
-      jsf.resolveYAML = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(renderYAML);
+      jsf.resolve = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(js_default);
+      jsf.resolveYAML = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(yaml_default);
       setupKeywords();
-      jsf.format = format;
-      jsf.option = option;
-      jsf.random = random;
+      jsf.format = format_default;
+      jsf.option = option_default;
+      jsf.random = random_default;
       jsf.extend = (name, cb) => {
         container.extend(name, cb);
         return jsf;
@@ -6168,27 +6272,26 @@ ${pair.comment}` : item.comment;
       jsf.locate = (name) => {
         return container.get(name);
       };
-      var VERSION = "0.5.0-rcv.38";
-      if (typeof VERSION !== "undefined") {
-        jsf.VERSION = VERSION;
-      }
-      var json_schema_faker_default = jsf;
-      module.exports = json_schema_faker_default;
+      jsf.VERSION = "0.5.0-rcv.45";
+      JSONSchemaFaker = { ...jsf };
+      lib_default = jsf;
     }
   });
 
   // main.iife.js
   var require_main_iife = __commonJS({
     "main.iife.js"(exports, module) {
-      var { setDependencies } = require_vendor();
-      var JSONSchemaFaker = require_lib3();
+      var { setDependencies: setDependencies2 } = (init_vendor(), __toCommonJS(vendor_exports));
+      var JSONSchemaFaker2 = (init_lib(), __toCommonJS(lib_exports)).default;
       if (typeof window !== "undefined") {
-        setDependencies(__spreadProps(__spreadValues({}, window.JSONPath), {
+        setDependencies2({
+          ...window.JSONPath,
           $RefParser: window.$RefParser
-        }));
-        window.JSONSchemaFaker = JSONSchemaFaker;
+        });
+        window.JSONSchemaFaker = JSONSchemaFaker2;
       }
-      module.exports = JSONSchemaFaker;
+      module.exports = JSONSchemaFaker2;
+      module.exports.JSONSchemaFaker = JSONSchemaFaker2;
     }
   });
   return require_main_iife();

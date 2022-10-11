@@ -4,21 +4,21 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
-var __markAsModule = (target) => __defProp(target, "__esModule", { value: true });
 var __commonJS = (cb, mod) => function __require() {
-  return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
-var __reExport = (target, module, desc) => {
-  if (module && typeof module === "object" || typeof module === "function") {
-    for (let key of __getOwnPropNames(module))
-      if (!__hasOwnProp.call(target, key) && key !== "default")
-        __defProp(target, key, { get: () => module[key], enumerable: !(desc = __getOwnPropDesc(module, key)) || desc.enumerable });
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
   }
-  return target;
+  return to;
 };
-var __toModule = (module) => {
-  return __reExport(__markAsModule(__defProp(module != null ? __create(__getProtoOf(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
-};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
 
 // node_modules/svelte/internal/index.js
 var require_internal = __commonJS({
@@ -45,7 +45,7 @@ var require_internal = __commonJS({
       return fn();
     }
     function blank_object2() {
-      return Object.create(null);
+      return /* @__PURE__ */ Object.create(null);
     }
     function run_all2(fns) {
       fns.forEach(run2);
@@ -55,6 +55,14 @@ var require_internal = __commonJS({
     }
     function safe_not_equal2(a, b) {
       return a != a ? b == b : a !== b || (a && typeof a === "object" || typeof a === "function");
+    }
+    var src_url_equal_anchor;
+    function src_url_equal(element_src, url2) {
+      if (!src_url_equal_anchor) {
+        src_url_equal_anchor = document.createElement("a");
+      }
+      src_url_equal_anchor.href = url2;
+      return element_src === src_url_equal_anchor.href;
     }
     function not_equal(a, b) {
       return a != a ? b == b : a !== b;
@@ -109,19 +117,26 @@ var require_internal = __commonJS({
       }
       return $$scope.dirty;
     }
-    function update_slot2(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_context_fn) {
-      const slot_changes = get_slot_changes2(slot_definition, $$scope, dirty, get_slot_changes_fn);
+    function update_slot_base2(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
       if (slot_changes) {
         const slot_context = get_slot_context2(slot_definition, ctx, $$scope, get_slot_context_fn);
         slot.p(slot_context, slot_changes);
       }
     }
-    function update_slot_spread2(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_spread_changes_fn, get_slot_context_fn) {
-      const slot_changes = get_slot_spread_changes_fn(dirty) | get_slot_changes2(slot_definition, $$scope, dirty, get_slot_changes_fn);
-      if (slot_changes) {
-        const slot_context = get_slot_context2(slot_definition, ctx, $$scope, get_slot_context_fn);
-        slot.p(slot_context, slot_changes);
+    function update_slot(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_context_fn) {
+      const slot_changes = get_slot_changes2(slot_definition, $$scope, dirty, get_slot_changes_fn);
+      update_slot_base2(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn);
+    }
+    function get_all_dirty_from_scope2($$scope) {
+      if ($$scope.ctx.length > 32) {
+        const dirty = [];
+        const length = $$scope.ctx.length / 32;
+        for (let i = 0; i < length; i++) {
+          dirty[i] = -1;
+        }
+        return dirty;
       }
+      return -1;
     }
     function exclude_internal_props2(props) {
       const result = {};
@@ -157,7 +172,7 @@ var require_internal = __commonJS({
     function null_to_empty(value) {
       return value == null ? "" : value;
     }
-    function set_store_value2(store, ret, value = ret) {
+    function set_store_value2(store, ret, value) {
       store.set(value);
       return ret;
     }
@@ -174,30 +189,30 @@ var require_internal = __commonJS({
     function set_raf(fn) {
       exports.raf = fn;
     }
-    var tasks2 = new Set();
+    var tasks = /* @__PURE__ */ new Set();
     function run_tasks(now) {
-      tasks2.forEach((task) => {
+      tasks.forEach((task) => {
         if (!task.c(now)) {
-          tasks2.delete(task);
+          tasks.delete(task);
           task.f();
         }
       });
-      if (tasks2.size !== 0)
+      if (tasks.size !== 0)
         exports.raf(run_tasks);
     }
     function clear_loops() {
-      tasks2.clear();
+      tasks.clear();
     }
     function loop(callback) {
       let task;
-      if (tasks2.size === 0)
+      if (tasks.size === 0)
         exports.raf(run_tasks);
       return {
         promise: new Promise((fulfill) => {
-          tasks2.add(task = { c: callback, f: fulfill });
+          tasks.add(task = { c: callback, f: fulfill });
         }),
         abort() {
-          tasks2.delete(task);
+          tasks.delete(task);
         }
       };
     }
@@ -208,7 +223,7 @@ var require_internal = __commonJS({
     function end_hydrating2() {
       is_hydrating2 = false;
     }
-    function upper_bound2(low, high, key, value) {
+    function upper_bound(low, high, key, value) {
       while (low < high) {
         const mid = low + (high - low >> 1);
         if (key(mid) <= value) {
@@ -219,18 +234,28 @@ var require_internal = __commonJS({
       }
       return low;
     }
-    function init_hydrate2(target) {
+    function init_hydrate(target) {
       if (target.hydrate_init)
         return;
       target.hydrate_init = true;
-      const children3 = target.childNodes;
+      let children3 = target.childNodes;
+      if (target.nodeName === "HEAD") {
+        const myChildren = [];
+        for (let i = 0; i < children3.length; i++) {
+          const node = children3[i];
+          if (node.claim_order !== void 0) {
+            myChildren.push(node);
+          }
+        }
+        children3 = myChildren;
+      }
       const m = new Int32Array(children3.length + 1);
       const p = new Int32Array(children3.length);
       m[0] = -1;
       let longest = 0;
       for (let i = 0; i < children3.length; i++) {
         const current3 = children3[i].claim_order;
-        const seqLen = upper_bound2(1, longest + 1, (idx) => children3[m[idx]].claim_order, current3) - 1;
+        const seqLen = (longest > 0 && children3[m[longest]].claim_order <= current3 ? longest + 1 : upper_bound(1, longest, (idx) => children3[m[idx]].claim_order, current3)) - 1;
         p[i] = m[seqLen] + 1;
         const newLen = seqLen + 1;
         m[newLen] = i;
@@ -260,24 +285,62 @@ var require_internal = __commonJS({
       }
     }
     function append2(target, node) {
+      target.appendChild(node);
+    }
+    function append_styles2(target, style_sheet_id, styles) {
+      const append_styles_to = get_root_for_style2(target);
+      if (!append_styles_to.getElementById(style_sheet_id)) {
+        const style = element2("style");
+        style.id = style_sheet_id;
+        style.textContent = styles;
+        append_stylesheet2(append_styles_to, style);
+      }
+    }
+    function get_root_for_style2(node) {
+      if (!node)
+        return document;
+      const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
+      if (root && root.host) {
+        return root;
+      }
+      return node.ownerDocument;
+    }
+    function append_empty_stylesheet(node) {
+      const style_element = element2("style");
+      append_stylesheet2(get_root_for_style2(node), style_element);
+      return style_element.sheet;
+    }
+    function append_stylesheet2(node, style) {
+      append2(node.head || node, style);
+      return style.sheet;
+    }
+    function append_hydration(target, node) {
       if (is_hydrating2) {
-        init_hydrate2(target);
-        if (target.actual_end_child === void 0 || target.actual_end_child !== null && target.actual_end_child.parentElement !== target) {
+        init_hydrate(target);
+        if (target.actual_end_child === void 0 || target.actual_end_child !== null && target.actual_end_child.parentNode !== target) {
           target.actual_end_child = target.firstChild;
         }
+        while (target.actual_end_child !== null && target.actual_end_child.claim_order === void 0) {
+          target.actual_end_child = target.actual_end_child.nextSibling;
+        }
         if (node !== target.actual_end_child) {
-          target.insertBefore(node, target.actual_end_child);
+          if (node.claim_order !== void 0 || node.parentNode !== target) {
+            target.insertBefore(node, target.actual_end_child);
+          }
         } else {
           target.actual_end_child = node.nextSibling;
         }
-      } else if (node.parentNode !== target) {
+      } else if (node.parentNode !== target || node.nextSibling !== null) {
         target.appendChild(node);
       }
     }
     function insert2(target, node, anchor) {
+      target.insertBefore(node, anchor || null);
+    }
+    function insert_hydration(target, node, anchor) {
       if (is_hydrating2 && !anchor) {
-        append2(target, node);
-      } else if (node.parentNode !== target || anchor && node.nextSibling !== anchor) {
+        append_hydration(target, node);
+      } else if (node.parentNode !== target || node.nextSibling != anchor) {
         target.insertBefore(node, anchor || null);
       }
     }
@@ -339,6 +402,12 @@ var require_internal = __commonJS({
           fn.call(this, event);
       };
     }
+    function trusted(fn) {
+      return function(event) {
+        if (event.isTrusted)
+          fn.call(this, event);
+      };
+    }
     function attr2(node, attribute, value) {
       if (value == null)
         node.removeAttribute(attribute);
@@ -377,7 +446,7 @@ var require_internal = __commonJS({
       node.setAttributeNS("http://www.w3.org/1999/xlink", attribute, value);
     }
     function get_binding_group_value(group, __value, checked) {
-      const value = new Set();
+      const value = /* @__PURE__ */ new Set();
       for (let i = 0; i < group.length; i += 1) {
         if (group[i].checked)
           value.add(group[i].__value);
@@ -400,16 +469,23 @@ var require_internal = __commonJS({
     function children2(element3) {
       return Array.from(element3.childNodes);
     }
-    function claim_node(nodes, predicate, processNode, createNode, dontUpdateLastIndex = false) {
+    function init_claim_info(nodes) {
       if (nodes.claim_info === void 0) {
         nodes.claim_info = { last_index: 0, total_claimed: 0 };
       }
+    }
+    function claim_node(nodes, predicate, processNode, createNode, dontUpdateLastIndex = false) {
+      init_claim_info(nodes);
       const resultNode = (() => {
         for (let i = nodes.claim_info.last_index; i < nodes.length; i++) {
           const node = nodes[i];
           if (predicate(node)) {
-            processNode(node);
-            nodes.splice(i, 1);
+            const replacement = processNode(node);
+            if (replacement === void 0) {
+              nodes.splice(i, 1);
+            } else {
+              nodes[i] = replacement;
+            }
             if (!dontUpdateLastIndex) {
               nodes.claim_info.last_index = i;
             }
@@ -419,11 +495,15 @@ var require_internal = __commonJS({
         for (let i = nodes.claim_info.last_index - 1; i >= 0; i--) {
           const node = nodes[i];
           if (predicate(node)) {
-            processNode(node);
-            nodes.splice(i, 1);
+            const replacement = processNode(node);
+            if (replacement === void 0) {
+              nodes.splice(i, 1);
+            } else {
+              nodes[i] = replacement;
+            }
             if (!dontUpdateLastIndex) {
               nodes.claim_info.last_index = i;
-            } else {
+            } else if (replacement === void 0) {
               nodes.claim_info.last_index--;
             }
             return node;
@@ -435,7 +515,7 @@ var require_internal = __commonJS({
       nodes.claim_info.total_claimed += 1;
       return resultNode;
     }
-    function claim_element(nodes, name, attributes, svg) {
+    function claim_element_base(nodes, name, attributes, create_element) {
       return claim_node(nodes, (node) => node.nodeName === name, (node) => {
         const remove = [];
         for (let j = 0; j < node.attributes.length; j++) {
@@ -445,12 +525,32 @@ var require_internal = __commonJS({
           }
         }
         remove.forEach((v) => node.removeAttribute(v));
-      }, () => svg ? svg_element2(name) : element2(name));
+        return void 0;
+      }, () => create_element(name));
+    }
+    function claim_element(nodes, name, attributes) {
+      return claim_element_base(nodes, name, attributes, element2);
+    }
+    function claim_svg_element(nodes, name, attributes) {
+      return claim_element_base(nodes, name, attributes, svg_element2);
     }
     function claim_text(nodes, data) {
-      return claim_node(nodes, (node) => node.nodeType === 3, (node) => {
-        node.data = "" + data;
-      }, () => text2(data), true);
+      return claim_node(
+        nodes,
+        (node) => node.nodeType === 3,
+        (node) => {
+          const dataStr = "" + data;
+          if (node.data.startsWith(dataStr)) {
+            if (node.data.length !== dataStr.length) {
+              return node.splitText(dataStr.length);
+            }
+          } else {
+            node.data = dataStr;
+          }
+        },
+        () => text2(data),
+        true
+      );
     }
     function claim_space(nodes) {
       return claim_text(nodes, " ");
@@ -464,16 +564,22 @@ var require_internal = __commonJS({
       }
       return nodes.length;
     }
-    function claim_html_tag(nodes) {
+    function claim_html_tag(nodes, is_svg) {
       const start_index = find_comment(nodes, "HTML_TAG_START", 0);
       const end_index = find_comment(nodes, "HTML_TAG_END", start_index);
       if (start_index === end_index) {
-        return new HtmlTag();
+        return new HtmlTagHydration(void 0, is_svg);
       }
-      const html_tag_nodes = nodes.splice(start_index, end_index + 1);
+      init_claim_info(nodes);
+      const html_tag_nodes = nodes.splice(start_index, end_index - start_index + 1);
       detach2(html_tag_nodes[0]);
       detach2(html_tag_nodes[html_tag_nodes.length - 1]);
-      return new HtmlTag(html_tag_nodes.slice(1, html_tag_nodes.length - 1));
+      const claimed_nodes = html_tag_nodes.slice(1, html_tag_nodes.length - 1);
+      for (const n of claimed_nodes) {
+        n.claim_order = nodes.claim_info.total_claimed;
+        nodes.claim_info.total_claimed += 1;
+      }
+      return new HtmlTagHydration(claimed_nodes, is_svg);
     }
     function set_data2(text3, data) {
       data = "" + data;
@@ -490,9 +596,13 @@ var require_internal = __commonJS({
       }
     }
     function set_style(node, key, value, important) {
-      node.style.setProperty(key, value, important ? "important" : "");
+      if (value === null) {
+        node.style.removeProperty(key);
+      } else {
+        node.style.setProperty(key, value, important ? "important" : "");
+      }
     }
-    function select_option(select, value) {
+    function select_option2(select, value) {
       for (let i = 0; i < select.options.length; i += 1) {
         const option = select.options[i];
         if (option.__value === value) {
@@ -500,6 +610,7 @@ var require_internal = __commonJS({
           return;
         }
       }
+      select.selectedIndex = -1;
     }
     function select_options2(select, value) {
       for (let i = 0; i < select.options.length; i += 1) {
@@ -564,28 +675,31 @@ var require_internal = __commonJS({
     function toggle_class2(element3, name, toggle) {
       element3.classList[toggle ? "add" : "remove"](name);
     }
-    function custom_event2(type, detail) {
+    function custom_event2(type, detail, { bubbles = false, cancelable = false } = {}) {
       const e = document.createEvent("CustomEvent");
-      e.initCustomEvent(type, false, false, detail);
+      e.initCustomEvent(type, bubbles, cancelable, detail);
       return e;
     }
     function query_selector_all(selector, parent = document.body) {
       return Array.from(parent.querySelectorAll(selector));
     }
     var HtmlTag = class {
-      constructor(claimed_nodes) {
+      constructor(is_svg = false) {
+        this.is_svg = false;
+        this.is_svg = is_svg;
         this.e = this.n = null;
-        this.l = claimed_nodes;
+      }
+      c(html) {
+        this.h(html);
       }
       m(html, target, anchor = null) {
         if (!this.e) {
-          this.e = element2(target.nodeName);
+          if (this.is_svg)
+            this.e = svg_element2(target.nodeName);
+          else
+            this.e = element2(target.nodeName);
           this.t = target;
-          if (this.l) {
-            this.n = this.l;
-          } else {
-            this.h(html);
-          }
+          this.c(html);
         }
         this.i(anchor);
       }
@@ -607,6 +721,25 @@ var require_internal = __commonJS({
         this.n.forEach(detach2);
       }
     };
+    var HtmlTagHydration = class extends HtmlTag {
+      constructor(claimed_nodes, is_svg = false) {
+        super(is_svg);
+        this.e = this.n = null;
+        this.l = claimed_nodes;
+      }
+      c(html) {
+        if (this.l) {
+          this.n = this.l;
+        } else {
+          super.c(html);
+        }
+      }
+      i(anchor) {
+        for (let i = 0; i < this.n.length; i += 1) {
+          insert_hydration(this.t, this.n[i], anchor);
+        }
+      }
+    };
     function attribute_to_object(attributes) {
       const result = {};
       for (const attribute of attributes) {
@@ -621,7 +754,7 @@ var require_internal = __commonJS({
       });
       return result;
     }
-    var active_docs2 = new Set();
+    var managed_styles = /* @__PURE__ */ new Map();
     var active = 0;
     function hash(str) {
       let hash2 = 5381;
@@ -629,6 +762,11 @@ var require_internal = __commonJS({
       while (i--)
         hash2 = (hash2 << 5) - hash2 ^ str.charCodeAt(i);
       return hash2 >>> 0;
+    }
+    function create_style_information(doc, node) {
+      const info = { stylesheet: append_empty_stylesheet(node), rules: {} };
+      managed_styles.set(doc, info);
+      return info;
     }
     function create_rule(node, a, b, duration, delay, ease, fn, uid = 0) {
       const step = 16.666 / duration;
@@ -641,12 +779,10 @@ var require_internal = __commonJS({
       const rule = keyframes + `100% {${fn(b, 1 - b)}}
 }`;
       const name = `__svelte_${hash(rule)}_${uid}`;
-      const doc = node.ownerDocument;
-      active_docs2.add(doc);
-      const stylesheet = doc.__svelte_stylesheet || (doc.__svelte_stylesheet = doc.head.appendChild(element2("style")).sheet);
-      const current_rules = doc.__svelte_rules || (doc.__svelte_rules = {});
-      if (!current_rules[name]) {
-        current_rules[name] = true;
+      const doc = get_root_for_style2(node);
+      const { stylesheet, rules } = managed_styles.get(doc) || create_style_information(doc, node);
+      if (!rules[name]) {
+        rules[name] = true;
         stylesheet.insertRule(`@keyframes ${name} ${rule}`, stylesheet.cssRules.length);
       }
       const animation = node.style.animation || "";
@@ -656,7 +792,9 @@ var require_internal = __commonJS({
     }
     function delete_rule(node, name) {
       const previous = (node.style.animation || "").split(", ");
-      const next = previous.filter(name ? (anim) => anim.indexOf(name) < 0 : (anim) => anim.indexOf("__svelte") === -1);
+      const next = previous.filter(
+        name ? (anim) => anim.indexOf(name) < 0 : (anim) => anim.indexOf("__svelte") === -1
+      );
       const deleted = previous.length - next.length;
       if (deleted) {
         node.style.animation = next.join(", ");
@@ -669,14 +807,12 @@ var require_internal = __commonJS({
       exports.raf(() => {
         if (active)
           return;
-        active_docs2.forEach((doc) => {
-          const stylesheet = doc.__svelte_stylesheet;
-          let i = stylesheet.cssRules.length;
-          while (i--)
-            stylesheet.deleteRule(i);
-          doc.__svelte_rules = {};
+        managed_styles.forEach((info) => {
+          const { ownerNode } = info.stylesheet;
+          if (ownerNode)
+            detach2(ownerNode);
         });
-        active_docs2.clear();
+        managed_styles.clear();
       });
     }
     function create_animation(node, from, fn, params) {
@@ -759,13 +895,13 @@ var require_internal = __commonJS({
         throw new Error("Function called outside component initialization");
       return exports.current_component;
     }
-    function beforeUpdate2(fn) {
+    function beforeUpdate(fn) {
       get_current_component2().$$.before_update.push(fn);
     }
     function onMount2(fn) {
       get_current_component2().$$.on_mount.push(fn);
     }
-    function afterUpdate2(fn) {
+    function afterUpdate(fn) {
       get_current_component2().$$.after_update.push(fn);
     }
     function onDestroy2(fn) {
@@ -773,21 +909,27 @@ var require_internal = __commonJS({
     }
     function createEventDispatcher2() {
       const component = get_current_component2();
-      return (type, detail) => {
+      return (type, detail, { cancelable = false } = {}) => {
         const callbacks = component.$$.callbacks[type];
         if (callbacks) {
-          const event = custom_event2(type, detail);
+          const event = custom_event2(type, detail, { cancelable });
           callbacks.slice().forEach((fn) => {
             fn.call(component, event);
           });
+          return !event.defaultPrevented;
         }
+        return true;
       };
     }
     function setContext2(key, context) {
       get_current_component2().$$.context.set(key, context);
+      return context;
     }
     function getContext2(key) {
       return get_current_component2().$$.context.get(key);
+    }
+    function getAllContexts2() {
+      return get_current_component2().$$.context;
     }
     function hasContext2(key) {
       return get_current_component2().$$.context.has(key);
@@ -821,20 +963,20 @@ var require_internal = __commonJS({
     function add_flush_callback(fn) {
       flush_callbacks2.push(fn);
     }
-    var flushing2 = false;
-    var seen_callbacks2 = new Set();
+    var seen_callbacks2 = /* @__PURE__ */ new Set();
+    var flushidx2 = 0;
     function flush2() {
-      if (flushing2)
-        return;
-      flushing2 = true;
+      const saved_component = exports.current_component;
       do {
-        for (let i = 0; i < dirty_components2.length; i += 1) {
-          const component = dirty_components2[i];
+        while (flushidx2 < dirty_components2.length) {
+          const component = dirty_components2[flushidx2];
+          flushidx2++;
           set_current_component2(component);
           update3(component.$$);
         }
         set_current_component2(null);
         dirty_components2.length = 0;
+        flushidx2 = 0;
         while (binding_callbacks2.length)
           binding_callbacks2.pop()();
         for (let i = 0; i < render_callbacks2.length; i += 1) {
@@ -850,8 +992,8 @@ var require_internal = __commonJS({
         flush_callbacks2.pop()();
       }
       update_scheduled2 = false;
-      flushing2 = false;
       seen_callbacks2.clear();
+      set_current_component2(saved_component);
     }
     function update3($$) {
       if ($$.fragment !== null) {
@@ -876,7 +1018,7 @@ var require_internal = __commonJS({
     function dispatch(node, direction, kind) {
       node.dispatchEvent(custom_event2(`${direction ? "intro" : "outro"}${kind}`));
     }
-    var outroing2 = new Set();
+    var outroing2 = /* @__PURE__ */ new Set();
     var outros2;
     function group_outros2() {
       outros2 = {
@@ -911,6 +1053,8 @@ var require_internal = __commonJS({
           }
         });
         block.o(local);
+      } else if (callback) {
+        callback();
       }
     }
     var null_transition = { duration: 0 };
@@ -956,6 +1100,7 @@ var require_internal = __commonJS({
         start() {
           if (started)
             return;
+          started = true;
           delete_rule(node);
           if (is_function2(config)) {
             config = config();
@@ -1225,8 +1370,8 @@ var require_internal = __commonJS({
       while (i--)
         old_indexes[old_blocks[i].key] = i;
       const new_blocks = [];
-      const new_lookup = new Map();
-      const deltas = new Map();
+      const new_lookup = /* @__PURE__ */ new Map();
+      const deltas = /* @__PURE__ */ new Map();
       i = n;
       while (i--) {
         const child_ctx = get_context(ctx, list, i);
@@ -1242,8 +1387,8 @@ var require_internal = __commonJS({
         if (key in old_indexes)
           deltas.set(key, Math.abs(i - old_indexes[key]));
       }
-      const will_move = new Set();
-      const did_move = new Set();
+      const will_move = /* @__PURE__ */ new Set();
+      const did_move = /* @__PURE__ */ new Set();
       function insert3(block) {
         transition_in2(block, 1);
         block.m(node, next);
@@ -1285,7 +1430,7 @@ var require_internal = __commonJS({
       return new_blocks;
     }
     function validate_each_keys(ctx, list, get_context, get_key) {
-      const keys = new Set();
+      const keys = /* @__PURE__ */ new Set();
       for (let i = 0; i < list.length; i++) {
         const key = get_key(get_context(ctx, list, i));
         if (keys.has(key)) {
@@ -1329,7 +1474,7 @@ var require_internal = __commonJS({
     function get_spread_object2(spread_props) {
       return typeof spread_props === "object" && spread_props !== null ? spread_props : {};
     }
-    var boolean_attributes2 = new Set([
+    var boolean_attributes = /* @__PURE__ */ new Set([
       "allowfullscreen",
       "allowpaymentrequest",
       "async",
@@ -1355,14 +1500,29 @@ var require_internal = __commonJS({
       "reversed",
       "selected"
     ]);
+    var void_element_names = /^(?:area|base|br|col|command|embed|hr|img|input|keygen|link|meta|param|source|track|wbr)$/;
+    function is_void(name) {
+      return void_element_names.test(name) || name.toLowerCase() === "!doctype";
+    }
     var invalid_attribute_name_character = /[\s'">/=\u{FDD0}-\u{FDEF}\u{FFFE}\u{FFFF}\u{1FFFE}\u{1FFFF}\u{2FFFE}\u{2FFFF}\u{3FFFE}\u{3FFFF}\u{4FFFE}\u{4FFFF}\u{5FFFE}\u{5FFFF}\u{6FFFE}\u{6FFFF}\u{7FFFE}\u{7FFFF}\u{8FFFE}\u{8FFFF}\u{9FFFE}\u{9FFFF}\u{AFFFE}\u{AFFFF}\u{BFFFE}\u{BFFFF}\u{CFFFE}\u{CFFFF}\u{DFFFE}\u{DFFFF}\u{EFFFE}\u{EFFFF}\u{FFFFE}\u{FFFFF}\u{10FFFE}\u{10FFFF}]/u;
-    function spread(args, classes_to_add) {
+    function spread(args, attrs_to_add) {
       const attributes = Object.assign({}, ...args);
-      if (classes_to_add) {
-        if (attributes.class == null) {
-          attributes.class = classes_to_add;
-        } else {
-          attributes.class += " " + classes_to_add;
+      if (attrs_to_add) {
+        const classes_to_add = attrs_to_add.classes;
+        const styles_to_add = attrs_to_add.styles;
+        if (classes_to_add) {
+          if (attributes.class == null) {
+            attributes.class = classes_to_add;
+          } else {
+            attributes.class += " " + classes_to_add;
+          }
+        }
+        if (styles_to_add) {
+          if (attributes.style == null) {
+            attributes.style = style_object_to_string(styles_to_add);
+          } else {
+            attributes.style = style_object_to_string(merge_ssr_styles(attributes.style, styles_to_add));
+          }
         }
       }
       let str = "";
@@ -1372,7 +1532,7 @@ var require_internal = __commonJS({
         const value = attributes[name];
         if (value === true)
           str += " " + name;
-        else if (boolean_attributes2.has(name.toLowerCase())) {
+        else if (boolean_attributes.has(name.toLowerCase())) {
           if (value)
             str += " " + name;
         } else if (value != null) {
@@ -1381,18 +1541,45 @@ var require_internal = __commonJS({
       });
       return str;
     }
-    var escaped = {
-      '"': "&quot;",
-      "'": "&#39;",
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;"
-    };
-    function escape(html) {
-      return String(html).replace(/["'&<>]/g, (match) => escaped[match]);
+    function merge_ssr_styles(style_attribute, style_directive) {
+      const style_object = {};
+      for (const individual_style of style_attribute.split(";")) {
+        const colon_index = individual_style.indexOf(":");
+        const name = individual_style.slice(0, colon_index).trim();
+        const value = individual_style.slice(colon_index + 1).trim();
+        if (!name)
+          continue;
+        style_object[name] = value;
+      }
+      for (const name in style_directive) {
+        const value = style_directive[name];
+        if (value) {
+          style_object[name] = value;
+        } else {
+          delete style_object[name];
+        }
+      }
+      return style_object;
+    }
+    var ATTR_REGEX = /[&"]/g;
+    var CONTENT_REGEX = /[&<]/g;
+    function escape(value, is_attr = false) {
+      const str = String(value);
+      const pattern = is_attr ? ATTR_REGEX : CONTENT_REGEX;
+      pattern.lastIndex = 0;
+      let escaped = "";
+      let last = 0;
+      while (pattern.test(str)) {
+        const i = pattern.lastIndex - 1;
+        const ch = str[i];
+        escaped += str.substring(last, i) + (ch === "&" ? "&amp;" : ch === '"' ? "&quot;" : "&lt;");
+        last = i + 1;
+      }
+      return escaped + str.substring(last);
     }
     function escape_attribute_value(value) {
-      return typeof value === "string" ? escape(value) : value;
+      const should_escape = typeof value === "string" || value && typeof value === "object";
+      return should_escape ? escape(value, true) : value;
     }
     function escape_object(obj) {
       const result = {};
@@ -1430,7 +1617,7 @@ var require_internal = __commonJS({
         const parent_component = exports.current_component;
         const $$ = {
           on_destroy,
-          context: new Map(parent_component ? parent_component.$$.context : context || []),
+          context: new Map(context || (parent_component ? parent_component.$$.context : [])),
           on_mount: [],
           before_update: [],
           after_update: [],
@@ -1442,9 +1629,9 @@ var require_internal = __commonJS({
         return html;
       }
       return {
-        render: (props = {}, { $$slots = {}, context = new Map() } = {}) => {
+        render: (props = {}, { $$slots = {}, context = /* @__PURE__ */ new Map() } = {}) => {
           on_destroy = [];
-          const result = { title: "", head: "", css: new Set() };
+          const result = { title: "", head: "", css: /* @__PURE__ */ new Set() };
           const html = $$render(result, props, {}, $$slots, context);
           run_all2(on_destroy);
           return {
@@ -1462,10 +1649,18 @@ var require_internal = __commonJS({
     function add_attribute(name, value, boolean) {
       if (value == null || boolean && !value)
         return "";
-      return ` ${name}${value === true ? "" : `=${typeof value === "string" ? JSON.stringify(escape(value)) : `"${value}"`}`}`;
+      const assignment = boolean && value === true ? "" : `="${escape(value, true)}"`;
+      return ` ${name}${assignment}`;
     }
     function add_classes(classes) {
       return classes ? ` class="${classes}"` : "";
+    }
+    function style_object_to_string(style_object) {
+      return Object.keys(style_object).filter((key) => style_object[key]).map((key) => `${key}: ${style_object[key]};`).join(" ");
+    }
+    function add_styles(style_object) {
+      const styles = style_object_to_string(style_object);
+      return styles ? ` style="${styles}"` : "";
     }
     function bind(component, name, callback) {
       const index = component.$$.props[name];
@@ -1513,7 +1708,7 @@ var require_internal = __commonJS({
       }
       component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
     }
-    function init2(component, options3, instance12, create_fragment13, not_equal2, props, dirty = [-1]) {
+    function init2(component, options3, instance12, create_fragment13, not_equal2, props, append_styles3, dirty = [-1]) {
       const parent_component = exports.current_component;
       set_current_component2(component);
       const $$ = component.$$ = {
@@ -1528,11 +1723,13 @@ var require_internal = __commonJS({
         on_disconnect: [],
         before_update: [],
         after_update: [],
-        context: new Map(parent_component ? parent_component.$$.context : options3.context || []),
+        context: new Map(options3.context || (parent_component ? parent_component.$$.context : [])),
         callbacks: blank_object2(),
         dirty,
-        skip_bound: false
+        skip_bound: false,
+        root: options3.target || parent_component.$$.root
       };
+      append_styles3 && append_styles3($$.root);
       let ready = false;
       $$.ctx = instance12 ? instance12(component, options3.props || {}, (i, ret, ...rest) => {
         const value = rest.length ? rest[0] : ret;
@@ -1629,15 +1826,23 @@ var require_internal = __commonJS({
       }
     };
     function dispatch_dev(type, detail) {
-      document.dispatchEvent(custom_event2(type, Object.assign({ version: "3.38.3" }, detail)));
+      document.dispatchEvent(custom_event2(type, Object.assign({ version: "3.50.1" }, detail), { bubbles: true }));
     }
     function append_dev(target, node) {
       dispatch_dev("SvelteDOMInsert", { target, node });
       append2(target, node);
     }
+    function append_hydration_dev(target, node) {
+      dispatch_dev("SvelteDOMInsert", { target, node });
+      append_hydration(target, node);
+    }
     function insert_dev(target, node, anchor) {
       dispatch_dev("SvelteDOMInsert", { target, node, anchor });
       insert2(target, node, anchor);
+    }
+    function insert_hydration_dev(target, node, anchor) {
+      dispatch_dev("SvelteDOMInsert", { target, node, anchor });
+      insert_hydration(target, node, anchor);
     }
     function detach_dev(node) {
       dispatch_dev("SvelteDOMRemove", { node });
@@ -1709,6 +1914,17 @@ var require_internal = __commonJS({
         }
       }
     }
+    function validate_dynamic_element(tag) {
+      const is_string = typeof tag === "string";
+      if (tag && !is_string) {
+        throw new Error('<svelte:element> expects "this" attribute to be a string.');
+      }
+    }
+    function validate_void_dynamic_element(tag) {
+      if (tag && is_void(tag)) {
+        throw new Error(`<svelte:element this="${tag}"> is self-closing and cannot have content.`);
+      }
+    }
     var SvelteComponentDev2 = class extends SvelteComponent2 {
       constructor(options3) {
         if (!options3 || !options3.target && !options3.$$inline) {
@@ -1741,6 +1957,7 @@ var require_internal = __commonJS({
       };
     }
     exports.HtmlTag = HtmlTag;
+    exports.HtmlTagHydration = HtmlTagHydration;
     exports.SvelteComponent = SvelteComponent2;
     exports.SvelteComponentDev = SvelteComponentDev2;
     exports.SvelteComponentTyped = SvelteComponentTyped2;
@@ -1751,15 +1968,20 @@ var require_internal = __commonJS({
     exports.add_location = add_location;
     exports.add_render_callback = add_render_callback2;
     exports.add_resize_listener = add_resize_listener;
+    exports.add_styles = add_styles;
     exports.add_transform = add_transform;
-    exports.afterUpdate = afterUpdate2;
+    exports.afterUpdate = afterUpdate;
     exports.append = append2;
     exports.append_dev = append_dev;
+    exports.append_empty_stylesheet = append_empty_stylesheet;
+    exports.append_hydration = append_hydration;
+    exports.append_hydration_dev = append_hydration_dev;
+    exports.append_styles = append_styles2;
     exports.assign = assign2;
     exports.attr = attr2;
     exports.attr_dev = attr_dev;
     exports.attribute_to_object = attribute_to_object;
-    exports.beforeUpdate = beforeUpdate2;
+    exports.beforeUpdate = beforeUpdate;
     exports.bind = bind;
     exports.binding_callbacks = binding_callbacks2;
     exports.blank_object = blank_object2;
@@ -1770,6 +1992,7 @@ var require_internal = __commonJS({
     exports.claim_element = claim_element;
     exports.claim_html_tag = claim_html_tag;
     exports.claim_space = claim_space;
+    exports.claim_svg_element = claim_svg_element;
     exports.claim_text = claim_text;
     exports.clear_loops = clear_loops;
     exports.component_subscribe = component_subscribe2;
@@ -1804,18 +2027,19 @@ var require_internal = __commonJS({
     exports.escape = escape;
     exports.escape_attribute_value = escape_attribute_value;
     exports.escape_object = escape_object;
-    exports.escaped = escaped;
     exports.exclude_internal_props = exclude_internal_props2;
     exports.fix_and_destroy_block = fix_and_destroy_block;
     exports.fix_and_outro_and_destroy_block = fix_and_outro_and_destroy_block;
     exports.fix_position = fix_position;
     exports.flush = flush2;
+    exports.getAllContexts = getAllContexts2;
     exports.getContext = getContext2;
+    exports.get_all_dirty_from_scope = get_all_dirty_from_scope2;
     exports.get_binding_group_value = get_binding_group_value;
     exports.get_current_component = get_current_component2;
     exports.get_custom_elements_slots = get_custom_elements_slots;
+    exports.get_root_for_style = get_root_for_style2;
     exports.get_slot_changes = get_slot_changes2;
-    exports.get_slot_context = get_slot_context2;
     exports.get_spread_object = get_spread_object2;
     exports.get_spread_update = get_spread_update2;
     exports.get_store_value = get_store_value2;
@@ -1828,6 +2052,8 @@ var require_internal = __commonJS({
     exports.init = init2;
     exports.insert = insert2;
     exports.insert_dev = insert_dev;
+    exports.insert_hydration = insert_hydration;
+    exports.insert_hydration_dev = insert_hydration_dev;
     exports.intros = intros;
     exports.invalid_attribute_name_character = invalid_attribute_name_character;
     exports.is_client = is_client;
@@ -1835,10 +2061,12 @@ var require_internal = __commonJS({
     exports.is_empty = is_empty2;
     exports.is_function = is_function2;
     exports.is_promise = is_promise;
+    exports.is_void = is_void;
     exports.listen = listen2;
     exports.listen_dev = listen_dev;
     exports.loop = loop;
     exports.loop_guard = loop_guard;
+    exports.merge_ssr_styles = merge_ssr_styles;
     exports.missing_component = missing_component;
     exports.mount_component = mount_component2;
     exports.noop = noop2;
@@ -1857,7 +2085,7 @@ var require_internal = __commonJS({
     exports.safe_not_equal = safe_not_equal2;
     exports.schedule_update = schedule_update2;
     exports.select_multiple_value = select_multiple_value;
-    exports.select_option = select_option;
+    exports.select_option = select_option2;
     exports.select_options = select_options2;
     exports.select_value = select_value;
     exports.self = self;
@@ -1876,6 +2104,7 @@ var require_internal = __commonJS({
     exports.set_svg_attributes = set_svg_attributes;
     exports.space = space2;
     exports.spread = spread;
+    exports.src_url_equal = src_url_equal;
     exports.start_hydrating = start_hydrating2;
     exports.stop_propagation = stop_propagation;
     exports.subscribe = subscribe2;
@@ -1887,15 +2116,18 @@ var require_internal = __commonJS({
     exports.toggle_class = toggle_class2;
     exports.transition_in = transition_in2;
     exports.transition_out = transition_out2;
+    exports.trusted = trusted;
     exports.update_await_block_branch = update_await_block_branch;
     exports.update_keyed_each = update_keyed_each;
-    exports.update_slot = update_slot2;
-    exports.update_slot_spread = update_slot_spread2;
+    exports.update_slot = update_slot;
+    exports.update_slot_base = update_slot_base2;
     exports.validate_component = validate_component;
+    exports.validate_dynamic_element = validate_dynamic_element;
     exports.validate_each_argument = validate_each_argument;
     exports.validate_each_keys = validate_each_keys;
     exports.validate_slots = validate_slots;
     exports.validate_store = validate_store;
+    exports.validate_void_dynamic_element = validate_void_dynamic_element;
     exports.xlink_attr = xlink_attr2;
   }
 });
@@ -1914,16 +2146,15 @@ var require_store = __commonJS({
     }
     function writable2(value, start = internal.noop) {
       let stop;
-      const subscribers = [];
+      const subscribers = /* @__PURE__ */ new Set();
       function set(new_value) {
         if (internal.safe_not_equal(value, new_value)) {
           value = new_value;
           if (stop) {
             const run_queue = !subscriber_queue2.length;
-            for (let i = 0; i < subscribers.length; i += 1) {
-              const s = subscribers[i];
-              s[1]();
-              subscriber_queue2.push(s, value);
+            for (const subscriber of subscribers) {
+              subscriber[1]();
+              subscriber_queue2.push(subscriber, value);
             }
             if (run_queue) {
               for (let i = 0; i < subscriber_queue2.length; i += 2) {
@@ -1939,17 +2170,14 @@ var require_store = __commonJS({
       }
       function subscribe2(run2, invalidate = internal.noop) {
         const subscriber = [run2, invalidate];
-        subscribers.push(subscriber);
-        if (subscribers.length === 1) {
+        subscribers.add(subscriber);
+        if (subscribers.size === 1) {
           stop = start(set) || internal.noop;
         }
         run2(value);
         return () => {
-          const index = subscribers.indexOf(subscriber);
-          if (index !== -1) {
-            subscribers.splice(index, 1);
-          }
-          if (subscribers.length === 0) {
+          subscribers.delete(subscriber);
+          if (subscribers.size === 0) {
             stop();
             stop = null;
           }
@@ -2013,9 +2241,6 @@ var require_gists = __commonJS({
     var { writable: writable2 } = require_store();
     var BASE_URL = "https://github.com";
     var API_URL = "https://api.github.com";
-    var AUTH_ID = "fcfd0d144cddb6b070e7";
-    var AUTH_SECRET = "2aaeecfab4de40d4db3fa7e7cc7466750a51dcdb";
-    var PROXY_URL = "https://cors-anywhere.herokuapp.com/";
     var data = window.localStorage._DATA;
     var loggedIn3 = writable2(!!data);
     var session2 = writable2(data ? JSON.parse(data) : {});
@@ -2023,12 +2248,12 @@ var require_gists = __commonJS({
     var current3 = writable2({});
     var options3 = writable2(null);
     function getUrl(x, path, params) {
-      const url22 = `${x}${path}?client_id=${AUTH_ID}&client_secret=${AUTH_SECRET}`;
+      const url22 = `${x}${path}?client_id=${"fcfd0d144cddb6b070e7"}&client_secret=${"2aaeecfab4de40d4db3fa7e7cc7466750a51dcdb"}`;
       const redirect = `redirect_uri=${encodeURIComponent(`${location.protocol}//${location.host}/`)}`;
       return params ? `${url22}&${Object.keys(params).map((k) => `${k}=${params[k]}`).join("&")}&${redirect}` : `${url22}${params !== false ? `&${redirect}` : ""}`;
     }
     function getJSON(path, params, _options) {
-      return fetch(`${PROXY_URL}${getUrl(API_URL, path, _options)}`, {
+      return fetch(`${"https://cors-anywhere.herokuapp.com/"}${getUrl(API_URL, path, _options)}`, {
         ...params,
         headers: {
           Authorization: `bearer ${window.localStorage._AUTH}`
@@ -2072,7 +2297,7 @@ var require_gists = __commonJS({
         _files[key] = { content: schemas22[key].value };
       });
       const url22 = getUrl(API_URL, "/gists", false);
-      const fixedUrl = `${PROXY_URL}${url22}`;
+      const fixedUrl = `${"https://cors-anywhere.herokuapp.com/"}${url22}`;
       return fetch(fixedUrl, {
         method: "POST",
         headers: {
@@ -2095,7 +2320,7 @@ var require_gists = __commonJS({
       const url22 = getUrl(BASE_URL, "/login/oauth/access_token", {
         code: tokenId2
       });
-      fetch(`${PROXY_URL}${url22}`, {
+      fetch(`${"https://cors-anywhere.herokuapp.com/"}${url22}`, {
         method: "POST",
         headers: {
           Accept: "application/json"
@@ -2123,7 +2348,7 @@ var require_gists = __commonJS({
 });
 
 // app.js
-var import_gists5 = __toModule(require_gists());
+var import_gists5 = __toESM(require_gists());
 
 // node_modules/svelte/internal/index.mjs
 function noop() {
@@ -2137,7 +2362,7 @@ function run(fn) {
   return fn();
 }
 function blank_object() {
-  return Object.create(null);
+  return /* @__PURE__ */ Object.create(null);
 }
 function run_all(fns) {
   fns.forEach(run);
@@ -2188,19 +2413,22 @@ function get_slot_changes(definition, $$scope, dirty, fn) {
   }
   return $$scope.dirty;
 }
-function update_slot(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_context_fn) {
-  const slot_changes = get_slot_changes(slot_definition, $$scope, dirty, get_slot_changes_fn);
+function update_slot_base(slot, slot_definition, ctx, $$scope, slot_changes, get_slot_context_fn) {
   if (slot_changes) {
     const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
     slot.p(slot_context, slot_changes);
   }
 }
-function update_slot_spread(slot, slot_definition, ctx, $$scope, dirty, get_slot_changes_fn, get_slot_spread_changes_fn, get_slot_context_fn) {
-  const slot_changes = get_slot_spread_changes_fn(dirty) | get_slot_changes(slot_definition, $$scope, dirty, get_slot_changes_fn);
-  if (slot_changes) {
-    const slot_context = get_slot_context(slot_definition, ctx, $$scope, get_slot_context_fn);
-    slot.p(slot_context, slot_changes);
+function get_all_dirty_from_scope($$scope) {
+  if ($$scope.ctx.length > 32) {
+    const dirty = [];
+    const length = $$scope.ctx.length / 32;
+    for (let i = 0; i < length; i++) {
+      dirty[i] = -1;
+    }
+    return dirty;
   }
+  return -1;
 }
 function exclude_internal_props(props) {
   const result = {};
@@ -2209,11 +2437,10 @@ function exclude_internal_props(props) {
       result[k] = props[k];
   return result;
 }
-function set_store_value(store, ret, value = ret) {
+function set_store_value(store, ret, value) {
   store.set(value);
   return ret;
 }
-var tasks = new Set();
 var is_hydrating = false;
 function start_hydrating() {
   is_hydrating = true;
@@ -2221,78 +2448,33 @@ function start_hydrating() {
 function end_hydrating() {
   is_hydrating = false;
 }
-function upper_bound(low, high, key, value) {
-  while (low < high) {
-    const mid = low + (high - low >> 1);
-    if (key(mid) <= value) {
-      low = mid + 1;
-    } else {
-      high = mid;
-    }
-  }
-  return low;
-}
-function init_hydrate(target) {
-  if (target.hydrate_init)
-    return;
-  target.hydrate_init = true;
-  const children2 = target.childNodes;
-  const m = new Int32Array(children2.length + 1);
-  const p = new Int32Array(children2.length);
-  m[0] = -1;
-  let longest = 0;
-  for (let i = 0; i < children2.length; i++) {
-    const current3 = children2[i].claim_order;
-    const seqLen = upper_bound(1, longest + 1, (idx) => children2[m[idx]].claim_order, current3) - 1;
-    p[i] = m[seqLen] + 1;
-    const newLen = seqLen + 1;
-    m[newLen] = i;
-    longest = Math.max(newLen, longest);
-  }
-  const lis = [];
-  const toMove = [];
-  let last = children2.length - 1;
-  for (let cur = m[longest] + 1; cur != 0; cur = p[cur - 1]) {
-    lis.push(children2[cur - 1]);
-    for (; last >= cur; last--) {
-      toMove.push(children2[last]);
-    }
-    last--;
-  }
-  for (; last >= 0; last--) {
-    toMove.push(children2[last]);
-  }
-  lis.reverse();
-  toMove.sort((a, b) => a.claim_order - b.claim_order);
-  for (let i = 0, j = 0; i < toMove.length; i++) {
-    while (j < lis.length && toMove[i].claim_order >= lis[j].claim_order) {
-      j++;
-    }
-    const anchor = j < lis.length ? lis[j] : null;
-    target.insertBefore(toMove[i], anchor);
-  }
-}
 function append(target, node) {
-  if (is_hydrating) {
-    init_hydrate(target);
-    if (target.actual_end_child === void 0 || target.actual_end_child !== null && target.actual_end_child.parentElement !== target) {
-      target.actual_end_child = target.firstChild;
-    }
-    if (node !== target.actual_end_child) {
-      target.insertBefore(node, target.actual_end_child);
-    } else {
-      target.actual_end_child = node.nextSibling;
-    }
-  } else if (node.parentNode !== target) {
-    target.appendChild(node);
+  target.appendChild(node);
+}
+function append_styles(target, style_sheet_id, styles) {
+  const append_styles_to = get_root_for_style(target);
+  if (!append_styles_to.getElementById(style_sheet_id)) {
+    const style = element("style");
+    style.id = style_sheet_id;
+    style.textContent = styles;
+    append_stylesheet(append_styles_to, style);
   }
+}
+function get_root_for_style(node) {
+  if (!node)
+    return document;
+  const root = node.getRootNode ? node.getRootNode() : node.ownerDocument;
+  if (root && root.host) {
+    return root;
+  }
+  return node.ownerDocument;
+}
+function append_stylesheet(node, style) {
+  append(node.head || node, style);
+  return style.sheet;
 }
 function insert(target, node, anchor) {
-  if (is_hydrating && !anchor) {
-    append(target, node);
-  } else if (node.parentNode !== target || anchor && node.nextSibling !== anchor) {
-    target.insertBefore(node, anchor || null);
-  }
+  target.insertBefore(node, anchor || null);
 }
 function detach(node) {
   node.parentNode.removeChild(node);
@@ -2364,6 +2546,16 @@ function set_data(text2, data) {
 function set_input_value(input, value) {
   input.value = value == null ? "" : value;
 }
+function select_option(select, value) {
+  for (let i = 0; i < select.options.length; i += 1) {
+    const option = select.options[i];
+    if (option.__value === value) {
+      option.selected = true;
+      return;
+    }
+  }
+  select.selectedIndex = -1;
+}
 function select_options(select, value) {
   for (let i = 0; i < select.options.length; i += 1) {
     const option = select.options[i];
@@ -2373,12 +2565,11 @@ function select_options(select, value) {
 function toggle_class(element2, name, toggle) {
   element2.classList[toggle ? "add" : "remove"](name);
 }
-function custom_event(type, detail) {
+function custom_event(type, detail, { bubbles = false, cancelable = false } = {}) {
   const e = document.createEvent("CustomEvent");
-  e.initCustomEvent(type, false, false, detail);
+  e.initCustomEvent(type, bubbles, cancelable, detail);
   return e;
 }
-var active_docs = new Set();
 var current_component;
 function set_current_component(component) {
   current_component = component;
@@ -2388,26 +2579,26 @@ function get_current_component() {
     throw new Error("Function called outside component initialization");
   return current_component;
 }
-function onMount(fn) {
-  get_current_component().$$.on_mount.push(fn);
-}
 function onDestroy(fn) {
   get_current_component().$$.on_destroy.push(fn);
 }
 function createEventDispatcher() {
   const component = get_current_component();
-  return (type, detail) => {
+  return (type, detail, { cancelable = false } = {}) => {
     const callbacks = component.$$.callbacks[type];
     if (callbacks) {
-      const event = custom_event(type, detail);
+      const event = custom_event(type, detail, { cancelable });
       callbacks.slice().forEach((fn) => {
         fn.call(component, event);
       });
+      return !event.defaultPrevented;
     }
+    return true;
   };
 }
 function setContext(key, context) {
   get_current_component().$$.context.set(key, context);
+  return context;
 }
 function getContext(key) {
   return get_current_component().$$.context.get(key);
@@ -2433,20 +2624,20 @@ function schedule_update() {
 function add_render_callback(fn) {
   render_callbacks.push(fn);
 }
-var flushing = false;
-var seen_callbacks = new Set();
+var seen_callbacks = /* @__PURE__ */ new Set();
+var flushidx = 0;
 function flush() {
-  if (flushing)
-    return;
-  flushing = true;
+  const saved_component = current_component;
   do {
-    for (let i = 0; i < dirty_components.length; i += 1) {
-      const component = dirty_components[i];
+    while (flushidx < dirty_components.length) {
+      const component = dirty_components[flushidx];
+      flushidx++;
       set_current_component(component);
       update(component.$$);
     }
     set_current_component(null);
     dirty_components.length = 0;
+    flushidx = 0;
     while (binding_callbacks.length)
       binding_callbacks.pop()();
     for (let i = 0; i < render_callbacks.length; i += 1) {
@@ -2462,8 +2653,8 @@ function flush() {
     flush_callbacks.pop()();
   }
   update_scheduled = false;
-  flushing = false;
   seen_callbacks.clear();
+  set_current_component(saved_component);
 }
 function update($$) {
   if ($$.fragment !== null) {
@@ -2475,7 +2666,7 @@ function update($$) {
     $$.after_update.forEach(add_render_callback);
   }
 }
-var outroing = new Set();
+var outroing = /* @__PURE__ */ new Set();
 var outros;
 function group_outros() {
   outros = {
@@ -2510,6 +2701,8 @@ function transition_out(block, local, detach2, callback) {
       }
     });
     block.o(local);
+  } else if (callback) {
+    callback();
   }
 }
 var globals = typeof window !== "undefined" ? window : typeof globalThis !== "undefined" ? globalThis : global;
@@ -2548,32 +2741,6 @@ function get_spread_update(levels, updates) {
 function get_spread_object(spread_props) {
   return typeof spread_props === "object" && spread_props !== null ? spread_props : {};
 }
-var boolean_attributes = new Set([
-  "allowfullscreen",
-  "allowpaymentrequest",
-  "async",
-  "autofocus",
-  "autoplay",
-  "checked",
-  "controls",
-  "default",
-  "defer",
-  "disabled",
-  "formnovalidate",
-  "hidden",
-  "ismap",
-  "loop",
-  "multiple",
-  "muted",
-  "nomodule",
-  "novalidate",
-  "open",
-  "playsinline",
-  "readonly",
-  "required",
-  "reversed",
-  "selected"
-]);
 function create_component(block) {
   block && block.c();
 }
@@ -2610,7 +2777,7 @@ function make_dirty(component, i) {
   }
   component.$$.dirty[i / 31 | 0] |= 1 << i % 31;
 }
-function init(component, options3, instance12, create_fragment13, not_equal, props, dirty = [-1]) {
+function init(component, options3, instance12, create_fragment13, not_equal, props, append_styles2, dirty = [-1]) {
   const parent_component = current_component;
   set_current_component(component);
   const $$ = component.$$ = {
@@ -2625,11 +2792,13 @@ function init(component, options3, instance12, create_fragment13, not_equal, pro
     on_disconnect: [],
     before_update: [],
     after_update: [],
-    context: new Map(parent_component ? parent_component.$$.context : options3.context || []),
+    context: new Map(options3.context || (parent_component ? parent_component.$$.context : [])),
     callbacks: blank_object(),
     dirty,
-    skip_bound: false
+    skip_bound: false,
+    root: options3.target || parent_component.$$.root
   };
+  append_styles2 && append_styles2($$.root);
   let ready = false;
   $$.ctx = instance12 ? instance12(component, options3.props || {}, (i, ret, ...rest) => {
     const value = rest.length ? rest[0] : ret;
@@ -2731,16 +2900,15 @@ var SvelteComponent = class {
 var subscriber_queue = [];
 function writable(value, start = noop) {
   let stop;
-  const subscribers = [];
+  const subscribers = /* @__PURE__ */ new Set();
   function set(new_value) {
     if (safe_not_equal(value, new_value)) {
       value = new_value;
       if (stop) {
         const run_queue = !subscriber_queue.length;
-        for (let i = 0; i < subscribers.length; i += 1) {
-          const s = subscribers[i];
-          s[1]();
-          subscriber_queue.push(s, value);
+        for (const subscriber of subscribers) {
+          subscriber[1]();
+          subscriber_queue.push(subscriber, value);
         }
         if (run_queue) {
           for (let i = 0; i < subscriber_queue.length; i += 2) {
@@ -2756,17 +2924,14 @@ function writable(value, start = noop) {
   }
   function subscribe2(run2, invalidate = noop) {
     const subscriber = [run2, invalidate];
-    subscribers.push(subscriber);
-    if (subscribers.length === 1) {
+    subscribers.add(subscriber);
+    if (subscribers.size === 1) {
       stop = start(set) || noop;
     }
     run2(value);
     return () => {
-      const index = subscribers.indexOf(subscriber);
-      if (index !== -1) {
-        subscribers.splice(index, 1);
-      }
-      if (subscribers.length === 0) {
+      subscribers.delete(subscriber);
+      if (subscribers.size === 0) {
         stop();
         stop = null;
       }
@@ -2782,11 +2947,11 @@ var __getOwnPropDesc2 = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames2 = Object.getOwnPropertyNames;
 var __getProtoOf2 = Object.getPrototypeOf;
 var __hasOwnProp2 = Object.prototype.hasOwnProperty;
-var __markAsModule2 = (target) => __defProp2(target, "__esModule", { value: true });
+var __markAsModule = (target) => __defProp2(target, "__esModule", { value: true });
 var __commonJS2 = (cb, mod) => function __require() {
   return mod || (0, cb[Object.keys(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
-var __reExport2 = (target, module, desc) => {
+var __reExport = (target, module, desc) => {
   if (module && typeof module === "object" || typeof module === "function") {
     for (let key of __getOwnPropNames2(module))
       if (!__hasOwnProp2.call(target, key) && key !== "default")
@@ -2794,8 +2959,8 @@ var __reExport2 = (target, module, desc) => {
   }
   return target;
 };
-var __toModule2 = (module) => {
-  return __reExport2(__markAsModule2(__defProp2(module != null ? __create2(__getProtoOf2(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
+var __toModule = (module) => {
+  return __reExport(__markAsModule(__defProp2(module != null ? __create2(__getProtoOf2(module)) : {}, "default", module && module.__esModule && "default" in module ? { get: () => module.default, enumerable: true } : { value: module, enumerable: true })), module);
 };
 var require_strict_uri_encode = __commonJS2({
   "node_modules/strict-uri-encode/index.js"(exports, module) {
@@ -3046,7 +3211,7 @@ var require_query_string = __commonJS2({
         parseBooleans: false
       }, options3);
       const formatter = parserForArrayFormat(options3);
-      const ret = Object.create(null);
+      const ret = /* @__PURE__ */ Object.create(null);
       if (typeof input !== "string") {
         return ret;
       }
@@ -3080,7 +3245,7 @@ var require_query_string = __commonJS2({
           result[key] = value;
         }
         return result;
-      }, Object.create(null));
+      }, /* @__PURE__ */ Object.create(null));
     }
     exports.extract = extract;
     exports.parse = parse2;
@@ -3396,8 +3561,8 @@ var require_dist = __commonJS2({
     module.exports = Router2;
   }
 });
-var import_query_string = __toModule2(require_query_string());
-var import_abstract_nested_router = __toModule2(require_dist());
+var import_query_string = __toModule(require_query_string());
+var import_abstract_nested_router = __toModule(require_dist());
 var export_Router = import_abstract_nested_router.default;
 var export_parse = import_query_string.parse;
 var export_stringify = import_query_string.stringify;
@@ -3640,6 +3805,10 @@ function addRouter(root, fallback, callback) {
   };
 }
 
+// node_modules/svelte/ssr.mjs
+function onMount() {
+}
+
 // node_modules/yrv/build/dist/lib/Router.svelte
 function create_if_block(ctx) {
   let current3;
@@ -3659,7 +3828,14 @@ function create_if_block(ctx) {
     p(ctx2, dirty) {
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 64)) {
-          update_slot(default_slot, default_slot_template, ctx2, ctx2[6], !current3 ? -1 : dirty, null, null);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[6],
+            !current3 ? get_all_dirty_from_scope(ctx2[6]) : get_slot_changes(default_slot_template, ctx2[6], dirty, null),
+            null
+          );
         }
       }
     },
@@ -3742,8 +3918,8 @@ function unassignRoute(route) {
   findRoutes();
 }
 function instance($$self, $$props, $$invalidate) {
-  let $basePath;
   let $router;
+  let $basePath;
   component_subscribe($$self, router, ($$value) => $$invalidate(5, $router = $$value));
   let { $$slots: slots = {}, $$scope } = $$props;
   let cleanup;
@@ -3824,7 +4000,7 @@ var Router = class extends SvelteComponent {
 var Router_default = Router;
 
 // node_modules/yrv/build/dist/lib/Route.svelte
-var get_default_slot_spread_changes = (dirty) => dirty & 8 > 0 ? -1 : 0;
+var get_default_slot_spread_changes = (dirty) => dirty & 8;
 var get_default_slot_changes = (dirty) => ({});
 var get_default_slot_context = (ctx) => ({ ...ctx[3] });
 function create_if_block2(ctx) {
@@ -3910,7 +4086,14 @@ function create_else_block_1(ctx) {
     p(ctx2, dirty) {
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 32776)) {
-          update_slot_spread(default_slot, default_slot_template, ctx2, ctx2[15], !current3 ? -1 : dirty, get_default_slot_changes, get_default_slot_spread_changes, get_default_slot_context);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[15],
+            get_default_slot_spread_changes(dirty) || !current3 ? get_all_dirty_from_scope(ctx2[15]) : get_slot_changes(default_slot_template, ctx2[15], dirty, get_default_slot_changes),
+            get_default_slot_context
+          );
         }
       }
     },
@@ -4068,6 +4251,8 @@ function create_if_block_2(ctx) {
   const if_blocks = [];
   function select_block_type_1(ctx2, dirty) {
     if (dirty & 2)
+      show_if = null;
+    if (show_if == null)
       show_if = !!isSvelteComponent(ctx2[1]);
     if (show_if)
       return 0;
@@ -4350,8 +4535,8 @@ function create_fragment2(ctx) {
   };
 }
 function instance2($$self, $$props, $$invalidate) {
-  let $routePath;
   let $routeInfo;
+  let $routePath;
   component_subscribe($$self, routeInfo, ($$value) => $$invalidate(14, $routeInfo = $$value));
   let { $$slots: slots = {}, $$scope } = $$props;
   let { key = null } = $$props;
@@ -4528,7 +4713,14 @@ function create_else_block2(ctx) {
     p(ctx2, dirty) {
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 65536)) {
-          update_slot(default_slot, default_slot_template, ctx2, ctx2[16], !current3 ? -1 : dirty, null, null);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[16],
+            !current3 ? get_all_dirty_from_scope(ctx2[16]) : get_slot_changes(default_slot_template, ctx2[16], dirty, null),
+            null
+          );
         }
       }
       set_attributes(a, a_data = get_spread_update(a_levels, [
@@ -4587,6 +4779,8 @@ function create_if_block3(ctx) {
       if (default_slot) {
         default_slot.m(button_1, null);
       }
+      if (button_1.autofocus)
+        button_1.focus();
       ctx[18](button_1);
       current3 = true;
       if (!mounted) {
@@ -4597,7 +4791,14 @@ function create_if_block3(ctx) {
     p(ctx2, dirty) {
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 65536)) {
-          update_slot(default_slot, default_slot_template, ctx2, ctx2[16], !current3 ? -1 : dirty, null, null);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[16],
+            !current3 ? get_all_dirty_from_scope(ctx2[16]) : get_slot_changes(default_slot_template, ctx2[16], dirty, null),
+            null
+          );
         }
       }
       set_attributes(button_1, button_1_data = get_spread_update(button_1_levels, [
@@ -4733,19 +4934,26 @@ function instance3($$self, $$props, $$invalidate) {
           specs += `,height=${wmatch[1]},top=${(window.screen.height - wmatch[1]) / 2}`;
         }
         const w = window.open(href, "", specs);
-        const t2 = setInterval(() => {
-          if (w.closed) {
-            dispatch("close");
-            clearInterval(t2);
-          }
-        }, 120);
+        const t2 = setInterval(
+          () => {
+            if (w.closed) {
+              dispatch("close");
+              clearInterval(t2);
+            }
+          },
+          120
+        );
       } else
         window.location.href = href;
       return;
     }
-    fixedLocation(href, () => {
-      navigateTo(fixedHref || "/", { reload, replace });
-    }, () => dispatch("click", e));
+    fixedLocation(
+      href,
+      () => {
+        navigateTo(fixedHref || "/", { reload, replace });
+      },
+      () => dispatch("click", e)
+    );
   }
   function handleAnchorOnClick(e) {
     if (e.metaKey || e.ctrlKey || e.button !== 0) {
@@ -4867,7 +5075,7 @@ Object.defineProperty(Router_default, "hashchange", {
 });
 
 // src/web/js/lib/Auth.svelte
-var import_gists3 = __toModule(require_gists());
+var import_gists3 = __toESM(require_gists(), 1);
 
 // src/web/js/lib/Icon.svelte
 function create_fragment4(ctx) {
@@ -4925,12 +5133,8 @@ var Icon = class extends SvelteComponent {
 var Icon_default = Icon;
 
 // node_modules/smoo/build/components/Fence.svelte
-var { document: document_1 } = globals;
-function add_css() {
-  var style = element("style");
-  style.id = "svelte-1fad9tz-style";
-  style.textContent = ".smoo-fence--overlay.svelte-1fad9tz{top:0;left:0;width:100%;height:100%;z-index:1;display:flex;position:fixed;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, .3)}.smoo-fence--wrapper.svelte-1fad9tz{background-color:white;box-shadow:0 2px 3px rgba(0, 0, 0, .2)}.smoo-fence--loading.svelte-1fad9tz{opacity:.3;pointer-events:none}.smoo-fence--inline.svelte-1fad9tz{display:inline-block}.smoo-fence--form.svelte-1fad9tz{padding:10px}";
-  append(document_1.head, style);
+function add_css(target) {
+  append_styles(target, "svelte-1fad9tz", ".smoo-fence--overlay.svelte-1fad9tz{top:0;left:0;width:100%;height:100%;z-index:1;display:flex;position:fixed;align-items:center;justify-content:center;background-color:rgba(0, 0, 0, .3)}.smoo-fence--wrapper.svelte-1fad9tz{background-color:white;box-shadow:0 2px 3px rgba(0, 0, 0, .2)}.smoo-fence--loading.svelte-1fad9tz{opacity:.3;pointer-events:none}.smoo-fence--inline.svelte-1fad9tz{display:inline-block}.smoo-fence--form.svelte-1fad9tz{padding:10px}");
 }
 var get_after_slot_changes = (dirty) => ({});
 var get_after_slot_context = (ctx) => ({});
@@ -5001,12 +5205,26 @@ function create_if_block4(ctx) {
     p(ctx2, dirty) {
       if (before_slot) {
         if (before_slot.p && (!current3 || dirty & 4096)) {
-          update_slot(before_slot, before_slot_template, ctx2, ctx2[12], !current3 ? -1 : dirty, get_before_slot_changes, get_before_slot_context);
+          update_slot_base(
+            before_slot,
+            before_slot_template,
+            ctx2,
+            ctx2[12],
+            !current3 ? get_all_dirty_from_scope(ctx2[12]) : get_slot_changes(before_slot_template, ctx2[12], dirty, get_before_slot_changes),
+            get_before_slot_context
+          );
         }
       }
       if (main_slot) {
         if (main_slot.p && (!current3 || dirty & 4128)) {
-          update_slot(main_slot, main_slot_template, ctx2, ctx2[12], !current3 ? -1 : dirty, get_main_slot_changes, get_main_slot_context);
+          update_slot_base(
+            main_slot,
+            main_slot_template,
+            ctx2,
+            ctx2[12],
+            !current3 ? get_all_dirty_from_scope(ctx2[12]) : get_slot_changes(main_slot_template, ctx2[12], dirty, get_main_slot_changes),
+            get_main_slot_context
+          );
         }
       }
       if (!ctx2[0]) {
@@ -5030,7 +5248,14 @@ function create_if_block4(ctx) {
       }
       if (after_slot) {
         if (after_slot.p && (!current3 || dirty & 4096)) {
-          update_slot(after_slot, after_slot_template, ctx2, ctx2[12], !current3 ? -1 : dirty, get_after_slot_changes, get_after_slot_context);
+          update_slot_base(
+            after_slot,
+            after_slot_template,
+            ctx2,
+            ctx2[12],
+            !current3 ? get_all_dirty_from_scope(ctx2[12]) : get_slot_changes(after_slot_template, ctx2[12], dirty, get_after_slot_changes),
+            get_after_slot_context
+          );
         }
       }
       if (!current3 || dirty & 16 && div1_class_value !== (div1_class_value = "smoo-fence--" + ctx2[4] + " svelte-1fad9tz")) {
@@ -5105,7 +5330,14 @@ function create_if_block_12(ctx) {
     p(ctx2, dirty) {
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 4096)) {
-          update_slot(default_slot, default_slot_template, ctx2, ctx2[12], !current3 ? -1 : dirty, null, null);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[12],
+            !current3 ? get_all_dirty_from_scope(ctx2[12]) : get_slot_changes(default_slot_template, ctx2[12], dirty, null),
+            null
+          );
         }
       }
       set_attributes(form, form_data = get_spread_update(form_levels, [
@@ -5320,10 +5552,13 @@ function instance5($$self, $$props, $$invalidate) {
             const firstNode = children2[0];
             push(ref, closeMe, document.activeElement, firstNode, lastNode, () => loading);
             if (autofocus) {
-              setTimeout(() => {
-                if (firstNode && !loading)
-                  firstNode.focus();
-              }, 60);
+              setTimeout(
+                () => {
+                  if (firstNode && !loading)
+                    firstNode.focus();
+                },
+                60
+              );
             }
           }
         }
@@ -5361,17 +5596,23 @@ function instance5($$self, $$props, $$invalidate) {
 var Fence = class extends SvelteComponent {
   constructor(options3) {
     super();
-    if (!document_1.getElementById("svelte-1fad9tz-style"))
-      add_css();
-    init(this, options3, instance5, create_fragment5, safe_not_equal, {
-      class: 8,
-      id: 9,
-      modal: 10,
-      noform: 0,
-      visible: 1,
-      loading: 2,
-      autofocus: 11
-    });
+    init(
+      this,
+      options3,
+      instance5,
+      create_fragment5,
+      safe_not_equal,
+      {
+        class: 8,
+        id: 9,
+        modal: 10,
+        noform: 0,
+        visible: 1,
+        loading: 2,
+        autofocus: 11
+      },
+      add_css
+    );
   }
 };
 var Fence_default = Fence;
@@ -5402,7 +5643,14 @@ function create_main_slot(ctx) {
     p(ctx2, dirty) {
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 4)) {
-          update_slot(default_slot, default_slot_template, ctx2, ctx2[2], !current3 ? -1 : dirty, get_default_slot_changes2, get_default_slot_context2);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[2],
+            !current3 ? get_all_dirty_from_scope(ctx2[2]) : get_slot_changes(default_slot_template, ctx2[2], dirty, get_default_slot_changes2),
+            get_default_slot_context2
+          );
         }
       }
     },
@@ -5492,7 +5740,7 @@ var Modal = class extends SvelteComponent {
 var Modal_default = Modal;
 
 // src/web/js/lib/Opts.svelte
-var import_gists = __toModule(require_gists());
+var import_gists = __toESM(require_gists(), 1);
 function get_each_context(ctx, list, i) {
   const child_ctx = ctx.slice();
   child_ctx[11] = list[i];
@@ -5539,8 +5787,9 @@ function create_else_block3(ctx) {
       for (let i = 0; i < each_blocks.length; i += 1) {
         each_blocks[i].m(select, null);
       }
-      if (select_data.multiple)
-        select_options(select, select_data.value);
+      (select_data.multiple ? select_options : select_option)(select, select_data.value);
+      if (select.autofocus)
+        select.focus();
       if (!mounted) {
         dispose = listen(select, "change", change_handler_1);
         mounted = true;
@@ -5567,8 +5816,8 @@ function create_else_block3(ctx) {
         each_blocks.length = each_value_1.length;
       }
       set_attributes(select, select_data = get_spread_update(select_levels, [ctx[11], { title: select_title_value }]));
-      if (dirty & 2 && select_data.multiple)
-        select_options(select, select_data.value);
+      if (dirty & 2 && "value" in select_data)
+        (select_data.multiple ? select_options : select_option)(select, select_data.value);
     },
     d(detaching) {
       if (detaching)
@@ -5604,6 +5853,8 @@ function create_if_block5(ctx) {
     },
     m(target, anchor) {
       insert(target, input, anchor);
+      if (input.autofocus)
+        input.focus();
       if (!mounted) {
         dispose = listen(input, "change", change_handler);
         mounted = true;
@@ -6253,7 +6504,7 @@ var Save = class extends SvelteComponent {
 var Save_default = Save;
 
 // src/web/js/lib/Gists.svelte
-var import_gists2 = __toModule(require_gists());
+var import_gists2 = __toESM(require_gists(), 1);
 function get_each_context2(ctx, list, i) {
   const child_ctx = ctx.slice();
   child_ctx[7] = list[i];
@@ -6304,7 +6555,7 @@ function create_if_block6(ctx) {
 }
 function create_else_block4(ctx) {
   let ol;
-  let each_value = ctx[3];
+  let each_value = ctx[2];
   let each_blocks = [];
   for (let i = 0; i < each_value.length; i += 1) {
     each_blocks[i] = create_each_block2(get_each_context2(ctx, each_value, i));
@@ -6324,8 +6575,8 @@ function create_else_block4(ctx) {
       }
     },
     p(ctx2, dirty) {
-      if (dirty & 8) {
-        each_value = ctx2[3];
+      if (dirty & 4) {
+        each_value = ctx2[2];
         let i;
         for (i = 0; i < each_value.length; i += 1) {
           const child_ctx = get_each_context2(ctx2, each_value, i);
@@ -6403,14 +6654,14 @@ function create_each_block_12(ctx) {
       append(li, t4);
     },
     p(ctx2, dirty) {
-      if (dirty & 8 && t0_value !== (t0_value = ctx2[10] + ""))
+      if (dirty & 4 && t0_value !== (t0_value = ctx2[10] + ""))
         set_data(t0, t0_value);
-      if (dirty & 8 && t2_value !== (t2_value = (ctx2[11].size / 1024).toFixed(2) + ""))
+      if (dirty & 4 && t2_value !== (t2_value = (ctx2[11].size / 1024).toFixed(2) + ""))
         set_data(t2, t2_value);
-      if (dirty & 8 && a_title_value !== (a_title_value = "Type: " + ctx2[11].type)) {
+      if (dirty & 4 && a_title_value !== (a_title_value = "Type: " + ctx2[11].type)) {
         attr(a, "title", a_title_value);
       }
-      if (dirty & 8 && a_href_value !== (a_href_value = ctx2[11].raw_url)) {
+      if (dirty & 4 && a_href_value !== (a_href_value = ctx2[11].raw_url)) {
         attr(a, "href", a_href_value);
       }
     },
@@ -6485,12 +6736,12 @@ function create_each_block2(ctx) {
     },
     p(new_ctx, dirty) {
       ctx = new_ctx;
-      if (dirty & 8 && t0_value !== (t0_value = (ctx[7].description || ctx[7].id) + ""))
+      if (dirty & 4 && t0_value !== (t0_value = (ctx[7].description || ctx[7].id) + ""))
         set_data(t0, t0_value);
-      if (dirty & 8 && a_href_value !== (a_href_value = ctx[7].html_url)) {
+      if (dirty & 4 && a_href_value !== (a_href_value = ctx[7].html_url)) {
         attr(a, "href", a_href_value);
       }
-      if (dirty & 8) {
+      if (dirty & 4) {
         each_value_1 = Object.entries(ctx[7].files);
         let i;
         for (i = 0; i < each_value_1.length; i += 1) {
@@ -6527,7 +6778,7 @@ function create_fragment9(ctx) {
   let if_block_anchor;
   let mounted;
   let dispose;
-  let if_block = ctx[2] && create_if_block6(ctx);
+  let if_block = ctx[3] && create_if_block6(ctx);
   return {
     c() {
       label = element("label");
@@ -6562,7 +6813,7 @@ function create_fragment9(ctx) {
       if (dirty & 1) {
         set_input_value(input, ctx2[0]);
       }
-      if (ctx2[2]) {
+      if (ctx2[3]) {
         if (if_block) {
           if_block.p(ctx2, dirty);
         } else {
@@ -6594,7 +6845,7 @@ function create_fragment9(ctx) {
 function instance8($$self, $$props, $$invalidate) {
   let filtered;
   let $loggedIn;
-  component_subscribe($$self, import_gists2.loggedIn, ($$value) => $$invalidate(2, $loggedIn = $$value));
+  component_subscribe($$self, import_gists2.loggedIn, ($$value) => $$invalidate(3, $loggedIn = $$value));
   let term = "";
   let data = [];
   let pending = true;
@@ -6611,10 +6862,10 @@ function instance8($$self, $$props, $$invalidate) {
   $$self.$$.update = () => {
     if ($$self.$$.dirty & 17) {
       $:
-        $$invalidate(3, filtered = data.filter((x) => !term || x.description.toLowerCase().includes(term.toLowerCase()) || Object.keys(x.files).some((k) => k.toLowerCase().includes(term.toLowerCase()))));
+        $$invalidate(2, filtered = data.filter((x) => !term || x.description.toLowerCase().includes(term.toLowerCase()) || Object.keys(x.files).some((k) => k.toLowerCase().includes(term.toLowerCase()))));
     }
   };
-  return [term, pending, $loggedIn, filtered, data, input_input_handler, click_handler];
+  return [term, pending, filtered, $loggedIn, data, input_input_handler, click_handler];
 }
 var Gists = class extends SvelteComponent {
   constructor(options3) {
@@ -7229,23 +7480,27 @@ function create_fragment10(ctx) {
   };
 }
 function instance9($$self, $$props, $$invalidate) {
+  let $current;
+  let $schemas;
   let $loggedIn;
   let $session;
-  let $schemas;
-  let $current;
+  component_subscribe($$self, import_gists3.current, ($$value) => $$invalidate(5, $current = $$value));
+  component_subscribe($$self, import_gists3.schemas, ($$value) => $$invalidate(6, $schemas = $$value));
   component_subscribe($$self, import_gists3.loggedIn, ($$value) => $$invalidate(0, $loggedIn = $$value));
   component_subscribe($$self, import_gists3.session, ($$value) => $$invalidate(1, $session = $$value));
-  component_subscribe($$self, import_gists3.schemas, ($$value) => $$invalidate(5, $schemas = $$value));
-  component_subscribe($$self, import_gists3.current, ($$value) => $$invalidate(6, $current = $$value));
   function done() {
     (0, import_gists3.me)().then((data) => {
       if (!data.login)
         return;
       set_store_value(import_gists3.loggedIn, $loggedIn = true, $loggedIn);
-      set_store_value(import_gists3.session, $session = {
-        username: data.login,
-        fullname: data.name
-      }, $session);
+      set_store_value(
+        import_gists3.session,
+        $session = {
+          username: data.login,
+          fullname: data.name
+        },
+        $session
+      );
       window.localStorage._DATA = JSON.stringify($session);
     });
   }
@@ -7304,7 +7559,14 @@ function create_fragment11(ctx) {
       }
       if (default_slot) {
         if (default_slot.p && (!current3 || dirty & 128)) {
-          update_slot(default_slot, default_slot_template, ctx2, ctx2[7], !current3 ? -1 : dirty, null, null);
+          update_slot_base(
+            default_slot,
+            default_slot_template,
+            ctx2,
+            ctx2[7],
+            !current3 ? get_all_dirty_from_scope(ctx2[7]) : get_slot_changes(default_slot_template, ctx2[7], dirty, null),
+            null
+          );
         }
       }
     },
@@ -7410,7 +7672,7 @@ var Ace = class extends SvelteComponent {
 var Ace_default = Ace;
 
 // src/web/js/lib/Editor.svelte
-var import_gists4 = __toModule(require_gists());
+var import_gists4 = __toESM(require_gists(), 1);
 function get_each_context3(ctx, list, i) {
   const child_ctx = ctx.slice();
   child_ctx[33] = list[i];
@@ -8057,10 +8319,14 @@ Are you sure?`.trim()))
     if (e.keyCode === 27)
       close();
     if (validate(e) && e.keyCode === 13) {
-      set_store_value(import_gists4.schemas, $schemas = $schemas.concat({
-        filename: e.target.value,
-        content: buffer
-      }), $schemas);
+      set_store_value(
+        import_gists4.schemas,
+        $schemas = $schemas.concat({
+          filename: e.target.value,
+          content: buffer
+        }),
+        $schemas
+      );
       set_store_value(import_gists4.current, $current = $schemas[$schemas.length - 1], $current);
       $$invalidate(2, isAdding = false);
       e.target.value = "";
@@ -8119,10 +8385,17 @@ Are you sure?`.trim()))
     $$invalidate(4, pending = false);
     $$invalidate(2, isAdding = false);
     $$invalidate(3, isEditing = false);
-    set_store_value(import_gists4.schemas, $schemas = Object.keys(data.files).filter((x) => ["text/plain", "application/json"].includes(data.files[x].type)).reduce((prev, cur) => {
-      prev.push(data.files[cur]);
-      return prev;
-    }, []), $schemas);
+    set_store_value(
+      import_gists4.schemas,
+      $schemas = Object.keys(data.files).filter((x) => ["text/plain", "application/json"].includes(data.files[x].type)).reduce(
+        (prev, cur) => {
+          prev.push(data.files[cur]);
+          return prev;
+        },
+        []
+      ),
+      $schemas
+    );
     set_store_value(import_gists4.current, $current = $schemas[0], $current);
   });
   function input_1_binding($$value) {
@@ -8181,7 +8454,7 @@ Are you sure?`.trim()))
 var Editor = class extends SvelteComponent {
   constructor(options3) {
     super();
-    init(this, options3, instance11, create_fragment12, safe_not_equal, {}, [-1, -1]);
+    init(this, options3, instance11, create_fragment12, safe_not_equal, {}, null, [-1, -1]);
   }
 };
 var Editor_default = Editor;
@@ -8189,8 +8462,8 @@ var Editor_default = Editor;
 // app.js
 function main() {
   if (typeof window.JSONSchemaFaker !== "undefined") {
-    window.JSONSchemaFaker.extend("faker", () => window.faker);
-    window.JSONSchemaFaker.extend("chance", () => window.chance);
+    JSONSchemaFaker.extend("faker", () => window.faker);
+    JSONSchemaFaker.extend("chance", () => window.chance);
   }
   new Auth_default({ target: document.getElementById("auth") });
   new Editor_default({ target: document.getElementById("editor") });
