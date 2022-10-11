@@ -11,7 +11,7 @@
       } else {
         root.JSONSchemaFaker = factory();
       }
-    }(typeof self !== 'undefined' ? self : this, () => JSONSchemaFaker));
+    }(typeof self !== 'undefined' ? self : typeof window !== 'undefined' ? window : globalThis, () => JSONSchemaFaker));
  ---
  */
 

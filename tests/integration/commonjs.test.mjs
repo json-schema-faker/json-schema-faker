@@ -1,10 +1,7 @@
 import { expect } from 'chai';
 import * as td from 'testdouble';
 
-import jsfExports, { JSONSchemaFaker } from '../../dist/main.cjs';
-
-// CommonJS always exports `default` and named exports in the same `module.exports` object
-const jsf = jsfExports.default;
+import jsf, { JSONSchemaFaker } from '../../dist/main.cjs';
 
 describe('CommonJS', () => {
   afterEach(() => {

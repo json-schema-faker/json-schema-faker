@@ -12,7 +12,4 @@ if (typeof $RefParser !== 'undefined' && typeof JSONPath !== 'undefined') {
   setDependencies({ ...JSONPath, $RefParser });
 }
 
-import jsf from './lib/index.mjs';
-
-export { default } from './lib/index.mjs';
-export const JSONSchemaFaker = jsf;
+export { default, JSONSchemaFaker } from './lib/index.mjs';
