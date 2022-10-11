@@ -4,7 +4,6 @@
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "types": "index.d.ts",
-  "type": "module",
   "bin": {
     "jsf": "bin/gen.cjs"
   },
