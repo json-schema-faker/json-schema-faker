@@ -9,7 +9,9 @@
           "default": false
         },
         "equal": false,
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "number can be 0",
@@ -18,7 +20,9 @@
           "default": 0
         },
         "equal": 0,
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "integer can be 0",
@@ -27,7 +31,9 @@
           "default": 0
         },
         "equal": 0,
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "string can be empty",
@@ -36,7 +42,9 @@
           "default": ""
         },
         "equal": "",
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "objects can be null",
@@ -45,7 +53,9 @@
           "default": null
         },
         "equal": null,
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       },
       {
         "description": "array of booleans all being false",
@@ -59,7 +69,9 @@
           }
         },
         "equal": [ false, false, false, false, false ],
-        "require": "core/option/useDefaultValue"
+        "set": {
+          "useDefaultValue": true
+        }
       }
     ]
   }

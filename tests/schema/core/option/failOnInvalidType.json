@@ -8,7 +8,9 @@
           "type": "nonExistentType"
         },
         "valid": false,
-        "require": "core/option/failOnInvalidType"
+        "set": {
+          "failOnInvalidTypes": false
+        }
       }
     ]
   }

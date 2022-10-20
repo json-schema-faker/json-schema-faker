@@ -126,9 +126,11 @@ jsf.locate('faker');
 - `refDepthMax` &mdash; Set a maximum circular `$ref` depth to render (default: 3)
 - `resolveJsonPath` &mdash; If enabled, it will expand `jsonPath` keywords on all generated objects  (default: `false`)
 - `reuseProperties` &mdash; If enabled, it will try to generate missing properties from existing ones. Only when `fillProperties` is enabled too  (default: `false`)
+- `sortProperties` &mdash; If `true`, properties will be sorted alphabetically, with `false` original order is kept, or `null` to keep them randomized (default: `null`)
 - `fillProperties` &mdash; If enabled, it will try to generate missing properties to fulfill the schema definition (default: `true`)
 - `random` &mdash; Setup a custom _randonmess_ generator, useful for getting deterministic results (default: `Math.random`)
 - `replaceEmptyByRandomValue` &mdash; Replace default empty value by a random value (default: `false`)
+- `omitNulls` &mdash; Remove any generated `null` value from the resulting value (default: `false`)
 
 ## Building
 

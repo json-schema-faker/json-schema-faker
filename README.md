@@ -29,9 +29,11 @@ Breaking-changes towards `v0.5.x` API:
 
 ## Contributors
 
-* [Alvaro Cabrera](https://twitter.com/pateketrueke)
-* [Tomasz Ducin](https://twitter.com/tomasz_ducin)
-* artwork by [Ajay Karat](http://www.devilsgarage.com/)
+<a href="https://github.com/json-schema-faker/json-schema-faker/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=json-schema-faker/json-schema-faker" />
+</a>
+
+&mdash; **Artwork by [Ajay Karat](http://www.devilsgarage.com/)**
 
 > We are more than happy to welcome new contributors, our project is still being developed, but we need more feedback!
 >

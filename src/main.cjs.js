@@ -1,8 +1,4 @@
-import $RefParser from 'json-schema-ref-parser';
-import { JSONPath } from 'jsonpath-plus';
+const jsf = require('./lib/main.mjs').default;
 
-import { setDependencies } from './lib/vendor';
-
-setDependencies({ $RefParser, JSONPath });
-
-export { default } from './lib';
+module.exports = jsf;
+module.exports.JSONSchemaFaker = { ...jsf };

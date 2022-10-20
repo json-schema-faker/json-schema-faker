@@ -1,0 +1,39 @@
+[
+  {
+    "description": "enum and oneOf will generate NaN",
+    "tests": [
+      {
+        "description": "should ignore schema.type if enum is used",
+        "schema": {
+          "properties": {
+            "value": {
+              "enum": [
+                "Int",
+                1,
+                "String",
+                2,
+                "Float",
+                3,
+                "Boolean",
+                4
+              ],
+              "oneOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            }
+          },
+          "required": [
+            "value"
+          ],
+          "additionalProperties": false
+        },
+        "valid": true
+      }
+    ]
+  }
+]

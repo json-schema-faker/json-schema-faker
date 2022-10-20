@@ -1,0 +1,55 @@
+{
+  "description": "properties with not",
+  "tests": [
+    {
+      "description": "should not be included in with additional properties when not schema matched",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "type": "string",
+            "enum": ["value"]
+          },
+          "notAllowed": {
+            "not": {}
+          }
+        }
+      },
+      "equal": {
+        "allowed": "value"
+      },
+      "valid": true,
+      "set": {
+        "useDefaultValue": true,
+        "fixedProbabilities": true,
+        "optionalsProbability": 1.0
+      }
+    },
+    {
+      "description": "should not be included in with additional properties when not is true",
+      "schema": {
+        "$schema": "http://json-schema.org/draft-06/schema#",
+        "type": "object",
+        "properties": {
+          "allowed": {
+            "type": "string",
+            "enum": ["value"]
+          },
+          "notAllowed": {
+            "not": true
+          }
+        }
+      },
+      "equal": {
+        "allowed": "value"
+      },
+      "valid": false,
+      "set": {
+        "useDefaultValue": true,
+        "fixedProbabilities": true,
+        "optionalsProbability": 1.0
+      },
+      "comment": "this is fine... but z-schema think is not?"
+    }
+  ]
+}

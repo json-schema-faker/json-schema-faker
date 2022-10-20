@@ -30,7 +30,9 @@
             }
           }
         },
-        "require": "core/option/enable-jsonpath"
+        "set": {
+          "resolveJsonPath": true
+        }
       }
     ]
   }

@@ -3,8 +3,7 @@ import { writable } from 'svelte/store';
 export const BASE_URL = 'https://github.com';
 export const API_URL = 'https://api.github.com';
 
-/* global Promise, fetch */
-/* global AUTH_ID, AUTH_SECRET, PROXY_URL */
+/* xglobal Promise, fetch */
 
 const data = window.localStorage._DATA;
 
@@ -17,7 +16,7 @@ export const options = writable(null);
 
 // builds a fixed URL for github.api calls
 export function getUrl(x, path, params) {
-  const url = `${x}${path}?client_id=${AUTH_ID}&client_secret=${AUTH_SECRET}`;
+  const url = `${x}${path}?client_id=${process.env.AUTH_ID}&client_secret=${process.env.AUTH_SECRET}`;
   const redirect = `redirect_uri=${encodeURIComponent(`${location.protocol}//${location.host}/`)}`;
 
   return params
@@ -26,7 +25,7 @@ export function getUrl(x, path, params) {
 }
 
 export function getJSON(path, params, _options) {
-  return fetch(`${PROXY_URL}${getUrl(API_URL, path, _options)}`, {
+  return fetch(`${process.env.PROXY_URL}${getUrl(API_URL, path, _options)}`, {
     ...params,
     headers: {
       Authorization: `bearer ${window.localStorage._AUTH}`,
@@ -89,7 +88,7 @@ export function save(schemas) {
   // FIXME: patch gist if owner matches?
 
   const url = getUrl(API_URL, '/gists', false);
-  const fixedUrl = `${PROXY_URL}${url}`;
+  const fixedUrl = `${process.env.PROXY_URL}${url}`;
 
   return fetch(fixedUrl, {
     method: 'POST',
@@ -118,7 +117,7 @@ export function auth(tokenId, callback) {
     code: tokenId,
   });
 
-  fetch(`${PROXY_URL}${url}`, {
+  fetch(`${process.env.PROXY_URL}${url}`, {
     method: 'POST',
     headers: {
       Accept: 'application/json',

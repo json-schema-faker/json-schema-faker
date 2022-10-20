@@ -47,7 +47,9 @@ html
         window.JSONSchemaFaker = jsf;
       import(from='js/app.js')
     else
-      import(from='vendor.js main.iife.js js/app.js')
+      script(src='vendor.js')
+      script(src='main.iife.js')
+      script(src='js/app.js')
 
     if NODE_ENV === 'production'
       script.
