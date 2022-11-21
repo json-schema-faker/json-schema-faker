@@ -278,7 +278,7 @@ function objectType(value, path, resolve, traverseCallback) {
   if (optionAPI('sortProperties') !== null) {
     const originalKeys = Object.keys(properties);
     const sortedKeys = Object.keys(props).sort((a, b) => {
-      return optionAPI('sortProperties') ? a.localeCompare(b) : originalKeys.indexOf(b) - originalKeys.indexOf(a);
+      return optionAPI('sortProperties') ? a.localeCompare(b) : originalKeys.indexOf(a) - originalKeys.indexOf(b);
     });
 
     sortedObj = sortedKeys.reduce((memo, key) => {
