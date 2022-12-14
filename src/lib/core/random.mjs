@@ -127,7 +127,7 @@ function date(step) {
     return by(step);
   }
 
-  const now = new Date();
+  const now = new Date('2022-12-14');
   const days = number(-1000, env.MOST_NEAR_DATETIME);
 
   now.setTime(now.getTime() - days);
