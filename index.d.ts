@@ -28,6 +28,8 @@ export interface JSONSchemaFakerOptions {
   fillProperties?: boolean;
   replaceEmptyByRandomValue?: boolean;
   random?: () => number | number;
+  minDateTime?: Date | string | number;
+  maxDateTime?: Date | string | number;
   renderTitle?: boolean;
   renderDescription?: boolean;
   renderComment?: boolean;

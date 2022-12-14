@@ -31,6 +31,8 @@ defaults.sortProperties = null;
 defaults.replaceEmptyByRandomValue = false;
 
 defaults.random = Math.random;
+defaults.minDateTime = -2524608000000;
+defaults.maxDateTime = 1000;
 
 defaults.renderTitle = true;
 defaults.renderDescription = true;

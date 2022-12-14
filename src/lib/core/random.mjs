@@ -127,12 +127,27 @@ function date(step) {
     return by(step);
   }
 
-  const now = new Date('2022-12-14');
-  const days = number(-1000, env.MOST_NEAR_DATETIME);
+  let earliest = optionAPI('minDateTime');
+  let latest = optionAPI('maxDateTime');
 
-  now.setTime(now.getTime() - days);
+  // convert to date if string
+  if (typeof earliest === 'string') {
+    earliest = new Date(earliest);
+  }
+  if (typeof latest === 'string') {
+    latest = new Date(latest);
+  }
 
-  return now;
+  const now = new Date().getTime();
+  // convert to date if number
+  if (typeof earliest === 'number') {
+    earliest = new Date(now + earliest);
+  }
+  if (typeof latest === 'number') {
+    latest = new Date(now + latest);
+  }
+
+  return new Date(getRandom(earliest.getTime(), latest.getTime()));
 }
 
 export default {
