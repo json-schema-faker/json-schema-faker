@@ -1,0 +1,43 @@
+[
+    {
+      "description": "random option",
+      "tests": [
+        {
+          "description": "should allow to set min and max values for date-time",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid": true,
+          "equal": "2017-04-19T01:01:01.0Z",
+          "set": {
+            "minDateTime": "1977-11-22",
+            "maxDateTime": "2017-04-19"
+          },
+          "repeat": 1,
+          "seed": 1
+        }
+      ]
+    },
+    {
+      "description": "random option",
+      "tests": [
+        {
+          "description": "should allow to set min and max values for date-time",
+          "schema": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "valid": true,
+          "equal": "2000-02-04T01:01:01.0Z",
+          "set": {
+            "minDateTime": "2000-02-03",
+            "maxDateTime": "2000-02-05"
+          },
+          "repeat": 1,
+          "seed": 0.5
+        }
+      ]
+    }
+  ]
+  
