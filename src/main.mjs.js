@@ -1,7 +1,9 @@
 /**
   ---
   $banner:
-    js: import './vendor.js';
+    js: |
+      if(typeof process!=='undefined')global.location={href:process.cwd()+'/'};
+      import './vendor.js';
   ---
   */
 
