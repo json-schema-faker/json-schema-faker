@@ -15,17 +15,16 @@
  ---
  */
 
-const { setDependencies } = require('./lib/vendor');
-const JSONSchemaFaker = require('./lib').default;
+const jsf = require('./shared');
 
 if (typeof window !== 'undefined') {
-  setDependencies({
+  jsf.setDependencies({
     ...window.JSONPath,
     $RefParser: window.$RefParser,
   });
 
-  window.JSONSchemaFaker = JSONSchemaFaker;
+  window.JSONSchemaFaker = jsf.default;
 }
 
-module.exports = JSONSchemaFaker;
-module.exports.JSONSchemaFaker = JSONSchemaFaker;
+module.exports = jsf.default;
+module.exports.JSONSchemaFaker = jsf.JSONSchemaFaker;

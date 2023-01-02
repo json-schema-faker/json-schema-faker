@@ -11,11 +11,14 @@
   "main": "dist/index.cjs",
   "module": "dist/main.mjs",
   "browser": "dist/main.iife.js",
-  "unpkg": "dist/bundle.cjs",
+  "unpkg": "dist/bundle.js",
   "exports": {
     ".": {
       "import": "./dist/main.mjs",
       "require": "./dist/main.cjs"
+    },
+    "./esm": {
+      "import": "./index.js"
     }
   },
   "scripts": {
@@ -55,7 +58,8 @@
       "**/*.{cjs,mjs}.js:{filename}"
     ],
     "bundle": [
-      "**/main*.js",
+      "**/main.*.js",
+      "**/shared.js",
       "**/app.js"
     ],
     "external": [
