@@ -117,7 +117,7 @@ if (!process.stdin.isTTY) {
 } else {
   generate(readFileSync(argv._[0]).toString(), (err, output) => {
     if (err) {
-      console.error(err.message);
+      console.error(err);
       process.exit(1);
     } else {
       process.stdout.write(output);

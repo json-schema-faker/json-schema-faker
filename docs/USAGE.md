@@ -48,7 +48,7 @@ const schema = {
         },
         name: {
           type: "string",
-          faker: "name.findName",
+          faker: "name.fullName",
         },
         email: {
           type: "string",

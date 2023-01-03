@@ -53,7 +53,7 @@
         "properties": {
           "z": {
             "type": "string",
-            "faker": "name.findName"
+            "faker": "name.fullName"
           },
           "b": {
             "type": "string",

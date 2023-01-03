@@ -1,4 +1,4 @@
-import faker from '@faker-js/faker/locale/de.js';
+import { faker } from '@faker-js/faker/locale/de';
 
 export function extend() {
   faker.mixin = (namespace, fnObject) => {

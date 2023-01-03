@@ -22,7 +22,7 @@
               "type": "string"
             },
             "prop$": {
-              "faker": "name.findName"
+              "faker": "name.fullName"
             }
           },
           "required": [

@@ -1,4 +1,4 @@
-const jsf = require('./shared').default;
+const jsf = require('./lib/main').default;
 
 module.exports = jsf;
 module.exports.JSONSchemaFaker = { ...jsf };

@@ -15,11 +15,11 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "faker": "name.findName"
+                  "faker": "name.fullName"
                 },
                 "phone": {
                   "type": "string",
-                  "faker": "phone.phoneNumber"
+                  "faker": "phone.number"
                 },
                 "email": {
                   "type": "string",
