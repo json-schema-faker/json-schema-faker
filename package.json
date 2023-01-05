@@ -10,12 +10,12 @@
   },
   "main": "dist/index.cjs",
   "module": "dist/main.mjs",
-  "browser": "dist/main.iife.js",
   "unpkg": "dist/bundle.js",
   "exports": {
     ".": {
       "import": "./dist/main.mjs",
-      "require": "./dist/main.cjs"
+      "require": "./dist/main.cjs",
+      "browser": "./dist/main.iife.js"
     },
     "./esm": {
       "import": "./index.js"
