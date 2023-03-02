@@ -31,8 +31,8 @@ defaults.sortProperties = false;
 defaults.replaceEmptyByRandomValue = false;
 
 defaults.random = Math.random;
-defaults.minDateTime = -2524608000000;
-defaults.maxDateTime = 1000;
+defaults.minDateTime = new Date('1889-12-31T00:00:00.000Z');
+defaults.maxDateTime = new Date('1970-01-01T00:00:01.000Z');
 
 defaults.renderTitle = true;
 defaults.renderDescription = true;
