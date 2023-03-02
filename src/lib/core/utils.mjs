@@ -472,6 +472,8 @@ function isEmpty(value) {
  * @returns {boolean}
  */
 function shouldClean(key, schema) {
+  schema = schema.items || schema;
+
   const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
   const wasCleaned = typeof schema.thunk === 'function' || (schema.additionalProperties && typeof schema.additionalProperties.thunk === 'function');
 
