@@ -136,6 +136,17 @@
         "throws": "missing items for [\\s\\S]+ in \\/"
       },
       {
+        "description": "should validate items using all options",
+        "schema": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "uniqueItems": true,
+          "additionalItems": false
+        },
+        "valid": true
+      },
+      {
         "description": "should handle inferred type (when possible)",
         "schema": {
           "items": {
