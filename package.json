@@ -13,11 +13,13 @@
   "unpkg": "dist/bundle.js",
   "exports": {
     ".": {
+      "types": "./index.d.ts",
       "import": "./dist/main.mjs",
       "require": "./dist/main.cjs",
       "browser": "./dist/main.iife.js"
     },
     "./esm": {
+      "types": "./index.d.ts",
       "import": "./index.js"
     }
   },
