@@ -192,7 +192,7 @@ function objectType(value, path, resolve, traverseCallback) {
     minProps = Math.max(optionalsProbability === null || additionalProperties ? random.number(fillProps ? 1 : 0, max) : 0, min);
   }
 
-  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true) {
+  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true && fillProps) {
     const limit = random.number(0, max);
 
     for (let i = 0; i < limit; i += 1) {
