@@ -196,7 +196,7 @@ function objectType(value, path, resolve, traverseCallback) {
     const limit = random.number(0, max);
 
     for (let i = 0; i < limit; i += 1) {
-      props[words(1) + hash(limit[i])] = anyType;
+      props[words(1) + hash(limit[i])] = additionalProperties || anyType;
     }
   }
 

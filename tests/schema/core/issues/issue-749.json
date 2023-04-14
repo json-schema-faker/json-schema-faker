@@ -1,0 +1,25 @@
+[
+  {
+    "description": "generate the current type when use alwaysFakeOptionals true and additionalProperties option",
+    "tests": [
+      {
+        "description": "should generate current type",
+        "schema": {
+          "properties": {
+            "fields": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "valid": true,
+        "random": "some seed",
+        "set": {
+          "alwaysFakeOptionals": true
+        }
+      }
+    ]
+  }
+]
