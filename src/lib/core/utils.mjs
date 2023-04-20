@@ -508,8 +508,8 @@ function clean(obj, schema, isArray = false) {
     } else {
       // should obtain the correct schema
       let subSchema = schema;
-      if (schema && schema['properties'] && schema['properties'][k]) {
-        subSchema = schema['properties'][k];
+      if (schema && schema.properties && schema.properties[k]) {
+        subSchema = schema.properties[k];
       }
       const value = clean(obj[k], subSchema);
 
