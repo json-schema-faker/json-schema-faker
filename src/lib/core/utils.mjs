@@ -506,7 +506,12 @@ function clean(obj, schema, isArray = false) {
         delete obj[k];
       }
     } else {
-      const value = clean(obj[k], schema);
+      // should obtain the correct schema
+      let subSchema = schema;
+      if (schema && schema['properties'] && schema['properties'][k]) {
+        subSchema = schema['properties'][k];
+      }
+      const value = clean(obj[k], subSchema);
 
       if (!isEmpty(value)) {
         obj[k] = value;
