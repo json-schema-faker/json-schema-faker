@@ -5,6 +5,10 @@ import utils from '../../../src/lib/core/utils.mjs';
 import optionAPI from '../../../src/lib/api/option.mjs';
 
 describe('Utils', () => {
+  beforeEach(() => {
+    optionAPI(optionAPI.getDefaults());
+  });
+
   describe('hasProperties function', () => {
     const bigObject = {
       some: 'keys',
@@ -469,9 +473,6 @@ describe('Utils', () => {
 
   describe('shouldClean function', () => {
     it('should return true when the key is not required and the schema does not have a thunk', () => {
-      optionAPI({
-        alwaysFakeOptionals: false,
-      });
       expect(utils.shouldClean('a', {})).to.be.true;
     });
 
@@ -502,9 +503,6 @@ describe('Utils', () => {
 
   describe('clean function', () => {
     it('should return same value if not passed an object', () => {
-      optionAPI({
-        alwaysFakeOptionals: false,
-      });
       expect(utils.clean(null)).to.eql(null);
       expect(utils.clean('string value')).to.eql('string value');
       expect(utils.clean(undefined)).to.eql(undefined);
@@ -513,9 +511,6 @@ describe('Utils', () => {
     });
 
     it('should remove undefined values', () => {
-      optionAPI({
-        alwaysFakeOptionals: false,
-      });
       const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
 
       const cleaned = utils.clean(a);
@@ -523,9 +518,6 @@ describe('Utils', () => {
     });
 
     it('should respect required keys when removing empty objects', () => {
-      optionAPI({
-        alwaysFakeOptionals: false,
-      });
       const a = { b: {}, c: { d: 'string value' }, e: {} };
 
       const cleaned = utils.clean(a, { required: ['b'] });
