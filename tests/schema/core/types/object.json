@@ -374,6 +374,19 @@
                   ]
                 }
               }
+            },
+            "data3": {
+              "type": "object",
+              "properties": {
+                "data1": {
+                  "type": "object",
+                  "properties": {
+                    "obj": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
             }
           },
           "required": [
@@ -388,6 +401,11 @@
             "obj": {}
           },
           "data2": {
+            "data1": {
+              "obj": {}
+            }
+          },
+          "data3": {
             "data1": {
               "obj": {}
             }
