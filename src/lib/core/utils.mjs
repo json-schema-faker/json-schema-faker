@@ -474,7 +474,9 @@ function isEmpty(value) {
 function shouldClean(key, schema) {
   schema = schema.items || schema;
 
-  const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
+  // fix: when alwaysFakeOptionals is true, need set isRequired to true, see bug:https://github.com/json-schema-faker/json-schema-faker/issues/761
+  const alwaysFakeOptionals = optionAPI('alwaysFakeOptionals');
+  const isRequired = (Array.isArray(schema.required) && schema.required.includes(key)) || alwaysFakeOptionals;
   const wasCleaned = typeof schema.thunk === 'function' || (schema.additionalProperties && typeof schema.additionalProperties.thunk === 'function');
 
   return !isRequired && !wasCleaned;
