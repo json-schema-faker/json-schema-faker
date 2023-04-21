@@ -469,7 +469,17 @@ describe('Utils', () => {
 
   describe('shouldClean function', () => {
     it('should return true when the key is not required and the schema does not have a thunk', () => {
+      optionAPI({
+        alwaysFakeOptionals: false,
+      });
       expect(utils.shouldClean('a', {})).to.be.true;
+    });
+
+    it('should return false when the key is not required and alwaysFakeOptionals set true', () => {
+      optionAPI({
+        alwaysFakeOptionals: true,
+      });
+      expect(utils.shouldClean('a', {})).to.be.false;
     });
 
     it('should return false when the key is required', () => {
@@ -492,6 +502,9 @@ describe('Utils', () => {
 
   describe('clean function', () => {
     it('should return same value if not passed an object', () => {
+      optionAPI({
+        alwaysFakeOptionals: false,
+      });
       expect(utils.clean(null)).to.eql(null);
       expect(utils.clean('string value')).to.eql('string value');
       expect(utils.clean(undefined)).to.eql(undefined);
@@ -500,6 +513,9 @@ describe('Utils', () => {
     });
 
     it('should remove undefined values', () => {
+      optionAPI({
+        alwaysFakeOptionals: false,
+      });
       const a = { b: undefined, c: { d: 'string value', e: [undefined] } };
 
       const cleaned = utils.clean(a);
@@ -507,6 +523,9 @@ describe('Utils', () => {
     });
 
     it('should respect required keys when removing empty objects', () => {
+      optionAPI({
+        alwaysFakeOptionals: false,
+      });
       const a = { b: {}, c: { d: 'string value' }, e: {} };
 
       const cleaned = utils.clean(a, { required: ['b'] });
