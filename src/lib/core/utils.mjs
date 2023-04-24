@@ -98,8 +98,9 @@ function clampDateTime(value) {
     return new Date(value).toISOString().substr(0, 10);
   }
 
-  let [year, month, day] = value.split('T')[0].split('-');
-  let [hour, minute, second] = value.split('T')[1].split('.')[0].split(':');
+  const [datePart, timePart] = value.split('T');
+  let [year, month, day] = datePart.split('-');
+  let [hour, minute, second] = timePart.substr(0, 8).split(':');
 
   month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
   day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
