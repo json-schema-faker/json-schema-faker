@@ -39,7 +39,7 @@
     "report": "c8 report",
     "lint": "eslint --ext mjs,svelte src tests",
     "_pretest": "npm run lint",
-    "_prepublish": "npm run build",
+    "prepare": "npm run build",
     "_graphviz": "madge src --dot > structure.gv",
     "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less",
     "watch": "npm run mortero -- --platform browser -dw",
