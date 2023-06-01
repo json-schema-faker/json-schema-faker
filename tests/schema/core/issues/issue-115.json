@@ -9,7 +9,7 @@
           "properties": {
             "name": {
               "type": "string",
-              "x-faker": "name.findName"
+              "x-faker": "name.fullName"
             },
             "email": {
               "type": "string",

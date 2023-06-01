@@ -15,9 +15,9 @@
         "schema": {
           "type": "object",
           "properties": {
-              "count": {
-                  "type": "integer"
-              }
+            "count": {
+              "type": "integer"
+            }
           },
           "additionalProperties": false
         },
@@ -28,9 +28,9 @@
         "schema": {
           "type": "object",
           "patternProperties": {
-              "count": {
-                  "type": "integer"
-              }
+            "count": {
+              "type": "integer"
+            }
           },
           "additionalProperties": false
         },
@@ -41,14 +41,14 @@
         "schema": {
           "type": "object",
           "properties": {
-              "count": {
-                  "type": "integer"
-              }
+            "count": {
+              "type": "integer"
+            }
           },
           "patternProperties": {
-              "v-[0-3]": {
-                  "type": "integer"
-              }
+            "v-[0-3]": {
+              "type": "integer"
+            }
           },
           "additionalProperties": false
         },
@@ -70,9 +70,9 @@
           "type": "object",
           "minProperties": 2,
           "properties": {
-              "count": {
-                  "type": "integer"
-              }
+            "count": {
+              "type": "integer"
+            }
           }
         },
         "valid": true
@@ -82,11 +82,20 @@
         "schema": {
           "type": "object",
           "properties": {
-            "one": { "type": "string" },
-            "two": { "type": "string" },
-            "three": { "type": "string" }
+            "one": {
+              "type": "string"
+            },
+            "two": {
+              "type": "string"
+            },
+            "three": {
+              "type": "string"
+            }
           },
-          "required": ["one", "three"]
+          "required": [
+            "one",
+            "three"
+          ]
         },
         "valid": true
       },
@@ -95,8 +104,12 @@
         "schema": {
           "type": "object",
           "patternProperties": {
-            "a\\w{4,12}": { "type": "string" },
-            "xy-[a-f\\d]{4}-n[pqrz]": { "type": "string" }
+            "a\\w{4,12}": {
+              "type": "string"
+            },
+            "xy-[a-f\\d]{4}-n[pqrz]": {
+              "type": "string"
+            }
           }
         },
         "valid": true
@@ -106,10 +119,17 @@
         "schema": {
           "type": "object",
           "properties": {
-            "x": { "type": "string" },
-            "y": { "type": "string" }
+            "x": {
+              "type": "string"
+            },
+            "y": {
+              "type": "string"
+            }
           },
-          "required": ["x", "y"],
+          "required": [
+            "x",
+            "y"
+          ],
           "minProperties": 2
         },
         "valid": true
@@ -119,9 +139,15 @@
         "schema": {
           "type": "object",
           "patternProperties": {
-            "a+": { "type": "string" },
-            "b+": { "type": "string" },
-            "c+": { "type": "string" }
+            "a+": {
+              "type": "string"
+            },
+            "b+": {
+              "type": "string"
+            },
+            "c+": {
+              "type": "string"
+            }
           },
           "minProperties": 1,
           "maxProperties": 2
@@ -133,11 +159,15 @@
         "schema": {
           "type": "object",
           "properties": {
-            "example": { "type": "string" }
+            "example": {
+              "type": "string"
+            }
           },
           "minProperties": 5,
           "maxProperties": 5,
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "valid": true
       },
@@ -147,7 +177,9 @@
           "type": "object",
           "minProperties": 20,
           "maxProperties": 30,
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "valid": true
       },
@@ -165,14 +197,16 @@
         "schema": {
           "type": "object",
           "patternProperties": {
-              "^hyb": {
-                  "type": "integer"
-              },
-              "rid$": {
-                  "type": "string"
-              }
+            "^hyb": {
+              "type": "integer"
+            },
+            "rid$": {
+              "type": "string"
+            }
           },
-          "required": [ "hybrid" ]
+          "required": [
+            "hybrid"
+          ]
         },
         "valid": false
       },
@@ -181,9 +215,12 @@
         "schema": {
           "type": "object",
           "additionalProperties": {
-              "type": "string"
+            "type": "string"
           },
-          "required": [ "hybrid", "other" ]
+          "required": [
+            "hybrid",
+            "other"
+          ]
         },
         "valid": true
       },
@@ -194,7 +231,10 @@
           "type": "object",
           "properties": {},
           "additionalProperties": false,
-          "required": [ "hybrid", "other" ]
+          "required": [
+            "hybrid",
+            "other"
+          ]
         },
         "throws": "missing properties for:\n[\\s\\S]+? in \\/"
       },
@@ -203,7 +243,10 @@
         "schema": {
           "type": "object",
           "properties": {},
-          "required": [ "hybrid", "other" ]
+          "required": [
+            "hybrid",
+            "other"
+          ]
         },
         "valid": false
       },
@@ -212,16 +255,19 @@
         "schema": {
           "type": "object",
           "patternProperties": {
-              "^hybrid.*": {
-                  "type": "string"
-              },
-              ".*other$": {
-                  "type": "integer"
-              }
+            "^hybrid.*": {
+              "type": "string"
+            },
+            ".*other$": {
+              "type": "integer"
+            }
           },
           "minProperties": 20,
           "additionalProperties": false,
-          "required": [ "hybrid", "other" ]
+          "required": [
+            "hybrid",
+            "other"
+          ]
         },
         "valid": true
       },
@@ -238,20 +284,23 @@
         "schema": {
           "type": "object",
           "patternProperties": {
-              "^hyb": {
-                  "type": "integer"
-              },
-              "rid$": {
-                  "maximum": 3
-              },
-              "^not-relevant$": {
-                  "type": "string"
-              }
+            "^hyb": {
+              "type": "integer"
+            },
+            "rid$": {
+              "maximum": 3
+            },
+            "^not-relevant$": {
+              "type": "string"
+            }
           },
           "additionalProperties": {
-              "type": "string"
+            "type": "string"
           },
-          "required": [ "hybrid", "other" ]
+          "required": [
+            "hybrid",
+            "other"
+          ]
         },
         "valid": true
       },
@@ -285,10 +334,88 @@
         "description": "should handle inferred type (when possible)",
         "schema": {
           "properties": {
-            "name": { "type": "string" }
+            "name": {
+              "type": "string"
+            }
           }
         },
         "type": "object"
+      },
+      {
+        "description": "should obtain the correct schema",
+        "schema": {
+          "properties": {
+            "obj": {
+              "type": "object"
+            },
+            "data1": {
+              "type": "object",
+              "properties": {
+                "obj": {
+                  "type": "object"
+                }
+              },
+              "required": [
+                "obj"
+              ]
+            },
+            "data2": {
+              "type": "object",
+              "properties": {
+                "data1": {
+                  "type": "object",
+                  "properties": {
+                    "obj": {
+                      "type": "object"
+                    }
+                  },
+                  "required": [
+                    "obj"
+                  ]
+                }
+              }
+            },
+            "data3": {
+              "type": "object",
+              "properties": {
+                "data1": {
+                  "type": "object",
+                  "properties": {
+                    "obj": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "required": [
+            "obj",
+            "data1",
+            "data2"
+          ]
+        },
+        "type": "object",
+        "equal": {
+          "data1": {
+            "obj": {}
+          },
+          "data2": {
+            "data1": {
+              "obj": {}
+            }
+          },
+          "data3": {
+            "data1": {
+              "obj": {}
+            }
+          },
+          "obj": {}
+        },
+        "set": {
+          "alwaysFakeOptionals": true,
+          "fillProperties": false
+        }
       }
     ]
   }

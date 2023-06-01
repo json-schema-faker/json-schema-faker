@@ -24,7 +24,7 @@
           "type": "string",
           "minLength": 1,
           "maxLength": 1,
-          "faker": "name.findName"
+          "faker": "name.fullName"
         },
         "require": "core/extend/faker-extend",
         "set": {

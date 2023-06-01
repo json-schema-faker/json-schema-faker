@@ -27,6 +27,14 @@ describe('Number Generator', () => {
     expect(isMultipleOf({ multipleOf: 8, minimum: 80, maximum: 90 })).to.be.true;
   });
 
+  it('should return 1', () => {
+    let n = numberType({ type: 'integer', minimum: 0, maximum: 1 });
+    while (n !== 1) {
+      n = numberType({ type: 'integer', minimum: 0, maximum: 1 });
+    }
+    expect(n).to.eq(1);
+  });
+
   describe('should ignore min and max if using Number.MAX_VALUE in then', () => {
     it('ignoring minimum', () => {
       const n = numberType({ minimum: -Number.MAX_VALUE });

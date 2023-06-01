@@ -48,7 +48,7 @@ const schema = {
         },
         name: {
           type: "string",
-          faker: "name.findName",
+          faker: "name.fullName",
         },
         email: {
           type: "string",
@@ -163,7 +163,7 @@ Below is the list of supported keywords:
 
 Inline references are fully supported (json-pointers) but external can't be resolved by `JSONSchemaFaker`.
 
-Remote en local references are automatically resolved thanks to `json-schema-ref-parser`.
+Remote and local references are automatically resolved thanks to `json-schema-ref-parser`.
 
 ```javascript
 const schema = {

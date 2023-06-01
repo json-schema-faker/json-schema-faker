@@ -9,18 +9,18 @@
 
   // FIXME: componentize options, subscribe to them and update global jsf options on change
   function getType(k, v) {
-    const extraProps = {};
+    const extraProps = { class: 'f' };
+
     let fixedType;
-
-    if (typeof v === 'boolean') {
+    if (v instanceof Date) {
+      fixedType = 'date';
+    } else if (Array.isArray(v)) {
+      fixedType = 'text';
+    } else if (typeof v === 'boolean') {
       fixedType = 'checkbox';
-    }
-
-    if (typeof v === 'number') {
+    } else if (typeof v === 'number') {
       fixedType = 'number';
-    }
-
-    if (v === null || typeof v === 'function') {
+    } else if (v === null || typeof v === 'function') {
       if (k === 'maxItems' || k === 'maxLength') {
         fixedType = 'number';
       }
@@ -31,17 +31,15 @@
       }
     }
 
-    if (Array.isArray(v)) {
-      fixedType = 'text';
-    }
-
     const result = ($options && $options[k]) || defaults[k];
 
-    if (fixedType !== 'checkbox') {
-      extraProps.class = 'f num';
-      extraProps.value = result;
-    } else {
+    if (fixedType === 'checkbox') {
       extraProps.checked = result;
+      extraProps.class = '';
+    } else if (fixedType === 'date') {
+      extraProps.value = v.toISOString().substr(0, 10);
+    } else if (fixedType === 'number') {
+      extraProps.value = result;
     }
 
     if (fixedType) {
@@ -90,11 +88,11 @@
   <hr />
 
   <form on:submit|preventDefault>
-    <ul class="lr flx flx-wp opts">
+    <ul class="lr flx flx-wp gap opts">
       {#each opts as option}
-        <li class="nosl flx mb">
+        <li class="nosl flx gap">
           <label for={option.id} class="tr cl-6">{option.name}</label>
-          <span>
+          <span class="flx-gw">
             {#if option.type}
               <input {...option} on:change={e => update(e, option)} title={option.name}>
             {:else}

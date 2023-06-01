@@ -45,7 +45,9 @@ function arrayType(value, path, resolve, traverseCallback) {
 
   if (!(value.items || value.additionalItems)) {
     if (utils.hasProperties(value, 'minItems', 'maxItems', 'uniqueItems')) {
-      throw new ParseError(`missing items for ${utils.short(value)}`, path);
+      if (value.minItems !== 0 || value.maxItems !== 0) {
+        throw new ParseError(`missing items for ${utils.short(value)}`, path);
+      }
     }
     return items;
   }

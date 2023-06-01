@@ -131,6 +131,8 @@ jsf.locate('faker');
 - `random` &mdash; Setup a custom _randonmess_ generator, useful for getting deterministic results (default: `Math.random`)
 - `replaceEmptyByRandomValue` &mdash; Replace default empty value by a random value (default: `false`)
 - `omitNulls` &mdash; Remove any generated `null` value from the resulting value (default: `false`)
+- `minDateTime` &mdash; When generating a string with format `date-time`, set the minimum date that will get selected. If it's a number it will be the offset from `now` in milliseconds (default: `-2524608000000`)
+- `maxDateTime` &mdash; When generating a string with format `date-time`, set the maximum date that will get selected. If it's a number it will be the offset from `now` in milliseconds (default: `1000`)
 
 ## Building
 

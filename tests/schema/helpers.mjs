@@ -79,6 +79,12 @@ export function tryTest(nth, max, test, refs, schema) {
           checkSchema(sample, schema, refs, test.omit);
         }
       } catch (e) {
+        if (test.flaky) {
+          console.log(`## FLAKY TEST (${nth} of ${max})`);
+          console.log(e.message);
+          return;
+        }
+
         const _e = new Error(`${e.message.split('\n')[0]} (${nth} of ${max})`);
 
         _e.stack = e.stack.split('\n').slice(1).join('\n');

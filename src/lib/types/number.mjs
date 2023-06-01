@@ -47,7 +47,7 @@ function numberType(value) {
     return base;
   }
 
-  return random.number(min, max, undefined, undefined, true);
+  return random.number(min, max, undefined, undefined, value.type !== 'integer');
 }
 
 export default numberType;

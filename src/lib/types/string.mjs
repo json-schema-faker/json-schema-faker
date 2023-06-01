@@ -42,6 +42,7 @@ function generateFormat(value, invalid) {
     case 'slug':
     case 'uri-template':
     case 'uuid':
+    case 'duration':
       return coreFormat(value.format);
     default:
       if (typeof callback === 'undefined') {

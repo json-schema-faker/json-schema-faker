@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.5.0-rcv.44",
+  "version": "0.5.0-rcv.46",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "types": "index.d.ts",
@@ -10,16 +10,28 @@
   },
   "main": "dist/index.cjs",
   "module": "dist/main.mjs",
-  "browser": "dist/main.iife.cjs",
-  "unpkg": "dist/bundle.cjs",
+  "unpkg": "dist/bundle.js",
+  "exports": {
+    ".": {
+      "types": "./index.d.ts",
+      "import": "./dist/main.mjs",
+      "require": "./dist/main.cjs",
+      "browser": "./dist/main.iife.js"
+    },
+    "./esm": {
+      "types": "./index.d.ts",
+      "import": "./index.js"
+    }
+  },
   "scripts": {
     "dev": "npm run test:schema -- -w",
     "test": "npm run test:ci -- && npm run test:schema",
     "test:ci": "npm run coverage:unit && npm run report -- -r lcov",
-    "test:all": "npm run coverage:all && npm run report -- -r html",
+    "test:all": "npm run test:unit && npm run test:schema",
     "test:run": "_mocha --exit --colors --recursive --parallel --loader=testdouble --watch-files 'tests/**' --watch-files 'src/**' --watch-extensions js,json -bR spec",
     "test:unit": "npm run test:run tests/unit --",
     "test:schema": "npm run test:run tests/schema --",
+    "test:coverage": "npm run coverage:all && npm run report -- -r html",
     "test:integration": "npm run test:run tests/integration --",
     "coverage": "c8 --reporter=lcov -x '**/tests/**' -x '**/*.spec.mjs'",
     "coverage:all": "npm run coverage -- npm run test:all",
@@ -33,29 +45,23 @@
     "watch": "npm run mortero -- --platform browser -dw",
     "build": "NODE_ENV=production npm run mortero -- -S --no-minify",
     "pretest": "npm run lint && npm run build -- -ymain",
-    "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.js",
-    "copy:bundle": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.cjs",
+    "copy:bundle": "concat -o dist/bundle.js dist/main.iife.js",
     "copy:wargs": "concat -o dist/wargs.cjs node_modules/wargs/dist/wargs.cjs",
-    "entry:cjs": "echo 'module.exports = require(\"./main.cjs.js\").default;' > dist/index.cjs",
-    "prepublishOnly": "npm run build -- -f",
+    "entry:cjs": "node patch.js",
     "postbuild": "npm run copy:bundle && npm run entry:cjs",
-    "prebuild": "mkdir -p dist && npm run copy:vendor && npm run copy:wargs",
+    "prebuild": "mkdir -p dist && npm run copy:wargs",
     "codecov": "codecov -e TRAVIS_NODE_VERSION"
   },
   "mortero": {
     "rename": [
       "**/src/**:{filepath/1}",
       "**/web/**:{filepath/1}",
-      "**/*.{cjs,mjs}.js:{filename}",
-      "**/*.iife.js:{filename}.cjs"
+      "**/*.{cjs,mjs}.js:{filename}"
     ],
     "bundle": [
-      "**/main*.js",
+      "**/main.*.js",
+      "**/shared.js",
       "**/app.js"
-    ],
-    "external": [
-      "json-schema-ref-parser",
-      "jsonpath-plus"
     ],
     "options": {
       "less": {
@@ -87,7 +93,8 @@
     "index.d.ts"
   ],
   "devDependencies": {
-    "@faker-js/faker": "^5.5.3",
+    "@apidevtools/json-schema-ref-parser": "^10.1.0",
+    "@faker-js/faker": "^7.6.0",
     "@types/json-schema": "^7.0.9",
     "ajv": "^6.12.6",
     "ansi-regex": ">=5.0.1",
@@ -107,6 +114,7 @@
     "glob": "^7.1.2",
     "glob-parent": ">=5.1.2",
     "is-my-json-valid": "^2.19.0",
+    "jsonpath-plus": "^7.2.0",
     "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
     "live-server": "^1.2.2",
@@ -130,9 +138,5 @@
     "yaml": "^1.10.2",
     "yrv": "^0.0.47",
     "z-schema": "^5.0.4"
-  },
-  "dependencies": {
-    "json-schema-ref-parser": "^6.1.0",
-    "jsonpath-plus": "^5.1.0"
   }
 }

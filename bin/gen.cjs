@@ -1,18 +1,25 @@
 #!/usr/bin/env node
 
-const jsf = require('../dist/main.cjs').default;
+const { inspect } = require('util');
+const { resolve } = require('path');
+const { Transform } = require('stream');
+const { existsSync, readFileSync } = require('fs');
 
-const sample = process.argv.slice(2)[0];
+const { JSONSchemaFaker } = require('../dist/main.cjs');
 
 // FIXME: validate types on given input....
 const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
-  boolean: 'DXMTFOxedrJUSE',
+  boolean: 'yPpMTFOEVRNJUSs',
+  string: 'cCYXoxriIlLdD',
   alias: {
-    c: 'currentWorkingDirectory',
+    c: 'cwd',
+    C: 'config',
 
-    D: 'defaultInvalidTypeProduct',
+    y: 'replaceEmptyByRandomValue',
+    Y: 'defaultInvalidTypeProduct',
     X: 'defaultRandExpMax',
 
+    P: 'pruneProperties',
     p: 'ignoreProperties',
     M: 'ignoreMissingRefs',
     T: 'failOnInvalidTypes',
@@ -21,9 +28,10 @@ const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
     O: 'alwaysFakeOptionals',
     o: 'optionalsProbability',
     x: 'fixedProbabilities',
-    e: 'useExamplesValue',
-    d: 'useDefaultValue',
+    E: 'useExamplesValue',
+    V: 'useDefaultValue',
     R: 'requiredOnly',
+    N: 'omitNulls',
     r: 'random',
 
     i: 'minItems',
@@ -31,40 +39,60 @@ const argv = require('../dist/wargs.cjs')(process.argv.slice(2), {
     l: 'minLength',
     L: 'maxLength',
 
+    d: 'minDateTime',
+    D: 'maxDateTime',
+
     J: 'resolveJsonPath',
     U: 'reuseProperties',
     S: 'fillProperties',
-    E: 'replaceEmptyByRandomValue',
+    s: 'sortProperties',
   },
 });
 
-if (typeof argv.flags.random === 'string') {
-  argv.flags.random = () => parseFloat(argv.flags.random);
+if (argv.flags.version) {
+  console.log(require('../package.json').name, JSONSchemaFaker.VERSION);
+  process.exit();
 }
 
 if (typeof argv.flags.ignoreProperties === 'string') {
-  argv.flags.ignoreProperties = [argv.flags.ignoreProperties];
+  argv.flags.ignoreProperties = argv.flags.ignoreProperties.split(',');
 }
 
-const { inspect } = require('util');
-const { Transform } = require('stream');
-const { readFileSync } = require('fs');
-
+const seed = argv.flags.random ? parseFloat(argv.flags.random) : null;
 const pretty = process.argv.indexOf('--pretty') !== -1;
 const noColor = process.argv.indexOf('--no-color') !== -1;
 
-// FIXME: enable flags...
-jsf.option({
-  resolveJsonPath: argv.flags.resolveJsonPath,
-  alwaysFakeOptionals: argv.flags.alwaysFakeOptionals,
-});
+const defaults = JSONSchemaFaker.option.getDefaults();
+const overrides = {
+  ...argv.flags,
+  ...(argv.flags.random ? { random: () => seed } : null),
+  renderTitle: argv.flags.renderTitle || null,
+  renderComment: argv.flags.renderComment || null,
+  renderDescription: argv.flags.renderDescription || null,
+};
 
-const cwd = argv.flags.currentWorkingDirectory || process.cwd();
+JSONSchemaFaker.option(Object.keys(defaults).reduce((memo, cur) => {
+  if (overrides[cur] !== null) memo[cur] = overrides[cur];
+  return memo;
+}, {}));
 
-function generate(schema, callback) {
-  jsf.resolve(JSON.parse(schema), cwd).then(result => {
+const cwd = argv.flags.cwd || process.cwd();
+
+function load(filepath) {
+  if (filepath.includes('.json')) return require(filepath);
+  return import(filepath).then(mod => mod.default || mod);
+}
+
+async function generate(schema, callback) {
+  try {
+    const config = argv.flags.config ? await load(resolve(argv.flags.config)) : null;
+
+    if (typeof config === 'function') await config({ cwd, argv, JSONSchemaFaker });
+    if (config && typeof config === 'object') JSONSchemaFaker.option(config);
+
+    const result = await JSONSchemaFaker.resolve(JSON.parse(schema), cwd);
+
     let sample;
-
     if (pretty) {
       sample = inspect(result, { colors: !noColor, depth: Infinity });
     } else {
@@ -72,11 +100,27 @@ function generate(schema, callback) {
     }
 
     callback(null, `${sample}\n`);
-  }).catch(callback);
+  } catch (e) {
+    callback(e);
+  }
 }
 
-process.stdin.pipe(new Transform({
-  transform(entry, enc, callback) {
-    generate(Buffer.from(entry, enc).toString(), callback);
-  }
-})).pipe(process.stdout);
+if (!process.stdin.isTTY) {
+  process.stdin.pipe(new Transform({
+    transform(entry, enc, callback) {
+      generate(Buffer.from(entry, enc).toString(), callback);
+    },
+  })).pipe(process.stdout);
+} else if (!existsSync(argv._[0])) {
+  console.error(`Missing input, given '${argv._}'`);
+  process.exit(1);
+} else {
+  generate(readFileSync(argv._[0]).toString(), (err, output) => {
+    if (err) {
+      console.error(err);
+      process.exit(1);
+    } else {
+      process.stdout.write(output);
+    }
+  });
+}

@@ -1,0 +1,57 @@
+[
+  {
+    "description": "empty objects should be preserved if required",
+    "tests": [
+      {
+        "description": "ensure we have empty objects",
+        "schema": {
+          "properties": {
+            "foo": {
+              "items": {
+                "properties": {
+                  "bar": {
+                    "type": "null"
+                  },
+                  "baz": {
+                    "properties": {
+                      "quux": {
+                        "type": "string"
+                      },
+                      "corge": {
+                        "type": "number"
+                      }
+                    },
+                    "required": [],
+                    "type": "object",
+                    "additionalProperties": false
+                  }
+                },
+                "required": [
+                  "bar",
+                  "baz"
+                ],
+                "type": "object"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "foo"
+          ],
+          "type": "object"
+        },
+        "equal": {
+          "foo": [
+            {
+              "bar": null,
+              "baz": {}
+            }
+          ]
+        },
+        "valid": true,
+        "seed": 0.00123,
+        "omit": ["z-schema"]
+      }
+    ]
+  }
+]

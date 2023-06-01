@@ -12,7 +12,7 @@
             },
             "name": {
               "type": "string",
-              "faker": "name.findName"
+              "faker": "name.fullName"
             },
             "children": {
               "$ref": "#/definitions/node"

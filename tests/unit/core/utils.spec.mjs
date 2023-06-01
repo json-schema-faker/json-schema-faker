@@ -5,6 +5,10 @@ import utils from '../../../src/lib/core/utils.mjs';
 import optionAPI from '../../../src/lib/api/option.mjs';
 
 describe('Utils', () => {
+  beforeEach(() => {
+    optionAPI(optionAPI.getDefaults());
+  });
+
   describe('hasProperties function', () => {
     const bigObject = {
       some: 'keys',
@@ -470,6 +474,13 @@ describe('Utils', () => {
   describe('shouldClean function', () => {
     it('should return true when the key is not required and the schema does not have a thunk', () => {
       expect(utils.shouldClean('a', {})).to.be.true;
+    });
+
+    it('should return false when the key is not required and alwaysFakeOptionals set true', () => {
+      optionAPI({
+        alwaysFakeOptionals: true,
+      });
+      expect(utils.shouldClean('a', {})).to.be.false;
     });
 
     it('should return false when the key is required', () => {

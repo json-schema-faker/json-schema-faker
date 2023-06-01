@@ -21,6 +21,7 @@
 
 /* flexbox */
 .flx { display: flex; }
+.gap { gap: 10px;  }
 
 .flx-cl { flex-direction: column; }
 .flx-wp { flex-wrap: wrap; }
@@ -307,9 +308,8 @@
   &:disabled { opacity: .5; }
 }
 
-.f { box-shadow: 1px 1px 1px @shadow-color; }
-.txt, .num { border: 1px solid @shadow-color;  }
-.num { width: 6em; }
+.f { border: 1px solid @shadow-color; }
+.flx-gw > .f { width: 6em; }
 
 /* misc */
 

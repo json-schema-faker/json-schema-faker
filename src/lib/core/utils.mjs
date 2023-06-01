@@ -5,6 +5,8 @@ import random from './random.mjs';
 const RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
 
 function getLocalRef(obj, path, refs) {
+  path = decodeURIComponent(path);
+
   if (refs && refs[path]) return clone(refs[path]); // eslint-disable-line
 
   const keyElements = path.replace('#/', '/').split('/');
@@ -96,8 +98,9 @@ function clampDateTime(value) {
     return new Date(value).toISOString().substr(0, 10);
   }
 
-  let [year, month, day] = value.split('T')[0].split('-');
-  let [hour, minute, second] = value.split('T')[1].split('.')[0].split(':');
+  const [datePart, timePart] = value.split('T');
+  let [year, month, day] = datePart.split('-');
+  let [hour, minute, second] = timePart.substr(0, 8).split(':');
 
   month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
   day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
@@ -470,7 +473,11 @@ function isEmpty(value) {
  * @returns {boolean}
  */
 function shouldClean(key, schema) {
-  const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
+  schema = schema.items || schema;
+
+  // fix: when alwaysFakeOptionals is true, need set isRequired to true, see bug:https://github.com/json-schema-faker/json-schema-faker/issues/761
+  const alwaysFakeOptionals = optionAPI('alwaysFakeOptionals');
+  const isRequired = (Array.isArray(schema.required) && schema.required.includes(key)) || alwaysFakeOptionals;
   const wasCleaned = typeof schema.thunk === 'function' || (schema.additionalProperties && typeof schema.additionalProperties.thunk === 'function');
 
   return !isRequired && !wasCleaned;
@@ -502,7 +509,12 @@ function clean(obj, schema, isArray = false) {
         delete obj[k];
       }
     } else {
-      const value = clean(obj[k], schema);
+      // should obtain the correct schema
+      let subSchema = schema;
+      if (schema && schema.properties && schema.properties[k]) {
+        subSchema = schema.properties[k];
+      }
+      const value = clean(obj[k], subSchema);
 
       if (!isEmpty(value)) {
         obj[k] = value;

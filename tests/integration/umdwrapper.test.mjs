@@ -1,7 +1,11 @@
 import { expect } from 'chai';
 import * as td from 'testdouble';
 
-import jsf from '../../dist/main.iife.cjs';
+import '../../dist/main.iife.js';
+
+/* global globalThis */
+
+const jsf = globalThis.JSONSchemaFaker;
 
 describe('UMD Wrapper', () => {
   afterEach(() => {

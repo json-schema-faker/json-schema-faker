@@ -192,11 +192,11 @@ function objectType(value, path, resolve, traverseCallback) {
     minProps = Math.max(optionalsProbability === null || additionalProperties ? random.number(fillProps ? 1 : 0, max) : 0, min);
   }
 
-  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true) {
+  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true && fillProps) {
     const limit = random.number(0, max);
 
-    for (let i = 0; i <= limit; i += 1) {
-      props[words(1) + hash(limit[i])] = anyType;
+    for (let i = 0; i < limit; i += 1) {
+      props[words(1) + hash(limit[i])] = additionalProperties || anyType;
     }
   }
 
@@ -278,7 +278,7 @@ function objectType(value, path, resolve, traverseCallback) {
   if (optionAPI('sortProperties') !== null) {
     const originalKeys = Object.keys(properties);
     const sortedKeys = Object.keys(props).sort((a, b) => {
-      return optionAPI('sortProperties') ? a.localeCompare(b) : originalKeys.indexOf(b) - originalKeys.indexOf(a);
+      return optionAPI('sortProperties') ? a.localeCompare(b) : originalKeys.indexOf(a) - originalKeys.indexOf(b);
     });
 
     sortedObj = sortedKeys.reduce((memo, key) => {

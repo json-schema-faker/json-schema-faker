@@ -19,7 +19,7 @@
 </script>
 <label class="mb flx flx-c nosl">
   <span>Filter gists:</span>
-  <input class="f txt ml flx-a" type="search" bind:value={term} />
+  <input class="f ml flx-a" type="search" bind:value={term} />
 </label>
 {#if $loggedIn}
   {#if pending}

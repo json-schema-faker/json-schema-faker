@@ -21,7 +21,7 @@ function setupKeywords() {
       this.offset = offset || random.number(min, max);
     }
 
-    if (value === true) {
+    if (value) {
       return this.offset++; // eslint-disable-line
     }
 
