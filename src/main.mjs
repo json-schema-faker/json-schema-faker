@@ -1,7 +1,3 @@
-if (typeof process !== 'undefined') {
-  global.location = { href: `${process.cwd()}/` };
-}
-
 import './vendor.js';
 
 import { setDependencies } from './shared.js';

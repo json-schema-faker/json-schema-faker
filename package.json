@@ -16,11 +16,11 @@
       "types": "./index.d.ts",
       "import": "./dist/main.mjs",
       "require": "./dist/main.cjs",
-      "browser": "./dist/main.iife.js"
+      "browser": "./dist/bundle.js"
     },
-    "./esm": {
+    "./src": {
       "types": "./index.d.ts",
-      "import": "./index.js"
+      "import": "./index.mjs"
     }
   },
   "scripts": {
@@ -43,12 +43,13 @@
     "_graphviz": "madge src --dot > structure.gv",
     "mortero": "mortero -Ddist -spublic -X{_base,lib} -ecss.less",
     "watch": "npm run mortero -- --platform browser -dw",
-    "build": "NODE_ENV=production npm run mortero -- -S --no-minify",
+    "build": "NODE_ENV=production npm run mortero -- -fS --no-minify",
     "pretest": "npm run lint && npm run build -- -ymain",
-    "copy:bundle": "concat -o dist/bundle.js dist/main.iife.js",
+    "copy:vendor": "concat -o dist/vendor.js node_modules/json-schema-ref-parser/dist/ref-parser.min.js node_modules/jsonpath-plus/dist/index-browser-umd.min.cjs",
+    "copy:bundle": "concat -o dist/bundle.js dist/vendor.js dist/main.iife.js",
     "copy:wargs": "concat -o dist/wargs.cjs node_modules/wargs/dist/wargs.cjs",
     "entry:cjs": "node patch.js",
-    "postbuild": "npm run copy:bundle && npm run entry:cjs",
+    "postbuild": "npm run copy:vendor && npm run entry:cjs && npm run copy:bundle",
     "prebuild": "mkdir -p dist && npm run copy:wargs",
     "codecov": "codecov -e TRAVIS_NODE_VERSION"
   },
@@ -62,6 +63,10 @@
       "**/main.*.js",
       "**/shared.js",
       "**/app.js"
+    ],
+    "external": [
+      "json-schema-ref-parser",
+      "jsonpath-plus"
     ],
     "options": {
       "less": {
@@ -89,11 +94,15 @@
     "mocks"
   ],
   "files": [
-    "dist/*.*js",
+    "dist/*.*",
+    "index.mjs",
     "index.d.ts"
   ],
+  "dependencies": {
+    "json-schema-ref-parser": "^6.1.0",
+    "jsonpath-plus": "^7.2.0"
+  },
   "devDependencies": {
-    "@apidevtools/json-schema-ref-parser": "^10.1.0",
     "@faker-js/faker": "^7.6.0",
     "@types/json-schema": "^7.0.9",
     "ajv": "^6.12.6",
@@ -114,7 +123,6 @@
     "glob": "^7.1.2",
     "glob-parent": ">=5.1.2",
     "is-my-json-valid": "^2.19.0",
-    "jsonpath-plus": "^7.2.0",
     "less": "^4.1.1",
     "less-plugin-autoprefix": "^2.0.0",
     "live-server": "^1.2.2",

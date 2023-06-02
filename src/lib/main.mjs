@@ -1,4 +1,4 @@
-import $RefParser from '@apidevtools/json-schema-ref-parser';
+import $RefParser from 'json-schema-ref-parser';
 import { JSONPath } from 'jsonpath-plus';
 
 import { setDependencies } from './vendor.mjs';

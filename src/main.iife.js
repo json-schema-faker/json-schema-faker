@@ -17,12 +17,12 @@
 
 const jsf = require('./shared');
 
-if (typeof window !== 'undefined') {
-  jsf.setDependencies({
-    ...window.JSONPath,
-    $RefParser: window.$RefParser,
-  });
+/* global $RefParser, JSONPath  */
+if (typeof $RefParser !== 'undefined' && typeof JSONPath !== 'undefined') {
+  jsf.setDependencies({ ...JSONPath, $RefParser });
+}
 
+if (typeof window !== 'undefined') {
   window.JSONSchemaFaker = jsf.default;
 }
 
