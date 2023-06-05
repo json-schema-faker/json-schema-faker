@@ -80,7 +80,7 @@ prune: clean ## Remove all from node_modules/*
 publish: clean
 	@VERSION=$(shell cat package.json | jq .version) make -s lib
 
-release: deps
+release:
 ifneq ($(CI),)
 	@echo '//registry.npmjs.org/:_authToken=$(NODE_AUTH_TOKEN)' > .npmrc
 	@npm version $(USE_RELEASE_VERSION)
