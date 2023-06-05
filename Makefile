@@ -30,16 +30,15 @@ endef
 ?: Makefile
 	@awk -F':.*?##' '/^[a-z\\%!:-]+:.*##/{gsub("%","*",$$1);gsub("\\\\",":*",$$1);printf "\033[36m%8s\033[0m %s\n",$$1,$$2}' $<
 
-ci: deps clean
-	@npm run build -- -ymain
-	@npm run test:integration
+ci: clean deps
 	@npm test
+	@npm run test:integration
 ifneq ($(CI),)
 	@npm run codecov
 endif
 
 lib: deps ## Build library output only
-	@npm run build -- -fymain
+	@npm run build -- -fymain -yshared
 
 dev: deps ## Watch and start development server
 	@npm run watch
@@ -81,7 +80,7 @@ prune: clean ## Remove all from node_modules/*
 publish: clean
 	@VERSION=$(shell cat package.json | jq .version) make -s lib
 
-release: deps
+release:
 ifneq ($(CI),)
 	@echo '//registry.npmjs.org/:_authToken=$(NODE_AUTH_TOKEN)' > .npmrc
 	@npm version $(USE_RELEASE_VERSION)
