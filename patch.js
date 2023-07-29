@@ -6,7 +6,11 @@ cjs = cjs.replace(/module\.exports = Object\.assign/, '// $&');
 writeFileSync('dist/main.cjs', cjs);
 writeFileSync('dist/index.cjs', 'module.exports = require("./main.cjs").default;\n');
 
+const prefix = `var location = typeof window !== "undefined" && typeof window.location !== "undefined"
+? window.location : (typeof process !== "undefined" && typeof process.cwd === "function"
+? { href: process.cwd() + "/" } : { href: "/" });`;
+
 let vendor = readFileSync('dist/vendor.js').toString();
-vendor = `if (typeof process !== 'undefined') { global.location = { href: \`\${process.cwd()}/\` }; }\n${vendor}`;
+vendor = `${prefix}\n${vendor}`;
 
 writeFileSync('dist/vendor.js', vendor);
