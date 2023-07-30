@@ -1,5 +1,5 @@
-import seedrandom from 'seedrandom';
 import path from 'path';
+import seedrandom from 'seedrandom';
 import {
   jsf, pick, tryTest, getTests,
 } from './helpers.mjs';
