@@ -11,6 +11,6 @@ const prefix = `var location = typeof window !== "undefined" && typeof window.lo
 ? { href: process.cwd() + "/" } : { href: "/" });`;
 
 let vendor = readFileSync('dist/vendor.js').toString();
-vendor = `${prefix}\n${vendor}`;
+vendor = `!(()=>{${prefix}\n${vendor}})()`;
 
 writeFileSync('dist/vendor.js', vendor);
