@@ -78,7 +78,7 @@ prune: clean ## Remove all from node_modules/*
 	@echo "OK"
 
 publish: clean
-	@VERSION=$(shell cat package.json | jq .version) make -s lib
+	@make -s lib
 
 release:
 ifneq ($(CI),)
