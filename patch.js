@@ -6,11 +6,10 @@ cjs = cjs.replace(/module\.exports = Object\.assign/, '// $&');
 writeFileSync('dist/main.cjs', cjs);
 writeFileSync('dist/index.cjs', 'module.exports = require("./main.cjs").default;\n');
 
-const prefix = `var location = typeof window !== "undefined" && typeof window.location !== "undefined"
-? window.location : (typeof process !== "undefined" && typeof process.cwd === "function"
-? { href: process.cwd() + "/" } : { href: "/" });`;
+// prefix was setting `location` and that caused redirections under browser-like environments
+// if you run this module on a browser-like environment that does not have `location` set it'll fail
 
 let vendor = readFileSync('dist/vendor.js').toString();
-vendor = `!(()=>{${prefix}\n${vendor}})()`;
+vendor = `!(()=>{${vendor}})()`;
 
 writeFileSync('dist/vendor.js', vendor);
