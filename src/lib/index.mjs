@@ -114,7 +114,7 @@ jsf.resolveWithContext = (schema, refs, cwd) => {
   }
 
   // normalize basedir (browser aware)
-  cwd = cwd || (typeof process !== 'undefined' ? process.cwd() : '');
+  cwd = cwd || (typeof process !== 'undefined' && typeof process.cwd === 'function' ? process.cwd() : '');
   cwd = `${cwd.replace(/\/+$/, '')}/`;
 
   const $refs = getRefs(refs, schema);
