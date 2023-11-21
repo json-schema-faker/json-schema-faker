@@ -1,3 +1,7 @@
+if (typeof location === 'undefined') {
+  global.location = { href: '/' };
+}
+
 export async function depsCheck(jsf) {
   const result = await jsf.resolve({ const: 42 });
 

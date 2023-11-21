@@ -32,6 +32,7 @@ endef
 
 ci: clean deps
 	@npm test
+	@npm run test:e2e
 	@npm run test:integration
 ifneq ($(CI),)
 	@npm run codecov
@@ -78,7 +79,7 @@ prune: clean ## Remove all from node_modules/*
 	@echo "OK"
 
 publish: clean
-	@VERSION=$(shell cat package.json | jq .version) make -s lib
+	@make -s lib
 
 release:
 ifneq ($(CI),)
