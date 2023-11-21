@@ -32,6 +32,7 @@ endef
 
 ci: clean deps
 	@npm test
+	@npm run test:e2e
 	@npm run test:integration
 ifneq ($(CI),)
 	@npm run codecov
