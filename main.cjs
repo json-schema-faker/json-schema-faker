@@ -4,6 +4,9 @@ var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
 var __getOwnPropNames = Object.getOwnPropertyNames;
 var __getProtoOf = Object.getPrototypeOf;
 var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __esm = (fn, res) => function __init() {
+  return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
+};
 var __commonJS = (cb, mod) => function __require() {
   return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
 };
@@ -20,14 +23,186 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
 var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
 
+// src/lib/vendor.mjs
+var DEPENDENCIES, getDependencies, setDependencies;
+var init_vendor = __esm({
+  "src/lib/vendor.mjs"() {
+    DEPENDENCIES = {};
+    getDependencies = () => {
+      return DEPENDENCIES;
+    };
+    setDependencies = (value) => {
+      Object.assign(DEPENDENCIES, value);
+    };
+  }
+});
+
+// src/lib/class/Registry.mjs
+var Registry, Registry_default;
+var init_Registry = __esm({
+  "src/lib/class/Registry.mjs"() {
+    Registry = class {
+      constructor() {
+        this.data = {};
+      }
+      /**
+       * Unregisters custom format(s)
+       * @param name
+       */
+      unregister(name) {
+        if (!name) {
+          this.data = {};
+        } else {
+          delete this.data[name];
+        }
+      }
+      /**
+       * Registers custom format
+       */
+      register(name, callback) {
+        this.data[name] = callback;
+      }
+      /**
+       * Register many formats at one shot
+       */
+      registerMany(formats) {
+        Object.keys(formats).forEach((name) => {
+          this.data[name] = formats[name];
+        });
+      }
+      /**
+       * Returns element by registry key
+       */
+      get(name) {
+        const format = this.data[name];
+        return format;
+      }
+      /**
+       * Returns the whole registry content
+       */
+      list() {
+        return this.data;
+      }
+    };
+    Registry_default = Registry;
+  }
+});
+
+// src/lib/api/defaults.mjs
+var defaults, defaults_default;
+var init_defaults = __esm({
+  "src/lib/api/defaults.mjs"() {
+    defaults = {};
+    defaults_default = defaults;
+    defaults.defaultInvalidTypeProduct = void 0;
+    defaults.defaultRandExpMax = 10;
+    defaults.pruneProperties = [];
+    defaults.ignoreProperties = [];
+    defaults.ignoreMissingRefs = false;
+    defaults.failOnInvalidTypes = true;
+    defaults.failOnInvalidFormat = true;
+    defaults.alwaysFakeOptionals = false;
+    defaults.optionalsProbability = null;
+    defaults.fixedProbabilities = false;
+    defaults.useExamplesValue = false;
+    defaults.useDefaultValue = false;
+    defaults.requiredOnly = false;
+    defaults.omitNulls = false;
+    defaults.minItems = 0;
+    defaults.maxItems = null;
+    defaults.minLength = 0;
+    defaults.maxLength = null;
+    defaults.resolveJsonPath = false;
+    defaults.reuseProperties = false;
+    defaults.fillProperties = true;
+    defaults.sortProperties = false;
+    defaults.replaceEmptyByRandomValue = false;
+    defaults.random = Math.random;
+    defaults.minDateTime = /* @__PURE__ */ new Date("1889-12-31T00:00:00.000Z");
+    defaults.maxDateTime = /* @__PURE__ */ new Date("1970-01-01T00:00:01.000Z");
+    defaults.renderTitle = true;
+    defaults.renderDescription = true;
+    defaults.renderComment = false;
+  }
+});
+
+// src/lib/class/OptionRegistry.mjs
+var OptionRegistry, OptionRegistry_default;
+var init_OptionRegistry = __esm({
+  "src/lib/class/OptionRegistry.mjs"() {
+    init_Registry();
+    init_defaults();
+    OptionRegistry = class extends Registry_default {
+      constructor() {
+        super();
+        this.data = { ...defaults_default };
+        this._defaults = defaults_default;
+      }
+      get defaults() {
+        return { ...this._defaults };
+      }
+    };
+    OptionRegistry_default = OptionRegistry;
+  }
+});
+
+// src/lib/api/option.mjs
+function optionAPI(nameOrOptionMap, optionalValue) {
+  if (typeof nameOrOptionMap === "string") {
+    if (typeof optionalValue !== "undefined") {
+      return registry.register(nameOrOptionMap, optionalValue);
+    }
+    return registry.get(nameOrOptionMap);
+  }
+  return registry.registerMany(nameOrOptionMap);
+}
+var registry, option_default;
+var init_option = __esm({
+  "src/lib/api/option.mjs"() {
+    init_OptionRegistry();
+    registry = new OptionRegistry_default();
+    optionAPI.getDefaults = () => registry.defaults;
+    option_default = optionAPI;
+  }
+});
+
+// src/lib/core/constants.mjs
+var ALLOWED_TYPES, SCALAR_TYPES, ALL_TYPES, MOST_NEAR_DATETIME, MIN_INTEGER, MAX_INTEGER, MIN_NUMBER, MAX_NUMBER, constants_default;
+var init_constants = __esm({
+  "src/lib/core/constants.mjs"() {
+    ALLOWED_TYPES = ["integer", "number", "string", "boolean"];
+    SCALAR_TYPES = ALLOWED_TYPES.concat(["null"]);
+    ALL_TYPES = ["array", "object"].concat(SCALAR_TYPES);
+    MOST_NEAR_DATETIME = 2524608e6;
+    MIN_INTEGER = -1e8;
+    MAX_INTEGER = 1e8;
+    MIN_NUMBER = -100;
+    MAX_NUMBER = 100;
+    constants_default = {
+      ALLOWED_TYPES,
+      SCALAR_TYPES,
+      ALL_TYPES,
+      MIN_NUMBER,
+      MAX_NUMBER,
+      MIN_INTEGER,
+      MAX_INTEGER,
+      MOST_NEAR_DATETIME
+    };
+  }
+});
+
 // node_modules/ret/lib/types.js
 var require_types = __commonJS({
-  "node_modules/ret/lib/types.js"(exports, module2) {
+  "node_modules/ret/lib/types.js"(exports2, module2) {
     module2.exports = {
       ROOT: 0,
       GROUP: 1,
@@ -43,7 +218,7 @@ var require_types = __commonJS({
 
 // node_modules/ret/lib/sets.js
 var require_sets = __commonJS({
-  "node_modules/ret/lib/sets.js"(exports) {
+  "node_modules/ret/lib/sets.js"(exports2) {
     var types2 = require_types();
     var INTS = () => [{ type: types2.RANGE, from: 48, to: 57 }];
     var WORDS = () => {
@@ -80,24 +255,24 @@ var require_sets = __commonJS({
         { type: types2.CHAR, value: 8233 }
       ];
     };
-    exports.words = () => ({ type: types2.SET, set: WORDS(), not: false });
-    exports.notWords = () => ({ type: types2.SET, set: WORDS(), not: true });
-    exports.ints = () => ({ type: types2.SET, set: INTS(), not: false });
-    exports.notInts = () => ({ type: types2.SET, set: INTS(), not: true });
-    exports.whitespace = () => ({ type: types2.SET, set: WHITESPACE(), not: false });
-    exports.notWhitespace = () => ({ type: types2.SET, set: WHITESPACE(), not: true });
-    exports.anyChar = () => ({ type: types2.SET, set: NOTANYCHAR(), not: true });
+    exports2.words = () => ({ type: types2.SET, set: WORDS(), not: false });
+    exports2.notWords = () => ({ type: types2.SET, set: WORDS(), not: true });
+    exports2.ints = () => ({ type: types2.SET, set: INTS(), not: false });
+    exports2.notInts = () => ({ type: types2.SET, set: INTS(), not: true });
+    exports2.whitespace = () => ({ type: types2.SET, set: WHITESPACE(), not: false });
+    exports2.notWhitespace = () => ({ type: types2.SET, set: WHITESPACE(), not: true });
+    exports2.anyChar = () => ({ type: types2.SET, set: NOTANYCHAR(), not: true });
   }
 });
 
 // node_modules/ret/lib/util.js
 var require_util = __commonJS({
-  "node_modules/ret/lib/util.js"(exports) {
+  "node_modules/ret/lib/util.js"(exports2) {
     var types2 = require_types();
     var sets = require_sets();
     var CTRL = "@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^ ?";
     var SLSH = { "0": 0, "t": 9, "n": 10, "v": 11, "f": 12, "r": 13 };
-    exports.strToChars = function(str) {
+    exports2.strToChars = function(str) {
       var chars_regex = /(\[\\b\])|(\\)?\\(?:u([A-F0-9]{4})|x([A-F0-9]{2})|(0?[0-7]{2})|c([@A-Z[\\\]^?])|([0tnvfr]))/g;
       str = str.replace(chars_regex, function(s, b, lbs, a16, b16, c8, dctrl, eslsh) {
         if (lbs) {
@@ -112,7 +287,7 @@ var require_util = __commonJS({
       });
       return str;
     };
-    exports.tokenizeClass = (str, regexpStr) => {
+    exports2.tokenizeClass = (str, regexpStr) => {
       var tokens = [];
       var regexp = /\\(?:(w)|(d)|(s)|(W)|(D)|(S))|((?:(?:\\)(.)|([^\]\\]))-(?:\\)?([^\]]))|(\])|(?:\\)?([^])/g;
       var rs, c;
@@ -144,9 +319,9 @@ var require_util = __commonJS({
           return [tokens, regexp.lastIndex];
         }
       }
-      exports.error(regexpStr, "Unterminated character class");
+      exports2.error(regexpStr, "Unterminated character class");
     };
-    exports.error = (regexp, msg) => {
+    exports2.error = (regexp, msg) => {
       throw new SyntaxError("Invalid regular expression: /" + regexp + "/: " + msg);
     };
   }
@@ -154,18 +329,18 @@ var require_util = __commonJS({
 
 // node_modules/ret/lib/positions.js
 var require_positions = __commonJS({
-  "node_modules/ret/lib/positions.js"(exports) {
+  "node_modules/ret/lib/positions.js"(exports2) {
     var types2 = require_types();
-    exports.wordBoundary = () => ({ type: types2.POSITION, value: "b" });
-    exports.nonWordBoundary = () => ({ type: types2.POSITION, value: "B" });
-    exports.begin = () => ({ type: types2.POSITION, value: "^" });
-    exports.end = () => ({ type: types2.POSITION, value: "$" });
+    exports2.wordBoundary = () => ({ type: types2.POSITION, value: "b" });
+    exports2.nonWordBoundary = () => ({ type: types2.POSITION, value: "B" });
+    exports2.begin = () => ({ type: types2.POSITION, value: "^" });
+    exports2.end = () => ({ type: types2.POSITION, value: "$" });
   }
 });
 
 // node_modules/ret/lib/index.js
 var require_lib = __commonJS({
-  "node_modules/ret/lib/index.js"(exports, module2) {
+  "node_modules/ret/lib/index.js"(exports2, module2) {
     var util = require_util();
     var types2 = require_types();
     var sets = require_sets();
@@ -356,9 +531,9 @@ var require_lib = __commonJS({
 
 // node_modules/drange/lib/index.js
 var require_lib2 = __commonJS({
-  "node_modules/drange/lib/index.js"(exports, module2) {
+  "node_modules/drange/lib/index.js"(exports2, module2) {
     "use strict";
-    var SubRange = class {
+    var SubRange = class _SubRange {
       constructor(low, high) {
         this.low = low;
         this.high = high;
@@ -370,31 +545,34 @@ var require_lib2 = __commonJS({
       touches(range) {
         return !(this.high + 1 < range.low || this.low - 1 > range.high);
       }
+      // Returns inclusive combination of SubRanges as a SubRange.
       add(range) {
-        return new SubRange(
+        return new _SubRange(
           Math.min(this.low, range.low),
           Math.max(this.high, range.high)
         );
       }
+      // Returns subtraction of SubRanges as an array of SubRanges.
+      // (There's a case where subtraction divides it in 2)
       subtract(range) {
         if (range.low <= this.low && range.high >= this.high) {
           return [];
         } else if (range.low > this.low && range.high < this.high) {
           return [
-            new SubRange(this.low, range.low - 1),
-            new SubRange(range.high + 1, this.high)
+            new _SubRange(this.low, range.low - 1),
+            new _SubRange(range.high + 1, this.high)
           ];
         } else if (range.low <= this.low) {
-          return [new SubRange(range.high + 1, this.high)];
+          return [new _SubRange(range.high + 1, this.high)];
         } else {
-          return [new SubRange(this.low, range.low - 1)];
+          return [new _SubRange(this.low, range.low - 1)];
         }
       }
       toString() {
         return this.low == this.high ? this.low.toString() : this.low + "-" + this.high;
       }
     };
-    var DRange = class {
+    var DRange = class _DRange {
       constructor(a, b) {
         this.ranges = [];
         this.length = 0;
@@ -421,7 +599,7 @@ var require_lib2 = __commonJS({
           this.ranges = newRanges.concat(this.ranges.slice(i));
           this._update_length();
         };
-        if (a instanceof DRange) {
+        if (a instanceof _DRange) {
           a.ranges.forEach(_add);
         } else {
           if (b == null)
@@ -444,7 +622,7 @@ var require_lib2 = __commonJS({
           this.ranges = newRanges.concat(this.ranges.slice(i));
           this._update_length();
         };
-        if (a instanceof DRange) {
+        if (a instanceof _DRange) {
           a.ranges.forEach(_subtract);
         } else {
           if (b == null)
@@ -467,7 +645,7 @@ var require_lib2 = __commonJS({
             i++;
           }
         };
-        if (a instanceof DRange) {
+        if (a instanceof _DRange) {
           a.ranges.forEach(_intersect);
         } else {
           if (b == null)
@@ -490,7 +668,7 @@ var require_lib2 = __commonJS({
         return "[ " + this.ranges.join(", ") + " ]";
       }
       clone() {
-        return new DRange(this);
+        return new _DRange(this);
       }
       numbers() {
         return this.ranges.reduce((result, subrange) => {
@@ -516,11 +694,16 @@ var require_lib2 = __commonJS({
 
 // node_modules/randexp/lib/randexp.js
 var require_randexp = __commonJS({
-  "node_modules/randexp/lib/randexp.js"(exports, module2) {
+  "node_modules/randexp/lib/randexp.js"(exports2, module2) {
     var ret = require_lib();
     var DRange = require_lib2();
     var types2 = ret.types;
     module2.exports = class RandExp2 {
+      /**
+       * @constructor
+       * @param {RegExp|String} regexp
+       * @param {String} m
+       */
       constructor(regexp, m) {
         this._setDefaults(regexp);
         if (regexp instanceof RegExp) {
@@ -535,6 +718,12 @@ var require_randexp = __commonJS({
         }
         this.tokens = ret(regexp);
       }
+      /**
+       * Checks if some custom properties have been set for this regexp.
+       *
+       * @param {RandExp} randexp
+       * @param {RegExp} regexp
+       */
       _setDefaults(regexp) {
         this.max = regexp.max != null ? regexp.max : RandExp2.prototype.max != null ? RandExp2.prototype.max : 100;
         this.defaultRange = regexp.defaultRange ? regexp.defaultRange : this.defaultRange.clone();
@@ -542,9 +731,21 @@ var require_randexp = __commonJS({
           this.randInt = regexp.randInt;
         }
       }
+      /**
+       * Generates the random string.
+       *
+       * @return {String}
+       */
       gen() {
         return this._gen(this.tokens, []);
       }
+      /**
+       * Generate random string modeled after given tokens.
+       *
+       * @param {Object} token
+       * @param {Array.<String>} groups
+       * @return {String}
+       */
       _gen(token, groups) {
         var stack, str, n, i, l;
         switch (token.type) {
@@ -590,18 +791,43 @@ var require_randexp = __commonJS({
             return String.fromCharCode(code);
         }
       }
+      /**
+       * If code is alphabetic, converts to other case.
+       * If not alphabetic, returns back code.
+       *
+       * @param {Number} code
+       * @return {Number}
+       */
       _toOtherCase(code) {
         return code + (97 <= code && code <= 122 ? -32 : 65 <= code && code <= 90 ? 32 : 0);
       }
+      /**
+       * Randomly returns a true or false value.
+       *
+       * @return {Boolean}
+       */
       _randBool() {
         return !this.randInt(0, 1);
       }
+      /**
+       * Randomly selects and returns a value from the array.
+       *
+       * @param {Array.<Object>} arr
+       * @return {Object}
+       */
       _randSelect(arr) {
         if (arr instanceof DRange) {
           return arr.index(this.randInt(0, arr.length - 1));
         }
         return arr[this.randInt(0, arr.length - 1)];
       }
+      /**
+       * expands a token to a DiscontinuousRange of characters which has a
+       * length and an index function (for random selecting)
+       *
+       * @param {Object} token
+       * @return {DiscontinuousRange}
+       */
       _expand(token) {
         if (token.type === ret.types.CHAR) {
           return new DRange(token.value);
@@ -629,15 +855,33 @@ var require_randexp = __commonJS({
           }
         }
       }
+      /**
+       * Randomly generates and returns a number between a and b (inclusive).
+       *
+       * @param {Number} a
+       * @param {Number} b
+       * @return {Number}
+       */
       randInt(a, b) {
         return a + Math.floor(Math.random() * (1 + b - a));
       }
+      /**
+       * Default range of characters to generate from.
+       */
       get defaultRange() {
         return this._range = this._range || new DRange(32, 126);
       }
       set defaultRange(range) {
         this._range = range;
       }
+      /**
+       *
+       * Enables use of randexp with a shorter call.
+       *
+       * @param {RegExp|String| regexp}
+       * @param {String} m
+       * @return {String}
+       */
       static randexp(regexp, m) {
         var randexp;
         if (typeof regexp === "string") {
@@ -652,6 +896,9 @@ var require_randexp = __commonJS({
         }
         return randexp.gen();
       }
+      /**
+       * Enables sugary /regexp/.gen syntax.
+       */
       static sugar() {
         RegExp.prototype.gen = function() {
           return RandExp2.randexp(this);
@@ -661,9 +908,1758 @@ var require_randexp = __commonJS({
   }
 });
 
+// src/lib/core/random.mjs
+function getRandomInteger(min, max) {
+  min = typeof min === "undefined" ? constants_default.MIN_INTEGER : min;
+  max = typeof max === "undefined" ? constants_default.MAX_INTEGER : max;
+  return Math.floor(option_default("random")() * (max - min + 1)) + min;
+}
+function _randexp(value) {
+  import_randexp.default.prototype.max = option_default("defaultRandExpMax");
+  import_randexp.default.prototype.randInt = (a, b) => a + Math.floor(option_default("random")() * (1 + (b - a)));
+  const re = new import_randexp.default(value);
+  return re.gen();
+}
+function pick(collection) {
+  return collection[Math.floor(option_default("random")() * collection.length)];
+}
+function shuffle(collection) {
+  let tmp;
+  let key;
+  let length = collection.length;
+  const copy = collection.slice();
+  for (; length > 0; ) {
+    key = Math.floor(option_default("random")() * length);
+    length -= 1;
+    tmp = copy[length];
+    copy[length] = copy[key];
+    copy[key] = tmp;
+  }
+  return copy;
+}
+function getRandom(min, max) {
+  return option_default("random")() * (max - min) + min;
+}
+function number(min, max, defMin, defMax, hasPrecision = false) {
+  defMin = typeof defMin === "undefined" ? constants_default.MIN_NUMBER : defMin;
+  defMax = typeof defMax === "undefined" ? constants_default.MAX_NUMBER : defMax;
+  min = typeof min === "undefined" ? defMin : min;
+  max = typeof max === "undefined" ? defMax : max;
+  if (max < min) {
+    max += min;
+  }
+  if (hasPrecision) {
+    return getRandom(min, max);
+  }
+  return getRandomInteger(min, max);
+}
+function by(type) {
+  switch (type) {
+    case "seconds":
+      return number(0, 60) * 60;
+    case "minutes":
+      return number(15, 50) * 612;
+    case "hours":
+      return number(12, 72) * 36123;
+    case "days":
+      return number(7, 30) * 86412345;
+    case "weeks":
+      return number(4, 52) * 604812345;
+    case "months":
+      return number(2, 13) * 2592012345;
+    case "years":
+      return number(1, 20) * 31104012345;
+    default:
+      break;
+  }
+}
+function date(step) {
+  if (step) {
+    return by(step);
+  }
+  let earliest = option_default("minDateTime");
+  let latest = option_default("maxDateTime");
+  if (typeof earliest === "string") {
+    earliest = new Date(earliest);
+  }
+  if (typeof latest === "string") {
+    latest = new Date(latest);
+  }
+  const now = (/* @__PURE__ */ new Date()).getTime();
+  if (typeof earliest === "number") {
+    earliest = new Date(now + earliest);
+  }
+  if (typeof latest === "number") {
+    latest = new Date(now + latest);
+  }
+  return new Date(getRandom(earliest.getTime(), latest.getTime()));
+}
+var import_randexp, random_default;
+var init_random = __esm({
+  "src/lib/core/random.mjs"() {
+    import_randexp = __toESM(require_randexp(), 1);
+    init_option();
+    init_constants();
+    random_default = {
+      pick,
+      date,
+      shuffle,
+      number,
+      randexp: _randexp
+    };
+  }
+});
+
+// src/lib/core/utils.mjs
+function getLocalRef(obj, path, refs) {
+  path = decodeURIComponent(path);
+  if (refs && refs[path])
+    return clone(refs[path]);
+  const keyElements = path.replace("#/", "/").split("/");
+  let schema = obj.$ref && refs && refs[obj.$ref] || obj;
+  if (!schema && !keyElements[0]) {
+    keyElements[0] = obj.$ref.split("#/")[0];
+  }
+  if (refs && path.includes("#/") && refs[keyElements[0]]) {
+    schema = refs[keyElements.shift()];
+  }
+  if (!keyElements[0])
+    keyElements.shift();
+  while (schema && keyElements.length > 0) {
+    const prop = keyElements.shift();
+    if (!schema[prop]) {
+      throw new Error(`Prop not found: ${prop} (${path})`);
+    }
+    schema = schema[prop];
+  }
+  return schema;
+}
+function isNumeric(value) {
+  return typeof value === "string" && RE_NUMERIC.test(value);
+}
+function isScalar(value) {
+  return ["number", "boolean"].includes(typeof value);
+}
+function hasProperties(obj, ...properties) {
+  return properties.filter((key) => {
+    return typeof obj[key] !== "undefined";
+  }).length > 0;
+}
+function clampDate(value) {
+  if (value.includes(" ")) {
+    return new Date(value).toISOString().substr(0, 10);
+  }
+  let [year, month, day] = value.split("T")[0].split("-");
+  month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
+  day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
+  return `${year}-${month}-${day}`;
+}
+function clampDateTime(value) {
+  if (value.includes(" ")) {
+    return new Date(value).toISOString().substr(0, 10);
+  }
+  const [datePart, timePart] = value.split("T");
+  let [year, month, day] = datePart.split("-");
+  let [hour, minute, second] = timePart.substr(0, 8).split(":");
+  month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
+  day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
+  hour = `0${Math.max(1, Math.min(23, hour))}`.slice(-2);
+  minute = `0${Math.max(1, Math.min(59, minute))}`.slice(-2);
+  second = `0${Math.max(1, Math.min(59, second))}`.slice(-2);
+  return `${year}-${month}-${day}T${hour}:${minute}:${second}.000Z`;
+}
+function typecast(type, schema, callback) {
+  const params = {};
+  switch (type || schema.type) {
+    case "integer":
+    case "number":
+      if (typeof schema.minimum !== "undefined") {
+        params.minimum = schema.minimum;
+      }
+      if (typeof schema.maximum !== "undefined") {
+        params.maximum = schema.maximum;
+      }
+      if (schema.enum) {
+        let min = Math.max(params.minimum || 0, 0);
+        let max = Math.min(params.maximum || Infinity, Infinity);
+        if (schema.exclusiveMinimum && min === schema.minimum) {
+          min += schema.multipleOf || 1;
+        }
+        if (schema.exclusiveMaximum && max === schema.maximum) {
+          max -= schema.multipleOf || 1;
+        }
+        if (min || max !== Infinity) {
+          schema.enum = schema.enum.filter((x) => {
+            if (x >= min && x <= max) {
+              return true;
+            }
+            return false;
+          });
+        }
+      }
+      break;
+    case "string": {
+      params.minLength = option_default("minLength") || 0;
+      params.maxLength = option_default("maxLength") || Number.MAX_SAFE_INTEGER;
+      if (typeof schema.minLength !== "undefined") {
+        params.minLength = Math.max(params.minLength, schema.minLength);
+      }
+      if (typeof schema.maxLength !== "undefined") {
+        params.maxLength = Math.min(params.maxLength, schema.maxLength);
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  let value = callback(params);
+  if (value === null || value === void 0) {
+    return null;
+  }
+  switch (type || schema.type) {
+    case "number":
+      value = isNumeric(value) ? parseFloat(value) : value;
+      break;
+    case "integer":
+      value = isNumeric(value) ? parseInt(value, 10) : value;
+      break;
+    case "boolean":
+      value = !!value;
+      break;
+    case "string": {
+      if (isScalar(value)) {
+        return value;
+      }
+      value = String(value);
+      const min = Math.max(params.minLength || 0, 0);
+      const max = Math.min(params.maxLength || Infinity, Infinity);
+      let prev;
+      let noChangeCount = 0;
+      while (value.length < min) {
+        prev = value;
+        if (!schema.pattern) {
+          value += `${random_default.pick([" ", "/", "_", "-", "+", "=", "@", "^"])}${value}`;
+        } else {
+          value += random_default.randexp(schema.pattern);
+        }
+        if (value === prev) {
+          noChangeCount += 1;
+          if (noChangeCount === 3) {
+            break;
+          }
+        } else {
+          noChangeCount = 0;
+        }
+      }
+      if (value.length > max) {
+        value = value.substr(0, max);
+      }
+      switch (schema.format) {
+        case "date-time":
+        case "datetime":
+          value = new Date(clampDateTime(value)).toISOString().replace(/([0-9])0+Z$/, "$1Z");
+          break;
+        case "full-date":
+        case "date":
+          value = new Date(clampDate(value)).toISOString().substr(0, 10);
+          break;
+        case "time":
+          value = (/* @__PURE__ */ new Date(`1969-01-01 ${value}`)).toISOString().substr(11);
+          break;
+        default:
+          break;
+      }
+      break;
+    }
+    default:
+      break;
+  }
+  return value;
+}
+function merge(a, b) {
+  Object.keys(b).forEach((key) => {
+    if (typeof b[key] !== "object" || b[key] === null) {
+      a[key] = b[key];
+    } else if (Array.isArray(b[key])) {
+      a[key] = a[key] || [];
+      b[key].forEach((value, i) => {
+        if (a.type === "array" && b.type === "array") {
+          a[key][i] = merge(a[key][i] || {}, value, true);
+        } else if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
+          a[key].push(value);
+        }
+      });
+    } else if (typeof a[key] !== "object" || a[key] === null || Array.isArray(a[key])) {
+      a[key] = merge({}, b[key]);
+    } else {
+      a[key] = merge(a[key], b[key]);
+    }
+  });
+  return a;
+}
+function clone(obj, cache = /* @__PURE__ */ new Map()) {
+  if (!obj || typeof obj !== "object") {
+    return obj;
+  }
+  if (cache.has(obj)) {
+    return cache.get(obj);
+  }
+  if (Array.isArray(obj)) {
+    const arr = [];
+    cache.set(obj, arr);
+    arr.push(...obj.map((x) => clone(x, cache)));
+    return arr;
+  }
+  const clonedObj = {};
+  cache.set(obj, clonedObj);
+  return Object.keys(obj).reduce((prev, cur) => {
+    prev[cur] = clone(obj[cur], cache);
+    return prev;
+  }, clonedObj);
+}
+function short(schema) {
+  const s = JSON.stringify(schema);
+  const l = JSON.stringify(schema, null, 2);
+  return s.length > 400 ? `${l.substr(0, 400)}...` : l;
+}
+function anyValue() {
+  return random_default.pick([
+    false,
+    true,
+    null,
+    -1,
+    NaN,
+    Math.PI,
+    Infinity,
+    void 0,
+    [],
+    {},
+    // FIXME: use built-in random?
+    Math.random(),
+    Math.random().toString(36).substr(2)
+  ]);
+}
+function hasValue(schema, value) {
+  if (schema.enum)
+    return schema.enum.includes(value);
+  if (schema.const)
+    return schema.const === value;
+}
+function notValue(schema, parent) {
+  const copy = merge({}, parent);
+  if (typeof schema.minimum !== "undefined") {
+    copy.maximum = schema.minimum;
+    copy.exclusiveMaximum = true;
+  }
+  if (typeof schema.maximum !== "undefined") {
+    copy.minimum = schema.maximum > copy.maximum ? 0 : schema.maximum;
+    copy.exclusiveMinimum = true;
+  }
+  if (typeof schema.minLength !== "undefined") {
+    copy.maxLength = schema.minLength;
+  }
+  if (typeof schema.maxLength !== "undefined") {
+    copy.minLength = schema.maxLength > copy.maxLength ? 0 : schema.maxLength;
+  }
+  if (schema.type) {
+    copy.type = random_default.pick(constants_default.SCALAR_TYPES.filter((x) => {
+      const types2 = Array.isArray(schema.type) ? schema.type : [schema.type];
+      return types2.every((type) => {
+        if (x === "number" || x === "integer") {
+          return type !== "number" && type !== "integer";
+        }
+        return x !== type;
+      });
+    }));
+  } else if (schema.enum) {
+    let value;
+    do {
+      value = anyValue();
+    } while (schema.enum.indexOf(value) !== -1);
+    copy.enum = [value];
+  }
+  if (schema.required && copy.properties) {
+    schema.required.forEach((prop) => {
+      delete copy.properties[prop];
+    });
+  }
+  return copy;
+}
+function validateValueForSchema(value, schema) {
+  const schemaHasMin = schema.minimum !== void 0;
+  const schemaHasMax = schema.maximum !== void 0;
+  return (schemaHasMin || schemaHasMax) && (!schemaHasMin || value >= schema.minimum) && (!schemaHasMax || value <= schema.maximum);
+}
+function validate(value, schemas) {
+  return !schemas.every((schema) => validateValueForSchema(value, schema));
+}
+function validateValueForOneOf(value, oneOf) {
+  const validCount = oneOf.reduce((count, schema) => count + (validateValueForSchema(value, schema) ? 1 : 0), 0);
+  return validCount === 1;
+}
+function isKey(prop) {
+  return ["enum", "const", "default", "examples", "required", "definitions", "items", "properties"].includes(prop);
+}
+function omitProps(obj, props) {
+  return Object.keys(obj).filter((key) => !props.includes(key)).reduce((copy, k) => {
+    if (Array.isArray(obj[k])) {
+      copy[k] = obj[k].slice();
+    } else {
+      copy[k] = obj[k] instanceof Object ? merge({}, obj[k]) : obj[k];
+    }
+    return copy;
+  }, {});
+}
+function template(value, schema) {
+  if (Array.isArray(value)) {
+    return value.map((x) => template(x, schema));
+  }
+  if (typeof value === "string") {
+    value = value.replace(/#\{([\w.-]+)\}/g, (_, $1) => schema[$1]);
+  }
+  return value;
+}
+function isEmpty(value) {
+  return Object.prototype.toString.call(value) === "[object Object]" && !Object.keys(value).length;
+}
+function shouldClean(key, schema) {
+  schema = schema.items || schema;
+  const alwaysFakeOptionals = option_default("alwaysFakeOptionals");
+  const isRequired = Array.isArray(schema.required) && schema.required.includes(key) || alwaysFakeOptionals;
+  const wasCleaned = typeof schema.thunk === "function" || schema.additionalProperties && typeof schema.additionalProperties.thunk === "function";
+  return !isRequired && !wasCleaned;
+}
+function clean(obj, schema, isArray = false) {
+  if (!obj || typeof obj !== "object") {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((value) => clean(value, schema, true)).filter((value) => typeof value !== "undefined");
+  }
+  Object.keys(obj).forEach((k) => {
+    if (isEmpty(obj[k])) {
+      if (shouldClean(k, schema)) {
+        delete obj[k];
+      }
+    } else {
+      let subSchema = schema;
+      if (schema && schema.properties && schema.properties[k]) {
+        subSchema = schema.properties[k];
+      }
+      const value = clean(obj[k], subSchema);
+      if (!isEmpty(value)) {
+        obj[k] = value;
+      }
+    }
+    if (typeof obj[k] === "undefined") {
+      delete obj[k];
+    }
+  });
+  if (!Object.keys(obj).length && isArray) {
+    return void 0;
+  }
+  return obj;
+}
+var RE_NUMERIC, utils_default;
+var init_utils = __esm({
+  "src/lib/core/utils.mjs"() {
+    init_option();
+    init_constants();
+    init_random();
+    RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
+    utils_default = {
+      hasProperties,
+      getLocalRef,
+      omitProps,
+      typecast,
+      merge,
+      clone,
+      short,
+      hasValue,
+      notValue,
+      anyValue,
+      validate,
+      validateValueForSchema,
+      validateValueForOneOf,
+      isKey,
+      template,
+      shouldClean,
+      clean,
+      isEmpty,
+      clampDate
+    };
+  }
+});
+
+// src/lib/class/Container.mjs
+function proxy(gen) {
+  return (value, schema, property, rootSchema) => {
+    let fn = value;
+    let args = [];
+    if (typeof value === "object") {
+      fn = Object.keys(value)[0];
+      if (Array.isArray(value[fn])) {
+        args = value[fn];
+      } else {
+        args.push(value[fn]);
+      }
+    }
+    const props = fn.split(".");
+    let ctx = gen();
+    while (props.length > 1) {
+      ctx = ctx[props.shift()];
+    }
+    value = typeof ctx === "object" ? ctx[props[0]] : ctx;
+    if (typeof value === "function") {
+      value = value.apply(ctx, args.map((x) => utils_default.template(x, rootSchema)));
+    }
+    if (Object.prototype.toString.call(value) === "[object Object]") {
+      Object.keys(value).forEach((key) => {
+        if (typeof value[key] === "function") {
+          throw new Error(`Cannot resolve value for '${property}: ${fn}', given: ${value}`);
+        }
+      });
+    }
+    return value;
+  };
+}
+var Container, Container_default;
+var init_Container = __esm({
+  "src/lib/class/Container.mjs"() {
+    init_utils();
+    Container = class {
+      constructor() {
+        this.registry = {};
+        this.support = {};
+      }
+      /**
+       * Unregister extensions
+       * @param name
+       */
+      reset(name) {
+        if (!name) {
+          this.registry = {};
+          this.support = {};
+        } else {
+          delete this.registry[name];
+          delete this.support[name];
+        }
+      }
+      /**
+       * Override dependency given by name
+       * @param name
+       * @param callback
+       */
+      extend(name, callback) {
+        this.registry[name] = callback(this.registry[name]);
+        if (!this.support[name]) {
+          this.support[name] = proxy(() => this.registry[name]);
+        }
+      }
+      /**
+       * Set keyword support by name
+       * @param name
+       * @param callback
+       */
+      define(name, callback) {
+        this.support[name] = callback;
+      }
+      /**
+       * Returns dependency given by name
+       * @param name
+       * @returns {Dependency}
+       */
+      get(name) {
+        if (typeof this.registry[name] === "undefined") {
+          throw new ReferenceError(`'${name}' dependency doesn't exist.`);
+        }
+        return this.registry[name];
+      }
+      /**
+       * Apply a custom keyword
+       * @param schema
+       */
+      wrap(schema) {
+        if (!("generate" in schema)) {
+          const keys = Object.keys(schema);
+          const context = {};
+          let length = keys.length;
+          while (length--) {
+            const fn = keys[length].replace(/^x-/, "");
+            const gen = this.support[fn];
+            if (typeof gen === "function") {
+              Object.defineProperty(schema, "generate", {
+                configurable: false,
+                enumerable: false,
+                writable: false,
+                value: (rootSchema, key) => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema, key.slice())
+                // eslint-disable-line
+              });
+              break;
+            }
+          }
+        }
+        return schema;
+      }
+    };
+    Container_default = Container;
+  }
+});
+
+// src/lib/api/format.mjs
+function formatAPI(nameOrFormatMap, callback) {
+  if (typeof nameOrFormatMap === "undefined") {
+    return registry2.list();
+  }
+  if (typeof nameOrFormatMap === "string") {
+    if (typeof callback === "function") {
+      registry2.register(nameOrFormatMap, callback);
+    } else if (callback === null || callback === false) {
+      registry2.unregister(nameOrFormatMap);
+    } else {
+      return registry2.get(nameOrFormatMap);
+    }
+  } else {
+    registry2.registerMany(nameOrFormatMap);
+  }
+}
+var registry2, format_default;
+var init_format = __esm({
+  "src/lib/api/format.mjs"() {
+    init_Registry();
+    registry2 = new Registry_default();
+    format_default = formatAPI;
+  }
+});
+
+// src/lib/core/error.mjs
+var ParseError, error_default;
+var init_error = __esm({
+  "src/lib/core/error.mjs"() {
+    ParseError = class extends Error {
+      constructor(message, path) {
+        super();
+        if (Error.captureStackTrace) {
+          Error.captureStackTrace(this, this.constructor);
+        }
+        this.name = "ParseError";
+        this.message = message;
+        this.path = path;
+      }
+    };
+    error_default = ParseError;
+  }
+});
+
+// src/lib/core/infer.mjs
+function matchesType(obj, lastElementInPath, inferredTypeProperties) {
+  return Object.keys(obj).filter((prop) => {
+    const isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1;
+    const inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
+    if (inferredPropertyFound && !isSubschema) {
+      return true;
+    }
+    return false;
+  }).length > 0;
+}
+function inferType(obj, schemaPath) {
+  const keys = Object.keys(inferredProperties);
+  for (let i = 0; i < keys.length; i += 1) {
+    const typeName = keys[i];
+    const lastElementInPath = schemaPath[schemaPath.length - 1];
+    if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
+      return typeName;
+    }
+  }
+}
+var inferredProperties, subschemaProperties, infer_default;
+var init_infer = __esm({
+  "src/lib/core/infer.mjs"() {
+    inferredProperties = {
+      array: [
+        "additionalItems",
+        "items",
+        "maxItems",
+        "minItems",
+        "uniqueItems"
+      ],
+      integer: [
+        "exclusiveMaximum",
+        "exclusiveMinimum",
+        "maximum",
+        "minimum",
+        "multipleOf"
+      ],
+      object: [
+        "additionalProperties",
+        "dependencies",
+        "maxProperties",
+        "minProperties",
+        "patternProperties",
+        "properties",
+        "required"
+      ],
+      string: [
+        "maxLength",
+        "minLength",
+        "pattern",
+        "format"
+      ]
+    };
+    inferredProperties.number = inferredProperties.integer;
+    subschemaProperties = [
+      "additionalItems",
+      "items",
+      "additionalProperties",
+      "dependencies",
+      "patternProperties",
+      "properties"
+    ];
+    infer_default = inferType;
+  }
+});
+
+// src/lib/generators/boolean.mjs
+function booleanGenerator() {
+  return option_default("random")() > 0.5;
+}
+var boolean_default;
+var init_boolean = __esm({
+  "src/lib/generators/boolean.mjs"() {
+    init_option();
+    boolean_default = booleanGenerator;
+  }
+});
+
+// src/lib/types/boolean.mjs
+var booleanType, boolean_default2;
+var init_boolean2 = __esm({
+  "src/lib/types/boolean.mjs"() {
+    init_boolean();
+    booleanType = boolean_default;
+    boolean_default2 = booleanType;
+  }
+});
+
+// src/lib/generators/null.mjs
+function nullGenerator() {
+  return null;
+}
+var null_default;
+var init_null = __esm({
+  "src/lib/generators/null.mjs"() {
+    null_default = nullGenerator;
+  }
+});
+
+// src/lib/types/null.mjs
+var nullType, null_default2;
+var init_null2 = __esm({
+  "src/lib/types/null.mjs"() {
+    init_null();
+    nullType = null_default;
+    null_default2 = nullType;
+  }
+});
+
+// src/lib/types/array.mjs
+function unique(path, items, value, sample, resolve2, traverseCallback) {
+  const tmp = [];
+  const seen = [];
+  function walk(obj) {
+    const json = JSON.stringify(obj.value);
+    if (seen.indexOf(json) === -1) {
+      seen.push(json);
+      tmp.push(obj);
+      return true;
+    }
+    return false;
+  }
+  items.forEach(walk);
+  let limit = 100;
+  while (tmp.length !== items.length) {
+    if (!walk(traverseCallback(value.items || sample, path, resolve2))) {
+      limit -= 1;
+    }
+    if (!limit) {
+      break;
+    }
+  }
+  return tmp;
+}
+function arrayType(value, path, resolve2, traverseCallback) {
+  const items = [];
+  if (!(value.items || value.additionalItems)) {
+    if (utils_default.hasProperties(value, "minItems", "maxItems", "uniqueItems")) {
+      if (value.minItems !== 0 || value.maxItems !== 0) {
+        throw new error_default(`missing items for ${utils_default.short(value)}`, path);
+      }
+    }
+    return items;
+  }
+  if (Array.isArray(value.items)) {
+    return value.items.map((item, key) => {
+      const itemSubpath = path.concat(["items", key]);
+      return traverseCallback(item, itemSubpath, resolve2);
+    });
+  }
+  let minItems = value.minItems;
+  let maxItems = value.maxItems;
+  const defaultMinItems = option_default("minItems");
+  const defaultMaxItems = option_default("maxItems");
+  if (defaultMinItems) {
+    minItems = typeof minItems === "undefined" ? defaultMinItems : Math.min(defaultMinItems, minItems);
+  }
+  if (defaultMaxItems) {
+    maxItems = typeof maxItems === "undefined" ? defaultMaxItems : Math.min(defaultMaxItems, maxItems);
+    if (maxItems && maxItems > defaultMaxItems) {
+      maxItems = defaultMaxItems;
+    }
+    if (minItems && minItems > defaultMaxItems) {
+      minItems = maxItems;
+    }
+  }
+  const optionalsProbability = option_default("alwaysFakeOptionals") === true ? 1 : option_default("optionalsProbability");
+  const fixedProbabilities = option_default("alwaysFakeOptionals") || option_default("fixedProbabilities") || false;
+  let length = random_default.number(minItems, maxItems, 1, 5);
+  if (optionalsProbability !== null) {
+    length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random_default.number(minItems, maxItems) * optionalsProbability), minItems || 0);
+  }
+  const sample = typeof value.additionalItems === "object" ? value.additionalItems : {};
+  for (let current = items.length; current < length; current += 1) {
+    const itemSubpath = path.concat(["items", current]);
+    const element = traverseCallback(value.items || sample, itemSubpath, resolve2);
+    items.push(element);
+  }
+  if (value.contains && length > 0) {
+    const idx = random_default.number(0, length - 1);
+    items[idx] = traverseCallback(value.contains, path.concat(["items", idx]), resolve2);
+  }
+  if (value.uniqueItems) {
+    return unique(path.concat(["items"]), items, value, sample, resolve2, traverseCallback);
+  }
+  return items;
+}
+var array_default;
+var init_array = __esm({
+  "src/lib/types/array.mjs"() {
+    init_random();
+    init_utils();
+    init_error();
+    init_option();
+    array_default = arrayType;
+  }
+});
+
+// src/lib/types/number.mjs
+function numberType(value) {
+  let min = typeof value.minimum === "undefined" || value.minimum === -Number.MAX_VALUE ? constants_default.MIN_INTEGER : value.minimum;
+  let max = typeof value.maximum === "undefined" || value.maximum === Number.MAX_VALUE ? constants_default.MAX_INTEGER : value.maximum;
+  const multipleOf = value.multipleOf;
+  const decimals = multipleOf && String(multipleOf).match(/e-(\d)|\.(\d+)$/);
+  if (decimals) {
+    const number2 = (Math.random() * random_default.number(0, 10) + 1) * multipleOf;
+    const truncate = decimals[1] || decimals[2].length;
+    const result = parseFloat(number2.toFixed(truncate));
+    const base = random_default.number(min, max - 1);
+    if (!String(result).includes(".")) {
+      return (base + result).toExponential();
+    }
+    return base + result;
+  }
+  if (multipleOf) {
+    max = Math.floor(max / multipleOf) * multipleOf;
+    min = Math.ceil(min / multipleOf) * multipleOf;
+  }
+  if (value.exclusiveMinimum && min === value.minimum) {
+    min += multipleOf || 1;
+  }
+  if (value.exclusiveMaximum && max === value.maximum) {
+    max -= multipleOf || 1;
+  }
+  if (min > max) {
+    return NaN;
+  }
+  if (multipleOf) {
+    let base = random_default.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
+    while (base < min) {
+      base += multipleOf;
+    }
+    return base;
+  }
+  return random_default.number(min, max, void 0, void 0, value.type !== "integer");
+}
+var number_default;
+var init_number = __esm({
+  "src/lib/types/number.mjs"() {
+    init_random();
+    init_constants();
+    number_default = numberType;
+  }
+});
+
+// src/lib/types/integer.mjs
+function integerType(value) {
+  return Math.floor(number_default({ ...value }));
+}
+var integer_default;
+var init_integer = __esm({
+  "src/lib/types/integer.mjs"() {
+    init_number();
+    integer_default = integerType;
+  }
+});
+
+// src/lib/generators/words.mjs
+function wordsGenerator(length) {
+  const words = random_default.shuffle(LIPSUM_WORDS);
+  return words.slice(0, length);
+}
+var LIPSUM_WORDS, words_default;
+var init_words = __esm({
+  "src/lib/generators/words.mjs"() {
+    init_random();
+    LIPSUM_WORDS = `Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore
+et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
+commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est
+laborum`.split(/\W/);
+    words_default = wordsGenerator;
+  }
+});
+
+// src/lib/types/object.mjs
+function objectType(value, path, resolve2, traverseCallback) {
+  const props = {};
+  const properties = value.properties || {};
+  const patternProperties = value.patternProperties || {};
+  const requiredProperties = typeof value.required === "boolean" ? [] : (value.required || []).slice();
+  const allowsAdditional = value.additionalProperties !== false;
+  const propertyKeys = Object.keys(properties);
+  const patternPropertyKeys = Object.keys(patternProperties);
+  const optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce((_response, _key) => {
+    if (requiredProperties.indexOf(_key) === -1)
+      _response.push(_key);
+    return _response;
+  }, []);
+  const allProperties = requiredProperties.concat(optionalProperties);
+  const additionalProperties = allowsAdditional ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
+  if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils_default.hasProperties(value, "minProperties", "maxProperties", "dependencies", "required")) {
+    return null;
+  }
+  if (option_default("requiredOnly") === true) {
+    requiredProperties.forEach((key) => {
+      if (properties[key]) {
+        props[key] = properties[key];
+      }
+    });
+    return traverseCallback(props, path.concat(["properties"]), resolve2, value);
+  }
+  const optionalsProbability = option_default("alwaysFakeOptionals") === true ? 1 : option_default("optionalsProbability");
+  const fixedProbabilities = option_default("alwaysFakeOptionals") || option_default("fixedProbabilities") || false;
+  const ignoreProperties = option_default("ignoreProperties") || [];
+  const reuseProps = option_default("reuseProperties");
+  const fillProps = option_default("fillProperties");
+  const max = value.maxProperties || allProperties.length + (allowsAdditional ? random_default.number(1, 5) : 0);
+  let min = Math.max(value.minProperties || 0, requiredProperties.length);
+  let neededExtras = Math.max(0, allProperties.length - min);
+  if (allProperties.length === 1 && !requiredProperties.length) {
+    min = Math.max(random_default.number(fillProps ? 1 : 0, max), min);
+  }
+  if (optionalsProbability !== null) {
+    if (fixedProbabilities === true) {
+      neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (allProperties.length - min));
+    } else {
+      neededExtras = random_default.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
+    }
+  }
+  const extraPropertiesRandomOrder = random_default.shuffle(optionalProperties).slice(0, neededExtras);
+  const extraProperties = optionalProperties.filter((_item) => {
+    return extraPropertiesRandomOrder.indexOf(_item) !== -1;
+  });
+  const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random_default.number(0, max);
+  const _props = requiredProperties.concat(random_default.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
+  const _defns = [];
+  const _deps = [];
+  if (value.dependencies) {
+    Object.keys(value.dependencies).forEach((prop) => {
+      const _required = value.dependencies[prop];
+      if (_props.indexOf(prop) !== -1) {
+        if (Array.isArray(_required)) {
+          _required.forEach((sub) => {
+            if (_props.indexOf(sub) === -1) {
+              _props.push(sub);
+            }
+          });
+        } else if (Array.isArray(_required.oneOf || _required.anyOf)) {
+          const values = _required.oneOf || _required.anyOf;
+          _deps.push({ prop, values });
+        } else {
+          _defns.push(_required);
+        }
+      }
+    });
+    if (_defns.length) {
+      delete value.dependencies;
+      return traverseCallback({
+        allOf: _defns.concat(value)
+      }, path.concat(["properties"]), resolve2, value);
+    }
+  }
+  const skipped = [];
+  const missing = [];
+  _props.forEach((key) => {
+    if (properties[key] && ["{}", "true"].includes(JSON.stringify(properties[key].not))) {
+      return;
+    }
+    for (let i = 0; i < ignoreProperties.length; i += 1) {
+      if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === "string" && ignoreProperties[i] === key || typeof ignoreProperties[i] === "function" && ignoreProperties[i](properties[key], key)) {
+        skipped.push(key);
+        return;
+      }
+    }
+    if (additionalProperties === false) {
+      if (requiredProperties.indexOf(key) !== -1) {
+        props[key] = properties[key];
+      }
+    }
+    if (properties[key]) {
+      props[key] = properties[key];
+    }
+    let found;
+    patternPropertyKeys.forEach((_key) => {
+      if (key.match(new RegExp(_key))) {
+        found = true;
+        if (props[key]) {
+          utils_default.merge(props[key], patternProperties[_key]);
+        } else {
+          props[random_default.randexp(key)] = patternProperties[_key];
+        }
+      }
+    });
+    if (!found) {
+      const subschema = patternProperties[key] || additionalProperties;
+      if (subschema && additionalProperties !== false) {
+        props[patternProperties[key] ? random_default.randexp(key) : key] = properties[key] || subschema;
+      } else {
+        missing.push(key);
+      }
+    }
+  });
+  let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
+  const hash = (suffix) => random_default.randexp(`_?[_a-f\\d]{1,3}${suffix ? "\\$?" : ""}`);
+  function get(from) {
+    let one;
+    do {
+      if (!from.length)
+        break;
+      one = from.shift();
+    } while (props[one]);
+    return one;
+  }
+  let minProps = min;
+  if (allowsAdditional && !requiredProperties.length) {
+    minProps = Math.max(optionalsProbability === null || additionalProperties ? random_default.number(fillProps ? 1 : 0, max) : 0, min);
+  }
+  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true && fillProps) {
+    const limit = random_default.number(0, max);
+    for (let i = 0; i < limit; i += 1) {
+      props[words_default(1) + hash(limit[i])] = additionalProperties || anyType;
+    }
+  }
+  while (fillProps) {
+    if (!(patternPropertyKeys.length || allowsAdditional)) {
+      break;
+    }
+    if (current >= minProps) {
+      break;
+    }
+    if (allowsAdditional) {
+      if (reuseProps && propertyKeys.length - current > minProps) {
+        let count = 0;
+        let key;
+        do {
+          count += 1;
+          if (count > 1e3) {
+            break;
+          }
+          key = get(requiredProperties) || random_default.pick(propertyKeys);
+        } while (typeof props[key] !== "undefined");
+        if (typeof props[key] === "undefined") {
+          props[key] = properties[key];
+          current += 1;
+        }
+      } else if (patternPropertyKeys.length && !additionalProperties) {
+        const prop = random_default.pick(patternPropertyKeys);
+        const word = random_default.randexp(prop);
+        if (!props[word]) {
+          props[word] = patternProperties[prop];
+          current += 1;
+        }
+      } else {
+        const word = get(requiredProperties) || words_default(1) + hash();
+        if (!props[word]) {
+          props[word] = additionalProperties || anyType;
+          current += 1;
+        }
+      }
+    }
+    for (let i = 0; current < min && i < patternPropertyKeys.length; i += 1) {
+      const _key = patternPropertyKeys[i];
+      const word = random_default.randexp(_key);
+      if (!props[word]) {
+        props[word] = patternProperties[_key];
+        current += 1;
+      }
+    }
+  }
+  if (requiredProperties.length === 0 && (!allowsAdditional || optionalsProbability === false)) {
+    const maximum = random_default.number(min, max);
+    for (; current < maximum; ) {
+      const word = get(propertyKeys);
+      if (word) {
+        props[word] = properties[word];
+      }
+      current += 1;
+    }
+  }
+  let sortedObj = props;
+  if (option_default("sortProperties") !== null) {
+    const originalKeys = Object.keys(properties);
+    const sortedKeys = Object.keys(props).sort((a, b) => {
+      return option_default("sortProperties") ? a.localeCompare(b) : originalKeys.indexOf(a) - originalKeys.indexOf(b);
+    });
+    sortedObj = sortedKeys.reduce((memo, key) => {
+      memo[key] = props[key];
+      return memo;
+    }, {});
+  }
+  const result = traverseCallback(sortedObj, path.concat(["properties"]), resolve2, value);
+  _deps.forEach((dep) => {
+    for (const sub of dep.values) {
+      if (utils_default.hasValue(sub.properties[dep.prop], result.value[dep.prop])) {
+        Object.keys(sub.properties).forEach((next) => {
+          if (next !== dep.prop) {
+            utils_default.merge(result.value, traverseCallback(sub.properties, path.concat(["properties"]), resolve2, value).value);
+          }
+        });
+        break;
+      }
+    }
+  });
+  return result;
+}
+var anyType, object_default;
+var init_object = __esm({
+  "src/lib/types/object.mjs"() {
+    init_constants();
+    init_random();
+    init_words();
+    init_utils();
+    init_option();
+    anyType = { type: constants_default.ALLOWED_TYPES };
+    object_default = objectType;
+  }
+});
+
+// src/lib/generators/thunk.mjs
+function produce() {
+  const length = random_default.number(1, 5);
+  return words_default(length).join(" ");
+}
+function thunkGenerator(min = 0, max = 140) {
+  const _min = Math.max(0, min);
+  const _max = random_default.number(_min, max);
+  let result = produce();
+  while (result.length < _min) {
+    result += produce();
+  }
+  if (result.length > _max) {
+    result = result.substr(0, _max);
+  }
+  return result;
+}
+var thunk_default;
+var init_thunk = __esm({
+  "src/lib/generators/thunk.mjs"() {
+    init_words();
+    init_random();
+    thunk_default = thunkGenerator;
+  }
+});
+
+// src/lib/generators/ipv4.mjs
+function ipv4Generator() {
+  return [0, 0, 0, 0].map(() => {
+    return random_default.number(0, 255);
+  }).join(".");
+}
+var ipv4_default;
+var init_ipv4 = __esm({
+  "src/lib/generators/ipv4.mjs"() {
+    init_random();
+    ipv4_default = ipv4Generator;
+  }
+});
+
+// src/lib/generators/dateTime.mjs
+function dateTimeGenerator() {
+  return random_default.date().toISOString();
+}
+var dateTime_default;
+var init_dateTime = __esm({
+  "src/lib/generators/dateTime.mjs"() {
+    init_random();
+    dateTime_default = dateTimeGenerator;
+  }
+});
+
+// src/lib/generators/date.mjs
+function dateGenerator() {
+  return dateTime_default().slice(0, 10);
+}
+var date_default;
+var init_date = __esm({
+  "src/lib/generators/date.mjs"() {
+    init_dateTime();
+    date_default = dateGenerator;
+  }
+});
+
+// src/lib/generators/time.mjs
+function timeGenerator() {
+  return dateTime_default().slice(11);
+}
+var time_default;
+var init_time = __esm({
+  "src/lib/generators/time.mjs"() {
+    init_dateTime();
+    time_default = timeGenerator;
+  }
+});
+
+// src/lib/generators/coreFormat.mjs
+function coreFormatGenerator(coreFormat) {
+  return random_default.randexp(regexps[coreFormat]).replace(ALLOWED_FORMATS, (match, key) => {
+    return random_default.randexp(regexps[key]);
+  });
+}
+var FRAGMENT, URI_PATTERN, PARAM_PATTERN, regexps, ALLOWED_FORMATS, coreFormat_default;
+var init_coreFormat = __esm({
+  "src/lib/generators/coreFormat.mjs"() {
+    init_random();
+    FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*";
+    URI_PATTERN = `https?://{hostname}(?:${FRAGMENT})+`;
+    PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?";
+    regexps = {
+      email: "[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}",
+      hostname: "[a-zA-Z]{1,33}\\.[a-z]{2,4}",
+      ipv6: "[a-f\\d]{4}(:[a-f\\d]{4}){7}",
+      uri: URI_PATTERN,
+      slug: "[a-zA-Z\\d_-]+",
+      // types from draft-0[67] (?)
+      "uri-reference": `${URI_PATTERN}${PARAM_PATTERN}`,
+      "uri-template": URI_PATTERN.replace("(?:", "(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|"),
+      "json-pointer": `(/(?:${FRAGMENT.replace("]*", "/]*")}|~[01]))+`,
+      // some types from https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.1.md#data-types (?)
+      uuid: "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$",
+      duration: "^P(?!$)((\\d+Y)?(\\d+M)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?|(\\d+W)?)$"
+    };
+    regexps.iri = regexps["uri-reference"];
+    regexps["iri-reference"] = regexps["uri-reference"];
+    regexps["idn-email"] = regexps.email;
+    regexps["idn-hostname"] = regexps.hostname;
+    ALLOWED_FORMATS = new RegExp(`\\{(${Object.keys(regexps).join("|")})\\}`);
+    coreFormat_default = coreFormatGenerator;
+  }
+});
+
+// src/lib/types/string.mjs
+function generateFormat(value, invalid) {
+  const callback = format_default(value.format);
+  if (typeof callback === "function") {
+    return callback(value);
+  }
+  switch (value.format) {
+    case "date-time":
+    case "datetime":
+      return dateTime_default();
+    case "date":
+      return date_default();
+    case "time":
+      return time_default();
+    case "ipv4":
+      return ipv4_default();
+    case "regex":
+      return ".+?";
+    case "email":
+    case "hostname":
+    case "ipv6":
+    case "uri":
+    case "uri-reference":
+    case "iri":
+    case "iri-reference":
+    case "idn-email":
+    case "idn-hostname":
+    case "json-pointer":
+    case "slug":
+    case "uri-template":
+    case "uuid":
+    case "duration":
+      return coreFormat_default(value.format);
+    default:
+      if (typeof callback === "undefined") {
+        if (option_default("failOnInvalidFormat")) {
+          throw new Error(`unknown registry key ${utils_default.short(value.format)}`);
+        } else {
+          return invalid();
+        }
+      }
+      throw new Error(`unsupported format '${value.format}'`);
+  }
+}
+function stringType(value) {
+  const output = utils_default.typecast("string", value, (opts) => {
+    if (value.format) {
+      return generateFormat(value, () => thunk_default(opts.minLength, opts.maxLength));
+    }
+    if (value.pattern) {
+      return random_default.randexp(value.pattern);
+    }
+    return thunk_default(opts.minLength, opts.maxLength);
+  });
+  return output;
+}
+var string_default;
+var init_string = __esm({
+  "src/lib/types/string.mjs"() {
+    init_thunk();
+    init_ipv4();
+    init_dateTime();
+    init_date();
+    init_time();
+    init_coreFormat();
+    init_option();
+    init_format();
+    init_random();
+    init_utils();
+    string_default = stringType;
+  }
+});
+
+// src/lib/types/index.mjs
+var typeMap, types_default;
+var init_types = __esm({
+  "src/lib/types/index.mjs"() {
+    init_boolean2();
+    init_null2();
+    init_array();
+    init_integer();
+    init_number();
+    init_object();
+    init_string();
+    typeMap = {
+      boolean: boolean_default2,
+      null: null_default2,
+      array: array_default,
+      integer: integer_default,
+      number: number_default,
+      object: object_default,
+      string: string_default
+    };
+    types_default = typeMap;
+  }
+});
+
+// src/lib/core/traverse.mjs
+function getMeta({ $comment: comment, title, description }) {
+  return Object.entries({ comment, title, description }).filter(([, value]) => value).reduce((memo, [k, v]) => {
+    memo[k] = v;
+    return memo;
+  }, {});
+}
+function traverse(schema, path, resolve2, rootSchema) {
+  schema = resolve2(schema, null, path);
+  if (schema && (schema.oneOf || schema.anyOf || schema.allOf)) {
+    schema = resolve2(schema, null, path);
+  }
+  if (!schema) {
+    throw new Error(`Cannot traverse at '${path.join(".")}', given '${JSON.stringify(rootSchema)}'`);
+  }
+  const context = {
+    ...getMeta(schema),
+    schemaPath: path
+  };
+  if (path[path.length - 1] !== "properties") {
+    if (option_default("useExamplesValue") && Array.isArray(schema.examples)) {
+      const fixedExamples = schema.examples.concat("default" in schema ? [schema.default] : []);
+      return { value: utils_default.typecast(null, schema, () => random_default.pick(fixedExamples)), context };
+    }
+    if (option_default("useExamplesValue") && typeof schema.example !== "undefined") {
+      return { value: utils_default.typecast(null, schema, () => schema.example), context };
+    }
+    if (option_default("useDefaultValue") && "default" in schema) {
+      if (schema.default !== "" || !option_default("replaceEmptyByRandomValue")) {
+        return { value: schema.default, context };
+      }
+    }
+    if ("template" in schema) {
+      return { value: utils_default.template(schema.template, rootSchema), context };
+    }
+    if ("const" in schema) {
+      return { value: schema.const, context };
+    }
+  }
+  if (schema.not && typeof schema.not === "object") {
+    schema = utils_default.notValue(schema.not, utils_default.omitProps(schema, ["not"]));
+    if (schema.type && schema.type === "object") {
+      const { value, context: innerContext } = traverse(schema, path.concat(["not"]), resolve2, rootSchema);
+      return { value: utils_default.clean(value, schema, false), context: { ...context, items: innerContext } };
+    }
+  }
+  if (typeof schema.thunk === "function") {
+    const { value, context: innerContext } = traverse(schema.thunk(rootSchema), path, resolve2);
+    return { value, context: { ...context, items: innerContext } };
+  }
+  if (schema.jsonPath) {
+    return { value: schema, context };
+  }
+  let type = schema.type;
+  if (Array.isArray(type)) {
+    type = random_default.pick(type);
+  } else if (typeof type === "undefined") {
+    type = infer_default(schema, path) || type;
+    if (type) {
+      schema.type = type;
+    }
+  }
+  if (typeof schema.generate === "function") {
+    const retVal = utils_default.typecast(null, schema, () => schema.generate(rootSchema, path));
+    const retType = retVal === null ? "null" : typeof retVal;
+    if (retType === type || retType === "number" && type === "integer" || Array.isArray(retVal) && type === "array") {
+      return { value: retVal, context };
+    }
+  }
+  if (typeof schema.pattern === "string") {
+    return { value: utils_default.typecast("string", schema, () => random_default.randexp(schema.pattern)), context };
+  }
+  if (Array.isArray(schema.enum)) {
+    return { value: utils_default.typecast(null, schema, () => random_default.pick(schema.enum)), context };
+  }
+  if (typeof type === "string") {
+    if (!types_default[type]) {
+      if (option_default("failOnInvalidTypes")) {
+        throw new error_default(`unknown primitive ${utils_default.short(type)}`, path.concat(["type"]));
+      } else {
+        const value = option_default("defaultInvalidTypeProduct");
+        if (typeof value === "string" && types_default[value]) {
+          return { value: types_default[value](schema, path, resolve2, traverse), context };
+        }
+        return { value, context };
+      }
+    } else {
+      try {
+        const innerResult = types_default[type](schema, path, resolve2, traverse);
+        if (type === "array") {
+          return {
+            value: innerResult.map(({ value }) => value),
+            context: {
+              ...context,
+              items: innerResult.map(
+                Array.isArray(schema.items) ? ({ context: c }) => c : ({ context: c }) => ({
+                  ...c,
+                  // we have to remove the index from the path to get the real schema path
+                  schemaPath: c.schemaPath.slice(0, -1)
+                })
+              )
+            }
+          };
+        }
+        if (type === "object") {
+          return innerResult !== null ? { value: innerResult.value, context: { ...context, items: innerResult.context } } : { value: {}, context };
+        }
+        return { value: innerResult, context };
+      } catch (e) {
+        if (typeof e.path === "undefined") {
+          throw new error_default(e.stack, path);
+        }
+        throw e;
+      }
+    }
+  }
+  let valueCopy = {};
+  let contextCopy = { ...context };
+  if (Array.isArray(schema)) {
+    valueCopy = [];
+  }
+  const pruneProperties = option_default("pruneProperties") || [];
+  Object.keys(schema).forEach((prop) => {
+    if (pruneProperties.includes(prop))
+      return;
+    if (schema[prop] === null)
+      return;
+    if (typeof schema[prop] === "object" && prop !== "definitions") {
+      const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve2, valueCopy);
+      valueCopy[prop] = utils_default.clean(value, schema[prop], false);
+      contextCopy[prop] = innerContext;
+      if (valueCopy[prop] === null && option_default("omitNulls")) {
+        delete valueCopy[prop];
+        delete contextCopy[prop];
+      }
+    } else {
+      valueCopy[prop] = schema[prop];
+    }
+  });
+  return { value: valueCopy, context: contextCopy };
+}
+var traverse_default;
+var init_traverse = __esm({
+  "src/lib/core/traverse.mjs"() {
+    init_utils();
+    init_random();
+    init_error();
+    init_infer();
+    init_types();
+    init_option();
+    traverse_default = traverse;
+  }
+});
+
+// src/lib/core/buildResolveSchema.mjs
+var buildResolveSchema, buildResolveSchema_default;
+var init_buildResolveSchema = __esm({
+  "src/lib/core/buildResolveSchema.mjs"() {
+    init_option();
+    init_random();
+    init_utils();
+    buildResolveSchema = ({
+      refs,
+      schema,
+      container: container2,
+      synchronous,
+      refDepthMax,
+      refDepthMin
+    }) => {
+      const recursiveUtil = {};
+      const seenRefs = {};
+      let depth = 0;
+      let lastRef;
+      let lastPath;
+      recursiveUtil.resolveSchema = (sub, index, rootPath) => {
+        if (sub === null || sub === void 0) {
+          return null;
+        }
+        if (typeof sub.generate === "function") {
+          return sub;
+        }
+        const _id = sub.$id || sub.id;
+        if (typeof _id === "string") {
+          delete sub.id;
+          delete sub.$id;
+          delete sub.$schema;
+        }
+        if (typeof sub.$ref === "string") {
+          const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
+          if (sub.$ref === "#" || seenRefs[sub.$ref] < 0 || lastRef === sub.$ref && ++depth > maxDepth) {
+            if (sub.$ref !== "#" && lastPath && lastPath.length === rootPath.length) {
+              return utils_default.getLocalRef(schema, sub.$ref, synchronous && refs);
+            }
+            delete sub.$ref;
+            return sub;
+          }
+          if (typeof seenRefs[sub.$ref] === "undefined") {
+            seenRefs[sub.$ref] = random_default.number(refDepthMin, refDepthMax) - 1;
+          }
+          lastPath = rootPath;
+          lastRef = sub.$ref;
+          let ref;
+          if (sub.$ref.indexOf("#/") === -1) {
+            ref = refs[sub.$ref] || null;
+          } else {
+            ref = utils_default.getLocalRef(schema, sub.$ref, synchronous && refs) || null;
+          }
+          let fixed;
+          if (typeof ref !== "undefined") {
+            if (!ref && option_default("ignoreMissingRefs") !== true) {
+              throw new Error(`Reference not found: ${sub.$ref}`);
+            }
+            seenRefs[sub.$ref] -= 1;
+            utils_default.merge(sub, ref || {});
+            fixed = synchronous && ref && ref.$ref;
+          }
+          if (!fixed)
+            delete sub.$ref;
+          return sub;
+        }
+        if (Array.isArray(sub.allOf)) {
+          const schemas = sub.allOf;
+          delete sub.allOf;
+          schemas.forEach((subSchema) => {
+            const _sub = recursiveUtil.resolveSchema(subSchema, null, rootPath);
+            utils_default.merge(sub, typeof _sub.thunk === "function" ? _sub.thunk(sub) : _sub);
+            if (Array.isArray(sub.allOf)) {
+              recursiveUtil.resolveSchema(sub, index, rootPath);
+            }
+          });
+        }
+        if (Array.isArray(sub.oneOf || sub.anyOf) && rootPath[rootPath.length - 2] !== "dependencies") {
+          const mix = sub.oneOf || sub.anyOf;
+          if (sub.enum && sub.oneOf) {
+            sub.enum = sub.enum.filter((x) => utils_default.validate(x, mix));
+          }
+          return {
+            thunk(rootSchema) {
+              const copy = utils_default.omitProps(sub, ["anyOf", "oneOf"]);
+              const fixed = random_default.pick(mix);
+              utils_default.merge(copy, fixed);
+              mix.forEach((omit) => {
+                if (omit.required && omit !== fixed) {
+                  omit.required.forEach((key) => {
+                    const includesKey = copy.required && copy.required.includes(key);
+                    if (copy.properties && !includesKey) {
+                      delete copy.properties[key];
+                    }
+                    if (rootSchema && rootSchema.properties) {
+                      delete rootSchema.properties[key];
+                    }
+                  });
+                }
+              });
+              return copy;
+            }
+          };
+        }
+        Object.keys(sub).forEach((prop) => {
+          if ((Array.isArray(sub[prop]) || typeof sub[prop] === "object") && !utils_default.isKey(prop)) {
+            sub[prop] = recursiveUtil.resolveSchema(sub[prop], prop, rootPath.concat(prop));
+          }
+        });
+        if (rootPath) {
+          const lastProp = rootPath[rootPath.length - 1];
+          if (lastProp === "properties" || lastProp === "items") {
+            return sub;
+          }
+        }
+        return container2.wrap(sub);
+      };
+      return recursiveUtil;
+    };
+    buildResolveSchema_default = buildResolveSchema;
+  }
+});
+
+// src/lib/core/run.mjs
+function pick2(data) {
+  return Array.isArray(data) ? random_default.pick(data) : data;
+}
+function cycle(data, reverse) {
+  if (!Array.isArray(data)) {
+    return data;
+  }
+  const value = reverse ? data.pop() : data.shift();
+  if (reverse) {
+    data.unshift(value);
+  } else {
+    data.push(value);
+  }
+  return value;
+}
+function resolve(obj, data, values, property) {
+  if (!obj || typeof obj !== "object") {
+    return obj;
+  }
+  if (!values) {
+    values = {};
+  }
+  if (!data) {
+    data = obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map((x) => resolve(x, data, values, property));
+  }
+  if (obj.jsonPath) {
+    const { JSONPath: JSONPath2 } = getDependencies();
+    const params = typeof obj.jsonPath !== "object" ? { path: obj.jsonPath } : obj.jsonPath;
+    params.group = obj.group || params.group || property;
+    params.cycle = obj.cycle || params.cycle || false;
+    params.reverse = obj.reverse || params.reverse || false;
+    params.count = obj.count || params.count || 1;
+    const key = `${params.group}__${params.path}`;
+    if (!values[key]) {
+      if (params.count > 1) {
+        values[key] = JSONPath2(params.path, data).slice(0, params.count);
+      } else {
+        values[key] = JSONPath2(params.path, data);
+      }
+    }
+    if (params.cycle || params.reverse) {
+      return cycle(values[key], params.reverse);
+    }
+    return pick2(values[key]);
+  }
+  Object.keys(obj).forEach((k) => {
+    obj[k] = resolve(obj[k], data, values, k);
+  });
+  return obj;
+}
+function run(refs, schema, container2, synchronous) {
+  if (Object.prototype.toString.call(schema) !== "[object Object]") {
+    throw new Error(`Invalid input, expecting object but given ${typeof schema}`);
+  }
+  const refDepthMin = option_default("refDepthMin") || 0;
+  const refDepthMax = option_default("refDepthMax") || 3;
+  try {
+    const { resolveSchema } = buildResolveSchema_default({
+      refs,
+      schema,
+      container: container2,
+      synchronous,
+      refDepthMin,
+      refDepthMax
+    });
+    const result = traverse_default(utils_default.clone(schema), [], resolveSchema);
+    if (option_default("resolveJsonPath")) {
+      return {
+        value: resolve(result.value),
+        context: result.context
+      };
+    }
+    return result;
+  } catch (e) {
+    if (e.path) {
+      throw new Error(`${e.message} in /${e.path.join("/")}`);
+    } else {
+      throw e;
+    }
+  }
+}
+var run_default;
+var init_run = __esm({
+  "src/lib/core/run.mjs"() {
+    init_vendor();
+    init_option();
+    init_traverse();
+    init_random();
+    init_utils();
+    init_buildResolveSchema();
+    run_default = run;
+  }
+});
+
+// src/lib/renderers/js.mjs
+function renderJS(res) {
+  return res.value;
+}
+var js_default;
+var init_js = __esm({
+  "src/lib/renderers/js.mjs"() {
+    js_default = renderJS;
+  }
+});
+
 // node_modules/yaml/dist/PlainValue-ec8e588e.js
 var require_PlainValue_ec8e588e = __commonJS({
-  "node_modules/yaml/dist/PlainValue-ec8e588e.js"(exports) {
+  "node_modules/yaml/dist/PlainValue-ec8e588e.js"(exports2) {
     "use strict";
     var Char = {
       ANCHOR: "&",
@@ -805,9 +2801,9 @@ var require_PlainValue_ec8e588e = __commonJS({
       return `${src}
 ${offset}${err}${errEnd}`;
     }
-    var Range = class {
+    var Range = class _Range {
       static copy(orig) {
-        return new Range(orig.start, orig.end);
+        return new _Range(orig.start, orig.end);
       }
       constructor(start, end) {
         this.start = start;
@@ -816,6 +2812,14 @@ ${offset}${err}${errEnd}`;
       isEmpty() {
         return typeof this.start !== "number" || !this.end || this.end <= this.start;
       }
+      /**
+       * Set `origStart` and `origEnd` to point to the original source range for
+       * this node, which may differ due to dropped CR characters.
+       *
+       * @param {number[]} cr - Positions of dropped CR characters
+       * @param {number} offset - Starting index of `cr` from the last call
+       * @returns {number} - The next offset, matching the one found for `origStart`
+       */
       setOrigRange(cr, offset) {
         const {
           start,
@@ -845,13 +2849,14 @@ ${offset}${err}${errEnd}`;
         return nextOffset;
       }
     };
-    var Node2 = class {
+    var Node2 = class _Node {
       static addStringTerminator(src, offset, str) {
         if (str[str.length - 1] === "\n")
           return str;
-        const next = Node2.endOfWhiteSpace(src, offset);
+        const next = _Node.endOfWhiteSpace(src, offset);
         return next >= src.length || src[next] === "\n" ? str + "\n" : str;
       }
+      // ^(---|...)
       static atDocumentBoundary(src, offset, sep) {
         const ch0 = src[offset];
         if (!ch0)
@@ -909,12 +2914,21 @@ ${offset}${err}${errEnd}`;
           ch = src[offset -= 1];
         return offset + 1;
       }
+      /**
+       * End of indentation, or null if the line's indent level is not more
+       * than `indent`
+       *
+       * @param {string} src
+       * @param {number} indent
+       * @param {number} lineStart
+       * @returns {?number}
+       */
       static endOfBlockIndent(src, indent, lineStart) {
-        const inEnd = Node2.endOfIndent(src, lineStart);
+        const inEnd = _Node.endOfIndent(src, lineStart);
         if (inEnd > lineStart + indent) {
           return inEnd;
         } else {
-          const wsEnd = Node2.endOfWhiteSpace(src, inEnd);
+          const wsEnd = _Node.endOfWhiteSpace(src, inEnd);
           const ch = src[wsEnd];
           if (!ch || ch === "\n")
             return wsEnd;
@@ -932,10 +2946,13 @@ ${offset}${err}${errEnd}`;
           return true;
         return indicatorAsIndent && ch === "-";
       }
+      // should be at line or string end, or at next non-whitespace char
       static normalizeOffset(src, offset) {
         const ch = src[offset];
-        return !ch ? offset : ch !== "\n" && src[offset - 1] === "\n" ? offset - 1 : Node2.endOfWhiteSpace(src, offset);
+        return !ch ? offset : ch !== "\n" && src[offset - 1] === "\n" ? offset - 1 : _Node.endOfWhiteSpace(src, offset);
       }
+      // fold single newline into space, multiple newlines to N - 1 newlines
+      // presumes src[offset] === '\n'
       static foldNewline(src, offset, indent) {
         let inCount = 0;
         let error = false;
@@ -951,7 +2968,7 @@ ${offset}${err}${errEnd}`;
             case "	":
               if (inCount <= indent)
                 error = true;
-              offset = Node2.endOfWhiteSpace(src, offset + 2) - 1;
+              offset = _Node.endOfWhiteSpace(src, offset + 2) - 1;
               break;
             case " ":
               inCount += 1;
@@ -1019,7 +3036,7 @@ ${offset}${err}${errEnd}`;
         const {
           end
         } = this.valueRange;
-        return start !== end || Node2.atBlank(src, end - 1);
+        return start !== end || _Node.atBlank(src, end - 1);
       }
       get hasComment() {
         if (this.context) {
@@ -1113,13 +3130,21 @@ ${offset}${err}${errEnd}`;
           src
         } = this.context;
         if (src[start] === Char.COMMENT) {
-          const end = Node2.endOfLine(src, start + 1);
+          const end = _Node.endOfLine(src, start + 1);
           const commentRange = new Range(start, end);
           this.props.push(commentRange);
           return end;
         }
         return start;
       }
+      /**
+       * Populates the `origStart` and `origEnd` values of all ranges for this
+       * node. Extended by child classes to handle descendant nodes.
+       *
+       * @param {number[]} cr - Positions of dropped CR characters
+       * @param {number} offset - Starting index of `cr` from the last call
+       * @returns {number} - The next offset, matching the one found for `origStart`
+       */
       setOrigRanges(cr, offset) {
         if (this.range)
           offset = this.range.setOrigRange(cr, offset);
@@ -1139,7 +3164,7 @@ ${offset}${err}${errEnd}`;
         if (value != null)
           return value;
         const str = src.slice(range.start, range.end);
-        return Node2.addStringTerminator(src, range.end, str);
+        return _Node.addStringTerminator(src, range.end, str);
       }
     };
     var YAMLError = class extends Error {
@@ -1223,7 +3248,7 @@ ${ctx}
       }
       return obj;
     }
-    var PlainValue = class extends Node2 {
+    var PlainValue = class _PlainValue extends Node2 {
       static endOfLine(src, start, inFlow) {
         let ch = src[start];
         let offset = start;
@@ -1316,7 +3341,7 @@ ${ctx}
           if (src[end] === "\n") {
             offset = end;
           } else {
-            valueEnd = PlainValue.endOfLine(src, end, inFlow);
+            valueEnd = _PlainValue.endOfLine(src, end, inFlow);
             offset = valueEnd;
           }
         }
@@ -1325,6 +3350,31 @@ ${ctx}
         this.valueRange.end = valueEnd;
         return valueEnd;
       }
+      /**
+       * Parses a plain value from the source
+       *
+       * Accepted forms are:
+       * ```
+       * #comment
+       *
+       * first line
+       *
+       * first line #comment
+       *
+       * first line
+       * block
+       * lines
+       *
+       * #comment
+       * block
+       * lines
+       * ```
+       * where block lines are empty or have an indent level greater than `indent`.
+       *
+       * @param {ParseContext} context
+       * @param {number} start - Index of first character
+       * @returns {number} - Index of the character after this scalar, may be `\n`
+       */
       parse(context, start) {
         this.context = context;
         const {
@@ -1334,7 +3384,7 @@ ${ctx}
         let offset = start;
         const ch = src[offset];
         if (ch && ch !== "#" && ch !== "\n") {
-          offset = PlainValue.endOfLine(src, start, inFlow);
+          offset = _PlainValue.endOfLine(src, start, inFlow);
         }
         this.valueRange = new Range(start, offset);
         offset = Node2.endOfWhiteSpace(src, offset);
@@ -1345,25 +3395,25 @@ ${ctx}
         return offset;
       }
     };
-    exports.Char = Char;
-    exports.Node = Node2;
-    exports.PlainValue = PlainValue;
-    exports.Range = Range;
-    exports.Type = Type;
-    exports.YAMLError = YAMLError;
-    exports.YAMLReferenceError = YAMLReferenceError;
-    exports.YAMLSemanticError = YAMLSemanticError;
-    exports.YAMLSyntaxError = YAMLSyntaxError;
-    exports.YAMLWarning = YAMLWarning;
-    exports._defineProperty = _defineProperty;
-    exports.defaultTagPrefix = defaultTagPrefix;
-    exports.defaultTags = defaultTags;
+    exports2.Char = Char;
+    exports2.Node = Node2;
+    exports2.PlainValue = PlainValue;
+    exports2.Range = Range;
+    exports2.Type = Type;
+    exports2.YAMLError = YAMLError;
+    exports2.YAMLReferenceError = YAMLReferenceError;
+    exports2.YAMLSemanticError = YAMLSemanticError;
+    exports2.YAMLSyntaxError = YAMLSyntaxError;
+    exports2.YAMLWarning = YAMLWarning;
+    exports2._defineProperty = _defineProperty;
+    exports2.defaultTagPrefix = defaultTagPrefix;
+    exports2.defaultTags = defaultTags;
   }
 });
 
 // node_modules/yaml/dist/resolveSeq-d03cb037.js
 var require_resolveSeq_d03cb037 = __commonJS({
-  "node_modules/yaml/dist/resolveSeq-d03cb037.js"(exports) {
+  "node_modules/yaml/dist/resolveSeq-d03cb037.js"(exports2) {
     "use strict";
     var PlainValue = require_PlainValue_ec8e588e();
     function addCommentBefore(str, indent, comment) {
@@ -1432,7 +3482,7 @@ ${indent}${str}`;
       return schema.createNode(v, false);
     }
     var isEmptyPath = (path) => path == null || typeof path === "object" && path[Symbol.iterator]().next().done;
-    var Collection2 = class extends Node2 {
+    var Collection2 = class _Collection extends Node2 {
       constructor(schema) {
         super();
         PlainValue._defineProperty(this, "items", []);
@@ -1444,7 +3494,7 @@ ${indent}${str}`;
         else {
           const [key, ...rest] = path;
           const node = this.get(key, true);
-          if (node instanceof Collection2)
+          if (node instanceof _Collection)
             node.addIn(rest, value);
           else if (node === void 0 && this.schema)
             this.set(key, collectionFromPath(this.schema, rest, value));
@@ -1456,7 +3506,7 @@ ${indent}${str}`;
         if (rest.length === 0)
           return this.delete(key);
         const node = this.get(key, true);
-        if (node instanceof Collection2)
+        if (node instanceof _Collection)
           return node.deleteIn(rest);
         else
           throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
@@ -1466,7 +3516,7 @@ ${indent}${str}`;
         if (rest.length === 0)
           return !keepScalar && node instanceof Scalar2 ? node.value : node;
         else
-          return node instanceof Collection2 ? node.getIn(rest, keepScalar) : void 0;
+          return node instanceof _Collection ? node.getIn(rest, keepScalar) : void 0;
       }
       hasAllNullValues() {
         return this.items.every((node) => {
@@ -1480,14 +3530,14 @@ ${indent}${str}`;
         if (rest.length === 0)
           return this.has(key);
         const node = this.get(key, true);
-        return node instanceof Collection2 ? node.hasIn(rest) : false;
+        return node instanceof _Collection ? node.hasIn(rest) : false;
       }
       setIn([key, ...rest], value) {
         if (rest.length === 0) {
           this.set(key, value);
         } else {
           const node = this.get(key, true);
-          if (node instanceof Collection2)
+          if (node instanceof _Collection)
             node.setIn(rest, value);
           else if (node === void 0 && this.schema)
             this.set(key, collectionFromPath(this.schema, rest, value));
@@ -1495,6 +3545,8 @@ ${indent}${str}`;
             throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
         }
       }
+      // overridden in implementations
+      /* istanbul ignore next */
       toJSON() {
         return null;
       }
@@ -1565,7 +3617,7 @@ ${indent}${str}`;
             end
           } = flowChars;
           const strings = nodes.map((n) => n.str);
-          if (hasItemWithNewLine || strings.reduce((sum, str2) => sum + str2.length + 2, 2) > Collection2.maxFlowStringSingleLineLength) {
+          if (hasItemWithNewLine || strings.reduce((sum, str2) => sum + str2.length + 2, 2) > _Collection.maxFlowStringSingleLineLength) {
             str = start;
             for (const s of strings) {
               str += s ? `
@@ -1667,12 +3719,12 @@ ${indent}${s}` : "\n";
         });
       return JSON.stringify(jsKey);
     };
-    var Pair2 = class extends Node2 {
+    var Pair2 = class _Pair extends Node2 {
       constructor(key, value = null) {
         super();
         this.key = key;
         this.value = value;
-        this.type = Pair2.Type.PAIR;
+        this.type = _Pair.Type.PAIR;
       }
       get commentBefore() {
         return this.key instanceof Node2 ? this.key.commentBefore : void 0;
@@ -1831,7 +3883,7 @@ ${ctx.indent}`;
       }
       return 1;
     };
-    var Alias2 = class extends Node2 {
+    var Alias2 = class _Alias extends Node2 {
       static stringify({
         range,
         source
@@ -1886,8 +3938,10 @@ ${ctx.indent}`;
         }
         return anchor.res;
       }
+      // Only called when stringifying an alias mapping key while constructing
+      // Object output.
       toString(ctx) {
-        return Alias2.stringify(this, ctx);
+        return _Alias.stringify(this, ctx);
       }
     };
     PlainValue._defineProperty(Alias2, "default", true);
@@ -1944,6 +3998,12 @@ ${ctx.indent}`;
       set(key, value) {
         this.add(new Pair2(key, value), true);
       }
+      /**
+       * @param {*} arg ignored
+       * @param {*} ctx Conversion context, originally set in Document#toJSON()
+       * @param {Class} Type If set, forces the returned collection type
+       * @returns {*} Instance of Type, Map, or Object
+       */
       toJSON(_, ctx, Type) {
         const map = Type ? new Type() : ctx && ctx.mapAsMap ? /* @__PURE__ */ new Map() : {};
         if (ctx && ctx.onCreate)
@@ -1987,6 +4047,13 @@ ${ctx.indent}`;
         }
         this.type = Pair2.Type.MERGE_PAIR;
       }
+      // If the value associated with a merge key is a single mapping node, each of
+      // its key/value pairs is inserted into the current mapping, unless the key
+      // already exists in it. If the value associated with the merge key is a
+      // sequence, then this sequence is expected to contain mapping nodes and each
+      // of these nodes is merged in turn according to its order in the sequence.
+      // Keys in mapping nodes earlier in the sequence override keys specified in
+      // later mapping nodes. -- http://yaml.org/type/merge.html
       addToJSMap(ctx, map) {
         for (const {
           source
@@ -3290,42 +5357,51 @@ ${ca}` : ca;
         items
       };
     }
-    exports.Alias = Alias2;
-    exports.Collection = Collection2;
-    exports.Merge = Merge2;
-    exports.Node = Node2;
-    exports.Pair = Pair2;
-    exports.Scalar = Scalar2;
-    exports.YAMLMap = YAMLMap2;
-    exports.YAMLSeq = YAMLSeq2;
-    exports.addComment = addComment;
-    exports.binaryOptions = binaryOptions2;
-    exports.boolOptions = boolOptions2;
-    exports.findPair = findPair;
-    exports.intOptions = intOptions2;
-    exports.isEmptyPath = isEmptyPath;
-    exports.nullOptions = nullOptions2;
-    exports.resolveMap = resolveMap;
-    exports.resolveNode = resolveNode;
-    exports.resolveSeq = resolveSeq;
-    exports.resolveString = resolveString;
-    exports.strOptions = strOptions2;
-    exports.stringifyNumber = stringifyNumber;
-    exports.stringifyString = stringifyString;
-    exports.toJSON = toJSON;
+    exports2.Alias = Alias2;
+    exports2.Collection = Collection2;
+    exports2.Merge = Merge2;
+    exports2.Node = Node2;
+    exports2.Pair = Pair2;
+    exports2.Scalar = Scalar2;
+    exports2.YAMLMap = YAMLMap2;
+    exports2.YAMLSeq = YAMLSeq2;
+    exports2.addComment = addComment;
+    exports2.binaryOptions = binaryOptions2;
+    exports2.boolOptions = boolOptions2;
+    exports2.findPair = findPair;
+    exports2.intOptions = intOptions2;
+    exports2.isEmptyPath = isEmptyPath;
+    exports2.nullOptions = nullOptions2;
+    exports2.resolveMap = resolveMap;
+    exports2.resolveNode = resolveNode;
+    exports2.resolveSeq = resolveSeq;
+    exports2.resolveString = resolveString;
+    exports2.strOptions = strOptions2;
+    exports2.stringifyNumber = stringifyNumber;
+    exports2.stringifyString = stringifyString;
+    exports2.toJSON = toJSON;
   }
 });
 
 // node_modules/yaml/dist/warnings-1000a372.js
 var require_warnings_1000a372 = __commonJS({
-  "node_modules/yaml/dist/warnings-1000a372.js"(exports) {
+  "node_modules/yaml/dist/warnings-1000a372.js"(exports2) {
     "use strict";
     var PlainValue = require_PlainValue_ec8e588e();
     var resolveSeq = require_resolveSeq_d03cb037();
     var binary = {
       identify: (value) => value instanceof Uint8Array,
+      // Buffer inherits from Uint8Array
       default: false,
       tag: "tag:yaml.org,2002:binary",
+      /**
+       * Returns a Buffer in node and an Uint8Array in browsers
+       *
+       * To use the resulting buffer as an image, you'll want to do something like:
+       *
+       *   const blob = new Blob([buffer], { type: 'image/jpeg' })
+       *   document.querySelector('#photo').src = URL.createObjectURL(blob)
+       */
       resolve: (doc, node) => {
         const src = resolveSeq.resolveString(doc, node);
         if (typeof Buffer === "function") {
@@ -3437,7 +5513,7 @@ ${pair.comment}` : item.comment;
       resolve: parsePairs,
       createNode: createPairs
     };
-    var YAMLOMap = class extends resolveSeq.YAMLSeq {
+    var YAMLOMap = class _YAMLOMap extends resolveSeq.YAMLSeq {
       constructor() {
         super();
         PlainValue._defineProperty(this, "add", resolveSeq.YAMLMap.prototype.add.bind(this));
@@ -3445,7 +5521,7 @@ ${pair.comment}` : item.comment;
         PlainValue._defineProperty(this, "get", resolveSeq.YAMLMap.prototype.get.bind(this));
         PlainValue._defineProperty(this, "has", resolveSeq.YAMLMap.prototype.has.bind(this));
         PlainValue._defineProperty(this, "set", resolveSeq.YAMLMap.prototype.set.bind(this));
-        this.tag = YAMLOMap.tag;
+        this.tag = _YAMLOMap.tag;
       }
       toJSON(_, ctx) {
         const map = /* @__PURE__ */ new Map();
@@ -3498,10 +5574,10 @@ ${pair.comment}` : item.comment;
       resolve: parseOMap,
       createNode: createOMap
     };
-    var YAMLSet = class extends resolveSeq.YAMLMap {
+    var YAMLSet = class _YAMLSet extends resolveSeq.YAMLMap {
       constructor() {
         super();
-        this.tag = YAMLSet.tag;
+        this.tag = _YAMLSet.tag;
       }
       add(key) {
         const pair = key instanceof resolveSeq.Pair ? key : new resolveSeq.Pair(key);
@@ -3605,6 +5681,9 @@ ${pair.comment}` : item.comment;
       identify: (value) => value instanceof Date,
       default: true,
       tag: "tag:yaml.org,2002:timestamp",
+      // If the time zone is omitted, the timestamp is assumed to be specified in UTC. The time part
+      // may be omitted altogether, resulting in a date format. In such a case, the time part is
+      // assumed to be 00:00:00Z (start of day, UTC).
       test: RegExp("^(?:([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})(?:(?:t|T|[ \\t]+)([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}(\\.[0-9]+)?)(?:[ \\t]*(Z|[-+][012]?[0-9](?::[0-9]{2})?))?)?)$"),
       resolve: (str, year, month, day, hour, minute, second, millisec, tz) => {
         if (millisec)
@@ -3658,22 +5737,22 @@ ${pair.comment}` : item.comment;
         warn(msg, "DeprecationWarning");
       }
     }
-    exports.binary = binary;
-    exports.floatTime = floatTime;
-    exports.intTime = intTime;
-    exports.omap = omap;
-    exports.pairs = pairs;
-    exports.set = set;
-    exports.timestamp = timestamp;
-    exports.warn = warn;
-    exports.warnFileDeprecation = warnFileDeprecation;
-    exports.warnOptionDeprecation = warnOptionDeprecation;
+    exports2.binary = binary;
+    exports2.floatTime = floatTime;
+    exports2.intTime = intTime;
+    exports2.omap = omap;
+    exports2.pairs = pairs;
+    exports2.set = set;
+    exports2.timestamp = timestamp;
+    exports2.warn = warn;
+    exports2.warnFileDeprecation = warnFileDeprecation;
+    exports2.warnOptionDeprecation = warnOptionDeprecation;
   }
 });
 
 // node_modules/yaml/dist/Schema-88e323a7.js
 var require_Schema_88e323a7 = __commonJS({
-  "node_modules/yaml/dist/Schema-88e323a7.js"(exports) {
+  "node_modules/yaml/dist/Schema-88e323a7.js"(exports2) {
     "use strict";
     var PlainValue = require_PlainValue_ec8e588e();
     var resolveSeq = require_resolveSeq_d03cb037();
@@ -4096,7 +6175,9 @@ var require_Schema_88e323a7 = __commonJS({
       return tags2;
     }
     var sortMapEntriesByKey = (a, b) => a.key < b.key ? -1 : a.key > b.key ? 1 : 0;
-    var Schema2 = class {
+    var Schema2 = class _Schema {
+      // TODO: remove in v2
+      // TODO: remove in v2
       constructor({
         customTags,
         merge: merge2,
@@ -4113,7 +6194,7 @@ var require_Schema_88e323a7 = __commonJS({
       }
       createNode(value, wrapScalars, tagName, ctx) {
         const baseCtx = {
-          defaultPrefix: Schema2.defaultPrefix,
+          defaultPrefix: _Schema.defaultPrefix,
           schema: this,
           wrapScalars
         };
@@ -4132,1683 +6213,56 @@ var require_Schema_88e323a7 = __commonJS({
     };
     PlainValue._defineProperty(Schema2, "defaultPrefix", PlainValue.defaultTagPrefix);
     PlainValue._defineProperty(Schema2, "defaultTags", PlainValue.defaultTags);
-    exports.Schema = Schema2;
+    exports2.Schema = Schema2;
   }
 });
 
 // node_modules/yaml/dist/types.js
 var require_types2 = __commonJS({
-  "node_modules/yaml/dist/types.js"(exports) {
+  "node_modules/yaml/dist/types.js"(exports2) {
     "use strict";
     var resolveSeq = require_resolveSeq_d03cb037();
     var Schema2 = require_Schema_88e323a7();
     require_PlainValue_ec8e588e();
     require_warnings_1000a372();
-    exports.Alias = resolveSeq.Alias;
-    exports.Collection = resolveSeq.Collection;
-    exports.Merge = resolveSeq.Merge;
-    exports.Node = resolveSeq.Node;
-    exports.Pair = resolveSeq.Pair;
-    exports.Scalar = resolveSeq.Scalar;
-    exports.YAMLMap = resolveSeq.YAMLMap;
-    exports.YAMLSeq = resolveSeq.YAMLSeq;
-    exports.binaryOptions = resolveSeq.binaryOptions;
-    exports.boolOptions = resolveSeq.boolOptions;
-    exports.intOptions = resolveSeq.intOptions;
-    exports.nullOptions = resolveSeq.nullOptions;
-    exports.strOptions = resolveSeq.strOptions;
-    exports.Schema = Schema2.Schema;
+    exports2.Alias = resolveSeq.Alias;
+    exports2.Collection = resolveSeq.Collection;
+    exports2.Merge = resolveSeq.Merge;
+    exports2.Node = resolveSeq.Node;
+    exports2.Pair = resolveSeq.Pair;
+    exports2.Scalar = resolveSeq.Scalar;
+    exports2.YAMLMap = resolveSeq.YAMLMap;
+    exports2.YAMLSeq = resolveSeq.YAMLSeq;
+    exports2.binaryOptions = resolveSeq.binaryOptions;
+    exports2.boolOptions = resolveSeq.boolOptions;
+    exports2.intOptions = resolveSeq.intOptions;
+    exports2.nullOptions = resolveSeq.nullOptions;
+    exports2.strOptions = resolveSeq.strOptions;
+    exports2.Schema = Schema2.Schema;
   }
 });
-
-// main.cjs.js
-var main_cjs_exports = {};
-__export(main_cjs_exports, {
-  JSONSchemaFaker: () => JSONSchemaFaker2,
-  default: () => lib_default
-});
-module.exports = __toCommonJS(main_cjs_exports);
-
-// src/lib/main.mjs
-var import_json_schema_ref_parser = __toESM(require("json-schema-ref-parser"), 1);
-var import_jsonpath_plus = require("jsonpath-plus");
-
-// src/lib/vendor.mjs
-var DEPENDENCIES = {};
-var getDependencies = () => {
-  return DEPENDENCIES;
-};
-var setDependencies = (value) => {
-  Object.assign(DEPENDENCIES, value);
-};
-
-// src/lib/class/Registry.mjs
-var Registry = class {
-  constructor() {
-    this.data = {};
-  }
-  unregister(name) {
-    if (!name) {
-      this.data = {};
-    } else {
-      delete this.data[name];
-    }
-  }
-  register(name, callback) {
-    this.data[name] = callback;
-  }
-  registerMany(formats) {
-    Object.keys(formats).forEach((name) => {
-      this.data[name] = formats[name];
-    });
-  }
-  get(name) {
-    const format = this.data[name];
-    return format;
-  }
-  list() {
-    return this.data;
-  }
-};
-var Registry_default = Registry;
-
-// src/lib/api/defaults.mjs
-var defaults = {};
-var defaults_default = defaults;
-defaults.defaultInvalidTypeProduct = void 0;
-defaults.defaultRandExpMax = 10;
-defaults.pruneProperties = [];
-defaults.ignoreProperties = [];
-defaults.ignoreMissingRefs = false;
-defaults.failOnInvalidTypes = true;
-defaults.failOnInvalidFormat = true;
-defaults.alwaysFakeOptionals = false;
-defaults.optionalsProbability = null;
-defaults.fixedProbabilities = false;
-defaults.useExamplesValue = false;
-defaults.useDefaultValue = false;
-defaults.requiredOnly = false;
-defaults.omitNulls = false;
-defaults.minItems = 0;
-defaults.maxItems = null;
-defaults.minLength = 0;
-defaults.maxLength = null;
-defaults.resolveJsonPath = false;
-defaults.reuseProperties = false;
-defaults.fillProperties = true;
-defaults.sortProperties = null;
-defaults.replaceEmptyByRandomValue = false;
-defaults.random = Math.random;
-defaults.renderTitle = true;
-defaults.renderDescription = true;
-defaults.renderComment = false;
-
-// src/lib/class/OptionRegistry.mjs
-var OptionRegistry = class extends Registry_default {
-  constructor() {
-    super();
-    this.data = { ...defaults_default };
-    this._defaults = defaults_default;
-  }
-  get defaults() {
-    return { ...this._defaults };
-  }
-};
-var OptionRegistry_default = OptionRegistry;
-
-// src/lib/api/option.mjs
-var registry = new OptionRegistry_default();
-function optionAPI(nameOrOptionMap, optionalValue) {
-  if (typeof nameOrOptionMap === "string") {
-    if (typeof optionalValue !== "undefined") {
-      return registry.register(nameOrOptionMap, optionalValue);
-    }
-    return registry.get(nameOrOptionMap);
-  }
-  return registry.registerMany(nameOrOptionMap);
-}
-optionAPI.getDefaults = () => registry.defaults;
-var option_default = optionAPI;
-
-// src/lib/core/constants.mjs
-var ALLOWED_TYPES = ["integer", "number", "string", "boolean"];
-var SCALAR_TYPES = ALLOWED_TYPES.concat(["null"]);
-var ALL_TYPES = ["array", "object"].concat(SCALAR_TYPES);
-var MOST_NEAR_DATETIME = 2524608e6;
-var MIN_INTEGER = -1e8;
-var MAX_INTEGER = 1e8;
-var MIN_NUMBER = -100;
-var MAX_NUMBER = 100;
-var constants_default = {
-  ALLOWED_TYPES,
-  SCALAR_TYPES,
-  ALL_TYPES,
-  MIN_NUMBER,
-  MAX_NUMBER,
-  MIN_INTEGER,
-  MAX_INTEGER,
-  MOST_NEAR_DATETIME
-};
-
-// src/lib/core/random.mjs
-var import_randexp = __toESM(require_randexp(), 1);
-function getRandomInteger(min, max) {
-  min = typeof min === "undefined" ? constants_default.MIN_INTEGER : min;
-  max = typeof max === "undefined" ? constants_default.MAX_INTEGER : max;
-  return Math.floor(option_default("random")() * (max - min + 1)) + min;
-}
-function _randexp(value) {
-  import_randexp.default.prototype.max = option_default("defaultRandExpMax");
-  import_randexp.default.prototype.randInt = (a, b) => a + Math.floor(option_default("random")() * (1 + (b - a)));
-  const re = new import_randexp.default(value);
-  return re.gen();
-}
-function pick(collection) {
-  return collection[Math.floor(option_default("random")() * collection.length)];
-}
-function shuffle(collection) {
-  let tmp;
-  let key;
-  let length = collection.length;
-  const copy = collection.slice();
-  for (; length > 0; ) {
-    key = Math.floor(option_default("random")() * length);
-    length -= 1;
-    tmp = copy[length];
-    copy[length] = copy[key];
-    copy[key] = tmp;
-  }
-  return copy;
-}
-function getRandom(min, max) {
-  return option_default("random")() * (max - min) + min;
-}
-function number(min, max, defMin, defMax, hasPrecision = false) {
-  defMin = typeof defMin === "undefined" ? constants_default.MIN_NUMBER : defMin;
-  defMax = typeof defMax === "undefined" ? constants_default.MAX_NUMBER : defMax;
-  min = typeof min === "undefined" ? defMin : min;
-  max = typeof max === "undefined" ? defMax : max;
-  if (max < min) {
-    max += min;
-  }
-  if (hasPrecision) {
-    return getRandom(min, max);
-  }
-  return getRandomInteger(min, max);
-}
-function by(type) {
-  switch (type) {
-    case "seconds":
-      return number(0, 60) * 60;
-    case "minutes":
-      return number(15, 50) * 612;
-    case "hours":
-      return number(12, 72) * 36123;
-    case "days":
-      return number(7, 30) * 86412345;
-    case "weeks":
-      return number(4, 52) * 604812345;
-    case "months":
-      return number(2, 13) * 2592012345;
-    case "years":
-      return number(1, 20) * 31104012345;
-    default:
-      break;
-  }
-}
-function date(step) {
-  if (step) {
-    return by(step);
-  }
-  const now = new Date();
-  const days = number(-1e3, constants_default.MOST_NEAR_DATETIME);
-  now.setTime(now.getTime() - days);
-  return now;
-}
-var random_default = {
-  pick,
-  date,
-  shuffle,
-  number,
-  randexp: _randexp
-};
-
-// src/lib/core/utils.mjs
-var RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
-function getLocalRef(obj, path, refs) {
-  path = decodeURIComponent(path);
-  if (refs && refs[path])
-    return clone(refs[path]);
-  const keyElements = path.replace("#/", "/").split("/");
-  let schema = obj.$ref && refs && refs[obj.$ref] || obj;
-  if (!schema && !keyElements[0]) {
-    keyElements[0] = obj.$ref.split("#/")[0];
-  }
-  if (refs && path.includes("#/") && refs[keyElements[0]]) {
-    schema = refs[keyElements.shift()];
-  }
-  if (!keyElements[0])
-    keyElements.shift();
-  while (schema && keyElements.length > 0) {
-    const prop = keyElements.shift();
-    if (!schema[prop]) {
-      throw new Error(`Prop not found: ${prop} (${path})`);
-    }
-    schema = schema[prop];
-  }
-  return schema;
-}
-function isNumeric(value) {
-  return typeof value === "string" && RE_NUMERIC.test(value);
-}
-function isScalar(value) {
-  return ["number", "boolean"].includes(typeof value);
-}
-function hasProperties(obj, ...properties) {
-  return properties.filter((key) => {
-    return typeof obj[key] !== "undefined";
-  }).length > 0;
-}
-function clampDate(value) {
-  if (value.includes(" ")) {
-    return new Date(value).toISOString().substr(0, 10);
-  }
-  let [year, month, day] = value.split("T")[0].split("-");
-  month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
-  day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
-  return `${year}-${month}-${day}`;
-}
-function clampDateTime(value) {
-  if (value.includes(" ")) {
-    return new Date(value).toISOString().substr(0, 10);
-  }
-  let [year, month, day] = value.split("T")[0].split("-");
-  let [hour, minute, second] = value.split("T")[1].split(".")[0].split(":");
-  month = `0${Math.max(1, Math.min(12, month))}`.slice(-2);
-  day = `0${Math.max(1, Math.min(31, day))}`.slice(-2);
-  hour = `0${Math.max(1, Math.min(23, hour))}`.slice(-2);
-  minute = `0${Math.max(1, Math.min(59, minute))}`.slice(-2);
-  second = `0${Math.max(1, Math.min(59, second))}`.slice(-2);
-  return `${year}-${month}-${day}T${hour}:${minute}:${second}.000Z`;
-}
-function typecast(type, schema, callback) {
-  const params = {};
-  switch (type || schema.type) {
-    case "integer":
-    case "number":
-      if (typeof schema.minimum !== "undefined") {
-        params.minimum = schema.minimum;
-      }
-      if (typeof schema.maximum !== "undefined") {
-        params.maximum = schema.maximum;
-      }
-      if (schema.enum) {
-        let min = Math.max(params.minimum || 0, 0);
-        let max = Math.min(params.maximum || Infinity, Infinity);
-        if (schema.exclusiveMinimum && min === schema.minimum) {
-          min += schema.multipleOf || 1;
-        }
-        if (schema.exclusiveMaximum && max === schema.maximum) {
-          max -= schema.multipleOf || 1;
-        }
-        if (min || max !== Infinity) {
-          schema.enum = schema.enum.filter((x) => {
-            if (x >= min && x <= max) {
-              return true;
-            }
-            return false;
-          });
-        }
-      }
-      break;
-    case "string": {
-      params.minLength = option_default("minLength") || 0;
-      params.maxLength = option_default("maxLength") || Number.MAX_SAFE_INTEGER;
-      if (typeof schema.minLength !== "undefined") {
-        params.minLength = Math.max(params.minLength, schema.minLength);
-      }
-      if (typeof schema.maxLength !== "undefined") {
-        params.maxLength = Math.min(params.maxLength, schema.maxLength);
-      }
-      break;
-    }
-    default:
-      break;
-  }
-  let value = callback(params);
-  if (value === null || value === void 0) {
-    return null;
-  }
-  switch (type || schema.type) {
-    case "number":
-      value = isNumeric(value) ? parseFloat(value) : value;
-      break;
-    case "integer":
-      value = isNumeric(value) ? parseInt(value, 10) : value;
-      break;
-    case "boolean":
-      value = !!value;
-      break;
-    case "string": {
-      if (isScalar(value)) {
-        return value;
-      }
-      value = String(value);
-      const min = Math.max(params.minLength || 0, 0);
-      const max = Math.min(params.maxLength || Infinity, Infinity);
-      let prev;
-      let noChangeCount = 0;
-      while (value.length < min) {
-        prev = value;
-        if (!schema.pattern) {
-          value += `${random_default.pick([" ", "/", "_", "-", "+", "=", "@", "^"])}${value}`;
-        } else {
-          value += random_default.randexp(schema.pattern);
-        }
-        if (value === prev) {
-          noChangeCount += 1;
-          if (noChangeCount === 3) {
-            break;
-          }
-        } else {
-          noChangeCount = 0;
-        }
-      }
-      if (value.length > max) {
-        value = value.substr(0, max);
-      }
-      switch (schema.format) {
-        case "date-time":
-        case "datetime":
-          value = new Date(clampDateTime(value)).toISOString().replace(/([0-9])0+Z$/, "$1Z");
-          break;
-        case "full-date":
-        case "date":
-          value = new Date(clampDate(value)).toISOString().substr(0, 10);
-          break;
-        case "time":
-          value = new Date(`1969-01-01 ${value}`).toISOString().substr(11);
-          break;
-        default:
-          break;
-      }
-      break;
-    }
-    default:
-      break;
-  }
-  return value;
-}
-function merge(a, b) {
-  Object.keys(b).forEach((key) => {
-    if (typeof b[key] !== "object" || b[key] === null) {
-      a[key] = b[key];
-    } else if (Array.isArray(b[key])) {
-      a[key] = a[key] || [];
-      b[key].forEach((value, i) => {
-        if (a.type === "array" && b.type === "array") {
-          a[key][i] = merge(a[key][i] || {}, value, true);
-        } else if (Array.isArray(a[key]) && a[key].indexOf(value) === -1) {
-          a[key].push(value);
-        }
-      });
-    } else if (typeof a[key] !== "object" || a[key] === null || Array.isArray(a[key])) {
-      a[key] = merge({}, b[key]);
-    } else {
-      a[key] = merge(a[key], b[key]);
-    }
-  });
-  return a;
-}
-function clone(obj, cache = /* @__PURE__ */ new Map()) {
-  if (!obj || typeof obj !== "object") {
-    return obj;
-  }
-  if (cache.has(obj)) {
-    return cache.get(obj);
-  }
-  if (Array.isArray(obj)) {
-    const arr = [];
-    cache.set(obj, arr);
-    arr.push(...obj.map((x) => clone(x, cache)));
-    return arr;
-  }
-  const clonedObj = {};
-  cache.set(obj, clonedObj);
-  return Object.keys(obj).reduce((prev, cur) => {
-    prev[cur] = clone(obj[cur], cache);
-    return prev;
-  }, clonedObj);
-}
-function short(schema) {
-  const s = JSON.stringify(schema);
-  const l = JSON.stringify(schema, null, 2);
-  return s.length > 400 ? `${l.substr(0, 400)}...` : l;
-}
-function anyValue() {
-  return random_default.pick([
-    false,
-    true,
-    null,
-    -1,
-    NaN,
-    Math.PI,
-    Infinity,
-    void 0,
-    [],
-    {},
-    Math.random(),
-    Math.random().toString(36).substr(2)
-  ]);
-}
-function hasValue(schema, value) {
-  if (schema.enum)
-    return schema.enum.includes(value);
-  if (schema.const)
-    return schema.const === value;
-}
-function notValue(schema, parent) {
-  const copy = merge({}, parent);
-  if (typeof schema.minimum !== "undefined") {
-    copy.maximum = schema.minimum;
-    copy.exclusiveMaximum = true;
-  }
-  if (typeof schema.maximum !== "undefined") {
-    copy.minimum = schema.maximum > copy.maximum ? 0 : schema.maximum;
-    copy.exclusiveMinimum = true;
-  }
-  if (typeof schema.minLength !== "undefined") {
-    copy.maxLength = schema.minLength;
-  }
-  if (typeof schema.maxLength !== "undefined") {
-    copy.minLength = schema.maxLength > copy.maxLength ? 0 : schema.maxLength;
-  }
-  if (schema.type) {
-    copy.type = random_default.pick(constants_default.SCALAR_TYPES.filter((x) => {
-      const types2 = Array.isArray(schema.type) ? schema.type : [schema.type];
-      return types2.every((type) => {
-        if (x === "number" || x === "integer") {
-          return type !== "number" && type !== "integer";
-        }
-        return x !== type;
-      });
-    }));
-  } else if (schema.enum) {
-    let value;
-    do {
-      value = anyValue();
-    } while (schema.enum.indexOf(value) !== -1);
-    copy.enum = [value];
-  }
-  if (schema.required && copy.properties) {
-    schema.required.forEach((prop) => {
-      delete copy.properties[prop];
-    });
-  }
-  return copy;
-}
-function validateValueForSchema(value, schema) {
-  const schemaHasMin = schema.minimum !== void 0;
-  const schemaHasMax = schema.maximum !== void 0;
-  return (schemaHasMin || schemaHasMax) && (!schemaHasMin || value >= schema.minimum) && (!schemaHasMax || value <= schema.maximum);
-}
-function validate(value, schemas) {
-  return !schemas.every((schema) => validateValueForSchema(value, schema));
-}
-function validateValueForOneOf(value, oneOf) {
-  const validCount = oneOf.reduce((count, schema) => count + (validateValueForSchema(value, schema) ? 1 : 0), 0);
-  return validCount === 1;
-}
-function isKey(prop) {
-  return ["enum", "const", "default", "examples", "required", "definitions", "items", "properties"].includes(prop);
-}
-function omitProps(obj, props) {
-  return Object.keys(obj).filter((key) => !props.includes(key)).reduce((copy, k) => {
-    if (Array.isArray(obj[k])) {
-      copy[k] = obj[k].slice();
-    } else {
-      copy[k] = obj[k] instanceof Object ? merge({}, obj[k]) : obj[k];
-    }
-    return copy;
-  }, {});
-}
-function template(value, schema) {
-  if (Array.isArray(value)) {
-    return value.map((x) => template(x, schema));
-  }
-  if (typeof value === "string") {
-    value = value.replace(/#\{([\w.-]+)\}/g, (_, $1) => schema[$1]);
-  }
-  return value;
-}
-function isEmpty(value) {
-  return Object.prototype.toString.call(value) === "[object Object]" && !Object.keys(value).length;
-}
-function shouldClean(key, schema) {
-  const isRequired = Array.isArray(schema.required) && schema.required.includes(key);
-  const wasCleaned = typeof schema.thunk === "function" || schema.additionalProperties && typeof schema.additionalProperties.thunk === "function";
-  return !isRequired && !wasCleaned;
-}
-function clean(obj, schema, isArray = false) {
-  if (!obj || typeof obj !== "object") {
-    return obj;
-  }
-  if (Array.isArray(obj)) {
-    return obj.map((value) => clean(value, schema, true)).filter((value) => typeof value !== "undefined");
-  }
-  Object.keys(obj).forEach((k) => {
-    if (isEmpty(obj[k])) {
-      if (shouldClean(k, schema)) {
-        delete obj[k];
-      }
-    } else {
-      const value = clean(obj[k], schema);
-      if (!isEmpty(value)) {
-        obj[k] = value;
-      }
-    }
-    if (typeof obj[k] === "undefined") {
-      delete obj[k];
-    }
-  });
-  if (!Object.keys(obj).length && isArray) {
-    return void 0;
-  }
-  return obj;
-}
-var utils_default = {
-  hasProperties,
-  getLocalRef,
-  omitProps,
-  typecast,
-  merge,
-  clone,
-  short,
-  hasValue,
-  notValue,
-  anyValue,
-  validate,
-  validateValueForSchema,
-  validateValueForOneOf,
-  isKey,
-  template,
-  shouldClean,
-  clean,
-  isEmpty,
-  clampDate
-};
-
-// src/lib/class/Container.mjs
-function proxy(gen) {
-  return (value, schema, property, rootSchema) => {
-    let fn = value;
-    let args = [];
-    if (typeof value === "object") {
-      fn = Object.keys(value)[0];
-      if (Array.isArray(value[fn])) {
-        args = value[fn];
-      } else {
-        args.push(value[fn]);
-      }
-    }
-    const props = fn.split(".");
-    let ctx = gen();
-    while (props.length > 1) {
-      ctx = ctx[props.shift()];
-    }
-    value = typeof ctx === "object" ? ctx[props[0]] : ctx;
-    if (typeof value === "function") {
-      value = value.apply(ctx, args.map((x) => utils_default.template(x, rootSchema)));
-    }
-    if (Object.prototype.toString.call(value) === "[object Object]") {
-      Object.keys(value).forEach((key) => {
-        if (typeof value[key] === "function") {
-          throw new Error(`Cannot resolve value for '${property}: ${fn}', given: ${value}`);
-        }
-      });
-    }
-    return value;
-  };
-}
-var Container = class {
-  constructor() {
-    this.registry = {};
-    this.support = {};
-  }
-  reset(name) {
-    if (!name) {
-      this.registry = {};
-      this.support = {};
-    } else {
-      delete this.registry[name];
-      delete this.support[name];
-    }
-  }
-  extend(name, callback) {
-    this.registry[name] = callback(this.registry[name]);
-    if (!this.support[name]) {
-      this.support[name] = proxy(() => this.registry[name]);
-    }
-  }
-  define(name, callback) {
-    this.support[name] = callback;
-  }
-  get(name) {
-    if (typeof this.registry[name] === "undefined") {
-      throw new ReferenceError(`'${name}' dependency doesn't exist.`);
-    }
-    return this.registry[name];
-  }
-  wrap(schema) {
-    if (!("generate" in schema)) {
-      const keys = Object.keys(schema);
-      const context = {};
-      let length = keys.length;
-      while (length--) {
-        const fn = keys[length].replace(/^x-/, "");
-        const gen = this.support[fn];
-        if (typeof gen === "function") {
-          Object.defineProperty(schema, "generate", {
-            configurable: false,
-            enumerable: false,
-            writable: false,
-            value: (rootSchema, key) => gen.call(context, schema[keys[length]], schema, keys[length], rootSchema, key.slice())
-          });
-          break;
-        }
-      }
-    }
-    return schema;
-  }
-};
-var Container_default = Container;
-
-// src/lib/api/format.mjs
-var registry2 = new Registry_default();
-function formatAPI(nameOrFormatMap, callback) {
-  if (typeof nameOrFormatMap === "undefined") {
-    return registry2.list();
-  }
-  if (typeof nameOrFormatMap === "string") {
-    if (typeof callback === "function") {
-      registry2.register(nameOrFormatMap, callback);
-    } else if (callback === null || callback === false) {
-      registry2.unregister(nameOrFormatMap);
-    } else {
-      return registry2.get(nameOrFormatMap);
-    }
-  } else {
-    registry2.registerMany(nameOrFormatMap);
-  }
-}
-var format_default = formatAPI;
-
-// src/lib/core/error.mjs
-var ParseError = class extends Error {
-  constructor(message, path) {
-    super();
-    if (Error.captureStackTrace) {
-      Error.captureStackTrace(this, this.constructor);
-    }
-    this.name = "ParseError";
-    this.message = message;
-    this.path = path;
-  }
-};
-var error_default = ParseError;
-
-// src/lib/core/infer.mjs
-var inferredProperties = {
-  array: [
-    "additionalItems",
-    "items",
-    "maxItems",
-    "minItems",
-    "uniqueItems"
-  ],
-  integer: [
-    "exclusiveMaximum",
-    "exclusiveMinimum",
-    "maximum",
-    "minimum",
-    "multipleOf"
-  ],
-  object: [
-    "additionalProperties",
-    "dependencies",
-    "maxProperties",
-    "minProperties",
-    "patternProperties",
-    "properties",
-    "required"
-  ],
-  string: [
-    "maxLength",
-    "minLength",
-    "pattern",
-    "format"
-  ]
-};
-inferredProperties.number = inferredProperties.integer;
-var subschemaProperties = [
-  "additionalItems",
-  "items",
-  "additionalProperties",
-  "dependencies",
-  "patternProperties",
-  "properties"
-];
-function matchesType(obj, lastElementInPath, inferredTypeProperties) {
-  return Object.keys(obj).filter((prop) => {
-    const isSubschema = subschemaProperties.indexOf(lastElementInPath) > -1;
-    const inferredPropertyFound = inferredTypeProperties.indexOf(prop) > -1;
-    if (inferredPropertyFound && !isSubschema) {
-      return true;
-    }
-    return false;
-  }).length > 0;
-}
-function inferType(obj, schemaPath) {
-  const keys = Object.keys(inferredProperties);
-  for (let i = 0; i < keys.length; i += 1) {
-    const typeName = keys[i];
-    const lastElementInPath = schemaPath[schemaPath.length - 1];
-    if (matchesType(obj, lastElementInPath, inferredProperties[typeName])) {
-      return typeName;
-    }
-  }
-}
-var infer_default = inferType;
-
-// src/lib/generators/boolean.mjs
-function booleanGenerator() {
-  return option_default("random")() > 0.5;
-}
-var boolean_default = booleanGenerator;
-
-// src/lib/types/boolean.mjs
-var booleanType = boolean_default;
-var boolean_default2 = booleanType;
-
-// src/lib/generators/null.mjs
-function nullGenerator() {
-  return null;
-}
-var null_default = nullGenerator;
-
-// src/lib/types/null.mjs
-var nullType = null_default;
-var null_default2 = nullType;
-
-// src/lib/types/array.mjs
-function unique(path, items, value, sample, resolve2, traverseCallback) {
-  const tmp = [];
-  const seen = [];
-  function walk(obj) {
-    const json = JSON.stringify(obj.value);
-    if (seen.indexOf(json) === -1) {
-      seen.push(json);
-      tmp.push(obj);
-      return true;
-    }
-    return false;
-  }
-  items.forEach(walk);
-  let limit = 100;
-  while (tmp.length !== items.length) {
-    if (!walk(traverseCallback(value.items || sample, path, resolve2))) {
-      limit -= 1;
-    }
-    if (!limit) {
-      break;
-    }
-  }
-  return tmp;
-}
-function arrayType(value, path, resolve2, traverseCallback) {
-  const items = [];
-  if (!(value.items || value.additionalItems)) {
-    if (utils_default.hasProperties(value, "minItems", "maxItems", "uniqueItems")) {
-      throw new error_default(`missing items for ${utils_default.short(value)}`, path);
-    }
-    return items;
-  }
-  if (Array.isArray(value.items)) {
-    return value.items.map((item, key) => {
-      const itemSubpath = path.concat(["items", key]);
-      return traverseCallback(item, itemSubpath, resolve2);
-    });
-  }
-  let minItems = value.minItems;
-  let maxItems = value.maxItems;
-  const defaultMinItems = option_default("minItems");
-  const defaultMaxItems = option_default("maxItems");
-  if (defaultMinItems) {
-    minItems = typeof minItems === "undefined" ? defaultMinItems : Math.min(defaultMinItems, minItems);
-  }
-  if (defaultMaxItems) {
-    maxItems = typeof maxItems === "undefined" ? defaultMaxItems : Math.min(defaultMaxItems, maxItems);
-    if (maxItems && maxItems > defaultMaxItems) {
-      maxItems = defaultMaxItems;
-    }
-    if (minItems && minItems > defaultMaxItems) {
-      minItems = maxItems;
-    }
-  }
-  const optionalsProbability = option_default("alwaysFakeOptionals") === true ? 1 : option_default("optionalsProbability");
-  const fixedProbabilities = option_default("alwaysFakeOptionals") || option_default("fixedProbabilities") || false;
-  let length = random_default.number(minItems, maxItems, 1, 5);
-  if (optionalsProbability !== null) {
-    length = Math.max(fixedProbabilities ? Math.round((maxItems || length) * optionalsProbability) : Math.abs(random_default.number(minItems, maxItems) * optionalsProbability), minItems || 0);
-  }
-  const sample = typeof value.additionalItems === "object" ? value.additionalItems : {};
-  for (let current = items.length; current < length; current += 1) {
-    const itemSubpath = path.concat(["items", current]);
-    const element = traverseCallback(value.items || sample, itemSubpath, resolve2);
-    items.push(element);
-  }
-  if (value.contains && length > 0) {
-    const idx = random_default.number(0, length - 1);
-    items[idx] = traverseCallback(value.contains, path.concat(["items", idx]), resolve2);
-  }
-  if (value.uniqueItems) {
-    return unique(path.concat(["items"]), items, value, sample, resolve2, traverseCallback);
-  }
-  return items;
-}
-var array_default = arrayType;
-
-// src/lib/types/number.mjs
-function numberType(value) {
-  let min = typeof value.minimum === "undefined" || value.minimum === -Number.MAX_VALUE ? constants_default.MIN_INTEGER : value.minimum;
-  let max = typeof value.maximum === "undefined" || value.maximum === Number.MAX_VALUE ? constants_default.MAX_INTEGER : value.maximum;
-  const multipleOf = value.multipleOf;
-  const decimals = multipleOf && String(multipleOf).match(/e-(\d)|\.(\d+)$/);
-  if (decimals) {
-    const number2 = (Math.random() * random_default.number(0, 10) + 1) * multipleOf;
-    const truncate = decimals[1] || decimals[2].length;
-    const result = parseFloat(number2.toFixed(truncate));
-    const base = random_default.number(min, max - 1);
-    if (!String(result).includes(".")) {
-      return (base + result).toExponential();
-    }
-    return base + result;
-  }
-  if (multipleOf) {
-    max = Math.floor(max / multipleOf) * multipleOf;
-    min = Math.ceil(min / multipleOf) * multipleOf;
-  }
-  if (value.exclusiveMinimum && min === value.minimum) {
-    min += multipleOf || 1;
-  }
-  if (value.exclusiveMaximum && max === value.maximum) {
-    max -= multipleOf || 1;
-  }
-  if (min > max) {
-    return NaN;
-  }
-  if (multipleOf) {
-    let base = random_default.number(Math.floor(min / multipleOf), Math.floor(max / multipleOf)) * multipleOf;
-    while (base < min) {
-      base += multipleOf;
-    }
-    return base;
-  }
-  return random_default.number(min, max, void 0, void 0, true);
-}
-var number_default = numberType;
-
-// src/lib/types/integer.mjs
-function integerType(value) {
-  return Math.floor(number_default({ ...value }));
-}
-var integer_default = integerType;
-
-// src/lib/generators/words.mjs
-var LIPSUM_WORDS = `Lorem ipsum dolor sit amet consectetur adipisicing elit sed do eiusmod tempor incididunt ut labore
-et dolore magna aliqua Ut enim ad minim veniam quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-commodo consequat Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-pariatur Excepteur sint occaecat cupidatat non proident sunt in culpa qui officia deserunt mollit anim id est
-laborum`.split(/\W/);
-function wordsGenerator(length) {
-  const words = random_default.shuffle(LIPSUM_WORDS);
-  return words.slice(0, length);
-}
-var words_default = wordsGenerator;
-
-// src/lib/types/object.mjs
-var anyType = { type: constants_default.ALLOWED_TYPES };
-function objectType(value, path, resolve2, traverseCallback) {
-  const props = {};
-  const properties = value.properties || {};
-  const patternProperties = value.patternProperties || {};
-  const requiredProperties = typeof value.required === "boolean" ? [] : (value.required || []).slice();
-  const allowsAdditional = value.additionalProperties !== false;
-  const propertyKeys = Object.keys(properties);
-  const patternPropertyKeys = Object.keys(patternProperties);
-  const optionalProperties = propertyKeys.concat(patternPropertyKeys).reduce((_response, _key) => {
-    if (requiredProperties.indexOf(_key) === -1)
-      _response.push(_key);
-    return _response;
-  }, []);
-  const allProperties = requiredProperties.concat(optionalProperties);
-  const additionalProperties = allowsAdditional ? value.additionalProperties === true ? anyType : value.additionalProperties : value.additionalProperties;
-  if (!allowsAdditional && propertyKeys.length === 0 && patternPropertyKeys.length === 0 && utils_default.hasProperties(value, "minProperties", "maxProperties", "dependencies", "required")) {
-    return null;
-  }
-  if (option_default("requiredOnly") === true) {
-    requiredProperties.forEach((key) => {
-      if (properties[key]) {
-        props[key] = properties[key];
-      }
-    });
-    return traverseCallback(props, path.concat(["properties"]), resolve2, value);
-  }
-  const optionalsProbability = option_default("alwaysFakeOptionals") === true ? 1 : option_default("optionalsProbability");
-  const fixedProbabilities = option_default("alwaysFakeOptionals") || option_default("fixedProbabilities") || false;
-  const ignoreProperties = option_default("ignoreProperties") || [];
-  const reuseProps = option_default("reuseProperties");
-  const fillProps = option_default("fillProperties");
-  const max = value.maxProperties || allProperties.length + (allowsAdditional ? random_default.number(1, 5) : 0);
-  let min = Math.max(value.minProperties || 0, requiredProperties.length);
-  let neededExtras = Math.max(0, allProperties.length - min);
-  if (allProperties.length === 1 && !requiredProperties.length) {
-    min = Math.max(random_default.number(fillProps ? 1 : 0, max), min);
-  }
-  if (optionalsProbability !== null) {
-    if (fixedProbabilities === true) {
-      neededExtras = Math.round(min - requiredProperties.length + optionalsProbability * (allProperties.length - min));
-    } else {
-      neededExtras = random_default.number(min - requiredProperties.length, optionalsProbability * (allProperties.length - min));
-    }
-  }
-  const extraPropertiesRandomOrder = random_default.shuffle(optionalProperties).slice(0, neededExtras);
-  const extraProperties = optionalProperties.filter((_item) => {
-    return extraPropertiesRandomOrder.indexOf(_item) !== -1;
-  });
-  const _limit = optionalsProbability !== null || requiredProperties.length === max ? max : random_default.number(0, max);
-  const _props = requiredProperties.concat(random_default.shuffle(extraProperties).slice(0, _limit)).slice(0, max);
-  const _defns = [];
-  const _deps = [];
-  if (value.dependencies) {
-    Object.keys(value.dependencies).forEach((prop) => {
-      const _required = value.dependencies[prop];
-      if (_props.indexOf(prop) !== -1) {
-        if (Array.isArray(_required)) {
-          _required.forEach((sub) => {
-            if (_props.indexOf(sub) === -1) {
-              _props.push(sub);
-            }
-          });
-        } else if (Array.isArray(_required.oneOf || _required.anyOf)) {
-          const values = _required.oneOf || _required.anyOf;
-          _deps.push({ prop, values });
-        } else {
-          _defns.push(_required);
-        }
-      }
-    });
-    if (_defns.length) {
-      delete value.dependencies;
-      return traverseCallback({
-        allOf: _defns.concat(value)
-      }, path.concat(["properties"]), resolve2, value);
-    }
-  }
-  const skipped = [];
-  const missing = [];
-  _props.forEach((key) => {
-    if (properties[key] && ["{}", "true"].includes(JSON.stringify(properties[key].not))) {
-      return;
-    }
-    for (let i = 0; i < ignoreProperties.length; i += 1) {
-      if (ignoreProperties[i] instanceof RegExp && ignoreProperties[i].test(key) || typeof ignoreProperties[i] === "string" && ignoreProperties[i] === key || typeof ignoreProperties[i] === "function" && ignoreProperties[i](properties[key], key)) {
-        skipped.push(key);
-        return;
-      }
-    }
-    if (additionalProperties === false) {
-      if (requiredProperties.indexOf(key) !== -1) {
-        props[key] = properties[key];
-      }
-    }
-    if (properties[key]) {
-      props[key] = properties[key];
-    }
-    let found;
-    patternPropertyKeys.forEach((_key) => {
-      if (key.match(new RegExp(_key))) {
-        found = true;
-        if (props[key]) {
-          utils_default.merge(props[key], patternProperties[_key]);
-        } else {
-          props[random_default.randexp(key)] = patternProperties[_key];
-        }
-      }
-    });
-    if (!found) {
-      const subschema = patternProperties[key] || additionalProperties;
-      if (subschema && additionalProperties !== false) {
-        props[patternProperties[key] ? random_default.randexp(key) : key] = properties[key] || subschema;
-      } else {
-        missing.push(key);
-      }
-    }
-  });
-  let current = Object.keys(props).length + (fillProps ? 0 : skipped.length);
-  const hash = (suffix) => random_default.randexp(`_?[_a-f\\d]{1,3}${suffix ? "\\$?" : ""}`);
-  function get(from) {
-    let one;
-    do {
-      if (!from.length)
-        break;
-      one = from.shift();
-    } while (props[one]);
-    return one;
-  }
-  let minProps = min;
-  if (allowsAdditional && !requiredProperties.length) {
-    minProps = Math.max(optionalsProbability === null || additionalProperties ? random_default.number(fillProps ? 1 : 0, max) : 0, min);
-  }
-  if (!extraProperties.length && !neededExtras && allowsAdditional && fixedProbabilities === true) {
-    const limit = random_default.number(0, max);
-    for (let i = 0; i <= limit; i += 1) {
-      props[words_default(1) + hash(limit[i])] = anyType;
-    }
-  }
-  while (fillProps) {
-    if (!(patternPropertyKeys.length || allowsAdditional)) {
-      break;
-    }
-    if (current >= minProps) {
-      break;
-    }
-    if (allowsAdditional) {
-      if (reuseProps && propertyKeys.length - current > minProps) {
-        let count = 0;
-        let key;
-        do {
-          count += 1;
-          if (count > 1e3) {
-            break;
-          }
-          key = get(requiredProperties) || random_default.pick(propertyKeys);
-        } while (typeof props[key] !== "undefined");
-        if (typeof props[key] === "undefined") {
-          props[key] = properties[key];
-          current += 1;
-        }
-      } else if (patternPropertyKeys.length && !additionalProperties) {
-        const prop = random_default.pick(patternPropertyKeys);
-        const word = random_default.randexp(prop);
-        if (!props[word]) {
-          props[word] = patternProperties[prop];
-          current += 1;
-        }
-      } else {
-        const word = get(requiredProperties) || words_default(1) + hash();
-        if (!props[word]) {
-          props[word] = additionalProperties || anyType;
-          current += 1;
-        }
-      }
-    }
-    for (let i = 0; current < min && i < patternPropertyKeys.length; i += 1) {
-      const _key = patternPropertyKeys[i];
-      const word = random_default.randexp(_key);
-      if (!props[word]) {
-        props[word] = patternProperties[_key];
-        current += 1;
-      }
-    }
-  }
-  if (requiredProperties.length === 0 && (!allowsAdditional || optionalsProbability === false)) {
-    const maximum = random_default.number(min, max);
-    for (; current < maximum; ) {
-      const word = get(propertyKeys);
-      if (word) {
-        props[word] = properties[word];
-      }
-      current += 1;
-    }
-  }
-  let sortedObj = props;
-  if (option_default("sortProperties") !== null) {
-    const originalKeys = Object.keys(properties);
-    const sortedKeys = Object.keys(props).sort((a, b) => {
-      return option_default("sortProperties") ? a.localeCompare(b) : originalKeys.indexOf(b) - originalKeys.indexOf(a);
-    });
-    sortedObj = sortedKeys.reduce((memo, key) => {
-      memo[key] = props[key];
-      return memo;
-    }, {});
-  }
-  const result = traverseCallback(sortedObj, path.concat(["properties"]), resolve2, value);
-  _deps.forEach((dep) => {
-    for (const sub of dep.values) {
-      if (utils_default.hasValue(sub.properties[dep.prop], result.value[dep.prop])) {
-        Object.keys(sub.properties).forEach((next) => {
-          if (next !== dep.prop) {
-            utils_default.merge(result.value, traverseCallback(sub.properties, path.concat(["properties"]), resolve2, value).value);
-          }
-        });
-        break;
-      }
-    }
-  });
-  return result;
-}
-var object_default = objectType;
-
-// src/lib/generators/thunk.mjs
-function produce() {
-  const length = random_default.number(1, 5);
-  return words_default(length).join(" ");
-}
-function thunkGenerator(min = 0, max = 140) {
-  const _min = Math.max(0, min);
-  const _max = random_default.number(_min, max);
-  let result = produce();
-  while (result.length < _min) {
-    result += produce();
-  }
-  if (result.length > _max) {
-    result = result.substr(0, _max);
-  }
-  return result;
-}
-var thunk_default = thunkGenerator;
-
-// src/lib/generators/ipv4.mjs
-function ipv4Generator() {
-  return [0, 0, 0, 0].map(() => {
-    return random_default.number(0, 255);
-  }).join(".");
-}
-var ipv4_default = ipv4Generator;
-
-// src/lib/generators/dateTime.mjs
-function dateTimeGenerator() {
-  return random_default.date().toISOString();
-}
-var dateTime_default = dateTimeGenerator;
-
-// src/lib/generators/date.mjs
-function dateGenerator() {
-  return dateTime_default().slice(0, 10);
-}
-var date_default = dateGenerator;
-
-// src/lib/generators/time.mjs
-function timeGenerator() {
-  return dateTime_default().slice(11);
-}
-var time_default = timeGenerator;
-
-// src/lib/generators/coreFormat.mjs
-var FRAGMENT = "[a-zA-Z][a-zA-Z0-9+-.]*";
-var URI_PATTERN = `https?://{hostname}(?:${FRAGMENT})+`;
-var PARAM_PATTERN = "(?:\\?([a-z]{1,7}(=\\w{1,5})?&){0,3})?";
-var regexps = {
-  email: "[a-zA-Z\\d][a-zA-Z\\d-]{1,13}[a-zA-Z\\d]@{hostname}",
-  hostname: "[a-zA-Z]{1,33}\\.[a-z]{2,4}",
-  ipv6: "[a-f\\d]{4}(:[a-f\\d]{4}){7}",
-  uri: URI_PATTERN,
-  slug: "[a-zA-Z\\d_-]+",
-  "uri-reference": `${URI_PATTERN}${PARAM_PATTERN}`,
-  "uri-template": URI_PATTERN.replace("(?:", "(?:/\\{[a-z][:a-zA-Z0-9-]*\\}|"),
-  "json-pointer": `(/(?:${FRAGMENT.replace("]*", "/]*")}|~[01]))+`,
-  uuid: "^[0-9a-f]{8}-(?:[0-9a-f]{4}-){3}[0-9a-f]{12}$",
-  duration: "^P(?!$)((\\d+Y)?(\\d+M)?(\\d+D)?(T(?=\\d)(\\d+H)?(\\d+M)?(\\d+S)?)?|(\\d+W)?)$"
-};
-regexps.iri = regexps["uri-reference"];
-regexps["iri-reference"] = regexps["uri-reference"];
-regexps["idn-email"] = regexps.email;
-regexps["idn-hostname"] = regexps.hostname;
-var ALLOWED_FORMATS = new RegExp(`\\{(${Object.keys(regexps).join("|")})\\}`);
-function coreFormatGenerator(coreFormat) {
-  return random_default.randexp(regexps[coreFormat]).replace(ALLOWED_FORMATS, (match, key) => {
-    return random_default.randexp(regexps[key]);
-  });
-}
-var coreFormat_default = coreFormatGenerator;
-
-// src/lib/types/string.mjs
-function generateFormat(value, invalid) {
-  const callback = format_default(value.format);
-  if (typeof callback === "function") {
-    return callback(value);
-  }
-  switch (value.format) {
-    case "date-time":
-    case "datetime":
-      return dateTime_default();
-    case "date":
-      return date_default();
-    case "time":
-      return time_default();
-    case "ipv4":
-      return ipv4_default();
-    case "regex":
-      return ".+?";
-    case "email":
-    case "hostname":
-    case "ipv6":
-    case "uri":
-    case "uri-reference":
-    case "iri":
-    case "iri-reference":
-    case "idn-email":
-    case "idn-hostname":
-    case "json-pointer":
-    case "slug":
-    case "uri-template":
-    case "uuid":
-    case "duration":
-      return coreFormat_default(value.format);
-    default:
-      if (typeof callback === "undefined") {
-        if (option_default("failOnInvalidFormat")) {
-          throw new Error(`unknown registry key ${utils_default.short(value.format)}`);
-        } else {
-          return invalid();
-        }
-      }
-      throw new Error(`unsupported format '${value.format}'`);
-  }
-}
-function stringType(value) {
-  const output = utils_default.typecast("string", value, (opts) => {
-    if (value.format) {
-      return generateFormat(value, () => thunk_default(opts.minLength, opts.maxLength));
-    }
-    if (value.pattern) {
-      return random_default.randexp(value.pattern);
-    }
-    return thunk_default(opts.minLength, opts.maxLength);
-  });
-  return output;
-}
-var string_default = stringType;
-
-// src/lib/types/index.mjs
-var typeMap = {
-  boolean: boolean_default2,
-  null: null_default2,
-  array: array_default,
-  integer: integer_default,
-  number: number_default,
-  object: object_default,
-  string: string_default
-};
-var types_default = typeMap;
-
-// src/lib/core/traverse.mjs
-function getMeta({ $comment: comment, title, description }) {
-  return Object.entries({ comment, title, description }).filter(([, value]) => value).reduce((memo, [k, v]) => {
-    memo[k] = v;
-    return memo;
-  }, {});
-}
-function traverse(schema, path, resolve2, rootSchema) {
-  schema = resolve2(schema, null, path);
-  if (schema && (schema.oneOf || schema.anyOf || schema.allOf)) {
-    schema = resolve2(schema, null, path);
-  }
-  if (!schema) {
-    throw new Error(`Cannot traverse at '${path.join(".")}', given '${JSON.stringify(rootSchema)}'`);
-  }
-  const context = {
-    ...getMeta(schema),
-    schemaPath: path
-  };
-  if (path[path.length - 1] !== "properties") {
-    if (option_default("useExamplesValue") && Array.isArray(schema.examples)) {
-      const fixedExamples = schema.examples.concat("default" in schema ? [schema.default] : []);
-      return { value: utils_default.typecast(null, schema, () => random_default.pick(fixedExamples)), context };
-    }
-    if (option_default("useExamplesValue") && schema.example) {
-      return { value: utils_default.typecast(null, schema, () => schema.example), context };
-    }
-    if (option_default("useDefaultValue") && "default" in schema) {
-      if (schema.default !== "" || !option_default("replaceEmptyByRandomValue")) {
-        return { value: schema.default, context };
-      }
-    }
-    if ("template" in schema) {
-      return { value: utils_default.template(schema.template, rootSchema), context };
-    }
-    if ("const" in schema) {
-      return { value: schema.const, context };
-    }
-  }
-  if (schema.not && typeof schema.not === "object") {
-    schema = utils_default.notValue(schema.not, utils_default.omitProps(schema, ["not"]));
-    if (schema.type && schema.type === "object") {
-      const { value, context: innerContext } = traverse(schema, path.concat(["not"]), resolve2, rootSchema);
-      return { value: utils_default.clean(value, schema, false), context: { ...context, items: innerContext } };
-    }
-  }
-  if (typeof schema.thunk === "function") {
-    const { value, context: innerContext } = traverse(schema.thunk(rootSchema), path, resolve2);
-    return { value, context: { ...context, items: innerContext } };
-  }
-  if (schema.jsonPath) {
-    return { value: schema, context };
-  }
-  let type = schema.type;
-  if (Array.isArray(type)) {
-    type = random_default.pick(type);
-  } else if (typeof type === "undefined") {
-    type = infer_default(schema, path) || type;
-    if (type) {
-      schema.type = type;
-    }
-  }
-  if (typeof schema.generate === "function") {
-    const retVal = utils_default.typecast(null, schema, () => schema.generate(rootSchema, path));
-    const retType = retVal === null ? "null" : typeof retVal;
-    if (retType === type || retType === "number" && type === "integer" || Array.isArray(retVal) && type === "array") {
-      return { value: retVal, context };
-    }
-  }
-  if (typeof schema.pattern === "string") {
-    return { value: utils_default.typecast("string", schema, () => random_default.randexp(schema.pattern)), context };
-  }
-  if (Array.isArray(schema.enum)) {
-    return { value: utils_default.typecast(null, schema, () => random_default.pick(schema.enum)), context };
-  }
-  if (typeof type === "string") {
-    if (!types_default[type]) {
-      if (option_default("failOnInvalidTypes")) {
-        throw new error_default(`unknown primitive ${utils_default.short(type)}`, path.concat(["type"]));
-      } else {
-        const value = option_default("defaultInvalidTypeProduct");
-        if (typeof value === "string" && types_default[value]) {
-          return { value: types_default[value](schema, path, resolve2, traverse), context };
-        }
-        return { value, context };
-      }
-    } else {
-      try {
-        const innerResult = types_default[type](schema, path, resolve2, traverse);
-        if (type === "array") {
-          return {
-            value: innerResult.map(({ value }) => value),
-            context: {
-              ...context,
-              items: innerResult.map(
-                Array.isArray(schema.items) ? ({ context: c }) => c : ({ context: c }) => ({
-                  ...c,
-                  schemaPath: c.schemaPath.slice(0, -1)
-                })
-              )
-            }
-          };
-        }
-        if (type === "object") {
-          return innerResult !== null ? { value: innerResult.value, context: { ...context, items: innerResult.context } } : { value: {}, context };
-        }
-        return { value: innerResult, context };
-      } catch (e) {
-        if (typeof e.path === "undefined") {
-          throw new error_default(e.stack, path);
-        }
-        throw e;
-      }
-    }
-  }
-  let valueCopy = {};
-  let contextCopy = { ...context };
-  if (Array.isArray(schema)) {
-    valueCopy = [];
-  }
-  const pruneProperties = option_default("pruneProperties") || [];
-  Object.keys(schema).forEach((prop) => {
-    if (pruneProperties.includes(prop))
-      return;
-    if (schema[prop] === null)
-      return;
-    if (typeof schema[prop] === "object" && prop !== "definitions") {
-      const { value, context: innerContext } = traverse(schema[prop], path.concat([prop]), resolve2, valueCopy);
-      valueCopy[prop] = utils_default.clean(value, schema[prop], false);
-      contextCopy[prop] = innerContext;
-      if (valueCopy[prop] === null && option_default("omitNulls")) {
-        delete valueCopy[prop];
-        delete contextCopy[prop];
-      }
-    } else {
-      valueCopy[prop] = schema[prop];
-    }
-  });
-  return { value: valueCopy, context: contextCopy };
-}
-var traverse_default = traverse;
-
-// src/lib/core/buildResolveSchema.mjs
-var buildResolveSchema = ({
-  refs,
-  schema,
-  container: container2,
-  synchronous,
-  refDepthMax,
-  refDepthMin
-}) => {
-  const recursiveUtil = {};
-  const seenRefs = {};
-  let depth = 0;
-  let lastRef;
-  let lastPath;
-  recursiveUtil.resolveSchema = (sub, index, rootPath) => {
-    if (sub === null || sub === void 0) {
-      return null;
-    }
-    if (typeof sub.generate === "function") {
-      return sub;
-    }
-    const _id = sub.$id || sub.id;
-    if (typeof _id === "string") {
-      delete sub.id;
-      delete sub.$id;
-      delete sub.$schema;
-    }
-    if (typeof sub.$ref === "string") {
-      const maxDepth = Math.max(refDepthMin, refDepthMax) - 1;
-      if (sub.$ref === "#" || seenRefs[sub.$ref] < 0 || lastRef === sub.$ref && ++depth > maxDepth) {
-        if (sub.$ref !== "#" && lastPath && lastPath.length === rootPath.length) {
-          return utils_default.getLocalRef(schema, sub.$ref, synchronous && refs);
-        }
-        delete sub.$ref;
-        return sub;
-      }
-      if (typeof seenRefs[sub.$ref] === "undefined") {
-        seenRefs[sub.$ref] = random_default.number(refDepthMin, refDepthMax) - 1;
-      }
-      lastPath = rootPath;
-      lastRef = sub.$ref;
-      let ref;
-      if (sub.$ref.indexOf("#/") === -1) {
-        ref = refs[sub.$ref] || null;
-      } else {
-        ref = utils_default.getLocalRef(schema, sub.$ref, synchronous && refs) || null;
-      }
-      let fixed;
-      if (typeof ref !== "undefined") {
-        if (!ref && option_default("ignoreMissingRefs") !== true) {
-          throw new Error(`Reference not found: ${sub.$ref}`);
-        }
-        seenRefs[sub.$ref] -= 1;
-        utils_default.merge(sub, ref || {});
-        fixed = synchronous && ref && ref.$ref;
-      }
-      if (!fixed)
-        delete sub.$ref;
-      return sub;
-    }
-    if (Array.isArray(sub.allOf)) {
-      const schemas = sub.allOf;
-      delete sub.allOf;
-      schemas.forEach((subSchema) => {
-        const _sub = recursiveUtil.resolveSchema(subSchema, null, rootPath);
-        utils_default.merge(sub, typeof _sub.thunk === "function" ? _sub.thunk(sub) : _sub);
-        if (Array.isArray(sub.allOf)) {
-          recursiveUtil.resolveSchema(sub, index, rootPath);
-        }
-      });
-    }
-    if (Array.isArray(sub.oneOf || sub.anyOf) && rootPath[rootPath.length - 2] !== "dependencies") {
-      const mix = sub.oneOf || sub.anyOf;
-      if (sub.enum && sub.oneOf) {
-        sub.enum = sub.enum.filter((x) => utils_default.validate(x, mix));
-      }
-      return {
-        thunk(rootSchema) {
-          const copy = utils_default.omitProps(sub, ["anyOf", "oneOf"]);
-          const fixed = random_default.pick(mix);
-          utils_default.merge(copy, fixed);
-          mix.forEach((omit) => {
-            if (omit.required && omit !== fixed) {
-              omit.required.forEach((key) => {
-                const includesKey = copy.required && copy.required.includes(key);
-                if (copy.properties && !includesKey) {
-                  delete copy.properties[key];
-                }
-                if (rootSchema && rootSchema.properties) {
-                  delete rootSchema.properties[key];
-                }
-              });
-            }
-          });
-          return copy;
-        }
-      };
-    }
-    Object.keys(sub).forEach((prop) => {
-      if ((Array.isArray(sub[prop]) || typeof sub[prop] === "object") && !utils_default.isKey(prop)) {
-        sub[prop] = recursiveUtil.resolveSchema(sub[prop], prop, rootPath.concat(prop));
-      }
-    });
-    if (rootPath) {
-      const lastProp = rootPath[rootPath.length - 1];
-      if (lastProp === "properties" || lastProp === "items") {
-        return sub;
-      }
-    }
-    return container2.wrap(sub);
-  };
-  return recursiveUtil;
-};
-var buildResolveSchema_default = buildResolveSchema;
-
-// src/lib/core/run.mjs
-function pick2(data) {
-  return Array.isArray(data) ? random_default.pick(data) : data;
-}
-function cycle(data, reverse) {
-  if (!Array.isArray(data)) {
-    return data;
-  }
-  const value = reverse ? data.pop() : data.shift();
-  if (reverse) {
-    data.unshift(value);
-  } else {
-    data.push(value);
-  }
-  return value;
-}
-function resolve(obj, data, values, property) {
-  if (!obj || typeof obj !== "object") {
-    return obj;
-  }
-  if (!values) {
-    values = {};
-  }
-  if (!data) {
-    data = obj;
-  }
-  if (Array.isArray(obj)) {
-    return obj.map((x) => resolve(x, data, values, property));
-  }
-  if (obj.jsonPath) {
-    const { JSONPath: JSONPath2 } = getDependencies();
-    const params = typeof obj.jsonPath !== "object" ? { path: obj.jsonPath } : obj.jsonPath;
-    params.group = obj.group || params.group || property;
-    params.cycle = obj.cycle || params.cycle || false;
-    params.reverse = obj.reverse || params.reverse || false;
-    params.count = obj.count || params.count || 1;
-    const key = `${params.group}__${params.path}`;
-    if (!values[key]) {
-      if (params.count > 1) {
-        values[key] = JSONPath2(params.path, data).slice(0, params.count);
-      } else {
-        values[key] = JSONPath2(params.path, data);
-      }
-    }
-    if (params.cycle || params.reverse) {
-      return cycle(values[key], params.reverse);
-    }
-    return pick2(values[key]);
-  }
-  Object.keys(obj).forEach((k) => {
-    obj[k] = resolve(obj[k], data, values, k);
-  });
-  return obj;
-}
-function run(refs, schema, container2, synchronous) {
-  if (Object.prototype.toString.call(schema) !== "[object Object]") {
-    throw new Error(`Invalid input, expecting object but given ${typeof schema}`);
-  }
-  const refDepthMin = option_default("refDepthMin") || 0;
-  const refDepthMax = option_default("refDepthMax") || 3;
-  try {
-    const { resolveSchema } = buildResolveSchema_default({
-      refs,
-      schema,
-      container: container2,
-      synchronous,
-      refDepthMin,
-      refDepthMax
-    });
-    const result = traverse_default(utils_default.clone(schema), [], resolveSchema);
-    if (option_default("resolveJsonPath")) {
-      return {
-        value: resolve(result.value),
-        context: result.context
-      };
-    }
-    return result;
-  } catch (e) {
-    if (e.path) {
-      throw new Error(`${e.message} in /${e.path.join("/")}`);
-    } else {
-      throw e;
-    }
-  }
-}
-var run_default = run;
-
-// src/lib/renderers/js.mjs
-function renderJS(res) {
-  return res.value;
-}
-var js_default = renderJS;
 
 // node_modules/yaml/types.mjs
-var import_types2 = __toESM(require_types2(), 1);
-var binaryOptions = import_types2.default.binaryOptions;
-var boolOptions = import_types2.default.boolOptions;
-var intOptions = import_types2.default.intOptions;
-var nullOptions = import_types2.default.nullOptions;
-var strOptions = import_types2.default.strOptions;
-var Schema = import_types2.default.Schema;
-var Alias = import_types2.default.Alias;
-var Collection = import_types2.default.Collection;
-var Merge = import_types2.default.Merge;
-var Node = import_types2.default.Node;
-var Pair = import_types2.default.Pair;
-var Scalar = import_types2.default.Scalar;
-var YAMLMap = import_types2.default.YAMLMap;
-var YAMLSeq = import_types2.default.YAMLSeq;
+var import_types2, binaryOptions, boolOptions, intOptions, nullOptions, strOptions, Schema, Alias, Collection, Merge, Node, Pair, Scalar, YAMLMap, YAMLSeq;
+var init_types2 = __esm({
+  "node_modules/yaml/types.mjs"() {
+    import_types2 = __toESM(require_types2(), 1);
+    binaryOptions = import_types2.default.binaryOptions;
+    boolOptions = import_types2.default.boolOptions;
+    intOptions = import_types2.default.intOptions;
+    nullOptions = import_types2.default.nullOptions;
+    strOptions = import_types2.default.strOptions;
+    Schema = import_types2.default.Schema;
+    Alias = import_types2.default.Alias;
+    Collection = import_types2.default.Collection;
+    Merge = import_types2.default.Merge;
+    Node = import_types2.default.Node;
+    Pair = import_types2.default.Pair;
+    Scalar = import_types2.default.Scalar;
+    YAMLMap = import_types2.default.YAMLMap;
+    YAMLSeq = import_types2.default.YAMLSeq;
+  }
+});
 
 // src/lib/renderers/yaml.mjs
 function getIn(obj, path) {
@@ -5844,10 +6298,25 @@ function renderYAML({ value, context }) {
   doc.contents = nodes;
   return doc.toString();
 }
-var yaml_default = renderYAML;
+var yaml_default;
+var init_yaml = __esm({
+  "src/lib/renderers/yaml.mjs"() {
+    init_yaml();
+    init_types2();
+    init_option();
+    yaml_default = renderYAML;
+  }
+});
+
+// src/lib/renderers/index.mjs
+var init_renderers = __esm({
+  "src/lib/renderers/index.mjs"() {
+    init_js();
+    init_yaml();
+  }
+});
 
 // src/lib/index.mjs
-var container = new Container_default();
 function setupKeywords() {
   container.define("autoIncrement", function autoIncrement(value, schema) {
     if (!this.offset) {
@@ -5856,7 +6325,7 @@ function setupKeywords() {
       const offset = value.initialOffset || schema.initialOffset;
       this.offset = offset || random_default.number(min, max);
     }
-    if (value === true) {
+    if (value) {
       return this.offset++;
     }
     return schema;
@@ -5902,89 +6371,118 @@ function getRefs(refs, schema) {
   walk(schema);
   return $refs;
 }
-var jsf = (schema, refs, cwd) => {
-  console.debug("[json-schema-faker] calling JSONSchemaFaker() is deprecated, call either .generate() or .resolve()");
-  if (cwd) {
-    console.debug("[json-schema-faker] local references are only supported by calling .resolve()");
-  }
-  return jsf.generate(schema, refs);
-};
-jsf.generateWithContext = (schema, refs) => {
-  const $refs = getRefs(refs, schema);
-  return run_default($refs, schema, container, true);
-};
-jsf.generate = (schema, refs) => js_default(
-  jsf.generateWithContext(schema, refs)
-);
-jsf.generateYAML = (schema, refs) => yaml_default(
-  jsf.generateWithContext(schema, refs)
-);
-jsf.resolveWithContext = (schema, refs, cwd) => {
-  if (typeof refs === "string") {
-    cwd = refs;
-    refs = {};
-  }
-  cwd = cwd || (typeof process !== "undefined" ? process.cwd() : "");
-  cwd = `${cwd.replace(/\/+$/, "")}/`;
-  const $refs = getRefs(refs, schema);
-  const fixedRefs = {
-    order: 1,
-    canRead(file) {
-      const key = file.url.replace("/:", ":");
-      return $refs[key] || $refs[key.split("/").pop()];
-    },
-    read(file, callback) {
-      try {
-        callback(null, this.canRead(file));
-      } catch (e) {
-        callback(e);
+var container, jsf, JSONSchemaFaker, lib_default;
+var init_lib = __esm({
+  "src/lib/index.mjs"() {
+    init_vendor();
+    init_Container();
+    init_format();
+    init_option();
+    init_constants();
+    init_random();
+    init_utils();
+    init_run();
+    init_renderers();
+    container = new Container_default();
+    jsf = (schema, refs, cwd) => {
+      console.debug("[json-schema-faker] calling JSONSchemaFaker() is deprecated, call either .generate() or .resolve()");
+      if (cwd) {
+        console.debug("[json-schema-faker] local references are only supported by calling .resolve()");
       }
-    }
-  };
-  const { $RefParser: $RefParser2 } = getDependencies();
-  return $RefParser2.bundle(cwd, schema, {
-    resolve: {
-      file: { order: 100 },
-      http: { order: 200 },
-      fixedRefs
-    },
-    dereference: {
-      circular: "ignore"
-    }
-  }).then((sub) => run_default($refs, sub, container)).catch((e) => {
-    throw new Error(`Error while resolving schema (${e.message})`);
-  });
-};
-jsf.resolve = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(js_default);
-jsf.resolveYAML = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(yaml_default);
-setupKeywords();
-jsf.format = format_default;
-jsf.option = option_default;
-jsf.random = random_default;
-jsf.extend = (name, cb) => {
-  container.extend(name, cb);
-  return jsf;
-};
-jsf.define = (name, cb) => {
-  container.define(name, cb);
-  return jsf;
-};
-jsf.reset = (name) => {
-  container.reset(name);
-  setupKeywords();
-  return jsf;
-};
-jsf.locate = (name) => {
-  return container.get(name);
-};
-jsf.VERSION = "0.5.0-rcv.45";
-var JSONSchemaFaker = { ...jsf };
-var lib_default = jsf;
+      return jsf.generate(schema, refs);
+    };
+    jsf.generateWithContext = (schema, refs) => {
+      const $refs = getRefs(refs, schema);
+      return run_default($refs, schema, container, true);
+    };
+    jsf.generate = (schema, refs) => js_default(
+      jsf.generateWithContext(schema, refs)
+    );
+    jsf.generateYAML = (schema, refs) => yaml_default(
+      jsf.generateWithContext(schema, refs)
+    );
+    jsf.resolveWithContext = (schema, refs, cwd) => {
+      if (typeof refs === "string") {
+        cwd = refs;
+        refs = {};
+      }
+      cwd = cwd || (typeof process !== "undefined" && typeof process.cwd === "function" ? process.cwd() : "");
+      cwd = `${cwd.replace(/\/+$/, "")}/`;
+      const $refs = getRefs(refs, schema);
+      const fixedRefs = {
+        order: 1,
+        canRead(file) {
+          const key = file.url.replace("/:", ":");
+          return $refs[key] || $refs[key.split("/").pop()];
+        },
+        read(file, callback) {
+          try {
+            callback(null, this.canRead(file));
+          } catch (e) {
+            callback(e);
+          }
+        }
+      };
+      const { $RefParser: $RefParser2 } = getDependencies();
+      return $RefParser2.bundle(cwd, schema, {
+        resolve: {
+          file: { order: 100 },
+          http: { order: 200 },
+          fixedRefs
+        },
+        dereference: {
+          circular: "ignore"
+        }
+      }).then((sub) => run_default($refs, sub, container)).catch((e) => {
+        throw new Error(`Error while resolving schema (${e.message})`);
+      });
+    };
+    jsf.resolve = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(js_default);
+    jsf.resolveYAML = (schema, refs, cwd) => jsf.resolveWithContext(schema, refs, cwd).then(yaml_default);
+    setupKeywords();
+    jsf.format = format_default;
+    jsf.option = option_default;
+    jsf.random = random_default;
+    jsf.extend = (name, cb) => {
+      container.extend(name, cb);
+      return jsf;
+    };
+    jsf.define = (name, cb) => {
+      container.define(name, cb);
+      return jsf;
+    };
+    jsf.reset = (name) => {
+      container.reset(name);
+      setupKeywords();
+      return jsf;
+    };
+    jsf.locate = (name) => {
+      return container.get(name);
+    };
+    jsf.VERSION = "0.5.3";
+    JSONSchemaFaker = { ...jsf };
+    lib_default = jsf;
+  }
+});
 
 // src/lib/main.mjs
-setDependencies({ $RefParser: import_json_schema_ref_parser.default, JSONPath: import_jsonpath_plus.JSONPath });
-var JSONSchemaFaker2 = lib_default;
-// Annotate the CommonJS export names for ESM import in node:
-0 && (module.exports = {
-  JSONSchemaFaker
+var main_exports = {};
+__export(main_exports, {
+  JSONSchemaFaker: () => JSONSchemaFaker,
+  default: () => lib_default
 });
+var import_json_schema_ref_parser, import_jsonpath_plus;
+var init_main = __esm({
+  "src/lib/main.mjs"() {
+    import_json_schema_ref_parser = __toESM(require("json-schema-ref-parser"), 1);
+    import_jsonpath_plus = require("jsonpath-plus");
+    init_vendor();
+    init_lib();
+    setDependencies({ $RefParser: import_json_schema_ref_parser.default, JSONPath: import_jsonpath_plus.JSONPath });
+  }
+});
+
+// src/src/main.cjs.js
+var jsf2 = (init_main(), __toCommonJS(main_exports)).default;
+module.exports = jsf2;
+module.exports.JSONSchemaFaker = { ...jsf2 };

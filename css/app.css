@@ -242,6 +242,9 @@ body {
 .flx {
   display: flex;
 }
+.gap {
+  gap: 10px;
+}
 .flx-cl {
   flex-direction: column;
 }
@@ -740,13 +743,9 @@ body {
   opacity: 0.5;
 }
 .f {
-  box-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
-}
-.txt,
-.num {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
-.num {
+.flx-gw > .f {
   width: 6em;
 }
 /* misc */
