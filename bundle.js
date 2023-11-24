@@ -6157,7 +6157,7 @@ laborum`.split(/\W/);
       jsf.locate = (name) => {
         return container.get(name);
       };
-      jsf.VERSION = "0.5.3";
+      jsf.VERSION = "0.5.4";
       JSONSchemaFaker = { ...jsf };
       lib_default = jsf;
     }

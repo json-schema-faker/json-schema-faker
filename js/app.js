@@ -778,7 +778,7 @@ var require_internal = __commonJS({
       const crossorigin2 = is_crossorigin();
       let unsubscribe;
       if (crossorigin2) {
-        iframe.src = "data:text/html,<script>onresize=function(){parent.postMessage(0,'*')}<\/script>";
+        iframe.src = "data:text/html,<script>onresize=function(){parent.postMessage(0,'*')}</script>";
         unsubscribe = listen2(window, "message", (event) => {
           if (event.source === iframe.contentWindow)
             fn();
@@ -1051,13 +1051,13 @@ var require_internal = __commonJS({
         throw new Error("Function called outside component initialization");
       return exports.current_component;
     }
-    function beforeUpdate2(fn) {
+    function beforeUpdate(fn) {
       get_current_component2().$$.before_update.push(fn);
     }
     function onMount2(fn) {
       get_current_component2().$$.on_mount.push(fn);
     }
-    function afterUpdate2(fn) {
+    function afterUpdate(fn) {
       get_current_component2().$$.after_update.push(fn);
     }
     function onDestroy2(fn) {
@@ -2195,7 +2195,7 @@ var require_internal = __commonJS({
     exports.add_render_callback = add_render_callback2;
     exports.add_styles = add_styles;
     exports.add_transform = add_transform;
-    exports.afterUpdate = afterUpdate2;
+    exports.afterUpdate = afterUpdate;
     exports.append = append2;
     exports.append_dev = append_dev;
     exports.append_empty_stylesheet = append_empty_stylesheet;
@@ -2206,7 +2206,7 @@ var require_internal = __commonJS({
     exports.attr = attr2;
     exports.attr_dev = attr_dev;
     exports.attribute_to_object = attribute_to_object;
-    exports.beforeUpdate = beforeUpdate2;
+    exports.beforeUpdate = beforeUpdate;
     exports.bind = bind;
     exports.binding_callbacks = binding_callbacks2;
     exports.blank_object = blank_object2;
@@ -2867,9 +2867,6 @@ function get_current_component() {
   if (!current_component)
     throw new Error("Function called outside component initialization");
   return current_component;
-}
-function onMount(fn) {
-  get_current_component().$$.on_mount.push(fn);
 }
 function onDestroy(fn) {
   get_current_component().$$.on_destroy.push(fn);
@@ -4149,6 +4146,10 @@ function addRouter(root, fallback, callback) {
       window.removeEventListener("popstate", findRoutes, false);
     }
   };
+}
+
+// node_modules/svelte/ssr.mjs
+function onMount() {
 }
 
 // node_modules/yrv/build/dist/lib/Router.svelte
