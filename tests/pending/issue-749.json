@@ -1,0 +1,10 @@
+{
+  "properties": {
+    "fields": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string"
+      }
+    }
+  }
+}
