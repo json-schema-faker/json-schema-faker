@@ -19,7 +19,7 @@ endif
 .EXPORT_ALL_VARIABLES:
 
 # targets
-.PHONY: ? deps purge all clean deploy
+.PHONY: ? deps purge web clean deploy
 
 # utils
 define iif
@@ -53,7 +53,7 @@ build: deps ## Build scripts for dist
 watch: deps ## Build scripts for dist
 	@npm run build -- -xweb --watch
 
-all: deps ## Build artifact for production envs
+web: deps ## Build artifact for production envs
 	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
 	@git worktree add $(src) $(target)
 	@cd $(src) && rm -rf *

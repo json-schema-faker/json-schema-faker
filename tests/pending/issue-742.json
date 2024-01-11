@@ -1,0 +1,19 @@
+{
+  "type": "array",
+  "minItems": 5,
+  "maxItems": 5,
+  "items": {
+    "type": "object",
+    "properties": {
+      "id": {
+        "type": "integer",
+        "minimum": 1,
+        "autoIncrement": true,
+        "initialOffset": 1
+      }
+    },
+    "required": [
+      "id"
+    ]
+  }
+}
