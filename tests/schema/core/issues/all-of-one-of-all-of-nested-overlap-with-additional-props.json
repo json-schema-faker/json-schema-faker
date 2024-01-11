@@ -1,0 +1,41 @@
+[
+  {
+    "description": "allOf and oneOf nested with overlapping conditions",
+    "schemas": [{
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "properties": {
+        "date_of_birth": {
+          "type": "string",
+          "minimum": 10,
+          "maximum": 10
+        },
+        "age_group": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 5
+        }
+      },
+
+      "allOf": [{
+        "anyOf": [{
+          "required": [
+            "age_group"
+          ]
+        }, {
+          "required": [
+            "age_group",
+            "date_of_birth"
+          ]
+        }]
+      }]
+    }],
+    "tests": [
+      {
+        "description": "should combine recursively",
+        "schema": "schemas.0",
+        "valid": true
+      }
+    ]
+  }
+]
