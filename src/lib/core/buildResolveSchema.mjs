@@ -120,6 +120,11 @@ const buildResolveSchema = ({
           mix.forEach(omit => {
             if (omit.required && omit !== fixed) {
               omit.required.forEach(key => {
+                // if the picked schema also includes the required key, do not delete it
+                if (fixed.required && fixed.required.includes(key)) {
+                  return;
+                }
+
                 const includesKey = copy.required && copy.required.includes(key);
                 if (copy.properties && !includesKey) {
                   delete copy.properties[key];
