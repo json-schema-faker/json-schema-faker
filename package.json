@@ -12,10 +12,15 @@
   "module": "dist/main.mjs",
   "unpkg": "dist/bundle.js",
   "exports": {
-    ".": {
-      "types": "./index.d.ts",
-      "import": "./dist/main.mjs",
-      "require": "./dist/main.cjs",
+    ".": {       
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./dist/main.mjs"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./dist/main.cjs"
+      },
       "browser": "./dist/bundle.js"
     }
   },
