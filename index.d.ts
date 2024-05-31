@@ -49,7 +49,7 @@ export interface JSONSchemaFakerFormat {
 }
 
 declare function JSONSchemaFakerOption(opts: JSONSchemaFakerOptions): void;
-declare function JSONSchemaFakerOption(name: keyof JSONSchemaFakerOptions, value: any): void;
+declare function JSONSchemaFakerOption<K extends keyof JSONSchemaFakerOptions>(name: K, value: JSONSchemaFakerOptions[K]): void;
 declare namespace JSONSchemaFakerOption {
   var getDefaults: () => JSONSchemaFakerOptions;
 }
