@@ -19,7 +19,8 @@
                 "type": "array",
                 "items": {
                   "$ref": "#/definitions/current-account"
-                }
+                },
+                "minItems": 1
               }
             },
             "required": [

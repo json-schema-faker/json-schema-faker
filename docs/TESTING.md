@@ -6,7 +6,7 @@
 ### Unit tests
 
 - They just validate the building blocks from the entire library
-- We're using `mocha` and `chai` so the worflow would be very familiar
+- We're using `mocha` and `chai` so the workflow would be very familiar
 
 > Much stuff from the internals are not covered by unit-tests yet, PRs for increasing that are very welcome!
 
