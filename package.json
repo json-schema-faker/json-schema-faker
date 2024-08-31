@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.5.3",
+  "version": "0.5.6",
   "description": "JSON-Schema + fake data generators",
   "homepage": "http://json-schema-faker.js.org",
   "types": "index.d.ts",
@@ -13,9 +13,14 @@
   "unpkg": "dist/bundle.js",
   "exports": {
     ".": {
-      "types": "./index.d.ts",
-      "import": "./dist/main.mjs",
-      "require": "./dist/main.cjs",
+      "import": {
+        "types": "./index.d.ts",
+        "default": "./dist/main.mjs"
+      },
+      "require": {
+        "types": "./index.d.cts",
+        "default": "./dist/main.cjs"
+      },
       "browser": "./dist/bundle.js"
     }
   },
