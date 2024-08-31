@@ -192,7 +192,7 @@ JSONSchemaFaker.resolve(schema, refs).then((sample) => {
 
 ## Faking values
 
-`JSONSchemaFaker` has built-in generators for core-formats, [Faker.js](https://github.com/marak/Faker.js/) and [Chance.js](http://chancejs.com/) (and others) are also supported but they require setup:
+`JSONSchemaFaker` has built-in generators for core-formats, [Faker.js](https://github.com/faker-js/faker/) and [Chance.js](http://chancejs.com/) (and others) are also supported but they require setup:
 
 ```js
 JSONSchemaFaker.extend("faker", () => require("@faker-js/faker"));
@@ -207,7 +207,7 @@ JSONSchemaFaker.extend("faker", () => require("@faker-js/faker"));
 
 ([demo »](http://json-schema-faker.js.org/#gist/89659ebf28be89d3f860c3f80cbffe4b))
 
-The above schema will invoke [`faker.internet.email()`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/internet.js#L32).
+The above schema will invoke [`faker.internet.email()`](https://github.com/faker-js/faker/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/internet.js#L32).
 
 Note that both generators has higher precedence than **format**.
 
@@ -253,7 +253,7 @@ E.g. using `chance` to faking values while passing arguments to the generator:
 This example works for single-parameter generator function.
 
 However, if you pass multiple arguments to the generator function, just pass them wrapped in an array.
-In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/Marak/faker.js/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85)
+In the example below we use the [`faker.finance.amount(min, max, dec, symbol)`](https://github.com/faker-js/faker/blob/1f47f09e25ad43db41ea4187c3cd3f7e113d4cb4/lib/finance.js#L85)
 generator which has 4 parameters. We just wrap them with an array and it's equivalent to `faker.finance.amount(100, 10000, 2, "$")`:
 
 ```json
@@ -346,7 +346,7 @@ JSONSchemaFaker.option("alwaysFakeOptionals", true);
 
 ## Extending dependencies
 
-You may extend [Faker.js](https://github.com/Marak/faker.js):
+You may extend [Faker.js](https://github.com/faker-js/faker):
 
 ```javascript
 import { JSONSchemaFaker } from 'json-schema-faker';
@@ -373,7 +373,7 @@ const schema = {
 JSONSchemaFaker.resolve(schema).then(...);
 ```
 
-...or if you want to use [faker's _individual localization packages_](https://github.com/Marak/faker.js#individual-localization-packages), simply do the following:
+...or if you want to use [faker's _individual localization packages_](https://github.com/faker-js/faker#individual-localization-packages), simply do the following:
 
 ```js
 JSONSchemaFaker.extend("faker", () => {
