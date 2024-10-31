@@ -238,6 +238,16 @@ function typecast(type, schema, callback) {
 
       if (value.length > max) {
         value = value.substr(0, max);
+        const pattern = schema.pattern ? new RegExp(schema.pattern) : null;
+        if (pattern && !pattern.test(value)) {
+          let temp = value;
+          while (temp.length > min && !pattern.test(temp)) {
+            temp = temp.slice(0, -1);
+            if (pattern.test(temp)) {
+              value = temp;
+            }
+          }
+        }
       }
 
       switch (schema.format) {
