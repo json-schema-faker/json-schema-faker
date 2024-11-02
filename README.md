@@ -2,15 +2,13 @@
 
 [![Donate](https://img.shields.io/badge/Donate-PayPal-green.svg)](https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=8MXLRJ7QQXGYY)
 [![OpenCollective](https://badgen.net/opencollective/backers/json-schema-faker)](https://opencollective.com/json-schema-faker)
-[![Build status](https://github.com/json-schema-faker/json-schema-faker/workflows/ci/badge.svg)](https://github.com/json-schema-faker/json-schema-faker/actions)
+[![Build status](https://github.com/json-schema-faker/json-schema-faker/actions/workflows/testing.yml/badge.svg)](https://github.com/json-schema-faker/json-schema-faker/actions)
 [![NPM version](https://badge.fury.io/js/json-schema-faker.svg)](http://badge.fury.io/js/json-schema-faker)
 [![Coverage Status](https://codecov.io/github/json-schema-faker/json-schema-faker/coverage.svg?branch=master)](https://codecov.io/github/json-schema-faker/json-schema-faker?branch=master)
 
 [![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/json-schema-faker/Lobby)
-[![Dependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker)
-[![devDependency Status](https://david-dm.org/json-schema-faker/json-schema-faker/dev-status.svg)](https://david-dm.org/json-schema-faker/json-schema-faker#info=devDependencies)
 
-[![Inline docs](http://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](http://inch-ci.org/github/json-schema-faker/json-schema-faker)
+[![Inline docs](https://inch-ci.org/github/json-schema-faker/json-schema-faker.svg?branch=master)](https://inch-ci.org/github/json-schema-faker/json-schema-faker)
 [![Typedoc](https://img.shields.io/badge/typedoc-provided-blue.svg)](http://json-schema-faker.github.io/json-schema-faker/)
 [![Known Vulnerabilities](https://snyk.io/test/github/json-schema-faker/json-schema-faker/badge.svg)](https://snyk.io/test/github/json-schema-faker/json-schema-faker)
 
