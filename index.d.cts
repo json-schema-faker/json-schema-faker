@@ -35,6 +35,7 @@ export interface JSONSchemaFakerOptions {
   renderComment?: boolean;
   refDepthMax?: number;
   refDepthMin?: number;
+  maxRegexRetry?: number;
 }
 
 export type JSONSchemaFakerRefs = Schema[] | { [k: string]: Schema };
