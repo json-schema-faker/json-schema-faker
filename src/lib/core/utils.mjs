@@ -241,7 +241,9 @@ function typecast(type, schema, callback) {
         const pattern = schema.pattern ? new RegExp(schema.pattern) : null;
         if (pattern && !pattern.test(value)) {
           let temp = value;
-          while (temp.length > min && !pattern.test(temp)) {
+          const maxRetries = optionAPI('maxRegexRetry');
+          const minLength = Math.max(value.length - maxRetries, min);
+          while (temp.length > minLength && !pattern.test(temp)) {
             temp = temp.slice(0, -1);
             if (pattern.test(temp)) {
               value = temp;

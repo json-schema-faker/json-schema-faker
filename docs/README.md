@@ -133,6 +133,7 @@ jsf.locate('faker');
 - `omitNulls` &mdash; Remove any generated `null` value from the resulting value (default: `false`)
 - `minDateTime` &mdash; When generating a string with format `date-time`, set the minimum date that will get selected. If it's a number it will be the offset from `now` in milliseconds (default: `-2524608000000`)
 - `maxDateTime` &mdash; When generating a string with format `date-time`, set the maximum date that will get selected. If it's a number it will be the offset from `now` in milliseconds (default: `1000`)
+- `maxRegexRetry` &mdash; When generating a string with a `pattern` and a `maxLength`, if the `maxLength` is smaller than the generated value, the value will be cropped. If the new value is not matching the pattern, it will try to keep cropping the value until it's valid or it reaches either the minimum allowed length or the maximum number of iterations set by this option (default: `100`)
 
 ## Building
 
