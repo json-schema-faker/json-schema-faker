@@ -511,7 +511,7 @@ function clean(obj, schema, isArray = false) {
 
   if (Array.isArray(obj)) {
     return obj
-      .map(value => clean(value, schema, true))
+      .map(value => clean(value, schema?.items, true))
       .filter(value => typeof value !== 'undefined');
   }
 
