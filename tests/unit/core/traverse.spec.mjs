@@ -49,15 +49,21 @@ describe('Traverse', () => {
         type: 'string',
         generate: () => 'foo',
       },
+      minItems: 1,
       maxItems: 1,
     };
 
     expect(traverse(schema, [], mockResolve, schema)).to.eql({
-      value: [],
+      value: ['foo'],
       context: {
         schemaPath: [],
         title: schema.title,
-        items: []
+        items: [
+          {
+            schemaPath: ['items'],
+            description: schema.items.description,
+          },
+        ],
       },
     });
   });
