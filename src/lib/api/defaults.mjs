@@ -4,6 +4,7 @@ export default defaults;
 
 defaults.defaultInvalidTypeProduct = undefined;
 defaults.defaultRandExpMax = 10;
+defaults.maxRegexRetry = 100;
 
 defaults.pruneProperties = [];
 defaults.ignoreProperties = [];

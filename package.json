@@ -100,7 +100,7 @@
   ],
   "dependencies": {
     "json-schema-ref-parser": "^6.1.0",
-    "jsonpath-plus": "^7.2.0"
+    "jsonpath-plus": "^10.1.0"
   },
   "devDependencies": {
     "@faker-js/faker": "^7.6.0",

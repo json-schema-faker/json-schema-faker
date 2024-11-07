@@ -28,6 +28,15 @@
         "valid": true
       },
       {
+        "description": "should handle pattern with maxLength",
+        "schema": {
+          "type": "string",
+          "pattern": "^[a-z]{2}( [a-z])?$",
+          "maxLength": 3
+        },
+        "valid": true
+      },
+      {
         "description": "should handle format (core)",
         "schema": {
           "type": "object",

@@ -523,5 +523,11 @@ describe('Utils', () => {
       const cleaned = utils.clean(a, { required: ['b'] });
       expect(cleaned).to.eql({ b: {}, c: { d: 'string value' } });
     });
+
+    it('should respect nested required keys', () => {
+      const a = [[{ b: {} }]];
+      const cleaned = utils.clean(a, { items: { items: { properties: { price: {} }, required: ['b'] } } });
+      expect(cleaned).to.eql([[{ b: {} }]]);
+    });
   });
 });

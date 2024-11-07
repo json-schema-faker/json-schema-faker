@@ -49,6 +49,7 @@ describe('Traverse', () => {
         type: 'string',
         generate: () => 'foo',
       },
+      minItems: 1,
       maxItems: 1,
     };
 

@@ -55,6 +55,10 @@ function seed() {
           ? pick(suite, test.schema)
           : test.schema;
 
+        if (!schema) {
+          throw new Error(`Missing schema to test, given '${JSON.stringify(test)}'`);
+        }
+
         const refs = (test.refs || []).map(ref => {
           return typeof ref === 'string'
             ? pick(suite, ref)
