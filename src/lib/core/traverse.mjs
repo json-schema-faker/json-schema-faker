@@ -4,6 +4,7 @@ import ParseError from './error.mjs';
 import inferType from './infer.mjs';
 import types from '../types/index.mjs';
 import optionAPI from '../api/option.mjs';
+import { notValue } from './notValueUtils.mjs';
 
 function getMeta({ $comment: comment, title, description }) {
   return Object.entries({ comment, title, description })
@@ -62,7 +63,7 @@ function traverse(schema, path, resolve, rootSchema) {
   }
 
   if (schema.not && typeof schema.not === 'object') {
-    schema = utils.notValue(schema.not, utils.omitProps(schema, ['not']));
+    schema = notValue(schema.not, utils.omitProps(schema, ['not']));
 
     // build new object value from not-schema!
     if (schema.type && schema.type === 'object') {

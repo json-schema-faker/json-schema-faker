@@ -1,5 +1,4 @@
 import optionAPI from '../api/option.mjs';
-import env from './constants.mjs';
 import random from './random.mjs';
 
 const RE_NUMERIC = /^(0|[1-9][0-9]*)$/;
@@ -53,7 +52,7 @@ function isScalar(value) {
   return ['number', 'boolean'].includes(typeof value);
 }
 
- /**
+/**
  * Returns true/false whether the object parameter has its own properties defined
  *
  * @param obj
@@ -62,7 +61,7 @@ function isScalar(value) {
  */
 function hasProperties(obj, ...properties) {
   return properties.filter(key => {
-    return typeof obj[key] !== 'undefined';
+      return typeof obj[key] !== 'undefined';
   }).length > 0;
 }
 
@@ -359,60 +358,7 @@ function hasValue(schema, value) {
   if (schema.const) return schema.const === value;
 }
 
-function notValue(schema, parent) {
-  const copy = merge({}, parent);
 
-  if (typeof schema.minimum !== 'undefined') {
-    copy.maximum = schema.minimum;
-    copy.exclusiveMaximum = true;
-  }
-
-  if (typeof schema.maximum !== 'undefined') {
-    copy.minimum = schema.maximum > copy.maximum ? 0 : schema.maximum;
-    copy.exclusiveMinimum = true;
-  }
-
-  if (typeof schema.minLength !== 'undefined') {
-    copy.maxLength = schema.minLength;
-  }
-
-  if (typeof schema.maxLength !== 'undefined') {
-    copy.minLength = schema.maxLength > copy.maxLength ? 0 : schema.maxLength;
-  }
-
-  if (schema.type) {
-    copy.type = random.pick(env.SCALAR_TYPES.filter(x => {
-      const types = Array.isArray(schema.type) ? schema.type : [schema.type];
-
-      return types.every(type => {
-        // treat both types as _similar enough_ to be skipped equal
-        if (x === 'number' || x === 'integer') {
-          return type !== 'number' && type !== 'integer';
-        }
-
-        return x !== type;
-      });
-    }));
-  } else if (schema.enum) {
-    let value;
-
-    do {
-      value = anyValue();
-    } while (schema.enum.indexOf(value) !== -1);
-
-    copy.enum = [value];
-  }
-
-  if (schema.required && copy.properties) {
-    schema.required.forEach(prop => {
-      delete copy.properties[prop];
-    });
-  }
-
-  // TODO: explore more scenarios
-
-  return copy;
-}
 
 function validateValueForSchema(value, schema) {
   const schemaHasMin = schema.minimum !== undefined;
@@ -553,7 +499,6 @@ export default {
   clone,
   short,
   hasValue,
-  notValue,
   anyValue,
   validate,
   validateValueForSchema,
