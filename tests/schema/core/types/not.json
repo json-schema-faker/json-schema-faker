@@ -124,6 +124,16 @@
           }
         },
         "valid": true
+      },
+      {
+        "description": "should generate an integer not in enum values",
+        "schema": {
+          "type": "integer",
+          "maximum": 5,
+          "minimum": 2,
+          "not": { "enum": [1, 2, 5, 4] }
+        },
+        "equal": 3
       }
     ]
   }
