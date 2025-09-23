@@ -529,5 +529,40 @@ describe('Utils', () => {
       const cleaned = utils.clean(a, { items: { items: { properties: { price: {} }, required: ['b'] } } });
       expect(cleaned).to.eql([[{ b: {} }]]);
     });
+
+    it('should clean arrays under patternProperties', () => {
+      const schema = {
+        type: 'object',
+        patternProperties: {
+          '^(.*)$': {
+            type: 'array',
+            items: {
+              type: 'object',
+              required: ['requiredValue'],
+              properties: {
+                requiredValue: {},
+                optionalValue: {},
+              },
+            },
+          },
+        },
+      };
+
+      const obj = {
+        anyKey: [
+          {
+            requiredValue: {},
+            optionalValue: {},
+          },
+        ],
+      };
+
+      const cleaned = utils.clean(obj, schema);
+      expect(cleaned).to.eql({
+        anyKey: [{
+          requiredValue: {},
+        }],
+      });
+    });
   });
 });

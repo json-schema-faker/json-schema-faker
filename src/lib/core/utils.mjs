@@ -471,6 +471,19 @@ function clean(obj, schema, isArray = false) {
       let subSchema = schema;
       if (schema && schema.properties && schema.properties[k]) {
         subSchema = schema.properties[k];
+      } else if (schema && schema.patternProperties) {
+        // derive a schema from matching patternProperties
+        for (const [pattern, patternSchema] of Object.entries(schema.patternProperties)) {
+          try {
+            const re = new RegExp(pattern);
+            if (re.test(k)) {
+              subSchema = patternSchema;
+              break;
+            }
+          } catch (e) {
+            // ignore invalid regular expression patterns
+          }
+        }
       }
       const value = clean(obj[k], subSchema);
 
