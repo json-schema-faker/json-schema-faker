@@ -43,7 +43,9 @@ function resolve(obj, data, values, property) {
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(x => resolve(x, data, values, property));
+    // Resolve each element and drop undefined results so arrays don't contain invalid values
+    const resolved = obj.map(x => resolve(x, data, values, property));
+    return resolved.filter(v => typeof v !== 'undefined');
   }
 
   if (obj.jsonPath) {
