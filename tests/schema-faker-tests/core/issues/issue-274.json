@@ -1,0 +1,43 @@
+[
+  {
+    "description": "allOf does not work if array item contains oneOf property",
+    "tests": [
+      {
+        "description": "should combine sub-schemas on merging allOf",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "type": "object",
+          "allOf": [
+            {
+              "oneOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "b": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "b"
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "a"
+              ]
+            }
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

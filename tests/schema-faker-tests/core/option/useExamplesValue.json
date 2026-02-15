@@ -1,0 +1,31 @@
+[
+  {
+    "description": "useExamplesValue option",
+    "tests": [
+      {
+        "description": "should handle useExamplesValue option with 'examples' array",
+        "schema": {
+          "type": "string",
+          "examples": [
+            "World"
+          ]
+        },
+        "equal": "World",
+        "set": {
+         "useExamplesValue": true
+        }
+      },
+      {
+        "description": "should handle useExamplesValue option with 'example' property",
+        "schema": {
+          "type": "string",
+          "example": "World"
+        },
+        "equal": "World",
+        "set": {
+          "useExamplesValue": true
+        }
+      }
+    ]
+  }
+]

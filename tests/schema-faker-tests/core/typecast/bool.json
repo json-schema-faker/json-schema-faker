@@ -1,0 +1,22 @@
+[
+  {
+    "description": "should typecast chance.bool when generated value type is different than defined",
+    "tests": [
+      {
+        "description": "should generate the value with default type provided by chance.js (no explicit typedef)",
+        "schema": {
+          "chance": "bool"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast to string",
+        "schema": {
+          "type": "string",
+          "chance": "bool"
+        },
+        "valid": true
+      }
+    ]
+  }
+]

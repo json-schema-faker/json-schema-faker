@@ -1,0 +1,21 @@
+{
+  "description": "ignore nulls if asked",
+  "tests": [
+    {
+      "description": "should remove null values when omitNulls is enabled",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "value": {
+            "type": ["string", "null"]
+          }
+        }
+      },
+      "set": {
+        "omitNulls": true
+      },
+      "hasNot": ":null",
+      "valid": true
+    }
+  ]
+}

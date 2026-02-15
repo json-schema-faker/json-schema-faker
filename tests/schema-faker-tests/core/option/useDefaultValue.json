@@ -1,0 +1,44 @@
+[
+  {
+    "description": "useDefaultValue option",
+    "tests": [
+      {
+        "description": "should handle useDefaultValue option",
+        "schema": {
+          "type": "string",
+          "default": "Hello"
+        },
+        "equal": "Hello",
+        "set": {
+          "useDefaultValue": true
+        }
+      },
+      {
+        "description": "should handle useDefaultValue option with an empty default value",
+        "schema": {
+          "type": "string",
+          "default": ""
+        },
+        "equal": "",
+        "set": {
+          "useDefaultValue": true
+        }
+      },
+      {
+        "description": "should handle useDefaultValue & replaceEmptyByRandomValue option",
+        "schema": {
+          "test-response": {
+            "type": "string",
+            "default": ""
+          }
+        },
+        "valid": true,
+        "notEmpty": ["test-response"],
+        "set": {
+          "useDefaultValue": true,
+          "replaceEmptyByRandomValue": true
+        }
+      }
+    ]
+  }
+]

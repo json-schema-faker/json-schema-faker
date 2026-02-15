@@ -1,0 +1,64 @@
+[
+  {
+    "description": "Fix again min and maxItem generation",
+    "tests": [
+      {
+        "description": "minItems is a valid boundary if set to zero",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "default": 1
+          },
+          "minItems": 0,
+          "maxItems": 5
+        },
+        "repeat": 100,
+        "valid": true,
+        "set": {
+          "minItems": 7,
+          "maxItems": 7,
+          "useDefaultValue": true
+        },
+        "lessThan": 6
+      },
+      {
+        "description": "ignore minItems and maxItems if already set",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "default": 1
+          },
+          "minItems": 3,
+          "maxItems": 5
+        },
+        "repeat": 100,
+        "valid": true,
+        "set": {
+          "maxItems": 7,
+          "useDefaultValue": true
+        },
+        "atLeast": 3
+      },
+      {
+        "description": "set minItems and/or maxItems if they are not defined",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "default": 1
+          }
+        },
+        "repeat": 100,
+        "valid": true,
+        "set": {
+          "minItems": 7,
+          "maxItems": 7,
+          "useDefaultValue": true
+        },
+        "length": 7
+      }
+    ]
+  }
+]

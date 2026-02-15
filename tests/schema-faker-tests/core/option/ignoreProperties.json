@@ -1,0 +1,42 @@
+[
+  {
+    "description": "ignoreProperties option",
+    "tests": [
+      {
+        "description": "should skip generating from ignoreProperties",
+        "schema": {
+          "properties": {
+            "id": {
+              "type": "integer"
+            },
+            "key": {
+              "type": "string"
+            },
+            "foo": {
+              "enum": ["bar", "baz"]
+            },
+            "bar": {
+              "type": "boolean"
+            },
+            "buzz": {
+              "type": "array"
+            },
+            "truth": {
+              "default": 42
+            }
+          },
+          "required": [
+            "id",
+            "key",
+            "foo",
+            "bar",
+            "buzz",
+            "truth"
+          ]
+        },
+        "onlyProps": ["id", "key"],
+        "require": "core/option/ignoreProperties"
+      }
+    ]
+  }
+]

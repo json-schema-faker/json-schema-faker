@@ -1,0 +1,26 @@
+[
+  {
+    "description": "support consider patternProperties",
+    "tests": [
+      {
+        "description": "ensure first schema passes",
+        "schema": {
+          "required": [
+            "longitude"
+          ],
+          "type": "object",
+          "properties": {
+            "longitude": {
+              "title": "Longitude",
+              "type": "string",
+              "format": "decimal"
+            }
+          }
+        },
+        "set": {
+          "failOnInvalidFormat": false
+        }
+      }
+    ]
+  }
+]

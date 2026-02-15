@@ -1,0 +1,19 @@
+[
+  {
+    "description": "External file $refs not resolving",
+    "tests": [
+      {
+        "description": "make sure external file $ref does not cause an error",
+        "schema": {
+          "properties": {
+            "person": {
+              "$ref": "./tests/external-ref-files/issue-571-external-ref.json#/definitions/externalExample"
+            }
+          },
+          "type": "object"
+        },
+        "valid": true
+      }
+    ]
+  }
+]

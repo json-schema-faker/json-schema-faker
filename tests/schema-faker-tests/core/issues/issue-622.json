@@ -1,0 +1,28 @@
+[
+  {
+    "description": "mixing minProperties / maxProperties with required",
+    "tests": [
+      {
+        "description": "should generate no more than all props",
+        "schema": {
+          "type": "object",
+          "required": [
+            "val1"
+          ],
+          "minProperties": 1,
+          "maxProperties": 1,
+          "properties": {
+            "val1": {
+              "type": "string"
+            },
+            "val2": {
+              "type": "string"
+            }
+          }
+        },
+        "valid": true,
+        "repeat": 100
+      }
+    ]
+  }
+]

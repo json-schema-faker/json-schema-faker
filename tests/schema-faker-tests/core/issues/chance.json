@@ -1,0 +1,27 @@
+[
+  {
+    "description": "chance issues",
+    "tests": [
+      {
+        "description": "should allow url-format (0.7.1+)",
+        "schema": {
+          "type": "string",
+          "chance": "url"
+        },
+        "valid": true
+      },
+      {
+        "description": "should execute chance generator before default boolean type generator",
+        "schema": {
+          "type": "boolean",
+          "chance": {
+            "bool": {
+              "likelihood": 100
+            }
+          }
+        },
+        "equal": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,47 @@
+[
+  {
+    "description": "inferred-types keyword issues",
+    "tests": [
+      {
+        "description": "should work for non-reserved words",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "foo": {
+              "type": "array",
+              "items": [
+                {"enum":["bar"]}
+              ],
+              "minItems": 1,
+              "maxItems": 1
+            }
+          },
+          "required": ["foo"]
+        },
+        "equal": {
+          "foo": ["bar"]
+        }
+      },
+      {
+        "description": "should work for reserved words",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": [
+                {"enum":["bar"]}
+              ],
+              "minItems": 1,
+              "maxItems": 1
+            }
+          },
+          "required": ["items"]
+        },
+        "equal": {
+          "items": ["bar"]
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,41 @@
+[
+  {
+    "description": "oneOf/anyOf/allOf is deleted after one item generation",
+    "schemas": [
+      {
+        "definitions": {
+          "Element": {
+            "anyOf": [
+              {
+                "enum": [
+                  "123"
+                ]
+              },
+              {
+                "enum": [
+                  "456"
+                ]
+              }
+            ]
+          }
+        },
+        "items": [
+          {
+            "$ref": "#/definitions/Element"
+          },
+          {
+            "$ref": "#/definitions/Element"
+          }
+        ]
+      }
+    ],
+    "tests": [
+      {
+        "description": "it will always generate two items",
+        "schema": "schemas.0",
+        "count": 2,
+        "valid": true
+      }
+    ]
+  }
+]

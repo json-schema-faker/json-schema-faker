@@ -1,0 +1,28 @@
+[
+  {
+    "description": "pattern constraints",
+    "tests": [
+      {
+        "description": "should fullfil minLength/maxLength constraints",
+        "schema": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 20,
+          "pattern": "^[a-zA-Z0-9_]+$"
+        },
+        "valid": true
+      },
+      {
+        "description": "should sometimes fail on complex patterns",
+        "schema": {
+          "type": "string",
+          "pattern": "^A[CD]{1,6}B$",
+          "minLength": 6
+        },
+        "repeat": 10,
+        "valid": "true",
+        "throwsSometimes": "Given sample does not match schema"
+      }
+    ]
+  }
+]

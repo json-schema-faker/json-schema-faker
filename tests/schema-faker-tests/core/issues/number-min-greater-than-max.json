@@ -1,0 +1,26 @@
+[
+  {
+    "description": "number from an invalid range (min > max)",
+    "tests": [
+      {
+        "description": "should return NaN",
+        "schema": {
+          "type": "integer",
+          "minimum": 600,
+          "maximum": 500
+        },
+        "valid": false
+      },
+      {
+        "description": "should return NaN",
+        "schema": {
+          "type": "integer",
+          "minimum": 600,
+          "maximum": 500,
+          "multipleOf": 7
+        },
+        "valid": false
+      }
+    ]
+  }
+]

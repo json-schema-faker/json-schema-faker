@@ -1,0 +1,100 @@
+[
+  {
+    "description": "schema references",
+    "tests": [
+      {
+        "description": "should handle internal $refs",
+        "schema": {
+          "definitions": {
+            "integer": {
+              "type": "integer"
+            },
+            "positive": {
+              "minimum": 0,
+              "maximum": 100
+            }
+          },
+          "type": "object",
+          "properties": {
+            "weakNumber": {
+              "$ref": "#/definitions/integer"
+            },
+            "multipleOf5": {
+              "allOf": [
+                {
+                  "$ref": "#/definitions/positive"
+                },
+                {
+                  "$ref": "#/definitions/integer"
+                },
+                {
+                  "multipleOf": 5
+                }
+              ]
+            }
+          },
+          "required": ["weakNumber", "multipleOf5"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle provided $refs only",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "stringValues": {
+              "type": "array",
+              "items": {
+                "$ref": "a://str"
+              }
+            }
+          },
+          "required": ["stringValues"]
+        },
+        "refs": [
+          {
+            "id": "a://str",
+            "type": "string"
+          }
+        ],
+        "valid": true
+      }
+    ]
+  },
+  {
+    "description": "inner-references",
+    "tests": [
+      {
+        "description": "should register inner-references by id",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "test": {
+              "type": "object",
+              "properties": {
+                "id": "foo:bar",
+                "foo": {
+                  "type": "string",
+                  "enum": ["x"]
+                }
+              },
+              "required": ["foo"]
+            },
+            "other": {
+              "$ref": "foo:bar"
+            }
+          },
+          "required": ["test", "other"]
+        },
+        "equal": {
+          "test": {
+            "foo": "x"
+          },
+          "other": {
+            "foo": "x"
+          }
+        }
+      }
+    ]
+  }
+]

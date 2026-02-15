@@ -1,0 +1,31 @@
+[
+  {
+    "description": "format keywords",
+    "tests": [
+      {
+        "description": "should handle datetime",
+        "schema": {
+          "type": "string",
+          "format": "datetime"
+        },
+        "type": "string"
+      },
+      {
+        "description": "should handle date",
+        "schema": {
+          "type": "string",
+          "format": "date"
+        },
+        "type": "string"
+      },
+      {
+        "description": "should handle time",
+        "schema": {
+          "type": "string",
+          "format": "time"
+        },
+        "type": "string"
+      }
+    ]
+  }
+]

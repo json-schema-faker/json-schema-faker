@@ -1,0 +1,22 @@
+[
+  {
+    "description": "chance extension",
+    "tests": [
+      {
+        "description": "should handle chance.user",
+        "schema": {
+          "chance": "user",
+          "type": "object",
+          "properties": {
+            "first": { "type": "string" },
+            "last": { "type": "string" },
+            "email": { "type": "string" }
+          },
+          "required": ["first", "last", "email"]
+        },
+        "valid": true,
+        "require": "core/extend/chance-extend"
+      }
+    ]
+  }
+]

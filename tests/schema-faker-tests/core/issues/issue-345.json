@@ -1,0 +1,44 @@
+{
+  "description": "Invalid JSON generated with cyclic reference",
+  "tests": [
+    {
+      "description": "it will work as expected",
+      "schema": {
+        "type": "object",
+        "definitions": {
+          "DefaultCyclic_106": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer"
+              },
+              "me": {
+                "$ref": "#/definitions/DefaultCyclic_106"
+              }
+            },
+            "additionalProperties": false,
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "me": {
+            "$ref": "#/definitions/DefaultCyclic_106"
+          }
+        },
+        "required": [
+          "id"
+        ],
+        "additionalProperties": false
+      },
+      "set": {
+        "optionalsProbability": 0.75
+      },
+      "valid": true
+    }
+  ]
+}

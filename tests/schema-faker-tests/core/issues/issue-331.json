@@ -1,0 +1,32 @@
+[
+  {
+    "description": "regression for non-empty arrays",
+    "tests": [
+      {
+        "description": "should allow empty arrays if they are required",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "n": {
+                "type": "number"
+              },
+              "a": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            },
+            "required": [
+              "n",
+              "a"
+            ]
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

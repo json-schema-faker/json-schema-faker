@@ -1,0 +1,33 @@
+[
+  {
+    "description": "Generation of two required properties based on the same enum reference type",
+    "tests": [
+      {
+        "description": "make sure required properties based on the same enum reference type are always generated",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "property1": {
+              "$ref": "#/definitions/Enum"
+            },
+            "property2": {
+              "$ref": "#/definitions/Enum"
+            }
+          },
+          "definitions": {
+            "Enum": {
+              "type": "integer",
+              "description": "",
+              "enum": [
+                1
+              ]
+            }
+          }
+        },
+        "repeat": 100,
+        "valid": true
+      }
+    ]
+  }
+]

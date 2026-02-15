@@ -1,0 +1,51 @@
+[
+  {
+    "description": "requiredOnly option being ignored",
+    "tests": [
+      {
+        "description": "should omit non-required props if enabled",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "a": {
+              "type": "string"
+            },
+            "b": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "a"
+          ]
+        },
+        "onlyProps": ["a"],
+        "set": {
+          "requiredOnly": true
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate randomly otherwise",
+        "schema": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "a": {
+              "type": "string"
+            },
+            "b": {
+              "type": "number"
+            },
+            "c": {
+              "type": "boolean"
+            }
+          },
+          "required": [
+            "a"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,50 @@
+[
+  {
+    "description": "will use alwaysFakeOptionals (regression)",
+    "tests": [
+      {
+        "description": "will fix #502",
+        "schema": {
+          "title": "Forum",
+          "type": "object",
+          "properties": {
+            "Id": {
+              "type": "string"
+            },
+            "Topics": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Topic"
+              }
+            }
+          },
+          "definitions": {
+            "Topic": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string"
+                },
+                "Posts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/Post"
+                  }
+                }
+              }
+            },
+            "Post": {
+              "type": "object",
+              "properties": {
+                "Id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

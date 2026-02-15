@@ -1,0 +1,37 @@
+{
+  "description": "anyOf issue (required props)",
+  "tests": [
+    {
+      "description": "should properly skip some props",
+      "schema": {
+        "type": "object",
+        "anyOf": [
+          {
+            "properties": {
+              "a": {
+                "type": "string"
+              },
+              "b": {
+                "type": "string"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          {
+            "properties": {
+              "c": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "c"
+            ],
+            "additionalProperties": false
+          }
+        ]
+      },
+      "valid": true
+    }
+  ]
+}

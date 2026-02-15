@@ -1,0 +1,31 @@
+[
+  {
+    "description": "Generators should respect random type selection",
+    "tests": [
+      {
+        "description": "always return generator value when same type is randomly selected",
+        "schema": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "faker": "name.firstName"
+        },
+        "seed": 0.0000000000000001,
+        "type": "string"
+      },
+      {
+        "description": "never return generator value when different type is randomly selected",
+        "schema": {
+          "type": [
+            "string",
+            "null"
+          ],
+          "faker": "name.firstName"
+        },
+        "seed": 0.9999999999999999,
+        "equal": null
+      }
+    ]
+  }
+]

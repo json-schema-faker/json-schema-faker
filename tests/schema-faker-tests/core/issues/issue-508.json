@@ -1,0 +1,22 @@
+[
+  {
+    "description": "null issues",
+    "tests": [
+      {
+        "description": "should not iterate nulls",
+        "schema": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null
+        },
+        "valid": true
+      }
+    ]
+  }
+]

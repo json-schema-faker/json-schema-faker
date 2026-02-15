@@ -1,0 +1,35 @@
+[
+  {
+    "description": "should typecast chance.year when generated value type is different than defined",
+    "tests": [
+      {
+        "description": "should generate the value with default type provided by chance.js (no explicit typedef)",
+        "schema": {
+          "chance": "year"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast to string",
+        "schema": {
+          "type": "string",
+          "chance": "year"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast parametrized generator to string",
+        "schema": {
+          "type": "string",
+          "chance": {
+            "year": {
+              "min": 1939,
+              "max": 1945
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

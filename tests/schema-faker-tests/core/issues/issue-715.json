@@ -1,0 +1,29 @@
+[
+  {
+    "description": "$defs names with spaces cause 'Prop not found'",
+    "tests": [
+      {
+        "description": "will fix #710",
+        "schema": {
+          "$defs": {
+            "Def with Spaces": {
+              "type": "string"
+            }
+          },
+          "$id": "https://test.json",
+          "$schema": "http://json-schema.org/draft-07/schema#",
+          "properties": {
+            "SomeProp": {
+              "$ref": "#/$defs/Def with Spaces"
+            }
+          },
+          "required": [
+            "SomeProp"
+          ],
+          "type": "object"
+        },
+        "valid": true
+      }
+    ]
+  }
+]

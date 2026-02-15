@@ -1,0 +1,31 @@
+[
+  {
+    "description": "support passing array as a single parameter (instead of multiple params)",
+    "tests": [
+      {
+        "description": "should pass an array, when encountered double square brackets",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "chance": {
+                "pickone": [
+                  [
+                    "one",
+                    "two",
+                    "three"
+                  ]
+                ]
+              }
+            }
+          },
+          "required": [
+            "title"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

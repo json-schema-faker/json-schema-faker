@@ -1,0 +1,22 @@
+[
+  {
+    "description": "when defining object with property called 'pattern'",
+    "tests": [
+      {
+        "description": "should fake all properties as expected",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "pattern": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "pattern"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

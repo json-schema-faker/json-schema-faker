@@ -1,0 +1,30 @@
+{
+  "description": "useDefaultValue should use default, not properties.default",
+  "tests": [
+    {
+      "description": "Setting useDefaultValue should not pick from properties.default",
+      "schema": {
+        "type": "object",
+        "required": ["default", "other"],
+        "properties": {
+          "default": {
+            "type": "boolean",
+            "default": false
+          },
+          "other": {
+            "type": "string",
+            "enum": ["value"]
+          }
+        }
+      },
+      "set": {
+        "useDefaultValue": true
+      },
+      "equal": {
+        "default": false,
+        "other": "value"
+      },
+      "valid": true
+    }
+  ]
+}

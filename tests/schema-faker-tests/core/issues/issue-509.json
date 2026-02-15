@@ -1,0 +1,771 @@
+[
+  {
+    "description": "Complex schema, with recent formats, draft-07 (not working yet)",
+    "schemas": [
+      {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$id": "http://oasis-open.org/openc2/oc2ls/v1.0/schema.json",
+        "title": "oc2sl version 1.0 json schema",
+        "description": "this schema is intended to validate all posible derived content for the openc2 language specification version 1.0. it is meant to be used as a template that can be more strickly tuned when creating actuator profile specific schema. ",
+        "type": "object",
+        "oneOf": [
+          {
+            "$ref": "#/definitions/openc2_command",
+            "description": "a message defined by an action-target pair that is sent from a producer and received by a consumer."
+          },
+          {
+            "$ref": "#/definitions/openc2_response",
+            "description": "a message from a consumer to a producer acknowledging a command or returning the requested resources or status to a previously received command."
+          }
+        ],
+        "definitions": {
+          "action": {
+            "title": "openc2 action",
+            "type": "string",
+            "oneOf": [
+              {
+                "const": "scan",
+                "description": "systematic examination of some aspect of the entity or its environment."
+              },
+              {
+                "const": "locate",
+                "description": "find an object physically, logically, functionally, or by organization."
+              },
+              {
+                "const": "query",
+                "description": "initiate a request for information."
+              },
+              {
+                "const": "deny",
+                "description": "prevent a certain event or action from completion, such as preventing a flow from reaching a destination or preventing access."
+              },
+              {
+                "const": "contain",
+                "description": "isolate a file, process, or entity so that it cannot modify or access assets or processes."
+              },
+              {
+                "const": "allow",
+                "description": "permit access to or execution of a target."
+              },
+              {
+                "const": "start",
+                "description": "initiate a process, application, system, or activity."
+              },
+              {
+                "const": "stop",
+                "description": "halt a system or end an activity."
+              },
+              {
+                "const": "restart",
+                "description": "stop then start a system or an activity."
+              },
+              {
+                "const": "cancel",
+                "description": "invalidate a previously issued action."
+              },
+              {
+                "const": "set",
+                "description": "change a value, configuration, or state of a managed entity."
+              },
+              {
+                "const": "update",
+                "description": "instruct a component to retrieve, install, process, and operate in accordance with a software update, reconfiguration, or other update."
+              },
+              {
+                "const": "redirect",
+                "description": "change the flow of traffic to a destination other than its original destination."
+              },
+              {
+                "const": "create",
+                "description": "add a new entity of a known type (e.g., data, files, directories)."
+              },
+              {
+                "const": "delete",
+                "description": "remove an entity (e.g., data, files, flows)."
+              },
+              {
+                "const": "detonate",
+                "description": "execute and observe the behavior of a target (e.g., file, hyperlink) in an isolated environment."
+              },
+              {
+                "const": "restore",
+                "description": "return a system to a previously known state."
+              },
+              {
+                "const": "copy",
+                "description": "duplicate an object, file, data flow, or artifact."
+              },
+              {
+                "const": "investigate",
+                "description": "task the recipient to aggregate and report information as it pertains to a security event or incident."
+              },
+              {
+                "const": "remediate",
+                "description": "task the recipient to eliminate a vulnerability or attack point."
+              }
+            ]
+          },
+          "actuator": {
+            "title": "openc2 actuator",
+            "type": "object",
+            "patternProperties": {
+              "^\\w+$|^x-\\w+$": {
+                "type": [
+                  "array",
+                  "boolean",
+                  "integer",
+                  "number",
+                  "object",
+                  "string"
+                ],
+                "description": "langauge specification validator for committee approved and custom actuators. in practice actuators should be a static property and this catch all should be removed."
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "args": {
+            "title": "openc2 args",
+            "type": "object",
+            "properties": {
+              "start_time": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "the specific date/time to initiate the command. if only start_time is specified then end_time is never and duration is infinity."
+              },
+              "stop_time": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "the specific date/time to terminate the command. if only stop_time is specified then start_time is now and duration is derived. "
+              },
+              "duration": {
+                "type": "integer",
+                "minimum": 0,
+                "description": "the length of time for an command to be in effect. if only duration is specified then start_time is now and end-time is derived."
+              },
+              "response_requested": {
+                "description": "the type of response required for the command.",
+                "type": "string",
+                "oneOf": [
+                  {
+                    "const": "none",
+                    "description": "the consumer should not send a response."
+                  },
+                  {
+                    "const": "ack",
+                    "description": "the consumer should send a response acknowledging receipt of the command."
+                  },
+                  {
+                    "const": "status",
+                    "description": "the consumer should send a response containing the current status of command execution."
+                  },
+                  {
+                    "const": "complete",
+                    "description": "the consumer should send a response containing the status or results upon completion of command execution. "
+                  }
+                ]
+              }
+            },
+            "patternProperties": {
+              "^\\w+$|^x-\\w+$": {
+                "type": [
+                  "array",
+                  "boolean",
+                  "integer",
+                  "number",
+                  "object",
+                  "string"
+                ],
+                "description": "langauge specification validator for committee approved and custom args extensions. in practice args extension should be a static property and this catch all should be removed."
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "artifact": {
+            "title": "openc2 artifact",
+            "type": "object",
+            "properties": {
+              "mime_type": {
+                "description": "permitted values specified in the iana media types registry, rfc 6838.",
+                "type": "string",
+                "pattern": "^\\w+\\/[-+.\\w]+$"
+              },
+              "payload": {
+                "description": "choice of literal content or url.",
+                "$ref": "#/definitions/payload"
+              },
+              "hashes": {
+                "description": "hashes of the payload content.",
+                "$ref": "#/definitions/hashes"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "binary": {
+            "title": "openc2 binary",
+            "type": "string",
+            "contentEncoding": "base64"
+          },
+          "command_id": {
+            "title": "openc2 command identifier",
+            "type": "string"
+          },
+          "device": {
+            "title": "openc2 device",
+            "type": "object",
+            "properties": {
+              "hostname": {
+                "description": "a hostname that can be used to connect to this device over a network.",
+                "$ref": "#/definitions/hostname"
+              },
+              "idn_hostname": {
+                "description": "an internationalized hostname that can be used to connect to this device over a network.",
+                "$ref": "#/definitions/idn_hostname"
+              },
+              "device_id": {
+                "description": "an identifier that refers to this device within an inventory or management system",
+                "type": "string"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "domain_name": {
+            "title": "openc2 domain name",
+            "type": "string",
+            "format": "hostname"
+          },
+          "email_addr": {
+            "title": "openc2 email address",
+            "type": "string",
+            "format": "email"
+          },
+          "features": {
+            "title": "openc2 features items",
+            "type": "array",
+            "items": {
+              "description": "an array of zero to ten names used to query an actuator for its supported capabilities.",
+              "type": "string",
+              "oneOf": [
+                {
+                  "const": "versions",
+                  "description": "list of openc2 language versions supported by this actuator."
+                },
+                {
+                  "const": "profiles",
+                  "description": "list of profiles supported by this actuator."
+                },
+                {
+                  "const": "pairs",
+                  "description": "list of supported actions and applicable targets."
+                },
+                {
+                  "const": "rate_limit",
+                  "description": "maximum number of commands per minute supported by design or policy."
+                }
+              ]
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "file": {
+            "title": "openc2 file",
+            "type": "object",
+            "properties": {
+              "name": {
+                "description": "the name of the file as defined in the file system.",
+                "type": "string"
+              },
+              "path": {
+                "description": "the absolute path to the location of the file in the file system.",
+                "type": "string"
+              },
+              "hashes": {
+                "description": "one or more cryptographic hash codes of the file contents.",
+                "$ref": "#/definitions/hashes"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "hashes": {
+            "title": "openc2 hashes",
+            "type": "object",
+            "properties": {
+              "md5": {
+                "description": "md5 hash as defined in rfc 1321.",
+                "$ref": "#/definitions/binary"
+              },
+              "sha1": {
+                "description": "sha1 hash as defined in rfc 6234.",
+                "$ref": "#/definitions/binary"
+              },
+              "sha256": {
+                "description": "sha256 hash as defined in rfc 6234.",
+                "$ref": "#/definitions/binary"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "hostname": {
+            "title": "openc2 hostname",
+            "type": "string",
+            "format": "hostname"
+          },
+          "idn_domain_name": {
+            "title": "openc2 internationalized domain name",
+            "type": "string",
+            "format": "idn-hostname"
+          },
+          "idn_email_addr": {
+            "title": "openc2 internationalized email address",
+            "type": "string",
+            "format": "idn-email"
+          },
+          "idn_hostname": {
+            "title": "openc2 internationalized hostname",
+            "type": "string",
+            "format": "idn-hostname"
+          },
+          "ipv4_connection": {
+            "title": "openc2 ipv4 connection",
+            "type": "object",
+            "properties": {
+              "src_addr": {
+                "description": "ipv4 source address range.",
+                "$ref": "#/definitions/ipv4_net"
+              },
+              "src_port": {
+                "description": "source service per rfc 6335.",
+                "$ref": "#/definitions/port"
+              },
+              "dst_addr": {
+                "description": "ipv4 destination address range.",
+                "$ref": "#/definitions/ipv4_net"
+              },
+              "dst_port": {
+                "description": "destination service per rfc 6335.",
+                "$ref": "#/definitions/port"
+              },
+              "protocol": {
+                "description": "layer 4 protocol (e.g., tcp) - see l4_protocol section.",
+                "$ref": "#/definitions/l4_protocol"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "ipv6_connection": {
+            "title": "openc2 ipv6 connection",
+            "type": "object",
+            "properties": {
+              "src_addr": {
+                "description": "ipv6 source address range.",
+                "$ref": "#/definitions/ipv6_net"
+              },
+              "src_port": {
+                "description": "source service per rfc 6335.",
+                "$ref": "#/definitions/port"
+              },
+              "dst_addr": {
+                "description": "ipv6 destination address range.",
+                "$ref": "#/definitions/ipv6_net"
+              },
+              "dst_port": {
+                "description": "destination service per rfc 6335.",
+                "$ref": "#/definitions/port"
+              },
+              "protocol": {
+                "description": "layer 4 protocol (e.g., tcp) - see l4_protocol section.",
+                "$ref": "#/definitions/l4_protocol"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "ipv4_net": {
+            "title": "openc2 ipv4 net",
+            "type": "string",
+            "pattern": "^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)(?:\\/(\\d|[12]\\d|3[01]))?$"
+          },
+          "ipv6_net": {
+            "title": "openc2 ipv6 net",
+            "type": "string",
+            "pattern": "^(([0-9a-fA-F]{1,4}:){7,7}[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,7}:|([0-9a-fA-F]{1,4}:){1,6}:[0-9a-fA-F]{1,4}|([0-9a-fA-F]{1,4}:){1,5}(:[0-9a-fA-F]{1,4}){1,2}|([0-9a-fA-F]{1,4}:){1,4}(:[0-9a-fA-F]{1,4}){1,3}|([0-9a-fA-F]{1,4}:){1,3}(:[0-9a-fA-F]{1,4}){1,4}|([0-9a-fA-F]{1,4}:){1,2}(:[0-9a-fA-F]{1,4}){1,5}|[0-9a-fA-F]{1,4}:((:[0-9a-fA-F]{1,4}){1,6})|:((:[0-9a-fA-F]{1,4}){1,7}|:)|fe80:(:[0-9a-fA-F]{0,4}){0,4}%[0-9a-zA-Z]{1,}|::(ffff(:0{1,4}){0,1}:){0,1}((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])|([0-9a-fA-F]{1,4}:){1,4}:((25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9])\\.){3,3}(25[0-5]|(2[0-4]|1{0,1}[0-9]){0,1}[0-9]))(%.+)?s*(\\/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8]))?$"
+          },
+          "iri": {
+            "title": "openc2 iri",
+            "type": "string",
+            "format": "iri"
+          },
+          "l4_protocol": {
+            "title": "openc2 layer four protocol",
+            "type": "string",
+            "oneOf": [
+              {
+                "const": "icmp",
+                "description": "internet control message protocol."
+              },
+              {
+                "const": "tcp",
+                "description": "transmission control protocol."
+              },
+              {
+                "const": "udp",
+                "description": "user datagram protocol."
+              },
+              {
+                "const": "sctp",
+                "description": "stream control transmission protocol."
+              }
+            ]
+          },
+          "mac_addr": {
+            "title": "openc2 mac address",
+            "type": "string",
+            "pattern": "^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$"
+          },
+          "openc2_command": {
+            "title": "openc2 command",
+            "type": "object",
+            "properties": {
+              "action": {
+                "$ref": "#/definitions/action",
+                "description": "the task or activity to be performed (i.e., the 'verb')."
+              },
+              "target": {
+                "$ref": "#/definitions/target",
+                "description": "the object of the action. the action is performed on the target."
+              },
+              "args": {
+                "$ref": "#/definitions/args",
+                "description": "additional information that applies to the command."
+              },
+              "actuator": {
+                "$ref": "#/definitions/actuator",
+                "description": "the subject of the action. the actuator executes the action on the target."
+              },
+              "command_id": {
+                "$ref": "#/definitions/command_id",
+                "description": "an identifier of this command."
+              }
+            },
+            "required": [
+              "action",
+              "target"
+            ],
+            "additionalProperties": false
+          },
+          "openc2_response": {
+            "title": "openc2 response",
+            "type": "object",
+            "properties": {
+              "status": {
+                "$ref": "#/definitions/status",
+                "description": "an integer status code."
+              },
+              "status_text": {
+                "type": "string",
+                "description": "a free-form human-readable description of the response status."
+              },
+              "results": {
+                "$ref": "#/definitions/results",
+                "description": "map of key:value pairs that contain additional results based on the invoking command."
+              }
+            },
+            "required": [
+              "status"
+            ],
+            "additionalProperties": false
+          },
+          "pairs": {
+            "title": "openc2 pairs",
+            "type": "object",
+            "patternProperties": {
+              "^scan$|^locate$|^query$|^deny$|^contain$|^allow$|^start$|^stop$|^restart$|^cancel$|^set$|^update$|^redirect$|^create$|^delete$|^detonate$|^restore$|^copy$|^investigate$|^remediate$": {
+                "description": "map of each action supported by this actuator to the list of targets applicable to that action. in practice both action properties and target items should be narrowed to fit the scope of actuator profile schema. It would be best to do this with static action properties each of which have static target items.",
+                "type": "array",
+                "minItems": 1,
+                "uniqueItems": true,
+                "items": {
+                  "description": "openc2 pairs target items.",
+                  "type": "string",
+                  "pattern": "^artifact$|^command$|^device$|^domain_name$|^email_addr$|^features$|^file$|^idn_domain_name$|^idn_email_addr$|^ipv4_net$|^ipv6_net$|^ipv4_connection$|^ipv6_connection$|^iri$|^mac_addr$|^process$|^properties$|^uri$|^\\w+:\\w+$|^x-\\w+:\\w+$"
+                }
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "payload": {
+            "title": "openc2 payload",
+            "type": "object",
+            "properties": {
+              "bin": {
+                "description": "specifies the data contained in the artifact.",
+                "$ref": "#/definitions/binary"
+              },
+              "url": {
+                "description": "must be a valid url that resolves to the un-encoded content.",
+                "$ref": "#/definitions/uri"
+              }
+            },
+            "minProperties": 1,
+            "maxProperties": 1,
+            "additionalProperties": false
+          },
+          "port": {
+            "title": "openc2 port",
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 65535
+          },
+          "process": {
+            "title": "openc2 process",
+            "type": "object",
+            "properties": {
+              "pid": {
+                "description": "process id of the process.",
+                "type": "integer",
+                "minimum": 0
+              },
+              "name": {
+                "description": "name of the process.",
+                "type": "string"
+              },
+              "cwd": {
+                "description": "current working directory of the process.",
+                "type": "string"
+              },
+              "executable": {
+                "description": "executable that was executed to start the process.",
+                "$ref": "#/definitions/file"
+              },
+              "parent": {
+                "description": "process that spawned this one.",
+                "$ref": "#/definitions/process"
+              },
+              "command_line": {
+                "description": "the full command line invocation used to start this process, including all arguments.",
+                "type": "string"
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "properties": {
+            "title": "openc2 properties",
+            "type": "array",
+            "items": {
+              "description": "a list of names that uniquely identify properties of an actuator. in practice this should be a \"oneOf\" list of \"const\" that contains static values for that specific actuator profile.",
+              "type": "string"
+            },
+            "minItems": 1,
+            "uniqueItems": true
+          },
+          "results": {
+            "title": "openc2 response results",
+            "type": "object",
+            "properties": {
+              "versions": {
+                "description": "list of openc2 language versions supported by this actuator.",
+                "type": "array",
+                "items": {
+                  "description": "openc2 version items.",
+                  "type": "string"
+                },
+                "uniqueItems": true,
+                "minItems": 1
+              },
+              "profiles": {
+                "description": "list of profiles supported by this actuator.",
+                "type": "array",
+                "items": {
+                  "description": "openc2 profile items.",
+                  "type": "string",
+                  "pattern": "^\\w+$|^x-\\w+$"
+                },
+                "uniqueItems": true,
+                "minItems": 1
+              },
+              "pairs": {
+                "$ref": "#/definitions/pairs",
+                "description": "list of targets applicable to each supported action."
+              },
+              "rate_limit": {
+                "description": "maximum number of requests per minute supported by design or policy",
+                "type": "number",
+                "minimum": 0
+              }
+            },
+            "patternProperties": {
+              "^\\w+$|^x-\\w+$": {
+                "type": [
+                  "array",
+                  "boolean",
+                  "integer",
+                  "number",
+                  "object",
+                  "string"
+                ],
+                "description": "langauge specification validator for committee approved and custom results extensions. in practice results extension should be a static property and this catch all should be removed."
+              }
+            },
+            "minProperties": 1,
+            "additionalProperties": false
+          },
+          "status": {
+            "title": "openc2 status code",
+            "type": "integer",
+            "oneOf": [
+              {
+                "const": 102,
+                "description": "processing - an interim response used to inform the producer that the consumer has accepted the command but has not yet completed it."
+              },
+              {
+                "const": 200,
+                "description": "ok - the command has succeeded."
+              },
+              {
+                "const": 400,
+                "description": "bad request - the consumer cannot process the command due to something that is perceived to be a producer error (e.g., malformed command syntax)."
+              },
+              {
+                "const": 401,
+                "description": "unauthorized - the command message lacks valid authentication credentials for the target resource or authorization has been refused for the submitted credentials."
+              },
+              {
+                "const": 403,
+                "description": "forbidden - the consumer understood the command but refuses to authorize it."
+              },
+              {
+                "const": 404,
+                "description": "not found - the consumer has not found anything matching the command."
+              },
+              {
+                "const": 500,
+                "description": "internal error - the consumer encountered an unexpected condition that prevented it from performing the command."
+              },
+              {
+                "const": 501,
+                "description": "not implemented - the consumer does not support the functionality required to perform the command."
+              },
+              {
+                "const": 503,
+                "description": "service unavailable - the consumer is currently unable to perform the command due to a temporary overloading or maintenance of the consumer."
+              }
+            ]
+          },
+          "target": {
+            "title": "openc2 target",
+            "type": "object",
+            "properties": {
+              "artifact": {
+                "$ref": "#/definitions/artifact",
+                "description": "an array of bytes representing a file-like object or a link to that object."
+              },
+              "command": {
+                "$ref": "#/definitions/command_id",
+                "description": "a reference to a previously issued command."
+              },
+              "device": {
+                "$ref": "#/definitions/device",
+                "description": "the properties of a hardware device."
+              },
+              "domain_name": {
+                "$ref": "#/definitions/domain_name",
+                "description": "a network domain name."
+              },
+              "email_addr": {
+                "$ref": "#/definitions/email_addr",
+                "description": "a single email address."
+              },
+              "features": {
+                "$ref": "#/definitions/features",
+                "description": "a set of items used with the query action to determine an actuator's capabilities."
+              },
+              "file": {
+                "$ref": "#/definitions/file",
+                "description": "properties of a file."
+              },
+              "idn_domain_name": {
+                "$ref": "#/definitions/idn_domain_name",
+                "description": "an internationalized domain name."
+              },
+              "idn_email_addr": {
+                "$ref": "#/definitions/idn_email_addr",
+                "description": "a single internationalized email address."
+              },
+              "ipv4_net": {
+                "$ref": "#/definitions/ipv4_net",
+                "description": "an ipv4 address range including cidr prefix length."
+              },
+              "ipv6_net": {
+                "$ref": "#/definitions/ipv6_net",
+                "description": "an ipv6 address range including prefix length."
+              },
+              "ipv4_connection": {
+                "$ref": "#/definitions/ipv4_connection",
+                "description": "a 5-tuple of source and destination ipv4 address ranges, source and destination ports, and protocol."
+              },
+              "ipv6_connection": {
+                "$ref": "#/definitions/ipv6_connection",
+                "description": "a 5-tuple of source and destination ipv6 address ranges, source and destination ports, and protocol."
+              },
+              "iri": {
+                "$ref": "#/definitions/uri",
+                "description": "an internationalized resource identifier (iri)."
+              },
+              "mac_addr": {
+                "$ref": "#/definitions/mac_addr",
+                "description": "a media access control (mac) address - eui-48 or eui-64."
+              },
+              "process": {
+                "$ref": "#/definitions/process",
+                "description": "common properties of an instance of a computer program as executed on an operating system."
+              },
+              "properties": {
+                "$ref": "#/definitions/properties",
+                "description": "data attribute associated with an actuator."
+              },
+              "uri": {
+                "$ref": "#/definitions/uri",
+                "description": "a uniform resource identifier(uri)."
+              }
+            },
+            "patternProperties": {
+              "^\\w+:\\w+$|^x-\\w+:\\w+$": {
+                "type": [
+                  "array",
+                  "boolean",
+                  "integer",
+                  "number",
+                  "object",
+                  "string"
+                ],
+                "description": "langauge specification validator for committee approved and custom target extensions. in practice target extension should be a static property and this catch all should be removed."
+              }
+            },
+            "minProperties": 1,
+            "maxProperties": 1,
+            "additionalProperties": false
+          },
+          "uri": {
+            "title": "openc2 uri",
+            "type": "string",
+            "format": "uri"
+          }
+        }
+      }
+    ],
+    "tests": [
+      {
+        "description": "should generate values, but not enough valid",
+        "schema": "schemas.0"
+      }
+    ]
+  }
+]

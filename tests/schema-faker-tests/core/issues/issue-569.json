@@ -1,0 +1,26 @@
+[
+  {
+    "description": "Required properties that result in empty objects get removed",
+    "tests": [
+      {
+        "description": "should eventually generate some props",
+        "schema": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "things": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "things"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

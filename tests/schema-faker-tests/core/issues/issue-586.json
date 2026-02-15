@@ -1,0 +1,88 @@
+[
+  {
+    "description": "Empty required objects are not generated",
+    "tests": [
+      {
+        "description": "should generate empty objects for required props",
+        "schema": {
+          "id": "Profile",
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "object",
+              "properties": {
+                "foo": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {}
+                }
+              },
+              "required": [
+                "foo"
+              ]
+            }
+          },
+          "required": [
+            "firstName"
+          ]
+        },
+        "equal": {
+          "firstName": {
+            "foo": {}
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate non-empty objects if additionalProperties is given",
+        "schema": {
+          "additionalProperties": false,
+          "type": "object",
+          "properties": {
+            "tags": {
+              "type": "array",
+              "maxItems": 3,
+              "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                  "tag": {
+                    "type": "string",
+                    "minLength": 1,
+                    "maxLength": 20
+                  },
+                  "attributes": {
+                    "type": "object",
+                    "maxProperties": 4,
+                    "additionalProperties": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "tag",
+                  "attributes"
+                ]
+              }
+            },
+            "metadata": {
+              "type": "object",
+              "maxProperties": 20,
+              "additionalProperties": {
+                "type": "string"
+              }
+            }
+          }
+        },
+        "hasProps": [
+          "tags.0.attributes",
+          "metadata",
+          "tags"
+        ],
+        "set": {
+          "alwaysFakeOptionals": true
+        }
+      }
+    ]
+  }
+]

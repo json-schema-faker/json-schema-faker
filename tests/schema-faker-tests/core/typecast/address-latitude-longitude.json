@@ -1,0 +1,70 @@
+[
+  {
+    "description": "should typecast faker.address.latitude and faker.address.longitude when generated value type is different than defined",
+    "tests": [
+      {
+        "description": "should generate the value with default type provided by faker.js (no explicit typedef)",
+        "schema": {
+          "faker": "address.longitude"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast to number",
+        "schema": {
+          "type": "number",
+          "faker": "address.longitude"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast to integer",
+        "schema": {
+          "type": "integer",
+          "faker": "address.longitude"
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast array elements to number",
+        "schema": {
+          "type": "array",
+          "items": [
+            {
+              "type": "number",
+              "faker": "address.latitude"
+            },
+            {
+              "type": "number",
+              "faker": "address.longitude"
+            }
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should cast object properties values to number",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-04/schema#",
+          "description": "A geographical coordinate",
+          "type": "object",
+          "properties": {
+            "latitude": {
+              "type": "number",
+              "faker": "address.latitude"
+            },
+            "longitude": {
+              "type": "number",
+              "faker": "address.longitude"
+            }
+          },
+          "required": [
+            "latitude",
+            "longitude"
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

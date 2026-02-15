@@ -1,0 +1,81 @@
+[
+  {
+    "description": "support for enums as dependencies",
+    "tests": [
+      {
+        "description": "should handle enums",
+        "schema": {
+          "$schema": "http://json-schema.org/draft-07/schema",
+          "type": "object",
+          "required": [
+            "things"
+          ],
+          "properties": {
+            "things": {
+              "type": "array",
+              "title": "Foos and bars",
+              "uniqueItems": true,
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "foo": {
+                    "type": "string",
+                    "title": "Foo",
+                    "enum": [
+                      "A",
+                      "B"
+                    ]
+                  }
+                },
+                "required": [
+                  "foo",
+                  "bar"
+                ],
+                "dependencies": {
+                  "foo": {
+                    "oneOf": [
+                      {
+                        "properties": {
+                          "foo": {
+                            "enum": [
+                              "A"
+                            ]
+                          },
+                          "bar": {
+                            "type": "string",
+                            "title": "Bar",
+                            "enum": [
+                              "One",
+                              "Two"
+                            ]
+                          }
+                        }
+                      },
+                      {
+                        "properties": {
+                          "foo": {
+                            "const": "B"
+                          },
+                          "bar": {
+                            "type": "string",
+                            "title": "Bar",
+                            "enum": [
+                              "Three",
+                              "Four"
+                            ]
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

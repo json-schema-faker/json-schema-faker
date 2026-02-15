@@ -1,0 +1,17 @@
+[
+  {
+    "description": "failOnInvalidType option",
+    "tests": [
+      {
+        "description": "should handle failOnInvalidType option",
+        "schema": {
+          "type": "nonExistentType"
+        },
+        "valid": false,
+        "set": {
+          "failOnInvalidTypes": false
+        }
+      }
+    ]
+  }
+]

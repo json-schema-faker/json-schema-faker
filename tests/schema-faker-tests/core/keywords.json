@@ -1,0 +1,63 @@
+[
+  {
+    "description": "instance keywords",
+    "tests": [
+      {
+        "description": "should handle array of types",
+        "schema": {
+          "type": ["string", "integer"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle enum values",
+        "schema": {
+          "enum": ["", [], {}, false, null, -1]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle allOf values",
+        "schema": {
+          "allOf": [
+            {
+              "type": "string"
+            },
+            {
+              "enum": ["a", "value"]
+            }
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle anyof values",
+        "schema": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "array"
+            }
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle oneOf values",
+        "schema": {
+          "oneOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

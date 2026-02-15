@@ -1,0 +1,53 @@
+[
+  {
+    "description": "Support 'content' for arrays",
+    "tests": [
+      {
+        "description": "should handle content with empty array",
+        "schema": {
+          "type": "array",
+          "minItems": 0,
+          "maxItems": 0,
+          "items": {
+            "type": "integer"
+          },
+          "contains": {
+            "const": 42
+          }
+        },
+        "valid": false
+      },
+      {
+        "description": "should handle content with single item array",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "maxItems": 1,
+          "contains": {
+            "const": 42
+          }
+        },
+        "equal": [42]
+      },
+      {
+        "description": "should handle content with any array length",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 2,
+          "maxItems": 10,
+          "contains": {
+            "const": 42
+          }
+        },
+        "repeat": 10,
+        "valid": true
+      }
+    ]
+  }
+]

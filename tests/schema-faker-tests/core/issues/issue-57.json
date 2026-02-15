@@ -1,0 +1,37 @@
+[
+  {
+    "description": "mixin issues with allOf",
+    "tests": [
+      {
+        "description": "should get combined as expected",
+        "schema": {
+          "definitions": {
+            "address": {
+              "type": "object",
+              "properties": {
+                "street_address": { "type": "string" },
+                "city":           { "type": "string" },
+                "state":          { "type": "string" }
+              },
+              "required": ["street_address", "city", "state"]
+            }
+          },
+          "type": "object",
+          "properties": {
+            "billing_address": { "$ref": "#/definitions/address" },
+            "shipping_address": {
+              "allOf": [
+                { "$ref": "#/definitions/address" },
+                { "properties":
+                  { "type": { "enum": [ "residential", "business" ] } },
+                  "required": ["type"]
+                }
+              ]
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

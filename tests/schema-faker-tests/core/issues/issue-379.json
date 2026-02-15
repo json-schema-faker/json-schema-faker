@@ -1,0 +1,38 @@
+{
+  "description": "Floating point when using multipleOf",
+  "tests": [
+    {
+      "description": "should truncate up to given decimals",
+      "schema": {
+        "type": "number",
+        "multipleOf": 0.01
+      },
+      "seed": 0.25546874766962246,
+      "match": "48906250\\.\\d{2}$",
+      "valid": true
+    },
+    {
+      "description": "should truncate up to given decimals (large decimals)",
+      "schema": {
+        "type": "number",
+        "multipleOf": 0.01
+      },
+      "seed": 0.06559633646612273,
+      "equal": -86880732.99,
+      "valid": true
+    },
+    {
+      "description": "should also work with minimum (nonzero) and maximum",
+      "schema": {
+        "type": "number",
+        "minimum": 7,
+        "maximum": 10,
+        "multipleOf": 0.01
+      },
+      "seed": 0.25546874766962246,
+      "match": "7\\.\\d{2}$",
+      "omit": ["tv4", "ajv"],
+      "valid": true
+    }
+  ]
+}

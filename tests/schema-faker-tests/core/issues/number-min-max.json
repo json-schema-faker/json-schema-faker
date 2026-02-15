@@ -1,0 +1,73 @@
+[
+  {
+    "description": "generated number obeying min/max, 6 times to account for random test pass",
+    "tests": [
+      {
+        "description": "should handle one possible value min/max number",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle one possible value min/max number",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle one possible value min/max number",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle one possible value min/max number",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle one possible value min/max number",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      },
+      {
+        "description": "should handle one possible value min/max number",
+        "schema": {
+          "type": "number",
+          "minimum": 1,
+          "maximum": 1
+        },
+        "hasNot": ".",
+        "type": "number",
+        "valid": true
+      }
+    ]
+  }
+]

@@ -1,0 +1,67 @@
+[
+  {
+    "description": "Fields missing when using 'allOf' inside 'definitions'",
+    "tests": [
+      {
+        "description": "should eventually generate missing props",
+        "schema": {
+          "allOf": [
+            {
+              "properties": {
+                "a": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "a"
+              ]
+            },
+            {
+              "$ref": "#/definitions/foo"
+            },
+            {
+              "$ref": "#/definitions/bar"
+            }
+          ],
+          "definitions": {
+            "foo": {
+              "allOf": [
+                {
+                  "properties": {
+                    "b": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "b"
+                  ]
+                },
+                {
+                  "properties": {
+                    "c": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "c"
+                  ]
+                }
+              ]
+            },
+            "bar": {
+              "properties": {
+                "d": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "d"
+              ]
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

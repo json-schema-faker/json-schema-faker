@@ -1,0 +1,25 @@
+[
+  {
+    "description": "root-definitions on sync mode",
+    "tests": [
+      {
+        "description": "should resolve local definitions",
+        "schema": {
+          "definitions": {
+            "foo": {
+              "type": "object",
+              "properties": {
+                "bar": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "$ref": "#/definitions/foo"
+        },
+        "sync": true,
+        "valid": true
+      }
+    ]
+  }
+]

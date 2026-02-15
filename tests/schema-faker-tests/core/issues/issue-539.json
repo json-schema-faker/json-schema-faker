@@ -1,0 +1,27 @@
+[
+  {
+    "description": "out of range dates",
+    "tests": [
+      {
+        "description": "should format dates properly",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "time": {
+              "title": "sss",
+              "description": "zzzzzz",
+              "type": "string",
+              "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+              "format": "full-date"
+            }
+          },
+          "required": [
+            "time"
+          ]
+        },
+        "valid": true,
+        "repeat": 100
+      }
+    ]
+  }
+]

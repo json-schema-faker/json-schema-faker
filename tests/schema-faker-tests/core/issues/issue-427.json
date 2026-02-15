@@ -1,0 +1,102 @@
+{
+  "description": "Circular referencies not working?",
+  "tests": [
+    {
+      "description": "should eventually generate nested values",
+      "schema": {
+        "additionalProperties": false,
+        "type": "object",
+        "properties": {
+          "a": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "prop1": {
+                "type": "string"
+              },
+              "prop2": {
+                "type": "number"
+              }
+            },
+            "required": [
+              "prop1"
+            ]
+          },
+          "b": {
+            "$ref": "#/definitions/B"
+          }
+        },
+        "required": [
+          "a",
+          "b"
+        ],
+        "definitions": {
+          "B": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "b1": {
+                "type": "number"
+              },
+              "b2": {
+                "type": "boolean"
+              },
+              "b3": {
+                "anyOf": [
+                  {
+                    "$ref": "#/definitions/C"
+                  },
+                  {
+                    "$ref": "#/definitions/D"
+                  }
+                ]
+              }
+            },
+            "required": [
+              "b1",
+              "b2",
+              "b3"
+            ]
+          },
+          "C": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "c1": {
+                "type": "string"
+              },
+              "c2": {
+                "type": "boolean"
+              }
+            },
+            "required": [
+              "c1"
+            ]
+          },
+          "D": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "d1": {
+                "type": "string"
+              },
+              "d2": {
+                "$ref": "#/definitions/B"
+              }
+            },
+            "required": [
+              "d1",
+              "d2"
+            ]
+          }
+        }
+      },
+      "set": {
+        "optionalsProbability": 0.6
+      },
+      "throwsSometimes": "Given sample does not match schema",
+      "repeat": 100,
+      "valid": true
+    }
+  ]
+}

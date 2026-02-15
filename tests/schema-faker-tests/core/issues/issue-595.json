@@ -1,0 +1,104 @@
+[
+  {
+    "description": "The $ref not working as expected",
+    "tests": [
+      {
+        "description": "should eventually resolve some jsonPath",
+        "schema": {
+          "$id": "chat",
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "conversationTimestamp": {
+                "type": "string"
+              },
+              "conversationId": {
+                "type": "string"
+              },
+              "content": {
+                "type": "object",
+                "properties": {
+                  "contentType": {
+                    "enum": [
+                      "CHAT"
+                    ]
+                  },
+                  "participants": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "participantId": {
+                          "type": "string"
+                        },
+                        "participantType": {
+                          "type": "string",
+                          "enum": [
+                            "AGENT",
+                            "CLIENT",
+                            "TYPE_UNKNOWN"
+                          ]
+                        },
+                        "participantName": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "participantId",
+                        "participantType"
+                      ]
+                    }
+                  },
+                  "conversationContent": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "participantId": {
+                          "type": "string",
+                          "jsonPath": "$..content.participants[*].participantId"
+                        },
+                        "text": {
+                          "type": "string"
+                        },
+                        "timestamp": {
+                          "type": "string"
+                        },
+                        "id": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "participantId",
+                        "text",
+                        "timestamp"
+                      ]
+                    }
+                  }
+                },
+                "required": [
+                  "contentType",
+                  "participants",
+                  "conversationContent"
+                ]
+              }
+            },
+            "required": [
+              "conversationId",
+              "conversationTimestamp",
+              "content"
+            ],
+            "additionalProperties": true
+          }
+        },
+        "set": {
+          "resolveJsonPath": true
+        },
+        "valid": true
+      }
+    ]
+  }
+]

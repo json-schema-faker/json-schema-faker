@@ -1,0 +1,57 @@
+[
+  {
+    "description": "arbitrary local-references",
+    "tests": [
+      {
+        "description": "should resolve any local-reference",
+        "schema": {
+          "components": {
+            "schemas": {
+              "A": {
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/B"
+                  },
+                  {
+                    "$ref": "#/components/schemas/C"
+                  }
+                ]
+              },
+              "B": {
+                "type": "object",
+                "properties": {
+                  "bProp": {
+                    "type": "string",
+                    "format": "date-time"
+                  }
+                },
+                "required": [
+                  "bProp"
+                ]
+              },
+              "C": {
+                "type": "object",
+                "properties": {
+                  "cProp": {
+                    "type": "number",
+                    "required": true
+                  }
+                }
+              }
+            }
+          }
+        },
+        "sync": true,
+        "valid": true,
+        "set": {
+          "alwaysFakeOptionals": true
+        },
+        "hasProps": [
+          "components.schemas.A",
+          "components.schemas.B",
+          "components.schemas.C"
+        ]
+      }
+    ]
+  }
+]

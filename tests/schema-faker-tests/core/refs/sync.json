@@ -1,0 +1,65 @@
+[
+  {
+    "description": "should work on async mode (by default)",
+    "timeout": 30000,
+    "online": true,
+    "tests": [
+      {
+        "description": "should resolve all references",
+        "schema": {
+          "type": "object",
+          "required": ["value", "other"],
+          "properties": {
+            "value": {
+              "$ref": "#/definitions/test"
+            },
+            "other": {
+              "$ref": "#/definitions/other"
+            }
+          },
+          "definitions": {
+            "test": {
+              "type": "string"
+            },
+            "other": {
+              "$ref": "https://gist.githubusercontent.com/anonymous/eb11f16c9edccf040c028dc8bd2b1756/raw/cbac21f18550ff559b5bec4187aa813e59a8d825/User"
+            }
+          }
+        },
+        "FIXME": "this eventually fails, but because other is resolved to undefined; it just happen when repeating too much (too many requests?)",
+        "_repeat": 100,
+        "skip": true,
+        "valid": true
+      },
+      {
+        "description": "should resolve only local references",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "#/definitions/test"
+            }
+          },
+          "definitions": {
+            "test": {
+              "type": "string"
+            }
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "should fail on undefined/unreachable references",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "value": {
+              "$ref": "LocalIfOrRemoteURL"
+            }
+          }
+        },
+        "throws": "ENOENT: no such file or directory"
+      }
+    ]
+  }
+]

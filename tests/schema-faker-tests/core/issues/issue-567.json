@@ -1,0 +1,46 @@
+{
+  "description": "Unexpected behavior for allOf",
+  "tests": [
+    {
+      "description": "should combine subschemas from given items",
+      "schema": {
+        "allOf": [
+          {
+            "type": "array",
+            "items": [
+              {
+                "type": "integer",
+                "minimum": 3
+              },
+              {
+                "type": "integer",
+                "minimum": 3
+              }
+            ],
+            "additionalItems": false
+          },
+          {
+            "type": "array",
+            "items": [
+              {
+                "type": "integer",
+                "maximum": 10
+              },
+              {
+                "type": "integer",
+                "maximum": 10
+              }
+            ],
+            "additionalItems": false
+          }
+        ]
+      },
+      "valid": true,
+      "set": {
+        "useDefaultValue": true,
+        "fixedProbabilities": true,
+        "optionalsProbability": 1.0
+      }
+    }
+  ]
+}

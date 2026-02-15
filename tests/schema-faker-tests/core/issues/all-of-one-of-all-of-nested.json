@@ -1,0 +1,70 @@
+[
+  {
+    "description": "allOf oneOf allOff nested",
+    "schemas": [{
+      "$schema": "http://json-schema.org/draft-04/schema#",
+      "type": "object",
+      "additionalProperties": true,
+      "properties": {
+        "date_of_birth": {
+          "type": "string",
+          "minimum": 10,
+          "maximum": 10
+        },
+        "age_group": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 5
+        }
+      },
+
+      "allOf": [{
+        "oneOf": [{
+          "allOf": [{
+            "type": "object",
+            "required": ["a"],
+            "properties": {
+              "a": {
+                "type": "string"
+              }
+            }
+          },{
+            "type": "object",
+            "required": ["b"],
+            "properties": {
+              "b": {
+                "type": "string"
+              }
+            }
+          }]
+        }, {
+          "allOf": [{
+            "type": "object",
+            "required": ["a"],
+            "properties": {
+              "a": {
+                "type": "string"
+              }
+            }
+          },{
+            "type": "object",
+            "required": ["c"],
+            "properties": {
+              "c": {
+                "type": "string"
+              }
+            }
+          }]
+        }]
+      }]
+    }],
+    "tests": [
+      {
+        "description": "should combine recursively",
+        "schema": "schemas.0",
+        "valid": true,
+        "hasProps": ["a"]
+      }
+    ]
+  }
+]

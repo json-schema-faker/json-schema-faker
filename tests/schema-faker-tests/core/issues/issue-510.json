@@ -1,0 +1,26 @@
+[
+  {
+    "description": "AlwaysFakeOptionals doesn't work anymore",
+    "schemas": [
+      {
+        "type": "object",
+        "properties": {
+          "foo": {
+            "type": "string"
+          },
+          "bar": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    ],
+    "tests": [
+      {
+        "description": "make sure foo or bar are generated, optionally",
+        "schema": "schemas.0",
+        "valid": true
+      }
+    ]
+  }
+]
