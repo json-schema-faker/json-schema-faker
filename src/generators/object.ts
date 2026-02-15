@@ -1,10 +1,10 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
 import { walk } from "../schema-walker.js";
 
-export function generateObject(
+export async function generateObject(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): Record<string, unknown> {
+): Promise<Record<string, unknown>> {
   if (ctx.depth >= ctx.maxDepth) {
     return {};
   }
@@ -20,9 +20,9 @@ export function generateObject(
     for (const [key, propSchema] of Object.entries(schema.properties)) {
       definedKeys.add(key);
       if (required.has(key)) {
-        result[key] = walk(propSchema, childCtx);
+        result[key] = await walk(propSchema, childCtx);
       } else if (ctx.random.bool(ctx.optionalPropertyProbability)) {
-        result[key] = walk(propSchema, childCtx);
+        result[key] = await walk(propSchema, childCtx);
       }
     }
   }
@@ -33,7 +33,7 @@ export function generateObject(
     if (schema.patternProperties) {
       for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
         if (new RegExp(pattern).test(key)) {
-          result[key] = walk(patSchema, childCtx);
+          result[key] = await walk(patSchema, childCtx);
           definedKeys.add(key);
           break;
         }
@@ -42,7 +42,7 @@ export function generateObject(
     if (!definedKeys.has(key)) {
       const addlSchema = schema.additionalProperties ?? true;
       if (addlSchema !== false) {
-        result[key] = walk(addlSchema === true ? {} : addlSchema, childCtx);
+        result[key] = await walk(addlSchema === true ? {} : addlSchema, childCtx);
         definedKeys.add(key);
       }
     }
@@ -60,7 +60,7 @@ export function generateObject(
       while (Object.keys(result).length < minProps) {
         const key = `prop${ctx.random.int(0, 99999)}`;
         if (!result[key]) {
-          result[key] = walk(genSchema, childCtx);
+          result[key] = await walk(genSchema, childCtx);
         }
       }
     }

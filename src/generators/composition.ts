@@ -2,10 +2,10 @@ import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js"
 import { walk } from "../schema-walker.js";
 import { mergeSchemas } from "../merge.js";
 
-export function generateComposition(
+export async function generateComposition(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): unknown {
+): Promise<unknown> {
   // Extract non-composition keywords as base schema
   const { allOf, anyOf, oneOf, not, if: ifSchema, then: thenSchema, else: elseSchema, ...base } = schema;
 
@@ -37,13 +37,13 @@ export function generateComposition(
   return walk(base, ctx);
 }
 
-function generateConditional(
+async function generateConditional(
   base: JsonSchemaObject,
   ifSchema: JsonSchema,
   thenSchema: JsonSchema | undefined,
   elseSchema: JsonSchema | undefined,
   ctx: GenerateContext
-): unknown {
+): Promise<unknown> {
   // Coin flip: satisfy `if` (use then) or don't (use else)
   const satisfyIf = ctx.random.bool();
 
@@ -63,11 +63,11 @@ function generateConditional(
   }
 }
 
-function generateNot(
+async function generateNot(
   base: JsonSchemaObject,
   not: JsonSchema,
   ctx: GenerateContext
-): unknown {
+): Promise<unknown> {
   if (typeof not === "boolean") {
     if (not === true) {
       // not true = nothing is valid — shouldn't happen
@@ -96,7 +96,7 @@ function generateNot(
     const excluded = not.enum ?? [not.const];
     const excludedSet = new Set(excluded.map((v) => JSON.stringify(v)));
     for (let i = 0; i < 20; i++) {
-      const value = walk(base, ctx);
+      const value = await walk(base, ctx);
       if (!excludedSet.has(JSON.stringify(value))) {
         return value;
       }

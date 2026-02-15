@@ -3,7 +3,7 @@ import { generate } from "../../src/index.js";
 import { assertValid, assertValidMultipleSeeds } from "../helpers/validate.js";
 
 describe("allOf", () => {
-  test("merges numeric bounds", () => {
+  test("merges numeric bounds", async () => {
     const schema = {
       allOf: [
         { type: "integer" as const, minimum: 0 },
@@ -11,14 +11,14 @@ describe("allOf", () => {
       ],
     };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed }) as number;
+      const val = await generate(schema, { seed }) as number;
       expect(val).toBeGreaterThanOrEqual(0);
       expect(val).toBeLessThanOrEqual(10);
       expect(Number.isInteger(val)).toBe(true);
     }
   });
 
-  test("merges object properties", () => {
+  test("merges object properties", async () => {
     const schema = {
       allOf: [
         {
@@ -32,13 +32,13 @@ describe("allOf", () => {
         },
       ],
     };
-    const val = generate(schema as any) as Record<string, unknown>;
+    const val = await generate(schema as any) as Record<string, unknown>;
     expect(val).toHaveProperty("a");
     expect(val).toHaveProperty("b");
   });
 
-  test("validates across seeds", () => {
-    assertValidMultipleSeeds(
+  test("validates across seeds", async () => {
+    await assertValidMultipleSeeds(
       {
         allOf: [
           { type: "integer", minimum: 1 },
@@ -52,7 +52,7 @@ describe("allOf", () => {
 });
 
 describe("anyOf", () => {
-  test("picks one schema", () => {
+  test("picks one schema", async () => {
     const schema = {
       anyOf: [
         { type: "string" as const },
@@ -60,13 +60,13 @@ describe("anyOf", () => {
       ],
     };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed });
+      const val = await generate(schema, { seed });
       expect(typeof val === "string" || typeof val === "number").toBe(true);
     }
   });
 
-  test("validates across seeds", () => {
-    assertValidMultipleSeeds(
+  test("validates across seeds", async () => {
+    await assertValidMultipleSeeds(
       {
         anyOf: [
           { type: "string", minLength: 1 },
@@ -80,7 +80,7 @@ describe("anyOf", () => {
 });
 
 describe("oneOf", () => {
-  test("picks one schema", () => {
+  test("picks one schema", async () => {
     const schema = {
       oneOf: [
         { type: "string" as const, minLength: 1 },
@@ -89,7 +89,7 @@ describe("oneOf", () => {
       ],
     };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed });
+      const val = await generate(schema, { seed });
       const t = typeof val;
       expect(["string", "number", "boolean"]).toContain(t);
     }
@@ -97,19 +97,19 @@ describe("oneOf", () => {
 });
 
 describe("not", () => {
-  test("avoids excluded type", () => {
+  test("avoids excluded type", async () => {
     const schema = {
       not: { type: "string" as const },
     };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed });
+      const val = await generate(schema, { seed });
       expect(typeof val).not.toBe("string");
     }
   });
 });
 
 describe("if/then/else", () => {
-  test("generates values matching conditional", () => {
+  test("generates values matching conditional", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -123,7 +123,7 @@ describe("if/then/else", () => {
     };
     // Just check it generates valid objects without throwing
     for (let seed = 1; seed <= 20; seed++) {
-      const val = generate(schema, { seed });
+      const val = await generate(schema, { seed });
       expect(typeof val).toBe("object");
     }
   });

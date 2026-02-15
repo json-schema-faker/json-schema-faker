@@ -27,10 +27,10 @@ export interface ResolvedRef {
   ctx: GenerateContext;
 }
 
-export function resolveRef(
+export async function resolveRef(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): ResolvedRef {
+): Promise<ResolvedRef> {
   const ref = schema.$ref;
   if (!ref) return { schema, ctx };
 
@@ -47,6 +47,8 @@ export function resolveRef(
     resolved = ctx.refRegistry.get(ref);
   } else if (ref === "#") {
     resolved = ctx.refRegistry.get("#") ?? {};
+  } else if (ctx.refResolver) {
+    resolved = await ctx.refResolver(ref);
   } else {
     resolved = ctx.refRegistry.get(ref);
   }

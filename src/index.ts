@@ -9,7 +9,7 @@ export type { JsonSchema, GenerateOptions, Random } from "./types.js";
 // Global format registry shared across calls
 const globalFormatRegistry = createFormatRegistry();
 
-export function generate(schema: JsonSchema, options?: GenerateOptions): unknown {
+export async function generate(schema: JsonSchema, options?: GenerateOptions): Promise<unknown> {
   const random = createRandom(options?.seed ?? 1);
   const refRegistry = buildRefRegistry(schema);
   registerRootSchema(schema, refRegistry);
@@ -27,6 +27,7 @@ export function generate(schema: JsonSchema, options?: GenerateOptions): unknown
     refRegistry,
     refStack: new Set(),
     formatRegistry,
+    refResolver: options?.refResolver,
   };
 
   return walk(schema, ctx);
@@ -37,7 +38,7 @@ export function createGenerator(options?: GenerateOptions) {
   let callCount = 0;
 
   return {
-    generate(schema: JsonSchema): unknown {
+    generate(schema: JsonSchema): Promise<unknown> {
       const seed = (baseOptions.seed ?? 1) + callCount++;
       return generate(schema, { ...baseOptions, seed });
     },

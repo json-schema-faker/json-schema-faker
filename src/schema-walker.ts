@@ -12,7 +12,7 @@ import { resolveRef } from "./ref-resolver.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
-export function walk(schema: JsonSchema, ctx: GenerateContext): unknown {
+export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
   // Boolean schemas
   if (schema === true) {
     return walk({}, ctx);
@@ -23,7 +23,7 @@ export function walk(schema: JsonSchema, ctx: GenerateContext): unknown {
 
   // $ref resolution
   if (schema.$ref) {
-    const resolved = resolveRef(schema, ctx);
+    const resolved = await resolveRef(schema, ctx);
     return walk(resolved.schema, resolved.ctx);
   }
 

@@ -3,13 +3,13 @@ import { generate } from "../../src/index.js";
 import { assertValid, assertValidMultipleSeeds } from "../helpers/validate.js";
 
 describe("object generator", () => {
-  test("generates empty object for bare type", () => {
-    const val = generate({ type: "object" });
+  test("generates empty object for bare type", async () => {
+    const val = await generate({ type: "object" });
     expect(typeof val).toBe("object");
     expect(val).not.toBe(null);
   });
 
-  test("generates required properties", () => {
+  test("generates required properties", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -18,14 +18,14 @@ describe("object generator", () => {
       },
       required: ["name", "age"],
     };
-    const val = generate(schema) as Record<string, unknown>;
+    const val = await generate(schema) as Record<string, unknown>;
     expect(val).toHaveProperty("name");
     expect(val).toHaveProperty("age");
     expect(typeof val.name).toBe("string");
     expect(typeof val.age).toBe("number");
   });
 
-  test("respects additionalProperties: false", () => {
+  test("respects additionalProperties: false", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -34,21 +34,21 @@ describe("object generator", () => {
       required: ["x"],
       additionalProperties: false,
     };
-    assertValidMultipleSeeds(schema, 50, generate);
+    await assertValidMultipleSeeds(schema, 50, generate);
   });
 
-  test("respects minProperties", () => {
+  test("respects minProperties", async () => {
     const schema = {
       type: "object" as const,
       minProperties: 3,
     };
     for (let seed = 1; seed <= 20; seed++) {
-      const val = generate(schema, { seed }) as Record<string, unknown>;
+      const val = await generate(schema, { seed }) as Record<string, unknown>;
       expect(Object.keys(val).length).toBeGreaterThanOrEqual(3);
     }
   });
 
-  test("respects maxProperties", () => {
+  test("respects maxProperties", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -61,12 +61,12 @@ describe("object generator", () => {
       maxProperties: 2,
     };
     for (let seed = 1; seed <= 20; seed++) {
-      const val = generate(schema, { seed }) as Record<string, unknown>;
+      const val = await generate(schema, { seed }) as Record<string, unknown>;
       expect(Object.keys(val).length).toBeLessThanOrEqual(2);
     }
   });
 
-  test("validates across seeds", () => {
+  test("validates across seeds", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -76,6 +76,6 @@ describe("object generator", () => {
       },
       required: ["id", "name"],
     };
-    assertValidMultipleSeeds(schema, 100, generate);
+    await assertValidMultipleSeeds(schema, 100, generate);
   });
 });

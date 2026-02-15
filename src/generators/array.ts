@@ -1,10 +1,10 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
 import { walk } from "../schema-walker.js";
 
-export function generateArray(
+export async function generateArray(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): unknown[] {
+): Promise<unknown[]> {
   if (ctx.depth >= ctx.maxDepth) {
     return [];
   }
@@ -18,7 +18,7 @@ export function generateArray(
   // Handle prefixItems
   if (schema.prefixItems) {
     for (let i = 0; i < schema.prefixItems.length && result.length < maxItems; i++) {
-      result.push(walk(schema.prefixItems[i], childCtx));
+      result.push(await walk(schema.prefixItems[i], childCtx));
     }
   }
 
@@ -29,7 +29,7 @@ export function generateArray(
   if (schema.items !== false) {
     const itemSchema: JsonSchema = schema.items ?? {};
     while (result.length < targetLen) {
-      result.push(walk(itemSchema, childCtx));
+      result.push(await walk(itemSchema, childCtx));
     }
   }
 
@@ -40,7 +40,7 @@ export function generateArray(
     const containsCount = ctx.random.int(minContains, maxContains);
 
     for (let i = 0; i < containsCount; i++) {
-      const item = walk(schema.contains, childCtx);
+      const item = await walk(schema.contains, childCtx);
       if (result.length < maxItems) {
         const pos = ctx.random.int(0, result.length);
         result.splice(pos, 0, item);
@@ -64,12 +64,12 @@ export function generateArray(
   return result;
 }
 
-function dedup(
+async function dedup(
   arr: unknown[],
   schema: JsonSchemaObject,
   ctx: GenerateContext,
   maxItems: number
-): unknown[] {
+): Promise<unknown[]> {
   const seen = new Set<string>();
   const unique: unknown[] = [];
 
@@ -86,7 +86,7 @@ function dedup(
   let attempts = 0;
   const minItems = schema.minItems ?? 0;
   while (unique.length < minItems && attempts < 100) {
-    const item = walk(itemSchema, ctx);
+    const item = await walk(itemSchema, ctx);
     const key = JSON.stringify(item);
     if (!seen.has(key)) {
       seen.add(key);

@@ -58,12 +58,17 @@ export interface JsonSchemaObject {
   [key: string]: unknown;
 }
 
+export interface RefResolver {
+  (ref: string): Promise<JsonSchema> | JsonSchema;
+}
+
 export interface GenerateOptions {
   seed?: number;
   maxDepth?: number;
   maxDefaultItems?: number;
   optionalPropertyProbability?: number;
   formats?: Record<string, (random: Random) => string>;
+  refResolver?: RefResolver;
 }
 
 export interface GenerateContext {
@@ -75,6 +80,7 @@ export interface GenerateContext {
   refRegistry: Map<string, JsonSchema>;
   refStack: Set<string>;
   formatRegistry: Map<string, (random: Random) => string>;
+  refResolver?: RefResolver;
 }
 
 export interface Random {

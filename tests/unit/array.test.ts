@@ -3,12 +3,12 @@ import { generate } from "../../src/index.js";
 import { assertValid, assertValidMultipleSeeds } from "../helpers/validate.js";
 
 describe("array generator", () => {
-  test("generates array", () => {
-    const val = generate({ type: "array", items: { type: "integer" } });
+  test("generates array", async () => {
+    const val = await generate({ type: "array", items: { type: "integer" } });
     expect(Array.isArray(val)).toBe(true);
   });
 
-  test("respects minItems/maxItems", () => {
+  test("respects minItems/maxItems", async () => {
     const schema = {
       type: "array" as const,
       items: { type: "number" as const },
@@ -16,13 +16,13 @@ describe("array generator", () => {
       maxItems: 5,
     };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed }) as unknown[];
+      const val = await generate(schema, { seed }) as unknown[];
       expect(val.length).toBeGreaterThanOrEqual(3);
       expect(val.length).toBeLessThanOrEqual(5);
     }
   });
 
-  test("handles prefixItems", () => {
+  test("handles prefixItems", async () => {
     const schema = {
       type: "array" as const,
       prefixItems: [
@@ -32,10 +32,10 @@ describe("array generator", () => {
       ],
       items: false as const,
     };
-    assertValidMultipleSeeds(schema, 50, generate);
+    await assertValidMultipleSeeds(schema, 50, generate);
   });
 
-  test("handles uniqueItems", () => {
+  test("handles uniqueItems", async () => {
     const schema = {
       type: "array" as const,
       items: { type: "integer" as const, minimum: 0, maximum: 100 },
@@ -44,14 +44,14 @@ describe("array generator", () => {
       maxItems: 10,
     };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed }) as number[];
+      const val = await generate(schema, { seed }) as number[];
       const uniqueSet = new Set(val.map((v) => JSON.stringify(v)));
       expect(uniqueSet.size).toBe(val.length);
     }
   });
 
-  test("validates across seeds", () => {
-    assertValidMultipleSeeds(
+  test("validates across seeds", async () => {
+    await assertValidMultipleSeeds(
       {
         type: "array",
         items: { type: "string", minLength: 1 },

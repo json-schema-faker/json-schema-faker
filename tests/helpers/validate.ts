@@ -18,18 +18,18 @@ export function assertValid(schema: JsonSchema, value: unknown): void {
   }
 }
 
-export function assertValidMultipleSeeds(
+export async function assertValidMultipleSeeds(
   schema: JsonSchema,
   seeds: number[] | number,
-  generateFn: (schema: JsonSchema, options?: { seed?: number }) => unknown
-): void {
+  generateFn: (schema: JsonSchema, options?: { seed?: number }) => Promise<unknown>
+): Promise<void> {
   const seedList =
     typeof seeds === "number"
       ? Array.from({ length: seeds }, (_, i) => i + 1)
       : seeds;
 
   for (const seed of seedList) {
-    const value = generateFn(schema, { seed });
+    const value = await generateFn(schema, { seed });
     try {
       assertValid(schema, value);
     } catch (e) {

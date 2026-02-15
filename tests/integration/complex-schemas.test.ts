@@ -3,7 +3,7 @@ import { generate, createGenerator, registerFormat } from "../../src/index.js";
 import { assertValid, assertValidMultipleSeeds } from "../helpers/validate.js";
 
 describe("determinism", () => {
-  test("same seed produces same output", () => {
+  test("same seed produces same output", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -13,21 +13,21 @@ describe("determinism", () => {
       },
       required: ["id", "name", "tags"],
     };
-    const a = generate(schema, { seed: 42 });
-    const b = generate(schema, { seed: 42 });
+    const a = await generate(schema, { seed: 42 });
+    const b = await generate(schema, { seed: 42 });
     expect(JSON.stringify(a)).toBe(JSON.stringify(b));
   });
 
-  test("different seeds produce different output", () => {
+  test("different seeds produce different output", async () => {
     const schema = { type: "object" as const, properties: { x: { type: "integer" as const } }, required: ["x"] };
-    const a = generate(schema, { seed: 1 });
-    const b = generate(schema, { seed: 2 });
+    const a = await generate(schema, { seed: 1 });
+    const b = await generate(schema, { seed: 2 });
     expect(JSON.stringify(a)).not.toBe(JSON.stringify(b));
   });
 });
 
 describe("$ref resolution", () => {
-  test("resolves $defs references", () => {
+  test("resolves $defs references", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -45,10 +45,10 @@ describe("$ref resolution", () => {
         },
       },
     };
-    assertValidMultipleSeeds(schema, 50, generate);
+    await assertValidMultipleSeeds(schema, 50, generate);
   });
 
-  test("handles self-referencing schemas", () => {
+  test("handles self-referencing schemas", async () => {
     const schema = {
       type: "object" as const,
       properties: {
@@ -61,18 +61,18 @@ describe("$ref resolution", () => {
       required: ["name"],
     };
     // Should not stack overflow due to maxDepth
-    const val = generate(schema, { seed: 1, maxDepth: 3 });
+    const val = await generate(schema, { seed: 1, maxDepth: 3 });
     expect(typeof val).toBe("object");
     assertValid(schema, val);
   });
 });
 
 describe("createGenerator", () => {
-  test("produces different values on successive calls", () => {
+  test("produces different values on successive calls", async () => {
     const gen = createGenerator({ seed: 1 });
     const schema = { type: "integer" as const, minimum: 0, maximum: 1000 };
-    const a = gen.generate(schema);
-    const b = gen.generate(schema);
+    const a = await gen.generate(schema);
+    const b = await gen.generate(schema);
     // Different calls should produce different values
     // (though it's theoretically possible they're the same, extremely unlikely with 1000 range)
     expect(a !== b || true).toBe(true); // non-crashing is the main test
@@ -80,9 +80,9 @@ describe("createGenerator", () => {
 });
 
 describe("registerFormat", () => {
-  test("custom format is used", () => {
+  test("custom format is used", async () => {
     registerFormat("test-format", (random) => `test-${random.int(0, 99)}`);
-    const val = generate({ type: "string", format: "test-format" }) as string;
+    const val = await generate({ type: "string", format: "test-format" }) as string;
     expect(val).toMatch(/^test-\d+$/);
   });
 });
@@ -115,35 +115,35 @@ describe("complex nested schema", () => {
     required: ["id", "username", "email", "status"],
   };
 
-  test("generates valid complex objects", () => {
-    assertValidMultipleSeeds(userSchema, 100, generate);
+  test("generates valid complex objects", async () => {
+    await assertValidMultipleSeeds(userSchema, 100, generate);
   });
 });
 
 describe("type arrays", () => {
-  test("generates value matching one of the types", () => {
+  test("generates value matching one of the types", async () => {
     const schema = { type: ["string", "number"] as string[] };
     for (let seed = 1; seed <= 50; seed++) {
-      const val = generate(schema, { seed });
+      const val = await generate(schema, { seed });
       expect(typeof val === "string" || typeof val === "number").toBe(true);
     }
   });
 });
 
 describe("boolean schemas", () => {
-  test("true schema generates something", () => {
-    const val = generate(true);
+  test("true schema generates something", async () => {
+    const val = await generate(true);
     expect(val).toBeDefined();
   });
 
-  test("false schema throws", () => {
+  test("false schema throws", async () => {
     expect(() => generate(false)).toThrow();
   });
 });
 
 describe("empty schema", () => {
-  test("generates some value", () => {
-    const val = generate({});
+  test("generates some value", async () => {
+    const val = await generate({});
     expect(val !== undefined || val === undefined).toBe(true); // doesn't throw
   });
 });
