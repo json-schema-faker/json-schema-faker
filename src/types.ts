@@ -1,0 +1,87 @@
+export type JsonSchema = JsonSchemaObject | boolean;
+
+export interface JsonSchemaObject {
+  // Meta
+  $schema?: string;
+  $id?: string;
+  $ref?: string;
+  $defs?: Record<string, JsonSchema>;
+  definitions?: Record<string, JsonSchema>;
+
+  // Type
+  type?: string | string[];
+  enum?: unknown[];
+  const?: unknown;
+
+  // Numeric
+  minimum?: number;
+  maximum?: number;
+  exclusiveMinimum?: number;
+  exclusiveMaximum?: number;
+  multipleOf?: number;
+
+  // String
+  minLength?: number;
+  maxLength?: number;
+  pattern?: string;
+  format?: string;
+
+  // Array
+  items?: JsonSchema;
+  prefixItems?: JsonSchema[];
+  contains?: JsonSchema;
+  minItems?: number;
+  maxItems?: number;
+  uniqueItems?: boolean;
+  minContains?: number;
+  maxContains?: number;
+
+  // Object
+  properties?: Record<string, JsonSchema>;
+  required?: string[];
+  additionalProperties?: JsonSchema;
+  patternProperties?: Record<string, JsonSchema>;
+  minProperties?: number;
+  maxProperties?: number;
+  propertyNames?: JsonSchema;
+
+  // Composition
+  allOf?: JsonSchema[];
+  anyOf?: JsonSchema[];
+  oneOf?: JsonSchema[];
+  not?: JsonSchema;
+  if?: JsonSchema;
+  then?: JsonSchema;
+  else?: JsonSchema;
+
+  // Allow additional keywords
+  [key: string]: unknown;
+}
+
+export interface GenerateOptions {
+  seed?: number;
+  maxDepth?: number;
+  maxDefaultItems?: number;
+  optionalPropertyProbability?: number;
+  formats?: Record<string, (random: Random) => string>;
+}
+
+export interface GenerateContext {
+  random: Random;
+  maxDepth: number;
+  maxDefaultItems: number;
+  optionalPropertyProbability: number;
+  depth: number;
+  refRegistry: Map<string, JsonSchema>;
+  refStack: Set<string>;
+  formatRegistry: Map<string, (random: Random) => string>;
+}
+
+export interface Random {
+  next(): number;
+  int(min: number, max: number): number;
+  bool(probability?: number): boolean;
+  pick<T>(arr: readonly T[]): T;
+  shuffle<T>(arr: T[]): T[];
+  fork(): Random;
+}
