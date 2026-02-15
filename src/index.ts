@@ -1,10 +1,12 @@
-import type { JsonSchema, GenerateOptions, GenerateContext, Random } from "./types.js";
+import type { JsonSchema, GenerateOptions, GenerateContext, Random, RefResolver } from "./types.js";
 import { createRandom } from "./random.js";
 import { walk } from "./schema-walker.js";
 import { buildRefRegistry, registerRootSchema } from "./ref-resolver.js";
 import { createFormatRegistry, registerFormatGlobal } from "./formats/index.js";
+import { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
 
-export type { JsonSchema, GenerateOptions, Random } from "./types.js";
+export type { JsonSchema, GenerateOptions, Random, RefResolver } from "./types.js";
+export { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
 
 // Global format registry shared across calls
 const globalFormatRegistry = createFormatRegistry();

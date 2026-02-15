@@ -62,6 +62,17 @@ export interface RefResolver {
   (ref: string): Promise<JsonSchema> | JsonSchema;
 }
 
+export interface RemoteResolverOptions {
+  /** Base URL for resolving relative references */
+  baseUrl?: string;
+  /** Custom fetch function for HTTP requests */
+  fetch?: (url: string) => Promise<Response>;
+  /** Custom file reader function */
+  readFile?: (path: string) => Promise<string>;
+  /** Cache for resolved schemas */
+  cache?: Map<string, JsonSchema>;
+}
+
 export interface GenerateOptions {
   seed?: number;
   maxDepth?: number;
