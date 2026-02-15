@@ -14,12 +14,20 @@ export function generateNumber(
   if (schema.maximum !== undefined) max = schema.maximum;
 
   if (schema.exclusiveMinimum !== undefined) {
-    min = schema.exclusiveMinimum;
-    exclusiveMin = true;
+    if (typeof schema.exclusiveMinimum === "boolean") {
+      exclusiveMin = schema.exclusiveMinimum;
+    } else {
+      min = schema.exclusiveMinimum;
+      exclusiveMin = true;
+    }
   }
   if (schema.exclusiveMaximum !== undefined) {
-    max = schema.exclusiveMaximum;
-    exclusiveMax = true;
+    if (typeof schema.exclusiveMaximum === "boolean") {
+      exclusiveMax = schema.exclusiveMaximum;
+    } else {
+      max = schema.exclusiveMaximum;
+      exclusiveMax = true;
+    }
   }
 
   if (schema.multipleOf !== undefined) {
