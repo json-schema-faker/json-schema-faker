@@ -45,7 +45,7 @@ export async function generateArray(
     return true;
   };
 
-  // Handle prefixItems
+  // Handle prefixItems (Draft 2020-12 tuple syntax)
   if (schema.prefixItems) {
     for (let i = 0; i < schema.prefixItems.length && result.length < maxItems; i++) {
       const success = await addItem(schema.prefixItems[i]);

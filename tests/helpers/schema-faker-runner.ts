@@ -110,6 +110,7 @@ export async function runSchemaFakerTest(
   if (testCase.valid === true) {
     // Skip validation if schema has external refs that AJV can't resolve
     const hasExternalRefs = testCase.refs && testCase.refs.length > 0;
+    
     if (!hasExternalRefs) {
       try {
         assertValid(schema, value);

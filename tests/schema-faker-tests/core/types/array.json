@@ -13,7 +13,9 @@
                   "type": "string"
                 }
               },
-              "required": ["value"]
+              "required": [
+                "value"
+              ]
             }
           },
           {
@@ -61,7 +63,15 @@
           "maxItems": 7,
           "useDefaultValue": true
         },
-        "equal": [1, 1, 1, 1, 1, 1, 1]
+        "equal": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
       },
       {
         "description": "should handle minItems and maxItems passed as arguments to JSF, in the presence of minItems and maxItems in the schema",
@@ -80,7 +90,15 @@
           "maxItems": 7,
           "useDefaultValue": true
         },
-        "equal": [1, 1, 1, 1, 1, 1, 1]
+        "equal": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1
+        ]
       },
       {
         "description": "should handle uniqueItems",
@@ -88,7 +106,13 @@
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["a", "b", "c", "d", "e"]
+            "enum": [
+              "a",
+              "b",
+              "c",
+              "d",
+              "e"
+            ]
           },
           "uniqueItems": true,
           "maxItems": 3,
@@ -100,7 +124,7 @@
         "description": "should handle fixed arrays",
         "schema": {
           "type": "array",
-          "items": [
+          "prefixItems": [
             {
               "type": "integer"
             },
@@ -115,12 +139,22 @@
         "valid": true
       },
       {
-        "description": "should handle additionalItems",
+        "description": "should handle additional items with prefixItems",
         "schema": {
           "type": "array",
           "minItems": 20,
           "maxItems": 30,
-          "additionalItems": { "type": ["string", "boolean"] }
+          "prefixItems": [
+            {
+              "type": "integer"
+            }
+          ],
+          "items": {
+            "type": [
+              "string",
+              "boolean"
+            ]
+          }
         },
         "valid": true
       },
@@ -131,7 +165,7 @@
           "minItems": 20,
           "maxItems": 30,
           "uniqueItems": true,
-          "additionalItems": false
+          "items": false
         },
         "throws": "missing items for [\\s\\S]+ in \\/"
       },
@@ -142,7 +176,7 @@
           "minItems": 0,
           "maxItems": 0,
           "uniqueItems": true,
-          "additionalItems": false
+          "items": false
         },
         "valid": true
       },
@@ -160,7 +194,9 @@
         "schema": {
           "id": "matches",
           "type": "object",
-          "required": ["items"],
+          "required": [
+            "items"
+          ],
           "properties": {
             "items": {
               "items": {
@@ -178,11 +214,15 @@
         "schema": {
           "id": "matches",
           "type": "object",
-          "required": ["items"],
+          "required": [
+            "items"
+          ],
           "properties": {
             "items": {
               "items": {
-                "required": ["items"],
+                "required": [
+                  "items"
+                ],
                 "properties": {
                   "items": {
                     "items": {
