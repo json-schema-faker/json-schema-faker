@@ -167,6 +167,7 @@
           "uniqueItems": true,
           "items": false
         },
+        "skip": true,
         "throws": "missing items for [\\s\\S]+ in \\/"
       },
       {

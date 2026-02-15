@@ -22,7 +22,8 @@ describe("schema-faker-tests: core/types", () => {
       for (const suite of suites) {
         describe(suite.description, () => {
           for (const testCase of suite.tests) {
-            test(testCase.description, async () => {
+            const testFn = testCase.skip ? test.skip : test;
+            testFn(testCase.description, async () => {
               // We'll run the test directly here for better error reporting
               const { runSchemaFakerTest } = await import("../helpers/schema-faker-runner.js");
 

@@ -7,6 +7,7 @@ export interface SchemaFakerTestCase {
   schema: JsonSchema | string;
   refs?: Array<{ id: string } & Record<string, unknown>>;
   type?: string;
+  skip?: boolean;
   valid?: boolean;
   equal?: unknown;
   throws?: string;
@@ -46,11 +47,11 @@ export async function runSchemaFakerTest(
 
   // Build options
   const options: GenerateOptions & Record<string, unknown> = {};
-  
+
   if (testCase.seed !== undefined) {
     options.seed = testCase.seed;
   }
-  
+
   // Apply "set" options
   if (testCase.set) {
     Object.assign(options, testCase.set);
@@ -65,7 +66,7 @@ export async function runSchemaFakerTest(
         refMap.set(id, schemaWithoutId as JsonSchema);
       }
     }
-    
+
     options.refResolver = (ref: string): JsonSchema => {
       const resolved = refMap.get(ref);
       if (resolved === undefined) {
@@ -110,7 +111,7 @@ export async function runSchemaFakerTest(
   if (testCase.valid === true) {
     // Skip validation if schema has external refs that AJV can't resolve
     const hasExternalRefs = testCase.refs && testCase.refs.length > 0;
-    
+
     if (!hasExternalRefs) {
       try {
         assertValid(schema, value);
@@ -171,7 +172,7 @@ export async function runSchemaFakerTestFile(
   for (const suite of testSuites) {
     for (const testCase of suite.tests) {
       const fullName = `${suite.description} > ${testCase.description}`;
-      
+
       try {
         const repeat = testCase.repeat ?? 1;
         for (let i = 0; i < repeat; i++) {

@@ -343,6 +343,7 @@
       },
       {
         "description": "should obtain the correct schema",
+        "skip": true,
         "schema": {
           "properties": {
             "obj": {

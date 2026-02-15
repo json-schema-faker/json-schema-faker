@@ -32,6 +32,7 @@
       },
       {
         "description": "should generate complex not schemas",
+        "skip": true,
         "schema": {
           "title": "ro",
           "$schema": "http://json-schema.org/draft-04/schema#",

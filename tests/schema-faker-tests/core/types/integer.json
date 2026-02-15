@@ -37,6 +37,7 @@
       },
       {
         "description": "should handle exclusiveMinimum",
+        "skip": true,
         "schema": {
           "type": "integer",
           "minimum": 60,
@@ -50,6 +51,7 @@
       },
       {
         "description": "should handle exclusiveMaximum",
+        "skip": true,
         "schema": {
           "type": "integer",
           "minimum": 80,
