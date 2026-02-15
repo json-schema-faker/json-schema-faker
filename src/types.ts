@@ -80,6 +80,12 @@ export interface GenerateOptions {
   optionalPropertyProbability?: number;
   formats?: Record<string, (random: Random) => string>;
   refResolver?: RefResolver;
+  /** Override schema minItems for array generation */
+  minItems?: number;
+  /** Override schema maxItems for array generation */
+  maxItems?: number;
+  /** Use schema default values when generating */
+  useDefaultValue?: boolean;
 }
 
 export interface GenerateContext {
@@ -92,6 +98,12 @@ export interface GenerateContext {
   refStack: Set<string>;
   formatRegistry: Map<string, (random: Random) => string>;
   refResolver?: RefResolver;
+  /** Override schema minItems for array generation */
+  minItems?: number;
+  /** Override schema maxItems for array generation */
+  maxItems?: number;
+  /** Use schema default values when generating */
+  useDefaultValue?: boolean;
 }
 
 export interface Random {

@@ -30,6 +30,9 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     refStack: new Set(),
     formatRegistry,
     refResolver: options?.refResolver,
+    minItems: options?.minItems,
+    maxItems: options?.maxItems,
+    useDefaultValue: options?.useDefaultValue,
   };
 
   return walk(schema, ctx);

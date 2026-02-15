@@ -37,6 +37,11 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     return generateEnumConst(schema, ctx);
   }
 
+  // default value (when useDefaultValue option is enabled)
+  if (ctx.useDefaultValue && schema.default !== undefined) {
+    return schema.default;
+  }
+
   // Determine type
   const type = resolveType(schema, ctx);
 

@@ -12,8 +12,9 @@ export async function generateArray(
   const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1 };
   const result: unknown[] = [];
 
-  const minItems = schema.minItems ?? 0;
-  const maxItems = schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
+  // Use context overrides if provided, otherwise use schema values
+  const minItems = ctx.minItems ?? schema.minItems ?? 0;
+  const maxItems = ctx.maxItems ?? schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
 
   // Handle prefixItems
   if (schema.prefixItems) {
