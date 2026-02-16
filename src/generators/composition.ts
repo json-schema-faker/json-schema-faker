@@ -1,6 +1,26 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
 import { walk } from "../schema-walker.js";
 import { mergeSchemas } from "../merge.js";
+import { resolveRef } from "../ref-resolver.js";
+
+async function resolveSchemaRef(schema: JsonSchemaObject, ctx: GenerateContext): Promise<JsonSchemaObject> {
+  if (!schema.$ref) return schema;
+  const resolved = await resolveRef(schema, ctx);
+  return resolved.schema as JsonSchemaObject;
+}
+
+async function resolveAllOfRefs(allOf: JsonSchema[], ctx: GenerateContext): Promise<JsonSchemaObject[]> {
+  const resolved: JsonSchemaObject[] = [];
+  for (const item of allOf) {
+    if (typeof item === "object" && item !== null && "$ref" in item) {
+      const res = await resolveSchemaRef(item as JsonSchemaObject, ctx);
+      resolved.push(res);
+    } else if (typeof item === "object" && item !== null) {
+      resolved.push(item as JsonSchemaObject);
+    }
+  }
+  return resolved;
+}
 
 export async function generateComposition(
   schema: JsonSchemaObject,
@@ -10,7 +30,8 @@ export async function generateComposition(
   const { allOf, anyOf, oneOf, not, if: ifSchema, then: thenSchema, else: elseSchema, ...base } = schema;
 
   if (allOf) {
-    const merged = mergeSchemas([base, ...allOf]);
+    const resolvedRefs = await resolveAllOfRefs(allOf, ctx);
+    const merged = mergeSchemas([base, ...resolvedRefs]);
     return walk(merged, ctx);
   }
 
