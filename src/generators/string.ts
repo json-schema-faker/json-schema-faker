@@ -57,25 +57,17 @@ export function generateString(
     if (ctx.extensions?.chance) {
       if (typeof schema.chance === "string") {
         const chanceType = schema.chance as string;
-        try {
-          const generator = ctx.extensions.chance[chanceType];
-          if (typeof generator === "function") {
-            return generator();
-          }
-        } catch {
-          // Fall through to error
+        const generator = ctx.extensions.chance[chanceType];
+        if (typeof generator === "function") {
+          return generator.call(ctx.extensions.chance);
         }
       } else if (typeof schema.chance === "object") {
         const chanceOptions = schema.chance as Record<string, unknown>;
         const key = Object.keys(chanceOptions)[0];
         const options = chanceOptions[key] as Record<string, unknown> | undefined;
-        try {
-          const generator = ctx.extensions.chance[key];
-          if (typeof generator === "function") {
-            return options ? generator(options) : generator();
-          }
-        } catch {
-          // Fall through to error
+        const generator = ctx.extensions.chance[key];
+        if (typeof generator === "function") {
+          return options ? generator.call(ctx.extensions.chance, options) : generator.call(ctx.extensions.chance);
         }
       }
     }
@@ -83,6 +75,7 @@ export function generateString(
     const chanceType = typeof schema.chance === "string"
       ? schema.chance
       : Object.keys(schema.chance as Record<string, unknown>)[0];
+
     throw new Error(`cannot resolve chance-generator for ${chanceType} in ${ctx.path}`);
   }
 

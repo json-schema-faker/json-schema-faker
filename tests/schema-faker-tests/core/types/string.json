@@ -91,7 +91,6 @@
       },
       {
         "description": "should handle format (chance)",
-        "skip": true,
         "schema": {
           "type": "object",
           "properties": {
