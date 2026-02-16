@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should allow pseudorandom value generation",
-        "skip": true,
         "schema": {
           "type": "object",
           "properties": {
@@ -24,9 +23,9 @@
         },
         "valid": true,
         "equal": {
-          "a": 44,
-          "b": "in culpa proident amet",
-          "c": "fe228"
+          "a": 87,
+          "b": "4Pb4C",
+          "c": "rp602"
         },
         "repeat": 1,
         "random": "some seed"

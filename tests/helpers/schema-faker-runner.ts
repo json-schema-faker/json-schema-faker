@@ -6,6 +6,19 @@ import { assertValid } from "./validate.js";
 const extensionCache = new Map<string, unknown>();
 
 /**
+ * Hash a string seed to a number for consistent PRNG behavior
+ */
+function hashStringToSeed(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash);
+}
+
+/**
  * Load a required extension/module
  * Returns the extension or null if not available
  */
@@ -88,6 +101,8 @@ export interface SchemaFakerTestCase {
   hasNot?: string;
   set?: Record<string, unknown>;
   seed?: number;
+  /** Random seed (string or number) */
+  random?: string | number;
   repeat?: number;
   /** Required extensions/modules to load (e.g., "core/extend/faker-extend") */
   require?: string;
@@ -132,6 +147,16 @@ export async function runSchemaFakerTest(
 
   if (testCase.seed !== undefined) {
     options.seed = testCase.seed;
+  }
+
+  // Handle "random" option (string seed)
+  if (testCase.random !== undefined) {
+    if (typeof testCase.random === "string") {
+      // Hash string seed to a number
+      options.seed = hashStringToSeed(testCase.random);
+    } else {
+      options.seed = testCase.random;
+    }
   }
 
   // Apply "set" options
