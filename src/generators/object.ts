@@ -10,6 +10,29 @@ export async function generateObject(
     return {};
   }
 
+  // Check for contradictory schema: additionalProperties:false but minProperties > available keys
+  if (schema.additionalProperties === false) {
+    const hasProperties = schema.properties && Object.keys(schema.properties).length > 0;
+    const hasPatternProperties = schema.patternProperties && Object.keys(schema.patternProperties).length > 0;
+    const definedKeys = new Set<string>(schema.properties ? Object.keys(schema.properties) : []);
+    const required = new Set(schema.required ?? []);
+    const requiredKeys = [...required].filter((k) => !definedKeys.has(k));
+
+    // If minProperties is required but no way to generate them
+    if ((schema.minProperties ?? 0) > 0 && !hasProperties && !hasPatternProperties) {
+      throw new Error(
+        `missing properties for ${schema.minProperties} in ${ctx.path}: additionalProperties is false but no properties or patternProperties defined`
+      );
+    }
+
+    // If there are required properties not in properties and no patternProperties to match them
+    if (requiredKeys.length > 0 && !hasPatternProperties && !hasProperties) {
+      throw new Error(
+        `missing properties for ${requiredKeys.join(", ")} in ${ctx.path}: additionalProperties is false but required properties not defined in properties`
+      );
+    }
+  }
+
   const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: `${ctx.path}/properties` };
   const result: Record<string, unknown> = {};
   const definedKeys = new Set<string>();
