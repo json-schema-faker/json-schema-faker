@@ -2,9 +2,18 @@ import { generate } from "../../src/index.js";
 import type { JsonSchema, GenerateOptions } from "../../src/types.js";
 import { assertValid } from "./validate.js";
 import { createRemoteResolver } from "../../src/remote-resolver.js";
+import { join, dirname } from "path";
+
+interface ExtensionContext {
+  extensions: {
+    faker?: unknown;
+    chance?: unknown;
+    [key: string]: unknown;
+  };
+}
 
 // Extension loader cache
-const extensionCache = new Map<string, unknown>();
+const extensionCache = new Map<string, ExtensionContext>();
 
 /**
  * Hash a string seed to a number for consistent PRNG behavior
@@ -20,58 +29,52 @@ function hashStringToSeed(str: string): number {
 }
 
 /**
- * Load a required extension/module
- * Returns the extension or null if not available
+ * Load a required extension/module from the extend folder
+ * @param requirePath - The require path (e.g., "core/extend/faker-extend")
+ * @param basePath - Optional base path to resolve relative paths from
+ * Returns the extensions context with registered faker/chance, or null if not available
  */
-async function loadExtension(requirePath: string): Promise<unknown | null> {
+async function loadExtension(requirePath: string, basePath?: string): Promise<ExtensionContext | null> {
   // Check cache first
-  if (extensionCache.has(requirePath)) {
-    return extensionCache.get(requirePath);
+  const cacheKey = basePath ? `${basePath}:${requirePath}` : requirePath;
+  if (extensionCache.has(cacheKey)) {
+    return extensionCache.get(cacheKey)!;
   }
 
   try {
-    let extension: unknown = null;
+    // Create the extensions context
+    const ctx: ExtensionContext = {
+      extensions: {},
+    };
 
-    // Handle different extension types
-    if (requirePath === "core/extend/faker-extend") {
-      // Try to import @faker-js/faker
-      try {
-        // Dynamic import with unknown type to avoid TypeScript errors
-        const fakerModule = await import("@faker-js/faker" as string);
-        extension = (fakerModule as { faker?: unknown }).faker ?? null;
-      } catch {
-        // Faker not available
-        extension = null;
+    // Resolve the module path
+    // requirePath is like "core/extend/faker-extend"
+    // which maps to tests/schema-faker-tests/core/extend/faker-extend.mjs
+    let modulePath: string;
+    if (requirePath.startsWith("core/extend/")) {
+      const extName = requirePath.replace("core/extend/", "");
+      const extendDir = basePath
+        ? join(dirname(basePath), "extend")
+        : join(dirname(import.meta.filename), "../schema-faker-tests/core/extend");
+      modulePath = join(extendDir, `${extName}.mjs`);
+    } else {
+      return null;
+    }
+
+    // Dynamically import the module
+    try {
+      const module = await import(modulePath);
+      if (module.register && typeof module.register === "function") {
+        module.register(ctx);
       }
-    } else if (requirePath === "core/extend/chance-extend") {
-      // Try to import chance
-      try {
-        // Dynamic import with unknown type to avoid TypeScript errors
-        const chanceModule = await import("chance" as string);
-        const Chance = (chanceModule as { default?: unknown; Chance?: unknown }).default || 
-                       (chanceModule as { default?: unknown; Chance?: unknown }).Chance;
-        if (typeof Chance === "function") {
-          extension = new (Chance as new () => unknown)();
-        }
-      } catch {
-        // Chance not available
-        extension = null;
-      }
-    } else if (requirePath === "core/extend/mockjs-extend") {
-      // MockJS not implemented
-      extension = null;
-    } else if (requirePath === "core/formats/semver") {
-      // Semver format - register it globally
-      extension = { type: "format", name: "semver" };
-    } else if (requirePath.startsWith("core/option/")) {
-      // Option modules - these typically configure behavior
-      const optionName = requirePath.replace("core/option/", "");
-      extension = { type: "option", name: optionName };
+    } catch {
+      // Module not available or failed to load
+      return null;
     }
 
     // Cache the result
-    extensionCache.set(requirePath, extension);
-    return extension;
+    extensionCache.set(cacheKey, ctx);
+    return ctx;
   } catch {
     return null;
   }
@@ -81,12 +84,12 @@ async function loadExtension(requirePath: string): Promise<unknown | null> {
  * Check if a test case has required extensions that are not available
  * Returns true if the test should be skipped
  */
-export async function shouldSkipDueToRequirements(testCase: SchemaFakerTestCase): Promise<boolean> {
+export async function shouldSkipDueToRequirements(testCase: SchemaFakerTestCase, basePath?: string): Promise<boolean> {
   if (!testCase.require) {
     return false;
   }
 
-  const extension = await loadExtension(testCase.require);
+  const extension = await loadExtension(testCase.require, basePath);
   return extension === null;
 }
 
@@ -119,10 +122,11 @@ export interface SchemaFakerTestSuite {
 
 export async function runSchemaFakerTest(
   testCase: SchemaFakerTestCase,
-  sharedSchemas: JsonSchema[] = []
+  sharedSchemas: JsonSchema[] = [],
+  basePath?: string
 ): Promise<void> {
   // Check if test has requirements that aren't met
-  if (await shouldSkipDueToRequirements(testCase)) {
+  if (await shouldSkipDueToRequirements(testCase, basePath)) {
     throw new Error(`Test skipped: required extension "${testCase.require}" is not available`);
   }
 
@@ -167,25 +171,12 @@ export async function runSchemaFakerTest(
 
   // Load and apply required extensions
   if (testCase.require) {
-    const extension = await loadExtension(testCase.require);
-    if (extension) {
-      const extObj = extension as { type?: string; name?: string };
-      
-      if (extObj.type === "format" && extObj.name) {
-        // Format extensions would need to be registered globally or per-call
-        // For now, we'll skip format registration
-      } else if (extObj.type !== "option") {
-        // It's a generator extension (faker, chance, etc.)
-        if (!options.extensions) {
-          options.extensions = {};
-        }
-        
-        if (testCase.require.includes("faker")) {
-          (options.extensions as { faker?: unknown }).faker = extension;
-        } else if (testCase.require.includes("chance")) {
-          (options.extensions as { chance?: unknown }).chance = extension;
-        }
+    const extCtx = await loadExtension(testCase.require, basePath);
+    if (extCtx && extCtx.extensions) {
+      if (!options.extensions) {
+        options.extensions = {};
       }
+      Object.assign(options.extensions, extCtx.extensions);
     }
   }
 
@@ -334,7 +325,7 @@ export async function runSchemaFakerTestFile(
       try {
         const repeat = testCase.repeat ?? 1;
         for (let i = 0; i < repeat; i++) {
-          await runSchemaFakerTest(testCase, suite.schemas ?? []);
+          await runSchemaFakerTest(testCase, suite.schemas ?? [], fileName);
         }
         results.passed++;
       } catch (e) {

@@ -11,9 +11,12 @@
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
+    "@faker-js/faker": "^10.3.0",
     "@types/bun": "^1.2.0",
     "ajv": "^8.17.0",
     "ajv-formats": "^3.0.0",
+    "chance": "^1.1.13",
+    "mockjs": "^1.1.0",
     "typescript": "^5.7.0"
   }
 }
