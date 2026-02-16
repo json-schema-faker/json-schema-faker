@@ -25,11 +25,20 @@ export function generateString(
 
   // Check pattern
   if (schema.pattern) {
-    const result = generateFromRegex(schema.pattern, ctx.random);
-    if (schema.minLength !== undefined && result.length < schema.minLength) {
-      return padString(result, schema.minLength, ctx);
+    const maxAttempts = 50;
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+      const result = generateFromRegex(schema.pattern, ctx.random);
+      if (schema.minLength !== undefined && result.length < schema.minLength) {
+        continue;
+      }
+      if (schema.maxLength !== undefined && result.length > schema.maxLength) {
+        continue;
+      }
+      return result;
     }
-    if (schema.maxLength !== undefined && result.length > schema.maxLength) {
+    // Fallback: generate and slice
+    const result = generateFromRegex(schema.pattern, ctx.random);
+    if (schema.maxLength !== undefined) {
       return result.slice(0, schema.maxLength);
     }
     return result;

@@ -29,7 +29,6 @@
       },
       {
         "description": "should handle pattern with maxLength",
-        "skip": true,
         "schema": {
           "type": "string",
           "pattern": "^[a-z]{2}( [a-z])?$",
