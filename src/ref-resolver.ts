@@ -1,4 +1,5 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "./types.js";
+import { resolveFragment } from "./remote-resolver.js";
 
 export function buildRefRegistry(schema: JsonSchema): Map<string, JsonSchema> {
   const registry = new Map<string, JsonSchema>();
@@ -55,13 +56,42 @@ export async function resolveRef(
   }
 
   let resolved: JsonSchema | undefined;
+  let baseSchema: JsonSchema | undefined;
 
   if (ref.startsWith("#/")) {
     resolved = ctx.refRegistry.get(ref);
   } else if (ref === "#") {
     resolved = ctx.refRegistry.get("#") ?? {};
   } else if (ctx.refResolver) {
-    resolved = await ctx.refResolver(ref);
+    baseSchema = await ctx.refResolver(ref);
+    
+    // Extract the fragment from the full schema if the ref has a fragment
+    const hashIndex = ref.indexOf("#");
+    if (hashIndex !== -1) {
+      const fragment = ref.slice(hashIndex + 1);
+      if (fragment) {
+        resolved = resolveFragment(baseSchema, fragment);
+      } else {
+        resolved = baseSchema;
+      }
+    } else {
+      resolved = baseSchema;
+    }
+    
+    // Register the base schema's definitions in the registry
+    if (baseSchema && typeof baseSchema === "object" && baseSchema !== null) {
+      const fetchedSchema = baseSchema as JsonSchemaObject;
+      if (fetchedSchema.$defs) {
+        for (const [name, def] of Object.entries(fetchedSchema.$defs)) {
+          ctx.refRegistry.set(`#/$defs/${name}`, def);
+        }
+      }
+      if (fetchedSchema.definitions) {
+        for (const [name, def] of Object.entries(fetchedSchema.definitions)) {
+          ctx.refRegistry.set(`#/definitions/${name}`, def);
+        }
+      }
+    }
   } else {
     resolved = ctx.refRegistry.get(ref);
   }

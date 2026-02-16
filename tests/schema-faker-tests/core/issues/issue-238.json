@@ -44,9 +44,8 @@
       },
       {
         "description": "should create null value",
-        "skip": true,
         "schema": {
-          "id": "fooNull",
+          "$id": "fooNull",
           "properties": {
             "fooNull": {
               "type": [

@@ -33,6 +33,11 @@ export interface RemoteResolverOptions {
  * });
  * ```
  */
+export interface RemoteResolverResult {
+  schema: JsonSchema;
+  baseSchema: JsonSchema;
+}
+
 export function createRemoteResolver(options: RemoteResolverOptions = {}): (ref: string) => Promise<JsonSchema> {
   const cache = options.cache ?? new Map<string, JsonSchema>();
   const baseUrl = options.baseUrl;
@@ -41,29 +46,30 @@ export function createRemoteResolver(options: RemoteResolverOptions = {}): (ref:
     // Parse the reference to extract URL and fragment
     const { url, fragment } = parseRef(ref, baseUrl);
     
-    // Check cache first
-    if (cache.has(url)) {
-      return resolveFragment(cache.get(url)!, fragment);
-    }
-    
-    // Fetch the schema
     let schema: JsonSchema;
     
-    if (url.startsWith("http://") || url.startsWith("https://")) {
-      schema = await fetchSchema(url, options.fetch);
-    } else if (url.startsWith("file://")) {
-      const path = decodeURIComponent(url.slice(7));
-      schema = await readFileSchema(path, options.readFile);
+    // Check cache first - always get the full schema
+    if (cache.has(url)) {
+      schema = cache.get(url)!;
     } else {
-      // Treat as file path
-      schema = await readFileSchema(url, options.readFile);
+      // Fetch the schema
+      if (url.startsWith("http://") || url.startsWith("https://")) {
+        schema = await fetchSchema(url, options.fetch);
+      } else if (url.startsWith("file://")) {
+        const path = decodeURIComponent(url.slice(7));
+        schema = await readFileSchema(path, options.readFile);
+      } else {
+        // Treat as file path
+        schema = await readFileSchema(url, options.readFile);
+      }
+      
+      // Cache the full schema
+      cache.set(url, schema);
     }
     
-    // Cache the full schema
-    cache.set(url, schema);
-    
-    // Resolve fragment if present
-    return resolveFragment(schema, fragment);
+    // Always return the full schema - the caller will extract the fragment
+    // This allows internal refs within fragments to be resolved
+    return schema;
   };
 }
 
@@ -155,7 +161,7 @@ async function readFileSchema(path: string, customReadFile?: (path: string) => P
   return JSON.parse(content);
 }
 
-function resolveFragment(schema: JsonSchema, fragment: string | null): JsonSchema {
+export function resolveFragment(schema: JsonSchema, fragment: string | null): JsonSchema {
   if (!fragment || fragment === "") {
     return schema;
   }

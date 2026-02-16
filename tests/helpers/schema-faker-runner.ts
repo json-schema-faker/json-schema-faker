@@ -1,6 +1,7 @@
 import { generate } from "../../src/index.js";
 import type { JsonSchema, GenerateOptions } from "../../src/types.js";
 import { assertValid } from "./validate.js";
+import { createRemoteResolver } from "../../src/remote-resolver.js";
 
 // Extension loader cache
 const extensionCache = new Map<string, unknown>();
@@ -188,6 +189,11 @@ export async function runSchemaFakerTest(
     }
   }
 
+  // Add remote resolver for external refs if not already set
+  if (!options.refResolver && typeof globalThis.fetch === "function") {
+    options.refResolver = createRemoteResolver({ fetch: globalThis.fetch });
+  }
+
   // Build refResolver from refs
   if (testCase.refs) {
     const refMap = new Map<string, JsonSchema>();
@@ -253,6 +259,8 @@ export async function runSchemaFakerTest(
           // Skip validation for schemas with external refs
         } else if (msg.includes("schema is invalid")) {
           // Skip validation if the schema itself is invalid (e.g., Draft 4-07 exclusiveMinimum)
+        } else if (msg.includes("NOT SUPPORTED: keyword \"id\"")) {
+          // Skip validation for schemas using Draft 4-07 "id" keyword instead of "$id"
         } else {
           throw e;
         }
