@@ -4,7 +4,7 @@
     {
       "description": "should take missing props from required ones",
       "schema": {
-        "$schema": "http://json-schema.org/draft-04/schema#",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "title": "Customer",
         "description": "Customer",
         "type": "object",

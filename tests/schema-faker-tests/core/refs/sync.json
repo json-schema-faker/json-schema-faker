@@ -26,9 +26,7 @@
             }
           }
         },
-        "FIXME": "this eventually fails, but because other is resolved to undefined; it just happen when repeating too much (too many requests?)",
-        "_repeat": 100,
-        "skip": true,
+        "repeat": 100,
         "valid": true
       },
       {

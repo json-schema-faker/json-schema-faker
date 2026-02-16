@@ -19,7 +19,7 @@
             ]
           }
         },
-        "items": [
+        "prefixItems": [
           {
             "$ref": "#/definitions/Element"
           },

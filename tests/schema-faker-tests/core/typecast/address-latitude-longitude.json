@@ -29,7 +29,7 @@
         "description": "should cast array elements to number",
         "schema": {
           "type": "array",
-          "items": [
+          "prefixItems": [
             {
               "type": "number",
               "faker": "address.latitude"
@@ -45,7 +45,7 @@
       {
         "description": "should cast object properties values to number",
         "schema": {
-          "$schema": "http://json-schema.org/draft-04/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "description": "A geographical coordinate",
           "type": "object",
           "properties": {

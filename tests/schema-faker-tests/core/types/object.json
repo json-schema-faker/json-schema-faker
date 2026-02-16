@@ -92,10 +92,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "one",
-            "three"
-          ]
+          "required": ["one", "three"]
         },
         "valid": true
       },
@@ -126,10 +123,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "x",
-            "y"
-          ],
+          "required": ["x", "y"],
           "minProperties": 2
         },
         "valid": true
@@ -204,9 +198,7 @@
               "type": "string"
             }
           },
-          "required": [
-            "hybrid"
-          ]
+          "required": ["hybrid"]
         },
         "valid": false
       },
@@ -217,10 +209,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "required": [
-            "hybrid",
-            "other"
-          ]
+          "required": ["hybrid", "other"]
         },
         "valid": true
       },
@@ -231,10 +220,7 @@
           "type": "object",
           "properties": {},
           "additionalProperties": false,
-          "required": [
-            "hybrid",
-            "other"
-          ]
+          "required": ["hybrid", "other"]
         },
         "throws": "missing properties for:\n[\\s\\S]+? in \\/"
       },
@@ -243,10 +229,7 @@
         "schema": {
           "type": "object",
           "properties": {},
-          "required": [
-            "hybrid",
-            "other"
-          ]
+          "required": ["hybrid", "other"]
         },
         "valid": false
       },
@@ -264,10 +247,7 @@
           },
           "minProperties": 20,
           "additionalProperties": false,
-          "required": [
-            "hybrid",
-            "other"
-          ]
+          "required": ["hybrid", "other"]
         },
         "valid": true
       },
@@ -297,10 +277,7 @@
           "additionalProperties": {
             "type": "string"
           },
-          "required": [
-            "hybrid",
-            "other"
-          ]
+          "required": ["hybrid", "other"]
         },
         "valid": true
       },
@@ -356,9 +333,7 @@
                   "type": "object"
                 }
               },
-              "required": [
-                "obj"
-              ]
+              "required": ["obj"]
             },
             "data2": {
               "type": "object",
@@ -370,9 +345,7 @@
                       "type": "object"
                     }
                   },
-                  "required": [
-                    "obj"
-                  ]
+                  "required": ["obj"]
                 }
               }
             },
@@ -390,27 +363,13 @@
               }
             }
           },
-          "required": [
-            "obj",
-            "data1",
-            "data2"
-          ]
+          "required": ["obj", "data1", "data2"]
         },
         "type": "object",
         "equal": {
-          "data1": {
-            "obj": {}
-          },
-          "data2": {
-            "data1": {
-              "obj": {}
-            }
-          },
-          "data3": {
-            "data1": {
-              "obj": {}
-            }
-          },
+          "data1": { "obj": {} },
+          "data2": { "data1": { "obj": {} } },
+          "data3": { "data1": { "obj": {} } },
           "obj": {}
         },
         "set": {

@@ -9,7 +9,7 @@
           "properties": {
             "foo": {
               "type": "array",
-              "items": [
+              "prefixItems": [
                 {"enum":["bar"]}
               ],
               "minItems": 1,
@@ -29,7 +29,7 @@
           "properties": {
             "items": {
               "type": "array",
-              "items": [
+              "prefixItems": [
                 {"enum":["bar"]}
               ],
               "minItems": 1,
