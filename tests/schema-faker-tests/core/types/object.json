@@ -290,8 +290,7 @@
         "throws": "missing properties for [\\s\\S]+? in \\/"
       },
       {
-        "skip": true,
-        "description": "should throw if it couldnt generate enough keys",
+        "description": "should throw if it couldn't generate enough keys",
         "schema": {
           "type": "object",
           "properties": {

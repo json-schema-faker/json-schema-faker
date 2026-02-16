@@ -128,6 +128,14 @@ export async function generateObject(
         }
       }
     }
+
+    // Check if we still can't meet minProperties
+    if (Object.keys(result).length < minProps) {
+      const definedPropsList = Object.keys(schema.properties ?? {}).join(", ");
+      throw new Error(
+        `properties '${definedPropsList}' were not found while additionalProperties is false in ${ctx.path}`
+      );
+    }
   }
 
   // Respect maxProperties — trim optional props
