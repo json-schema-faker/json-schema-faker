@@ -36,15 +36,20 @@ export async function resolveRef(
 
   // Check if next ref depth would exceed max
   const nextRefDepth = ctx.refDepth + 1;
-  if (ctx.refDepthMax !== undefined && nextRefDepth > ctx.refDepthMax) {
-    // Set flag to indicate max depth has been reached
-    // This will cause array generators to produce empty arrays
-    return { schema: { type: "array" }, ctx: { ...ctx, refDepthReached: true } };
+  if (ctx.refDepthMax !== undefined && nextRefDepth >= ctx.refDepthMax) {
+    // Return empty schema to stop recursion
+    return { schema: {}, ctx: { ...ctx, refDepthReached: true } };
   }
 
-  // Check cycle detection
+  // Check cycle detection - when refDepthMax is set, ignore maxDepth for $ref resolution
   if (ctx.refStack.has(ref)) {
-    if (ctx.depth >= ctx.maxDepth) {
+    if (ctx.refDepthMax !== undefined) {
+      // With refDepthMax set, use >= to stop at exactly the max depth
+      if (ctx.refDepth >= ctx.refDepthMax) {
+        // Return empty schema to stop recursion
+        return { schema: {}, ctx: { ...ctx, refDepthReached: true } };
+      }
+    } else if (ctx.depth >= ctx.maxDepth) {
       return { schema: { type: "null" }, ctx };
     }
   }

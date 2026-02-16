@@ -23,7 +23,7 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
 
   const ctx: GenerateContext = {
     random,
-    maxDepth: options?.maxDepth ?? 5,
+    maxDepth: options?.maxDepth ?? (options?.refDepthMax ? options.refDepthMax + 20 : 5),
     maxDefaultItems: options?.maxDefaultItems ?? 3,
     // optionalsProbability is an alias for optionalPropertyProbability
     optionalPropertyProbability: options?.optionalsProbability ?? options?.optionalPropertyProbability ?? 0.5,

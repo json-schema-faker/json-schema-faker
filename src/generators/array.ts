@@ -31,7 +31,7 @@ export async function generateArray(
   // Use context overrides if provided, otherwise use schema values
   const minItems = ctx.minItems ?? schema.minItems ?? 0;
   let maxItems = ctx.maxItems ?? schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
-  
+
   // When alwaysFakeOptionals is true, use maxItems as the target
   if (ctx.alwaysFakeOptionals) {
     maxItems = Math.max(minItems, maxItems);
@@ -80,7 +80,7 @@ export async function generateArray(
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const useFixedProbabilities = ctx.fixedProbabilities ?? false;
   const optionalsProbability = ctx.optionalsProbability ?? ctx.optionalPropertyProbability ?? 0.5;
-  
+
   if (alwaysFakeOptionals) {
     // alwaysFakeOptionals overrides probabilities - generate maximum items
     targetLen = maxItems;
