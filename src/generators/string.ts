@@ -191,9 +191,12 @@ export function generateString(
       }
       return result;
     }
-    // Fallback: generate and slice
+    // Fallback: generate and slice/pad
     const result = generateFromRegex(schema.pattern, ctx.random);
-    if (schema.maxLength !== undefined) {
+    if (schema.minLength !== undefined && result.length < schema.minLength) {
+      return padString(result, schema.minLength, ctx);
+    }
+    if (schema.maxLength !== undefined && result.length > schema.maxLength) {
       return result.slice(0, schema.maxLength);
     }
     return result;

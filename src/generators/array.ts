@@ -29,8 +29,23 @@ export async function generateArray(
   const result: unknown[] = [];
 
   // Use context overrides if provided, otherwise use schema values
-  const minItems = ctx.minItems ?? schema.minItems ?? 0;
+  let minItems = ctx.minItems ?? schema.minItems ?? 0;
   let maxItems = ctx.maxItems ?? schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
+
+  // If schema has explicit maxItems, it's a hard upper bound - context cannot exceed it
+  if (schema.maxItems !== undefined && maxItems > schema.maxItems) {
+    maxItems = schema.maxItems;
+  }
+  
+  // Ensure minItems doesn't exceed maxItems
+  if (minItems > maxItems) {
+    minItems = maxItems;
+  }
+  
+  // Ensure minItems doesn't exceed maxItems
+  if (minItems > maxItems) {
+    // If context raised minItems above schema's maxItems, cap it at maxItems
+  }
 
   // When alwaysFakeOptionals is true, use maxItems as the target
   if (ctx.alwaysFakeOptionals) {

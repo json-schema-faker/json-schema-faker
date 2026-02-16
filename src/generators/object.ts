@@ -3,6 +3,20 @@ import { walk } from "../schema-walker.js";
 import { mergeSchemas } from "../merge.js";
 import { SCHEMA_KEYWORDS, isJsonSchema } from "../utils/schema-keywords.js";
 
+function isImpossibleSchema(schema: JsonSchema): boolean {
+  if (typeof schema === "boolean") {
+    return !schema; // false schema = impossible
+  }
+  if (typeof schema !== "object" || schema === null) {
+    return false;
+  }
+  // not: true or not: {} means nothing can match (impossible)
+  if (schema.not === true || (typeof schema.not === "object" && schema.not !== null && Object.keys(schema.not).length === 0)) {
+    return true;
+  }
+  return false;
+}
+
 /**
  * Get inferred properties from a schema object.
  * If the schema has explicit 'properties', use those.
@@ -128,6 +142,11 @@ export async function generateObject(
   // Generate required properties first
   if (Object.keys(inferredProperties).length > 0) {
     for (const [key, propSchema] of Object.entries(inferredProperties)) {
+      // Skip properties with impossible schemas (not: true or not: {})
+      if (isImpossibleSchema(propSchema)) {
+        continue;
+      }
+      
       definedKeys.add(key);
       const propCtx = { ...childCtx, path: `${childCtx.path}/${key}` };
       
