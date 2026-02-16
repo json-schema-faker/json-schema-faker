@@ -4,24 +4,23 @@
     "tests": [
       {
         "description": "should generate the value with default type provided by chance.js (no explicit typedef)",
-        "skip": true,
         "schema": {
           "chance": "year"
         },
+        "require": "core/extend/chance-extend",
         "valid": true
       },
       {
         "description": "should cast to string",
-        "skip": true,
         "schema": {
           "type": "string",
           "chance": "year"
         },
+        "require": "core/extend/chance-extend",
         "valid": true
       },
       {
         "description": "should cast parametrized generator to string",
-        "skip": true,
         "schema": {
           "type": "string",
           "chance": {
@@ -31,6 +30,7 @@
             }
           }
         },
+        "require": "core/extend/chance-extend",
         "valid": true
       }
     ]

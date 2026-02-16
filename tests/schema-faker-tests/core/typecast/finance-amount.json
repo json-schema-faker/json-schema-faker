@@ -4,19 +4,19 @@
     "tests": [
       {
         "description": "should generate the value with default type provided by faker.js (no explicit typedef)",
-        "skip": true,
         "schema": {
           "faker": "finance.amount"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
         "description": "should cast to string",
-        "skip": true,
         "schema": {
           "type": "string",
           "faker": "finance.amount"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
@@ -25,6 +25,7 @@
           "type": "number",
           "faker": "finance.amount"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
@@ -33,6 +34,7 @@
           "type": "integer",
           "faker": "finance.amount"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       }
     ]

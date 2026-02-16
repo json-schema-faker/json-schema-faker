@@ -4,6 +4,12 @@ import { pad2 } from "../utils/helpers.js";
 
 const DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+function castToString(value: unknown): string {
+  if (value === null) return "null";
+  if (value === undefined) return "undefined";
+  return String(value);
+}
+
 export function generateString(
   schema: JsonSchemaObject,
   ctx: GenerateContext
@@ -39,16 +45,19 @@ export function generateString(
       for (const part of parts) {
         try {
           current = current[part];
-        } catch (e) {
+        } catch {
           throw new Error(`failed to resolve .${part} (${fakerPath})`);
         }
       }
       if (typeof current === "function") {
-        return fakerArgs ? current(...fakerArgs) : current();
+        const fakerResult = fakerArgs ? current(...fakerArgs) : current();
+        return castToString(fakerResult);
+      } else {
+        throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
       }
+    } else {
+      throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
     }
-
-    throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
   }
 
   // Check chance extension (user-provided)
@@ -59,7 +68,8 @@ export function generateString(
         const chanceType = schema.chance as string;
         const generator = ctx.extensions.chance[chanceType];
         if (typeof generator === "function") {
-          return generator.call(ctx.extensions.chance);
+          const chanceResult = generator.call(ctx.extensions.chance);
+          return castToString(chanceResult);
         }
       } else if (typeof schema.chance === "object") {
         const chanceOptions = schema.chance as Record<string, unknown>;
@@ -67,7 +77,8 @@ export function generateString(
         const options = chanceOptions[key] as Record<string, unknown> | undefined;
         const generator = ctx.extensions.chance[key];
         if (typeof generator === "function") {
-          return options ? generator.call(ctx.extensions.chance, options) : generator.call(ctx.extensions.chance);
+          const chanceResult = options ? generator.call(ctx.extensions.chance, options) : generator.call(ctx.extensions.chance);
+          return castToString(chanceResult);
         }
       }
     }

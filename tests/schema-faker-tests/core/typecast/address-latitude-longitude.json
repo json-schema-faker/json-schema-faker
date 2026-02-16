@@ -1,29 +1,31 @@
 [
   {
-    "description": "should typecast faker.address.latitude and faker.address.longitude when generated value type is different than defined",
+    "description": "should typecast faker.location.latitude and faker.location.longitude when generated value type is different than defined",
     "tests": [
       {
         "description": "should generate the value with default type provided by faker.js (no explicit typedef)",
-        "skip": true,
         "schema": {
-          "faker": "address.longitude"
+          "faker": "location.longitude"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
         "description": "should cast to number",
         "schema": {
           "type": "number",
-          "faker": "address.longitude"
+          "faker": "location.longitude"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
         "description": "should cast to integer",
         "schema": {
           "type": "integer",
-          "faker": "address.longitude"
+          "faker": "location.longitude"
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
@@ -33,14 +35,15 @@
           "prefixItems": [
             {
               "type": "number",
-              "faker": "address.latitude"
+              "faker": "location.latitude"
             },
             {
               "type": "number",
-              "faker": "address.longitude"
+              "faker": "location.longitude"
             }
           ]
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       },
       {
@@ -52,11 +55,11 @@
           "properties": {
             "latitude": {
               "type": "number",
-              "faker": "address.latitude"
+              "faker": "location.latitude"
             },
             "longitude": {
               "type": "number",
-              "faker": "address.longitude"
+              "faker": "location.longitude"
             }
           },
           "required": [
@@ -64,6 +67,7 @@
             "longitude"
           ]
         },
+        "require": "core/extend/faker-extend",
         "valid": true
       }
     ]
