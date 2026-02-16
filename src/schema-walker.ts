@@ -80,7 +80,7 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
       // If failOnInvalidTypes is false but no defaultProduct is set, return null
       return null;
     }
-    throw new Error(`Unknown type: ${schema.type} at ${ctx.path}`);
+    throw new Error(`unknown primitive ${schema.type} in ${ctx.path}/type`);
   }
 
   switch (type) {

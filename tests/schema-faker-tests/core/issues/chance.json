@@ -4,12 +4,12 @@
     "tests": [
       {
         "description": "should allow url-format (0.7.1+)",
-        "skip": true,
         "schema": {
           "type": "string",
           "chance": "url"
         },
-        "valid": true
+        "valid": true,
+        "require": "core/extend/chance-extend"
       },
       {
         "description": "should execute chance generator before default boolean type generator",
@@ -22,7 +22,8 @@
             }
           }
         },
-        "equal": true
+        "equal": true,
+        "require": "core/extend/chance-extend"
       }
     ]
   }
