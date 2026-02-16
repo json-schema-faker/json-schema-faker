@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "format can be applied after any generator",
+        "skip": true,
         "schema": {
           "type": "object",
           "properties": {

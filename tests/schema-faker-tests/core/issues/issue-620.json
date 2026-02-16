@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "minItems is a valid boundary if set to zero",
+        "skip": true,
         "schema": {
           "type": "array",
           "items": {
@@ -24,6 +25,7 @@
       },
       {
         "description": "ignore minItems and maxItems if already set",
+        "skip": true,
         "schema": {
           "type": "array",
           "items": {

@@ -61,6 +61,7 @@
     "tests": [
       {
         "description": "should combine recursively",
+        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "hasProps": ["a"]

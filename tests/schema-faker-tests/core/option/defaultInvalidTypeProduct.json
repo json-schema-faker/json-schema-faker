@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should return static values if they are not well-known strings",
+        "skip": true,
         "schema": {
           "type": "undef"
         },
@@ -15,6 +16,7 @@
       },
       {
         "description": "should generate values if they are well-known strings",
+        "skip": true,
         "schema": {
           "type": "undef"
         },

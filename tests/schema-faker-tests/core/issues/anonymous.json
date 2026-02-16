@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should not work as expected",
+        "skip": true,
         "schema": {
           "x": {
             "enum": ["y"]

@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should combine sub-schemas on merging allOf",
+        "skip": true,
         "schema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "type": "object",

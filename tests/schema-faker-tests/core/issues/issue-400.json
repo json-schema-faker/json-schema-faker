@@ -3,6 +3,7 @@
   "tests": [
     {
       "description": "should randomize values from json-path references",
+      "skip": true,
       "schema": {
         "type": "object",
         "properties": {
@@ -66,6 +67,7 @@
     },
     {
       "description": "should randomize values from json-path references (example 2)",
+      "skip": true,
       "schema": {
         "type": "object",
         "properties": {

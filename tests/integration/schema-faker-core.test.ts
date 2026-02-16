@@ -2,10 +2,10 @@ import { describe, test } from "bun:test";
 import { join } from "path";
 import { loadTestFiles } from "../helpers/test-file-loader.js";
 
-const TYPES_DIR = join(import.meta.dirname, "../schema-faker-tests/core/types");
-const testFiles = await loadTestFiles(TYPES_DIR, ".");
+const CORE_DIR = join(import.meta.dirname, "../schema-faker-tests/core");
+const testFiles = await loadTestFiles(CORE_DIR, ".");
 
-describe("schema-faker-tests: core/types", () => {
+describe("schema-faker-tests: core", () => {
   for (const { name, suites } of testFiles) {
     describe(name, () => {
       for (const suite of suites) {

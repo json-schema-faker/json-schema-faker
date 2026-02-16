@@ -13,6 +13,7 @@
     },
     {
       "description": "should truncate up to given decimals (large decimals)",
+      "skip": true,
       "schema": {
         "type": "number",
         "multipleOf": 0.01

@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should handle null",
+        "skip": true,
         "schema": {
           "type": ["string", "null"],
           "faker": {
@@ -16,6 +17,7 @@
       },
       {
         "description": "should handle string",
+        "skip": true,
         "schema": {
           "type": ["string", "null"],
           "faker": {

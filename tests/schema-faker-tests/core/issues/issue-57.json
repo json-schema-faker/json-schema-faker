@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should get combined as expected",
+        "skip": true,
         "schema": {
           "definitions": {
             "address": {

@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should handle useExamplesValue option with 'examples' array",
+        "skip": true,
         "schema": {
           "type": "string",
           "examples": [
@@ -17,6 +18,7 @@
       },
       {
         "description": "should handle useExamplesValue option with 'example' property",
+        "skip": true,
         "schema": {
           "type": "string",
           "example": "World"

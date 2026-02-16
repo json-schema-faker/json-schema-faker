@@ -41,6 +41,7 @@
     "tests": [
       {
         "description": "should handle refDepthMin and refDepthMax options being equal",
+        "skip": true,
         "schema": "schemas.0",
         "equal": {
           "collection": {
@@ -81,6 +82,7 @@
       },
       {
         "description": "should handle refDepthMin and refDepthMax options being unequal",
+        "skip": true,
         "schema": "schemas.0",
         "equal": {
           "collection": {
@@ -102,6 +104,7 @@
       },
       {
         "description": "should handle refDepthMin being larger than refDepthMax",
+        "skip": true,
         "schema": "schemas.0",
         "equal": {
           "collection": {

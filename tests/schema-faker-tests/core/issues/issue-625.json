@@ -42,6 +42,7 @@
     "tests": [
       {
         "description": "should generate an object with either 2 or 3 properties with `alwaysFakeOptionals: false`",
+        "skip": true,
         "set": { "alwaysFakeOptionals": false },
         "schema": "schemas.0",
         "valid": true,
@@ -49,6 +50,7 @@
       },
       {
         "description": "should generate exactly 3 properties with `alwaysFakeOptionals: true`",
+        "skip": true,
         "set": { "alwaysFakeOptionals": true },
         "schema": "schemas.0",
         "valid": true,

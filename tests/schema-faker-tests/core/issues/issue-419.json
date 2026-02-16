@@ -3,6 +3,7 @@
   "tests": [
     {
       "description": "should resolve values from siblings",
+      "skip": true,
       "schema": {
         "type": "object",
         "properties": {
@@ -48,6 +49,7 @@
     },
     {
       "description": "should access generated values if they're sorted",
+      "skip": true,
       "schema": {
         "type": "object",
         "properties": {

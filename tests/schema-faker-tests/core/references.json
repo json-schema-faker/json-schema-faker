@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should handle internal $refs",
+        "skip": true,
         "schema": {
           "definitions": {
             "integer": {
@@ -66,6 +67,7 @@
     "tests": [
       {
         "description": "should register inner-references by id",
+        "skip": true,
         "schema": {
           "type": "object",
           "properties": {

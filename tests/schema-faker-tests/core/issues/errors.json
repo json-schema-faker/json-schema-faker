@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should report paths",
+        "skip": true,
         "schema": {
           "type": "object",
           "properties": {

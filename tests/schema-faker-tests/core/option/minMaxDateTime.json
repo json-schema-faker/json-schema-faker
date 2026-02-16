@@ -4,6 +4,7 @@
       "tests": [
         {
           "description": "should allow to set min and max values for date-time",
+          "skip": true,
           "schema": {
             "type": "string",
             "format": "date-time"
@@ -24,6 +25,7 @@
       "tests": [
         {
           "description": "should allow to set min and max values for date-time",
+          "skip": true,
           "schema": {
             "type": "string",
             "format": "date-time"

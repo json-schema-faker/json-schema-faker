@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should allow url-format (0.7.1+)",
+        "skip": true,
         "schema": {
           "type": "string",
           "chance": "url"
@@ -12,6 +13,7 @@
       },
       {
         "description": "should execute chance generator before default boolean type generator",
+        "skip": true,
         "schema": {
           "type": "boolean",
           "chance": {

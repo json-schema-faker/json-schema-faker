@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should resolve the schema (without $refs)",
+        "skip": true,
         "timeout": 30000,
         "schema": {
           "type": "object",

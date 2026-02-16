@@ -3,6 +3,7 @@
   "tests": [
     {
       "description": "should not skip required properties",
+      "skip": true,
       "schema": {
         "$schema": "http://json-schema.org/draft-06/schema#",
         "type": "object",

@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should fullfil minLength/maxLength constraints",
+        "skip": true,
         "schema": {
           "type": "string",
           "minLength": 8,

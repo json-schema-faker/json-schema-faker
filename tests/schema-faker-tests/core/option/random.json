@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should allow pseudorandom value generation",
+        "skip": true,
         "schema": {
           "type": "object",
           "properties": {

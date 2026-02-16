@@ -21,6 +21,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 0) for objects",
+        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "equal": {},
@@ -31,6 +32,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 1) for objects",
+        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "equal": {
@@ -48,6 +50,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 1) for arrays",
+        "skip": true,
         "schema": {
           "type": "array",
           "items": {
@@ -67,6 +70,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
+        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "equal": {
@@ -85,6 +89,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
+        "skip": true,
         "schema": {
           "type": "array",
           "items": {

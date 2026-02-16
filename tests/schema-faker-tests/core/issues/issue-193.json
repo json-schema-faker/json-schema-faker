@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should support minLength",
+        "skip": true,
         "schema": {
           "type": "string",
           "pattern": ".+",

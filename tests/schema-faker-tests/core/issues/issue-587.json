@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "handle minItems",
+        "skip": true,
         "schema": {
           "id": "Profile",
           "type": "object",

@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "will fix #710",
+        "skip": true,
         "schema": {
           "$defs": {
             "Def with Spaces": {

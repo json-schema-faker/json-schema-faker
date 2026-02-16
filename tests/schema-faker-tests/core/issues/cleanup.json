@@ -47,6 +47,7 @@
     "tests": [
       {
         "description": "should keep faker props",
+        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "hasProps": ["salary", "hiredAt"]

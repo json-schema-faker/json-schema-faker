@@ -3,6 +3,7 @@
   "tests": [
     {
       "description": "should generate enough valid strings",
+      "skip": true,
       "schema": {
         "comment": {
           "description": "Comment field",

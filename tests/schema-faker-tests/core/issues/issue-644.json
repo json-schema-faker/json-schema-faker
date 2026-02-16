@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should resolve from remote definitions",
+        "skip": true,
         "schema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "title": "Static Analysis Results Format (SARIF) Version 2.1.0-rtm.5 address fragment",

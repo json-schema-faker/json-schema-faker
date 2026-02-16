@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "ensure we have empty objects",
+        "skip": true,
         "schema": {
           "properties": {
             "foo": {

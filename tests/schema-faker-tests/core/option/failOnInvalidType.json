@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should handle failOnInvalidType option",
+        "skip": true,
         "schema": {
           "type": "nonExistentType"
         },

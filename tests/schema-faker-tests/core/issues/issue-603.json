@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should eventually generate missing props",
+        "skip": true,
         "schema": {
           "allOf": [
             {

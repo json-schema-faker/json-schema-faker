@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "always return generator value when same type is randomly selected",
+        "skip": true,
         "schema": {
           "type": [
             "string",
@@ -16,6 +17,7 @@
       },
       {
         "description": "never return generator value when different type is randomly selected",
+        "skip": true,
         "schema": {
           "type": [
             "string",

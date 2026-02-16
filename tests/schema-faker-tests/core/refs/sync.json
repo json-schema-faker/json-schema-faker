@@ -6,6 +6,7 @@
     "tests": [
       {
         "description": "should resolve all references",
+        "skip": true,
         "schema": {
           "type": "object",
           "required": ["value", "other"],

@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should generate the value with default type provided by chance.js (no explicit typedef)",
+        "skip": true,
         "schema": {
           "chance": "year"
         },
@@ -11,6 +12,7 @@
       },
       {
         "description": "should cast to string",
+        "skip": true,
         "schema": {
           "type": "string",
           "chance": "year"
@@ -19,6 +21,7 @@
       },
       {
         "description": "should cast parametrized generator to string",
+        "skip": true,
         "schema": {
           "type": "string",
           "chance": {
