@@ -3,10 +3,108 @@ import { generateFromRegex } from "../pattern/regex-gen.js";
 
 const DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+const FAKER_GENERATORS: Record<string, (random: { int: (min: number, max: number) => number; pick: <T>(arr: readonly T[]) => T }) => string> = {
+  "name.fullName": (random) => {
+    const first = random.pick(["John", "Jane", "Bob", "Alice", "Charlie", "Diana", "Eve", "Frank"]);
+    const last = random.pick(["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis"]);
+    return `${first} ${last}`;
+  },
+  "internet.email": (random) => {
+    const user = random.pick(["user", "test", "admin", "john", "jane", "bob"]);
+    const domain = random.pick(["example.com", "test.com", "mail.com", "domain.org"]);
+    return `${user}@${domain}`;
+  },
+  "internet.uuid": () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      const v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  },
+  "lorem.word": (random) => {
+    return random.pick(["lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit"]);
+  },
+  "lorem.sentence": (random) => {
+    const words = [];
+    const len = random.int(5, 10);
+    for (let i = 0; i < len; i++) {
+      words.push(random.pick(["lorem", "ipsum", "dolor", "sit", "amet", "consectetur", "adipiscing", "elit", "sed", "do"]));
+    }
+    return words.join(" ") + ".";
+  },
+};
+
+const CHANCE_GENERATORS: Record<string, (random: { int: (min: number, max: number) => number; pick: <T>(arr: readonly T[]) => T }, options?: Record<string, unknown>) => string> = {
+  "guid": () => {
+    return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+      const r = Math.random() * 16 | 0;
+      const v = c === "x" ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  },
+  "email": (random, options?: { domain?: string }) => {
+    const user = random.pick(["user", "test", "admin", "john", "jane", "bob"]);
+    const domain = options?.domain ?? random.pick(["example.com", "test.com", "mail.com"]);
+    return `${user}@${domain}`;
+  },
+  "name": (random) => {
+    const first = random.pick(["John", "Jane", "Bob", "Alice", "Charlie", "Diana"]);
+    const last = random.pick(["Smith", "Johnson", "Williams", "Brown", "Jones", "Davis"]);
+    return `${first} ${last}`;
+  },
+  "phone": (random) => {
+    return `+${random.int(1, 9)}${random.int(100, 999)}-${random.int(100, 999)}-${random.int(1000, 9999)}`;
+  },
+  "address": (random) => {
+    const num = random.int(1, 9999);
+    const street = random.pick(["Main", "Oak", "Pine", "Maple", "Cedar", "Elm"]);
+    const type = random.pick(["St", "Ave", "Blvd", "Rd", "Ln"]);
+    return `${num} ${street} ${type}`;
+  },
+  "city": (random) => {
+    return random.pick(["New York", "Los Angeles", "Chicago", "Houston", "Phoenix", "Philadelphia", "San Antonio", "San Diego"]);
+  },
+  "country": (random) => {
+    return random.pick(["USA", "Canada", "UK", "Germany", "France", "Japan", "Australia", "Brazil"]);
+  },
+};
+
 export function generateString(
   schema: JsonSchemaObject,
   ctx: GenerateContext
 ): string {
+  // Check faker extension
+  if (schema.faker !== undefined) {
+    const fakerPath = schema.faker as string;
+    const generator = FAKER_GENERATORS[fakerPath];
+    if (!generator) {
+      throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
+    }
+    return generator(ctx.random);
+  }
+
+  // Check chance extension
+  if (schema.chance !== undefined) {
+    if (typeof schema.chance === "string") {
+      const chanceType = schema.chance as string;
+      const generator = CHANCE_GENERATORS[chanceType];
+      if (!generator) {
+        throw new Error(`cannot resolve chance-generator for ${chanceType} in ${ctx.path}`);
+      }
+      return generator(ctx.random);
+    } else if (typeof schema.chance === "object") {
+      // Handle chance with options, e.g., { email: { domain: "fake.com" } }
+      const chanceOptions = schema.chance as Record<string, unknown>;
+      const key = Object.keys(chanceOptions)[0];
+      const options = chanceOptions[key] as Record<string, unknown> | undefined;
+      const generator = CHANCE_GENERATORS[key];
+      if (!generator) {
+        throw new Error(`cannot resolve chance-generator for ${key} in ${ctx.path}`);
+      }
+      return generator(ctx.random, options as { domain?: string } | undefined);
+    }
+  }
+
   // Check format first
   if (schema.format) {
     const formatGen = ctx.formatRegistry.get(schema.format);

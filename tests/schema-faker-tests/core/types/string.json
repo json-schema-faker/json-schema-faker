@@ -126,7 +126,6 @@
         "throws": "Error: unknown registry key .+?"
       },
       {
-        "skip": true,
         "description": "should validate custom formats",
         "schema": {
           "type": "object",
@@ -138,7 +137,7 @@
           },
           "required": ["test"]
         },
-        "throws": "cannot resolve faker-generator for .+? in \\/properties\\/test"
+        "throws": "cannot resolve faker-generator for .+? in /properties/test"
       },
       {
         "description": "should handle inferred type (when possible)",

@@ -19,7 +19,8 @@ export async function generateArray(
     }
   }
 
-  const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: `${ctx.path}/items` };
+  const childCtxPath = ctx.path === "/" ? "/items" : `${ctx.path}/items`;
+  const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: childCtxPath };
   const result: unknown[] = [];
 
   // Use context overrides if provided, otherwise use schema values
@@ -58,7 +59,7 @@ export async function generateArray(
   // Handle prefixItems (Draft 2020-12 tuple syntax)
   if (schema.prefixItems) {
     for (let i = 0; i < schema.prefixItems.length && result.length < maxItems; i++) {
-      const itemCtx = { ...childCtx, path: `${ctx.path}/prefixItems/${i}` };
+      const itemCtx = { ...childCtx, path: `${childCtx.path}/${i}` };
       const success = await addItem(schema.prefixItems[i], itemCtx);
       if (!success) break;
     }
