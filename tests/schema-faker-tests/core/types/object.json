@@ -225,8 +225,8 @@
         "valid": true
       },
       {
-        "skip": true,
         "description": "should handle required properties with empty properties field",
+        "skip": true,
         "schema": {
           "type": "object",
           "properties": {},
