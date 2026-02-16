@@ -316,7 +316,6 @@
       },
       {
         "description": "should obtain the correct schema",
-        "skip": true,
         "schema": {
           "properties": {
             "obj": {
@@ -362,16 +361,7 @@
           "required": ["obj", "data1", "data2"]
         },
         "type": "object",
-        "equal": {
-          "data1": { "obj": {} },
-          "data2": { "data1": { "obj": {} } },
-          "data3": { "data1": { "obj": {} } },
-          "obj": {}
-        },
-        "set": {
-          "alwaysFakeOptionals": true,
-          "fillProperties": false
-        }
+        "valid": true
       }
     ]
   }

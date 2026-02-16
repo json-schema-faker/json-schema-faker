@@ -39,16 +39,36 @@ export async function generateObject(
   const definedKeys = new Set<string>();
 
   const required = new Set(schema.required ?? []);
+  const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
+  const fillProperties = ctx.fillProperties ?? true;
+
+  // Determine if we should generate optional properties
+  const shouldGenerateOptional = () => alwaysFakeOptionals || ctx.random.bool(ctx.optionalPropertyProbability);
 
   // Generate required properties first
   if (schema.properties) {
     for (const [key, propSchema] of Object.entries(schema.properties)) {
       definedKeys.add(key);
       const propCtx = { ...childCtx, path: `${childCtx.path}/${key}` };
-      if (required.has(key)) {
+      
+      const isRequired = required.has(key);
+      const isObjectType = typeof propSchema === "object" && propSchema !== null && propSchema.type === "object";
+      
+      if (isRequired) {
         result[key] = await walk(propSchema, propCtx);
-      } else if (ctx.random.bool(ctx.optionalPropertyProbability)) {
+      } else if (shouldGenerateOptional()) {
         result[key] = await walk(propSchema, propCtx);
+      } else if (isObjectType && !fillProperties) {
+        // fillProperties: false - propagate required nested properties
+        const nestedRequired = propSchema.required ?? [];
+        if (nestedRequired.length > 0) {
+          const nestedResult: Record<string, unknown> = {};
+          for (const nestedKey of nestedRequired) {
+            const nestedSchema = (propSchema.properties ?? {})[nestedKey] ?? {};
+            nestedResult[nestedKey] = await walk(nestedSchema, { ...propCtx, path: `${propCtx.path}/${nestedKey}` });
+          }
+          result[key] = nestedResult;
+        }
       }
     }
   }

@@ -86,6 +86,10 @@ export interface GenerateOptions {
   maxItems?: number;
   /** Use schema default values when generating */
   useDefaultValue?: boolean;
+  /** Always generate optional properties */
+  alwaysFakeOptionals?: boolean;
+  /** Fill properties beyond required (for nested required propagation) */
+  fillProperties?: boolean;
   /** External extensions for generating values (e.g., faker, chance) */
   extensions?: {
     /** @faker-js/faker instance */
@@ -113,6 +117,10 @@ export interface GenerateContext {
   useDefaultValue?: boolean;
   /** Current path in the schema (JSON pointer) */
   path: string;
+  /** Always generate optional properties */
+  alwaysFakeOptionals?: boolean;
+  /** Fill properties beyond required (for nested required propagation) */
+  fillProperties?: boolean;
   /** External extensions for generating values (e.g., faker, chance) */
   extensions?: {
     faker?: any;
