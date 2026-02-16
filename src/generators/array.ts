@@ -9,6 +9,18 @@ export async function generateArray(
     return [];
   }
 
+  // Check for contradictory schema: items:false but minItems > 0
+  if (schema.items === false && (schema.minItems ?? 0) > 0) {
+    const prefixItemCount = schema.prefixItems?.length ?? 0;
+    if ((schema.minItems ?? 0) > prefixItemCount) {
+      console.error(`Cannot generate array: items is false (no additional items allowed) but minItems (${schema.minItems}) is greater than prefixItems count (${prefixItemCount})`);
+
+      throw new Error(
+        `missing items for ${schema.minItems} in /`
+      );
+    }
+  }
+
   const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1 };
   const result: unknown[] = [];
 
@@ -18,11 +30,11 @@ export async function generateArray(
 
   // Track seen values for uniqueItems
   const seen = schema.uniqueItems ? new Set<string>() : null;
-  
+
   // Helper to add item with uniqueness check
   const addItem = async (itemSchema: JsonSchema): Promise<boolean> => {
     let item = await walk(itemSchema, childCtx);
-    
+
     if (seen) {
       const key = JSON.stringify(item);
       if (seen.has(key)) {
@@ -40,7 +52,7 @@ export async function generateArray(
       }
       seen.add(key);
     }
-    
+
     result.push(item);
     return true;
   };
@@ -73,7 +85,7 @@ export async function generateArray(
 
     for (let i = 0; i < containsCount; i++) {
       let item = await walk(schema.contains, childCtx);
-      
+
       // Check uniqueness for contains items too
       if (seen) {
         const key = JSON.stringify(item);
@@ -94,7 +106,7 @@ export async function generateArray(
           seen.add(key);
         }
       }
-      
+
       if (result.length < maxItems) {
         const pos = ctx.random.int(0, result.length);
         result.splice(pos, 0, item);
@@ -127,22 +139,22 @@ async function fillUniqueItems(
   seen: Set<string>
 ): Promise<unknown[]> {
   const itemSchema: JsonSchema = schema.items ?? {};
-  
+
   // Try to fill up to minItems with unique values
   let attempts = 0;
   const maxAttempts = 100;
-  
+
   while (arr.length < minItems && attempts < maxAttempts) {
     attempts++;
     const item = await walk(itemSchema, ctx);
     const key = JSON.stringify(item);
-    
+
     if (!seen.has(key)) {
       seen.add(key);
       arr.push(item);
     }
   }
-  
+
   // Trim to maxItems if needed
   while (arr.length > maxItems) {
     arr.pop();
