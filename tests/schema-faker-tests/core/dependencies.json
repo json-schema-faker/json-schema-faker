@@ -33,7 +33,6 @@
       },
       {
         "description": "should handle schema-dependencies",
-        "skip": true,
         "schema": {
           "type": "object",
           "properties": {

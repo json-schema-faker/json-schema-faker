@@ -202,6 +202,44 @@ export async function generateObject(
     }
   }
 
+  // Handle schema dependencies
+  // If a property is present, add properties from the dependency schema
+  if (schema.dependencies) {
+    for (const [propName, dependency] of Object.entries(schema.dependencies)) {
+      // Only handle schema dependencies (object), not property dependencies (array)
+      if (typeof dependency !== "object" || dependency === null || Array.isArray(dependency)) {
+        continue;
+      }
+      
+      // Check if the property was generated
+      if (result[propName] !== undefined && !definedKeys.has(propName + "_dep")) {
+        definedKeys.add(propName + "_dep");
+        
+        // Add properties from the dependency schema
+        if (dependency.properties) {
+          for (const [depPropName, depPropSchema] of Object.entries(dependency.properties)) {
+            if (result[depPropName] === undefined) {
+              const depPropCtx = { ...childCtx, path: `${childCtx.path}/${depPropName}` };
+              result[depPropName] = await walk(depPropSchema as JsonSchema, depPropCtx);
+            }
+          }
+        }
+        
+        // Add required properties from the dependency schema
+        const depRequired = dependency.required;
+        if (Array.isArray(depRequired)) {
+          for (const reqProp of depRequired) {
+            if (result[reqProp] === undefined) {
+              const reqPropSchema = (dependency.properties as Record<string, JsonSchema>)?.[reqProp] ?? {};
+              const reqPropCtx = { ...childCtx, path: `${childCtx.path}/${reqProp}` };
+              result[reqProp] = await walk(reqPropSchema, reqPropCtx);
+            }
+          }
+        }
+      }
+    }
+  }
+
   // Respect minProperties
   const minProps = schema.minProperties ?? 0;
   const maxProps = schema.maxProperties;
