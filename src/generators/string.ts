@@ -1,5 +1,6 @@
 import type { JsonSchemaObject, GenerateContext } from "../types.js";
 import { generateFromRegex } from "../pattern/regex-gen.js";
+import { pad2 } from "../utils/helpers.js";
 
 const DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
@@ -214,10 +215,6 @@ function padString(str: string, targetLength: number, ctx: GenerateContext): str
     str += ctx.random.pick([...DEFAULT_CHARS]);
   }
   return str;
-}
-
-function pad2(n: number): string {
-  return n < 10 ? `0${n}` : `${n}`;
 }
 
 function generateDateTimeWithRange(ctx: GenerateContext): string {

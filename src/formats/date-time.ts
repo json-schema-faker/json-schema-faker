@@ -1,4 +1,5 @@
 import type { Random } from "../types.js";
+import { pad2, daysInMonth } from "../utils/helpers.js";
 
 export function generateDateTime(random: Random): string {
   const date = generateDate(random);
@@ -19,12 +20,4 @@ export function generateTime(random: Random): string {
   const minute = random.int(0, 59);
   const second = random.int(0, 59);
   return `${pad2(hour)}:${pad2(minute)}:${pad2(second)}Z`;
-}
-
-function pad2(n: number): string {
-  return n < 10 ? `0${n}` : `${n}`;
-}
-
-function daysInMonth(year: number, month: number): number {
-  return new Date(year, month, 0).getDate();
 }

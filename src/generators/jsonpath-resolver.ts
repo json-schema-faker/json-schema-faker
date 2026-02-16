@@ -16,6 +16,7 @@ function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSch
   // If schema has type:object but no properties, check for inferred properties
   if (schema.type === 'object' || schema.type === undefined) {
     const inferred: Record<string, JsonSchema> = {};
+    let hasInferredProperties = false;
 
     for (const [key, value] of Object.entries(schema)) {
       // Skip schema keywords
@@ -26,13 +27,17 @@ function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSch
       // If it looks like a schema, use it as-is
       if (isJsonSchema(value)) {
         inferred[key] = value as JsonSchema;
+        hasInferredProperties = true;
       } else {
         // Treat as a const/literal value - wrap in a const schema
         inferred[key] = { const: value };
+        hasInferredProperties = true;
       }
     }
 
-    return inferred;
+    if (hasInferredProperties) {
+      return inferred;
+    }
   }
 
   return {};
