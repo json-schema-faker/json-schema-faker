@@ -71,7 +71,7 @@ async function generateNot(
   if (typeof not === "boolean") {
     if (not === true) {
       // not true = nothing is valid — shouldn't happen
-      throw new Error("Cannot generate value for 'not: true'");
+      throw new Error(`Cannot generate value for 'not: true' at ${ctx.path}`);
     }
     // not false = everything is valid
     return walk(base, ctx);

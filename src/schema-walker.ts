@@ -12,19 +12,24 @@ import { resolveRef } from "./ref-resolver.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
+function childContext(ctx: GenerateContext, segment: string): GenerateContext {
+  const path = ctx.path === "/" ? `/${segment}` : `${ctx.path}/${segment}`;
+  return { ...ctx, depth: ctx.depth + 1, path };
+}
+
 export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
   // Boolean schemas
   if (schema === true) {
     return walk({}, ctx);
   }
   if (schema === false) {
-    throw new Error("Cannot generate value for 'false' schema");
+    throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
   }
 
   // $ref resolution
   if (schema.$ref) {
     const resolved = await resolveRef(schema, ctx);
-    return walk(resolved.schema, resolved.ctx);
+    return walk(resolved.schema, childContext(resolved.ctx, "$ref"));
   }
 
   // Composition keywords
@@ -61,7 +66,7 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     case "array":
       return generateArray(schema, ctx);
     default:
-      throw new Error(`Unknown type: ${type}`);
+      throw new Error(`Unknown type: ${type} at ${ctx.path}`);
   }
 }
 

@@ -13,15 +13,13 @@ export async function generateArray(
   if (schema.items === false && (schema.minItems ?? 0) > 0) {
     const prefixItemCount = schema.prefixItems?.length ?? 0;
     if ((schema.minItems ?? 0) > prefixItemCount) {
-      console.error(`Cannot generate array: items is false (no additional items allowed) but minItems (${schema.minItems}) is greater than prefixItems count (${prefixItemCount})`);
-
       throw new Error(
-        `missing items for ${schema.minItems} in /`
+        `missing items for ${schema.minItems} in ${ctx.path}: items is false but minItems (${schema.minItems}) exceeds prefixItems count (${prefixItemCount})`
       );
     }
   }
 
-  const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1 };
+  const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: `${ctx.path}/items` };
   const result: unknown[] = [];
 
   // Use context overrides if provided, otherwise use schema values
@@ -32,8 +30,8 @@ export async function generateArray(
   const seen = schema.uniqueItems ? new Set<string>() : null;
 
   // Helper to add item with uniqueness check
-  const addItem = async (itemSchema: JsonSchema): Promise<boolean> => {
-    let item = await walk(itemSchema, childCtx);
+  const addItem = async (itemSchema: JsonSchema, itemCtx: GenerateContext = childCtx): Promise<boolean> => {
+    let item = await walk(itemSchema, itemCtx);
 
     if (seen) {
       const key = JSON.stringify(item);
@@ -60,7 +58,8 @@ export async function generateArray(
   // Handle prefixItems (Draft 2020-12 tuple syntax)
   if (schema.prefixItems) {
     for (let i = 0; i < schema.prefixItems.length && result.length < maxItems; i++) {
-      const success = await addItem(schema.prefixItems[i]);
+      const itemCtx = { ...childCtx, path: `${ctx.path}/prefixItems/${i}` };
+      const success = await addItem(schema.prefixItems[i], itemCtx);
       if (!success) break;
     }
   }

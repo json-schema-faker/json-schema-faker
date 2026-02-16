@@ -15,5 +15,5 @@ export function generateEnumConst(
       : value;
   }
 
-  throw new Error("generateEnumConst called without enum or const");
+  throw new Error(`generateEnumConst called without enum or const at ${ctx.path}`);
 }

@@ -104,6 +104,8 @@ export interface GenerateContext {
   maxItems?: number;
   /** Use schema default values when generating */
   useDefaultValue?: boolean;
+  /** Current path in the schema (JSON pointer) */
+  path: string;
 }
 
 export interface Random {

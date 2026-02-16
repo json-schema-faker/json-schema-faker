@@ -33,6 +33,7 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     minItems: options?.minItems,
     maxItems: options?.maxItems,
     useDefaultValue: options?.useDefaultValue,
+    path: "/",
   };
 
   return walk(schema, ctx);

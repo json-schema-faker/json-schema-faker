@@ -10,7 +10,7 @@ export async function generateObject(
     return {};
   }
 
-  const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1 };
+  const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: `${ctx.path}/properties` };
   const result: Record<string, unknown> = {};
   const definedKeys = new Set<string>();
 
@@ -20,10 +20,11 @@ export async function generateObject(
   if (schema.properties) {
     for (const [key, propSchema] of Object.entries(schema.properties)) {
       definedKeys.add(key);
+      const propCtx = { ...childCtx, path: `${ctx.path}/properties/${key}` };
       if (required.has(key)) {
-        result[key] = await walk(propSchema, childCtx);
+        result[key] = await walk(propSchema, propCtx);
       } else if (ctx.random.bool(ctx.optionalPropertyProbability)) {
-        result[key] = await walk(propSchema, childCtx);
+        result[key] = await walk(propSchema, propCtx);
       }
     }
   }
