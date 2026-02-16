@@ -15,13 +15,39 @@ export async function generateComposition(
   }
 
   if (oneOf) {
-    const picked = ctx.random.pick(oneOf);
+    // Try each branch until one works
+    const branches = [...oneOf];
+    ctx.random.shuffle(branches);
+    
+    for (const branch of branches) {
+      const merged = mergeSchemas([base, branch]);
+      try {
+        return await walk(merged, ctx);
+      } catch {
+        // Try next branch
+      }
+    }
+    // If all fail, try the first one anyway
+    const picked = oneOf[0];
     const merged = mergeSchemas([base, picked]);
     return walk(merged, ctx);
   }
 
   if (anyOf) {
-    const picked = ctx.random.pick(anyOf);
+    // Try each branch until one works
+    const branches = [...anyOf];
+    ctx.random.shuffle(branches);
+    
+    for (const branch of branches) {
+      const merged = mergeSchemas([base, branch]);
+      try {
+        return await walk(merged, ctx);
+      } catch {
+        // Try next branch
+      }
+    }
+    // If all fail, try the first one anyway
+    const picked = anyOf[0];
     const merged = mergeSchemas([base, picked]);
     return walk(merged, ctx);
   }
