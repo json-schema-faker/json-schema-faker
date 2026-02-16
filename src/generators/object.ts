@@ -249,6 +249,11 @@ export async function generateObject(
     }
   }
 
+  // Apply pruneProperties - remove specified properties recursively
+  if (ctx.pruneProperties && ctx.pruneProperties.length > 0) {
+    pruneObjectProperties(result, ctx.pruneProperties);
+  }
+
   return result;
 }
 
@@ -318,4 +323,26 @@ function generateKeyMatchingPattern(pattern: string, ctx: GenerateContext): stri
   }
   
   return null;
+}
+
+function pruneObjectProperties(obj: unknown, propertiesToPrune: string[]): void {
+  if (typeof obj !== "object" || obj === null) {
+    return;
+  }
+
+  if (Array.isArray(obj)) {
+    for (const item of obj) {
+      pruneObjectProperties(item, propertiesToPrune);
+    }
+    return;
+  }
+
+  const record = obj as Record<string, unknown>;
+  for (const key of Object.keys(record)) {
+    if (propertiesToPrune.includes(key)) {
+      delete record[key];
+    } else {
+      pruneObjectProperties(record[key], propertiesToPrune);
+    }
+  }
 }

@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should remove nested keys from pruneProperties",
-        "skip": true,
         "schema": {
           "properties": {
             "test": {

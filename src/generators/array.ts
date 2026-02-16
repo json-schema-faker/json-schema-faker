@@ -9,6 +9,11 @@ export async function generateArray(
     return [];
   }
 
+  // Check if refDepth max was reached - generate empty array
+  if (ctx.refDepthReached) {
+    return [];
+  }
+
   // Check for contradictory schema: items:false but minItems > 0
   if (schema.items === false && (schema.minItems ?? 0) > 0) {
     const prefixItemCount = schema.prefixItems?.length ?? 0;
@@ -25,7 +30,12 @@ export async function generateArray(
 
   // Use context overrides if provided, otherwise use schema values
   const minItems = ctx.minItems ?? schema.minItems ?? 0;
-  const maxItems = ctx.maxItems ?? schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
+  let maxItems = ctx.maxItems ?? schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
+  
+  // When alwaysFakeOptionals is true, use maxItems as the target
+  if (ctx.alwaysFakeOptionals) {
+    maxItems = Math.max(minItems, maxItems);
+  }
 
   // Track seen values for uniqueItems
   const seen = schema.uniqueItems ? new Set<string>() : null;

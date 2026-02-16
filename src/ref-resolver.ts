@@ -34,6 +34,14 @@ export async function resolveRef(
   const ref = schema.$ref;
   if (!ref) return { schema, ctx };
 
+  // Check if next ref depth would exceed max
+  const nextRefDepth = ctx.refDepth + 1;
+  if (ctx.refDepthMax !== undefined && nextRefDepth > ctx.refDepthMax) {
+    // Set flag to indicate max depth has been reached
+    // This will cause array generators to produce empty arrays
+    return { schema: { type: "array" }, ctx: { ...ctx, refDepthReached: true } };
+  }
+
   // Check cycle detection
   if (ctx.refStack.has(ref)) {
     if (ctx.depth >= ctx.maxDepth) {
@@ -66,6 +74,7 @@ export async function resolveRef(
   const newCtx: GenerateContext = {
     ...ctx,
     refStack: new Set([...ctx.refStack, ref]),
+    refDepth: ctx.refDepth + 1,
   };
 
   return { schema: resolved, ctx: newCtx };

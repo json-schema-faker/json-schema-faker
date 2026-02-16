@@ -15,7 +15,13 @@ const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "
 
 function childContext(ctx: GenerateContext, segment: string): GenerateContext {
   const path = ctx.path === "/" ? `/${segment}` : `${ctx.path}/${segment}`;
-  return { ...ctx, depth: ctx.depth + 1, path };
+  return { 
+    ...ctx, 
+    depth: ctx.depth + 1, 
+    path,
+    // Preserve refDepthReached flag
+    refDepthReached: ctx.refDepthReached,
+  };
 }
 
 export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
@@ -48,8 +54,34 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     return schema.default;
   }
 
+  // examples value (when useExamplesValue option is enabled)
+  if (ctx.useExamplesValue) {
+    if (Array.isArray(schema.examples) && schema.examples.length > 0) {
+      return ctx.random.pick(schema.examples);
+    }
+    if (schema.example !== undefined) {
+      return schema.example;
+    }
+  }
+
   // Determine type
   const type = resolveType(schema, ctx);
+
+  // Handle unknown types
+  if (type === null) {
+    if (ctx.failOnInvalidTypes === false) {
+      if (ctx.defaultInvalidTypeProduct !== undefined) {
+        const defaultProduct = ctx.defaultInvalidTypeProduct;
+        if (typeof defaultProduct === "string") {
+          return handleDefaultInvalidTypeProduct(defaultProduct, ctx);
+        }
+        return defaultProduct;
+      }
+      // If failOnInvalidTypes is false but no defaultProduct is set, return null
+      return null;
+    }
+    throw new Error(`Unknown type: ${schema.type} at ${ctx.path}`);
+  }
 
   switch (type) {
     case "null":
@@ -71,8 +103,14 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
 }
 
-function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string {
-  if (typeof schema.type === "string") return schema.type;
+function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string | null {
+  if (typeof schema.type === "string") {
+    const knownTypes = ["string", "number", "integer", "boolean", "null", "object", "array"];
+    if (!knownTypes.includes(schema.type)) {
+      return null; // Unknown type
+    }
+    return schema.type;
+  }
 
   if (Array.isArray(schema.type)) {
     return ctx.random.pick(schema.type);
@@ -123,4 +161,24 @@ function hasInferredProperties(schema: JsonSchemaObject): boolean {
   }
   
   return false;
+}
+
+function handleDefaultInvalidTypeProduct(typeName: string, ctx: GenerateContext): unknown {
+  switch (typeName) {
+    case "string":
+      return "";
+    case "number":
+    case "integer":
+      return 0;
+    case "boolean":
+      return false;
+    case "null":
+      return null;
+    case "object":
+      return {};
+    case "array":
+      return [];
+    default:
+      return null;
+  }
 }

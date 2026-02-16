@@ -44,6 +44,15 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     extensions: options?.extensions,
     resolveJsonPath: options?.resolveJsonPath,
     autoIncrementCounters: new Map(),
+    refDepth: 0,
+    refDepthMin: options?.refDepthMin,
+    refDepthMax: options?.refDepthMax,
+    useExamplesValue: options?.useExamplesValue,
+    pruneProperties: options?.pruneProperties,
+    failOnInvalidTypes: options?.failOnInvalidTypes,
+    defaultInvalidTypeProduct: options?.defaultInvalidTypeProduct,
+    minDateTime: options?.minDateTime,
+    maxDateTime: options?.maxDateTime,
   };
 
   const result = await walk(schema, ctx);

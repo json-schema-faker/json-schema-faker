@@ -30,7 +30,6 @@
       },
       {
         "description": "should handle alwaysFakeOptionals option (= true) for arrays",
-        "skip": true,
         "schema": {
           "type": "array",
           "items": {

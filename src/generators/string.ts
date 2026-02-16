@@ -158,6 +158,11 @@ export function generateString(
 
   // Check format first
   if (schema.format) {
+    // Handle date-time format with min/max constraints
+    if (schema.format === "date-time" && (ctx.minDateTime !== undefined || ctx.maxDateTime !== undefined)) {
+      return generateDateTimeWithRange(ctx);
+    }
+    
     const formatGen = ctx.formatRegistry.get(schema.format);
     if (formatGen) {
       const result = formatGen(ctx.random);
@@ -209,4 +214,23 @@ function padString(str: string, targetLength: number, ctx: GenerateContext): str
     str += ctx.random.pick([...DEFAULT_CHARS]);
   }
   return str;
+}
+
+function pad2(n: number): string {
+  return n < 10 ? `0${n}` : `${n}`;
+}
+
+function generateDateTimeWithRange(ctx: GenerateContext): string {
+  const minDt = ctx.minDateTime ? new Date(ctx.minDateTime) : new Date("1970-01-01");
+  const maxDt = ctx.maxDateTime ? new Date(ctx.maxDateTime) : new Date();
+  
+  const minTime = minDt.getTime();
+  const maxTime = maxDt.getTime();
+  const randomTime = minTime + ctx.random.next() * (maxTime - minTime);
+  const date = new Date(randomTime);
+  
+  const year = date.getFullYear();
+  const month = pad2(date.getMonth() + 1);
+  const day = pad2(date.getDate());
+  return `${year}-${month}-${day}T01:01:01.0Z`;
 }

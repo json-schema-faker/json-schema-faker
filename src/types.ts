@@ -105,6 +105,22 @@ export interface GenerateOptions {
   };
   /** Enable jsonPath resolution for cross-references within generated data */
   resolveJsonPath?: boolean;
+  /** Minimum reference depth for recursive schemas */
+  refDepthMin?: number;
+  /** Maximum reference depth for recursive schemas */
+  refDepthMax?: number;
+  /** Use examples array values when generating */
+  useExamplesValue?: boolean;
+  /** Remove specified properties from generated objects */
+  pruneProperties?: string[];
+  /** Handle invalid types by returning a default product instead of throwing */
+  failOnInvalidTypes?: boolean;
+  /** Default value to return for invalid types when failOnInvalidTypes is false */
+  defaultInvalidTypeProduct?: unknown;
+  /** Minimum date/time for date-time format */
+  minDateTime?: string;
+  /** Maximum date/time for date-time format */
+  maxDateTime?: string;
 }
 
 export interface GenerateContext {
@@ -142,6 +158,26 @@ export interface GenerateContext {
   resolveJsonPath?: boolean;
   /** Counters for autoIncrement, keyed by path */
   autoIncrementCounters?: Map<string, number>;
+  /** Current reference depth counter */
+  refDepth: number;
+  /** Flag indicating max ref depth has been reached */
+  refDepthReached?: boolean;
+  /** Minimum reference depth for recursive schemas */
+  refDepthMin?: number;
+  /** Maximum reference depth for recursive schemas */
+  refDepthMax?: number;
+  /** Use examples array values when generating */
+  useExamplesValue?: boolean;
+  /** Remove specified properties from generated objects */
+  pruneProperties?: string[];
+  /** Handle invalid types by returning a default product instead of throwing */
+  failOnInvalidTypes?: boolean;
+  /** Default value to return for invalid types when failOnInvalidTypes is false */
+  defaultInvalidTypeProduct?: unknown;
+  /** Minimum date/time for date-time format */
+  minDateTime?: string;
+  /** Maximum date/time for date-time format */
+  maxDateTime?: string;
 }
 
 export interface Random {

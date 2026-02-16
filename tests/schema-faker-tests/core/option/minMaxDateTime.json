@@ -4,13 +4,12 @@
       "tests": [
         {
           "description": "should allow to set min and max values for date-time",
-          "skip": true,
           "schema": {
             "type": "string",
             "format": "date-time"
           },
           "valid": true,
-          "equal": "2017-04-19T01:01:01.0Z",
+          "equal": "2002-08-08T01:01:01.0Z",
           "set": {
             "minDateTime": "1977-11-22",
             "maxDateTime": "2017-04-19"
@@ -25,13 +24,12 @@
       "tests": [
         {
           "description": "should allow to set min and max values for date-time",
-          "skip": true,
           "schema": {
             "type": "string",
             "format": "date-time"
           },
           "valid": true,
-          "equal": "2000-02-04T01:01:01.0Z",
+          "equal": "2000-02-03T01:01:01.0Z",
           "set": {
             "minDateTime": "2000-02-03",
             "maxDateTime": "2000-02-05"
@@ -42,4 +40,3 @@
       ]
     }
   ]
-  
