@@ -15,6 +15,16 @@ interface ExtensionContext {
 // Extension loader cache
 const extensionCache = new Map<string, ExtensionContext>();
 
+// Shared cache for remote schemas - reused across all generate() calls
+const sharedRemoteSchemaCache = new Map<string, JsonSchema>();
+
+function getSharedRemoteResolver() {
+  return createRemoteResolver({ 
+    fetch: globalThis.fetch,
+    cache: sharedRemoteSchemaCache,
+  });
+}
+
 /**
  * Hash a string seed to a number for consistent PRNG behavior
  */
@@ -173,7 +183,7 @@ export async function runSchemaFakerTest(
 
   // Add remote resolver for external refs if not already set
   if (!options.refResolver && typeof globalThis.fetch === "function") {
-    options.refResolver = createRemoteResolver({ fetch: globalThis.fetch });
+    options.refResolver = getSharedRemoteResolver();
   }
 
   // Build refResolver from refs
