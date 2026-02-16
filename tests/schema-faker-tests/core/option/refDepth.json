@@ -28,20 +28,15 @@
               }
             },
             "type": "object",
-            "required": [
-              "a"
-            ]
+            "required": ["a"]
           }
         },
-        "required": [
-          "collection"
-        ]
+        "required": ["collection"]
       }
     ],
     "tests": [
       {
         "description": "should handle refDepthMin and refDepthMax options being equal",
-        "skip": true,
         "schema": "schemas.0",
         "equal": {
           "collection": {
@@ -54,11 +49,7 @@
                         {
                           "subA": [
                             {
-                              "subA": [
-                                {
-                                  "subA": []
-                                }
-                              ]
+                              "subA": []
                             }
                           ]
                         }
@@ -78,16 +69,15 @@
           "alwaysFakeOptionals": true
         },
         "random": "some seed",
-        "repeat": 1
+        "repeat": 10
       },
       {
         "description": "should handle refDepthMin and refDepthMax options being unequal",
-        "skip": true,
         "schema": "schemas.0",
         "equal": {
           "collection": {
             "a": {
-              "subA": []
+              "subA": [{ "subA": [] }]
             }
           }
         },
@@ -100,37 +90,32 @@
         },
         "random": "some seed",
         "valid": true,
-        "repeat": 1
+        "repeat": 10
       },
       {
         "description": "should handle refDepthMin being larger than refDepthMax",
-        "skip": true,
         "schema": "schemas.0",
         "equal": {
           "collection": {
             "a": {
               "subA": [
                 {
-                  "subA": [
-                    {
-                      "subA": []
-                    }
-                  ]
+                  "subA": []
                 }
               ]
             }
           }
         },
         "set": {
-          "refDepthMin": 3,
-          "refDepthMax": 1,
+          "refDepthMin": 1,
+          "refDepthMax": 3,
           "minItems": 1,
           "maxItems": 1,
           "alwaysFakeOptionals": true
         },
         "random": "some seed",
         "valid": true,
-        "repeat": 1
+        "repeat": 10
       }
     ]
   }

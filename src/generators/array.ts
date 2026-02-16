@@ -27,6 +27,9 @@ export async function generateArray(
   const childCtxPath = ctx.path === "/" ? "/items" : `${ctx.path}/items`;
   const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: childCtxPath };
   const result: unknown[] = [];
+  
+  // Track if we've hit the ref depth limit
+  const maxRefDepth = ctx.refDepthMax;
 
   // Use context overrides if provided, otherwise use schema values
   let minItems = ctx.minItems ?? schema.minItems ?? 0;
@@ -92,6 +95,13 @@ export async function generateArray(
 
   // Determine target length
   let targetLen: number;
+  
+  // If refDepth has reached maxRefDepth - 1, don't generate any items (return empty array)
+  // This ensures the next level (where refDepth == maxRefDepth) returns {}
+  if (maxRefDepth !== undefined && ctx.refDepth >= maxRefDepth - 1) {
+    return [];
+  }
+  
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const useFixedProbabilities = ctx.fixedProbabilities ?? false;
   const optionalsProbability = ctx.optionalsProbability ?? ctx.optionalPropertyProbability ?? 0.5;

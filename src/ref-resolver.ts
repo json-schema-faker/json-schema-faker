@@ -46,7 +46,8 @@ export async function resolveRef(
   // Check if next ref depth would exceed max
   const nextRefDepth = ctx.refDepth + 1;
   if (ctx.refDepthMax !== undefined && nextRefDepth >= ctx.refDepthMax) {
-    // Return empty schema to stop recursion
+    // Return empty schema - walk will pick a random type and generate something.
+    // The array generator will check refDepthReached and return empty array.
     return { schema: {}, ctx: { ...ctx, refDepthReached: true } };
   }
 
@@ -55,7 +56,7 @@ export async function resolveRef(
     if (ctx.refDepthMax !== undefined) {
       // With refDepthMax set, use >= to stop at exactly the max depth
       if (ctx.refDepth >= ctx.refDepthMax) {
-        // Return empty schema to stop recursion
+        // Return empty schema - array generator will check refDepthReached
         return { schema: {}, ctx: { ...ctx, refDepthReached: true } };
       }
     } else if (ctx.depth >= ctx.maxDepth) {

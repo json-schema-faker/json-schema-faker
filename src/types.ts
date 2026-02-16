@@ -109,6 +109,8 @@ export interface GenerateOptions {
   refDepthMin?: number;
   /** Maximum reference depth for recursive schemas */
   refDepthMax?: number;
+  /** Alias for setting both refDepthMin and refDepthMax to the same value */
+  refDepth?: number;
   /** Use examples array values when generating */
   useExamplesValue?: boolean;
   /** Remove specified properties from generated objects */

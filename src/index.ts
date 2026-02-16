@@ -21,9 +21,16 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     ? createFormatRegistry(options.formats)
     : new Map(globalFormatRegistry);
 
+  const refDepthMin = options?.refDepthMin ?? options?.refDepth;
+  const refDepthMax = options?.refDepthMax ?? options?.refDepth;
+
+  if (refDepthMin !== undefined && refDepthMax !== undefined && refDepthMin > refDepthMax) {
+    throw new Error(`refDepthMin (${refDepthMin}) cannot be greater than refDepthMax (${refDepthMax})`);
+  }
+
   const ctx: GenerateContext = {
     random,
-    maxDepth: options?.maxDepth ?? (options?.refDepthMax ? options.refDepthMax + 20 : 5),
+    maxDepth: options?.maxDepth ?? (refDepthMax ? refDepthMax + 20 : 5),
     maxDefaultItems: options?.maxDefaultItems ?? 3,
     // optionalsProbability is an alias for optionalPropertyProbability
     optionalPropertyProbability: options?.optionalsProbability ?? options?.optionalPropertyProbability ?? 0.5,
@@ -45,8 +52,8 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     resolveJsonPath: options?.resolveJsonPath,
     autoIncrementCounters: new Map(),
     refDepth: 0,
-    refDepthMin: options?.refDepthMin,
-    refDepthMax: options?.refDepthMax,
+    refDepthMin,
+    refDepthMax,
     useExamplesValue: options?.useExamplesValue,
     pruneProperties: options?.pruneProperties,
     failOnInvalidTypes: options?.failOnInvalidTypes,
