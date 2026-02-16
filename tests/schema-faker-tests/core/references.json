@@ -66,14 +66,13 @@
     "tests": [
       {
         "description": "should register inner-references by id",
-        "skip": true,
         "schema": {
           "type": "object",
           "properties": {
             "test": {
+              "$id": "foo:bar",
               "type": "object",
               "properties": {
-                "id": "foo:bar",
                 "foo": {
                   "type": "string",
                   "enum": ["x"]
