@@ -86,6 +86,13 @@ export interface GenerateOptions {
   maxItems?: number;
   /** Use schema default values when generating */
   useDefaultValue?: boolean;
+  /** External extensions for generating values (e.g., faker, chance) */
+  extensions?: {
+    /** @faker-js/faker instance */
+    faker?: any;
+    /** chance instance */
+    chance?: any;
+  };
 }
 
 export interface GenerateContext {
@@ -106,6 +113,11 @@ export interface GenerateContext {
   useDefaultValue?: boolean;
   /** Current path in the schema (JSON pointer) */
   path: string;
+  /** External extensions for generating values (e.g., faker, chance) */
+  extensions?: {
+    faker?: any;
+    chance?: any;
+  };
 }
 
 export interface Random {

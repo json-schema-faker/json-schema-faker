@@ -87,7 +87,7 @@ function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string {
   if (schema.minimum !== undefined || schema.maximum !== undefined || schema.exclusiveMinimum !== undefined || schema.exclusiveMaximum !== undefined || schema.multipleOf !== undefined) {
     return "number";
   }
-  if (schema.minLength !== undefined || schema.maxLength !== undefined || schema.pattern || schema.format) {
+  if (schema.minLength !== undefined || schema.maxLength !== undefined || schema.pattern || schema.format || schema.faker !== undefined || schema.chance !== undefined) {
     return "string";
   }
 

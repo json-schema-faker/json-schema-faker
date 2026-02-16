@@ -73,9 +73,27 @@ export function generateString(
   schema: JsonSchemaObject,
   ctx: GenerateContext
 ): string {
-  // Check faker extension
+  // Check faker extension (user-provided takes priority)
   if (schema.faker !== undefined) {
     const fakerPath = schema.faker as string;
+    
+    // Try user-provided faker first
+    if (ctx.extensions?.faker) {
+      try {
+        const parts = fakerPath.split(".");
+        let current: any = ctx.extensions.faker;
+        for (const part of parts) {
+          current = current[part];
+        }
+        if (typeof current === "function") {
+          return current();
+        }
+      } catch {
+        // Fall through to built-in
+      }
+    }
+    
+    // Fall back to built-in generators
     const generator = FAKER_GENERATORS[fakerPath];
     if (!generator) {
       throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
@@ -83,8 +101,36 @@ export function generateString(
     return generator(ctx.random);
   }
 
-  // Check chance extension
+  // Check chance extension (user-provided takes priority)
   if (schema.chance !== undefined) {
+    // Try user-provided chance first
+    if (ctx.extensions?.chance) {
+      if (typeof schema.chance === "string") {
+        const chanceType = schema.chance as string;
+        try {
+          const generator = ctx.extensions.chance[chanceType];
+          if (typeof generator === "function") {
+            return generator();
+          }
+        } catch {
+          // Fall through to built-in
+        }
+      } else if (typeof schema.chance === "object") {
+        const chanceOptions = schema.chance as Record<string, unknown>;
+        const key = Object.keys(chanceOptions)[0];
+        const options = chanceOptions[key] as Record<string, unknown> | undefined;
+        try {
+          const generator = ctx.extensions.chance[key];
+          if (typeof generator === "function") {
+            return options ? generator(options) : generator();
+          }
+        } catch {
+          // Fall through to built-in
+        }
+      }
+    }
+    
+    // Fall back to built-in generators
     if (typeof schema.chance === "string") {
       const chanceType = schema.chance as string;
       const generator = CHANCE_GENERATORS[chanceType];
