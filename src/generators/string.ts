@@ -81,7 +81,22 @@ export function generateString(
 
   // Check faker extension (user-provided takes priority)
   if (schema.faker !== undefined) {
-    const fakerPath = schema.faker as string;
+    // Handle both string format (e.g., "name.firstName") and object format (e.g., { "custom.statement": [19] })
+    let fakerPath: string;
+    let fakerArgs: unknown[] | undefined;
+    
+    if (typeof schema.faker === "object") {
+      const fakerObj = schema.faker as Record<string, unknown>;
+      const keys = Object.keys(fakerObj);
+      if (keys.length > 0) {
+        fakerPath = keys[0];
+        fakerArgs = fakerObj[fakerPath] as unknown[];
+      } else {
+        throw new Error(`cannot resolve faker-generator for ${JSON.stringify(schema.faker)} in ${ctx.path}`);
+      }
+    } else {
+      fakerPath = schema.faker as string;
+    }
     
     // Try user-provided faker first
     if (ctx.extensions?.faker) {
@@ -92,7 +107,7 @@ export function generateString(
           current = current[part];
         }
         if (typeof current === "function") {
-          return current();
+          return fakerArgs ? current(...fakerArgs) : current();
         }
       } catch {
         // Fall through to built-in
