@@ -33,7 +33,10 @@
             },
             "hiredAt": {
               "faker": {
-                "date.between": ["1990-01-01", "2012-12-29"]
+                "date.between": [{
+                  "from": "2020-01-01",
+                  "to": "2025-01-01"
+                }]
               }
             }
           },
@@ -47,10 +50,10 @@
     "tests": [
       {
         "description": "should keep faker props",
-        "skip": true,
         "schema": "schemas.0",
         "valid": true,
-        "hasProps": ["salary", "hiredAt"]
+        "hasProps": ["salary", "hiredAt"],
+        "require": "core/extend/faker-extend"
       }
     ]
   }

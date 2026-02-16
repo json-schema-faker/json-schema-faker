@@ -28,7 +28,7 @@ describe("schema-faker-tests: core/types", () => {
                   await runSchemaFakerTest(testCase as SchemaFakerTestCase, suite.schemas ?? []);
                 }
               } catch (e) {
-                throw new Error(`${suite.description} > ${testCase.description}: ${(e as Error).message}`);
+                throw new Error(`${suite.description} > ${testCase.description}: ${(e as Error).message}`, { cause: e });
               }
             });
           }
