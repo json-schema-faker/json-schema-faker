@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should handle initialOffset",
-        "skip": true,
         "schema": {
           "items": {
             "id": {

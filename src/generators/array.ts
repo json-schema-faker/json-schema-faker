@@ -66,7 +66,23 @@ export async function generateArray(
   }
 
   // Determine target length
-  const targetLen = ctx.random.int(Math.max(minItems, result.length), maxItems);
+  let targetLen: number;
+  const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
+  const useFixedProbabilities = ctx.fixedProbabilities ?? false;
+  const optionalsProbability = ctx.optionalsProbability ?? ctx.optionalPropertyProbability ?? 0.5;
+  
+  if (alwaysFakeOptionals) {
+    // alwaysFakeOptionals overrides probabilities - generate maximum items
+    targetLen = maxItems;
+  } else if (useFixedProbabilities) {
+    // When using fixed probabilities, deterministically calculate target length
+    // based on the probability and the available range
+    const availableRange = maxItems - Math.max(minItems, result.length);
+    const additionalItems = Math.round(availableRange * optionalsProbability);
+    targetLen = Math.max(minItems, result.length) + additionalItems;
+  } else {
+    targetLen = ctx.random.int(Math.max(minItems, result.length), maxItems);
+  }
 
   // Fill remaining with items schema (items: false means no additional items allowed)
   if (schema.items !== false) {

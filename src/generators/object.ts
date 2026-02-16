@@ -104,9 +104,26 @@ export async function generateObject(
   const required = new Set(inferredRequired);
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const fillProperties = ctx.fillProperties ?? true;
+  const useFixedProbabilities = ctx.fixedProbabilities ?? false;
+  const optionalsProbability = ctx.optionalsProbability ?? ctx.optionalPropertyProbability ?? 0.5;
+
+  // Get optional property keys
+  const optionalKeys = Object.keys(inferredProperties).filter(key => !required.has(key));
+  
+  // When using fixed probabilities, deterministically calculate how many properties to include
+  let propertiesToInclude: Set<string> | undefined;
+  if (useFixedProbabilities && !alwaysFakeOptionals && optionalKeys.length > 0) {
+    const targetCount = Math.round(optionalKeys.length * optionalsProbability);
+    // Deterministically select the first N properties based on the sorted keys
+    propertiesToInclude = new Set(optionalKeys.slice(0, targetCount));
+  }
 
   // Determine if we should generate optional properties
-  const shouldGenerateOptional = () => alwaysFakeOptionals || ctx.random.bool(ctx.optionalPropertyProbability);
+  const shouldGenerateOptional = (key: string) => {
+    if (alwaysFakeOptionals) return true;
+    if (propertiesToInclude) return propertiesToInclude.has(key);
+    return ctx.random.bool(optionalsProbability);
+  };
 
   // Generate required properties first
   if (Object.keys(inferredProperties).length > 0) {
@@ -119,7 +136,7 @@ export async function generateObject(
       
       if (isRequired) {
         result[key] = await walk(propSchema, propCtx);
-      } else if (shouldGenerateOptional()) {
+      } else if (shouldGenerateOptional(key)) {
         result[key] = await walk(propSchema, propCtx);
       } else if (isObjectType && !fillProperties) {
         // fillProperties: false - propagate required nested properties

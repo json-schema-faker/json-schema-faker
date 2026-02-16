@@ -19,6 +19,8 @@ export interface JsonSchemaObject {
   exclusiveMinimum?: number;
   exclusiveMaximum?: number;
   multipleOf?: number;
+  autoIncrement?: boolean;
+  initialOffset?: number;
 
   // String
   minLength?: number;
@@ -88,6 +90,10 @@ export interface GenerateOptions {
   useDefaultValue?: boolean;
   /** Always generate optional properties */
   alwaysFakeOptionals?: boolean;
+  /** Alias for optionalPropertyProbability - probability (0-1) of generating optional properties */
+  optionalsProbability?: number;
+  /** Use fixed/deterministic probabilities for testing */
+  fixedProbabilities?: boolean;
   /** Fill properties beyond required (for nested required propagation) */
   fillProperties?: boolean;
   /** External extensions for generating values (e.g., faker, chance) */
@@ -121,6 +127,10 @@ export interface GenerateContext {
   path: string;
   /** Always generate optional properties */
   alwaysFakeOptionals?: boolean;
+  /** Probability (0-1) of generating optional properties - mirrors optionalsProbability option */
+  optionalsProbability?: number;
+  /** Use fixed/deterministic probabilities for testing */
+  fixedProbabilities?: boolean;
   /** Fill properties beyond required (for nested required propagation) */
   fillProperties?: boolean;
   /** External extensions for generating values (e.g., faker, chance) */
@@ -130,6 +140,8 @@ export interface GenerateContext {
   };
   /** Enable jsonPath resolution for cross-references within generated data */
   resolveJsonPath?: boolean;
+  /** Counters for autoIncrement, keyed by path */
+  autoIncrementCounters?: Map<string, number>;
 }
 
 export interface Random {

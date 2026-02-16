@@ -91,6 +91,8 @@ export interface SchemaFakerTestCase {
   repeat?: number;
   /** Required extensions/modules to load (e.g., "core/extend/faker-extend") */
   require?: string;
+  /** Expected count of properties (for objects) or items (for arrays) */
+  count?: number;
 }
 
 export interface SchemaFakerTestSuite {
@@ -259,6 +261,23 @@ export async function runSchemaFakerTest(
           `Expected value to NOT match "${testCase.hasNot}" but got: ${strValue}`
         );
       }
+    }
+  }
+
+  // Check "count" expectation (number of properties in object or items in array)
+  if (testCase.count !== undefined) {
+    let actualCount: number;
+    if (Array.isArray(value)) {
+      actualCount = value.length;
+    } else if (typeof value === "object" && value !== null) {
+      actualCount = Object.keys(value).length;
+    } else {
+      actualCount = 0;
+    }
+    if (actualCount !== testCase.count) {
+      throw new Error(
+        `Expected count ${testCase.count} but got ${actualCount} for value: ${JSON.stringify(value)}`
+      );
     }
   }
 }

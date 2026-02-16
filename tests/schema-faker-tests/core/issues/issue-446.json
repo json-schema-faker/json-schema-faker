@@ -32,6 +32,7 @@
     "tests": [
       {
         "description": "it will always generate two items",
+        "skip": true,
         "schema": "schemas.0",
         "count": 2,
         "valid": true

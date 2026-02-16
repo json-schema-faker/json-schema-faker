@@ -21,7 +21,6 @@
       },
       {
         "description": "should handle optionalsProbability option (= 0) for objects",
-        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "equal": {},
@@ -32,7 +31,6 @@
       },
       {
         "description": "should handle optionalsProbability option (= 1) for objects",
-        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "equal": {
@@ -50,7 +48,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 1) for arrays",
-        "skip": true,
+        
         "schema": {
           "type": "array",
           "items": {
@@ -70,7 +68,6 @@
       },
       {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
-        "skip": true,
         "schema": "schemas.0",
         "valid": true,
         "equal": {
@@ -89,7 +86,7 @@
       },
       {
         "description": "should handle optionalsProbability option (= 0) overwritten by alwaysFakeOptionals for objects",
-        "skip": true,
+        
         "schema": {
           "type": "array",
           "items": {
@@ -110,6 +107,7 @@
       },
       {
         "description": "should generate just zero properties if optionalsProbability is 0%",
+        
         "schema": "schemas.0",
         "valid": true,
         "count": 0,
@@ -132,6 +130,7 @@
       },
       {
         "description": "should generate just two properties if optionalsProbability is 40%",
+        
         "schema": "schemas.0",
         "valid": true,
         "count": 2,
@@ -143,6 +142,7 @@
       },
       {
         "description": "should generate just three properties if optionalsProbability is 60%",
+        
         "schema": "schemas.0",
         "valid": true,
         "count": 3,
@@ -154,6 +154,7 @@
       },
       {
         "description": "should generate just four properties if optionalsProbability is 80%",
+        
         "schema": "schemas.0",
         "valid": true,
         "count": 4,

@@ -12,17 +12,17 @@ function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSch
   if (schema.properties) {
     return schema.properties;
   }
-  
+
   // If schema has type:object but no properties, check for inferred properties
   if (schema.type === 'object' || schema.type === undefined) {
     const inferred: Record<string, JsonSchema> = {};
-    
+
     for (const [key, value] of Object.entries(schema)) {
       // Skip schema keywords
       if (SCHEMA_KEYWORDS.has(key)) {
         continue;
       }
-      
+
       // If it looks like a schema, use it as-is
       if (isJsonSchema(value)) {
         inferred[key] = value as JsonSchema;
@@ -31,17 +31,17 @@ function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSch
         inferred[key] = { const: value };
       }
     }
-    
+
     return inferred;
   }
-  
+
   return {};
 }
 
 /**
  * Recursively resolve jsonPath references in a generated value
  * This is called after the initial generation to cross-reference values
- * 
+ *
  * @param value - The current value being processed
  * @param schema - The schema for the current value
  * @param ctx - The generation context
@@ -84,7 +84,7 @@ export async function resolveJsonPathsInValue(
   // Handle objects
   if (typeof value === "object" && value !== null && !Array.isArray(value)) {
     const result = { ...value } as Record<string, unknown>;
-    
+
     // Get inferred properties (handles both explicit and inferred)
     const properties = getInferredProperties(objSchema);
 
