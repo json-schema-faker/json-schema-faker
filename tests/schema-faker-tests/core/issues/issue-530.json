@@ -45,7 +45,7 @@
           "properties": {
             "name": {
               "type": "string",
-              "faker": "name.fullName"
+              "faker": "person.fullName"
             },
             "email": {
               "type": "string",
@@ -59,7 +59,8 @@
             "name"
           ]
         },
-        "valid": true
+        "valid": true,
+        "require": "core/extend/faker-extend"
       }
     ]
   }

@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should handle faker.custom.statement",
-        "skip": true,
         "schema": {
           "type": "string",
           "faker": {

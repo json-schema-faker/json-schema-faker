@@ -7,7 +7,7 @@ export function getFaker() {
 
   faker.mixin('custom', {
     statement(length) {
-      return `${faker.name.firstName()} has ${faker.finance.amount()} on ${faker.finance.account(length)}.`;
+      return `${faker.person.firstName()} has ${faker.finance.amount()} on ${faker.finance.accountNumber(length)}.`;
     },
     returnThisValue(val) {
       return val;

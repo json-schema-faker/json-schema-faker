@@ -9,7 +9,7 @@
           "properties": {
             "name": {
               "type": "string",
-              "x-faker": "name.fullName"
+              "x-faker": "person.fullName"
             },
             "email": {
               "type": "string",

@@ -12,7 +12,7 @@
             },
             "name": {
               "type": "string",
-              "faker": "name.fullName"
+              "faker": "person.fullName"
             },
             "children": {
               "$ref": "#/definitions/node"
@@ -53,7 +53,8 @@
     {
       "description": "should work as expected",
       "schema": "schemas.0",
-      "valid": true
+      "valid": true,
+      "require": "core/extend/faker-extend"
     }
   ]
 }

@@ -49,17 +49,16 @@
     },
     {
       "description": "should access generated values if they're sorted",
-      "skip": true,
       "schema": {
         "type": "object",
         "properties": {
           "z": {
             "type": "string",
-            "faker": "name.fullName"
+            "faker": "person.fullName"
           },
           "b": {
             "type": "string",
-            "faker": "name.lastName"
+            "faker": "person.lastName"
           },
           "c": {
             "template": "#{b} II"

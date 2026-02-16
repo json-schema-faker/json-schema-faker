@@ -16,7 +16,7 @@
               "properties": {
                 "name": {
                   "type": "string",
-                  "faker": "name.fullName"
+                  "faker": "person.fullName"
                 },
                 "phone": {
                   "type": "string",

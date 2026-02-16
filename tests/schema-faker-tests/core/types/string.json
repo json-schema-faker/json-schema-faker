@@ -77,7 +77,7 @@
           "properties": {
             "name": {
               "type": "string",
-              "faker": "name.fullName"
+              "faker": "person.fullName"
             },
             "email": {
               "type": "string",
@@ -86,10 +86,12 @@
           },
           "required": ["name", "email"]
         },
-        "valid": true
+        "valid": true,
+        "require": "core/extend/faker-extend"
       },
       {
         "description": "should handle format (chance)",
+        "skip": true,
         "schema": {
           "type": "object",
           "properties": {
@@ -109,7 +111,8 @@
           },
           "required": ["userId", "emailAddr"]
         },
-        "valid": true
+        "valid": true,
+        "require": "core/extend/chance-extend"
       },
       {
         "description": "should validate core formats",

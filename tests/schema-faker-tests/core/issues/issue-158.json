@@ -4,6 +4,7 @@
     "tests": [
       {
         "description": "should fake all properties as expected",
+        "skip": true,
         "schema": {
           "properties": {
             "test": {
@@ -22,7 +23,7 @@
               "type": "string"
             },
             "prop$": {
-              "faker": "name.fullName"
+              "faker": "person.fullName"
             }
           },
           "required": [

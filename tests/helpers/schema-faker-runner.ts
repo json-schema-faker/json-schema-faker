@@ -48,24 +48,15 @@ async function loadExtension(requirePath: string, basePath?: string): Promise<Ex
     };
 
     // Resolve the module path
-    // requirePath is like "core/extend/faker-extend"
-    // which maps to tests/schema-faker-tests/core/extend/faker-extend.mjs
-    let modulePath: string;
-    if (requirePath.startsWith("core/extend/")) {
-      const extName = requirePath.replace("core/extend/", "");
-      const extendDir = basePath
-        ? join(dirname(basePath), "extend")
-        : join(dirname(import.meta.filename), "../schema-faker-tests/core/extend");
-      modulePath = join(extendDir, `${extName}.mjs`);
-    } else {
-      return null;
-    }
+    const extName = requirePath.replace("core/extend/", "");
+    const extendDir = join(dirname(import.meta.filename), "../schema-faker-tests/core/extend");
+    const modulePath = join(extendDir, `${extName}.mjs`);
 
     // Dynamically import the module
     try {
       const module = await import(modulePath);
-      if (module.register && typeof module.register === "function") {
-        module.register(ctx);
+      if (typeof module.register === "function") {
+        module.register(ctx.extensions);
       }
     } catch {
       // Module not available or failed to load
