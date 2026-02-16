@@ -73,6 +73,11 @@ export function generateString(
   schema: JsonSchemaObject,
   ctx: GenerateContext
 ): string {
+  // Check for ambiguous extension (both faker and chance defined)
+  if (schema.faker !== undefined && schema.chance !== undefined) {
+    throw new Error(`ambiguous generator: both faker and chance are defined in ${ctx.path}`);
+  }
+
   // Check faker extension (user-provided takes priority)
   if (schema.faker !== undefined) {
     const fakerPath = schema.faker as string;
