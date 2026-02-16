@@ -12,7 +12,7 @@ describe("schema-faker-tests: core/types", () => {
       for (const suite of suites) {
         describe(suite.description, () => {
           for (const testCase of suite.tests) {
-            const testFn = testCase.skip ? test.skip : test;
+            const testFn = testCase.skip && !process.env.NO_SKIP ? test.skip : test;
             testFn(testCase.description, async () => {
               const { runSchemaFakerTest, shouldSkipDueToRequirements } = await import("../helpers/schema-faker-runner.js");
 

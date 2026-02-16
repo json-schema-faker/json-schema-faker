@@ -7,12 +7,13 @@
   "types": "src/index.ts",
   "scripts": {
     "test": "bun test",
+    "test:all": "NO_SKIP=1 bun test",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "^5.7.0",
+    "@types/bun": "^1.2.0",
     "ajv": "^8.17.0",
     "ajv-formats": "^3.0.0",
-    "@types/bun": "^1.2.0"
+    "typescript": "^5.7.0"
   }
 }
