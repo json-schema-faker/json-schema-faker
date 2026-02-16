@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should enable jsonPath queries",
-        "skip": true,
         "schema": {
           "test": {
             "type": "object",

@@ -97,6 +97,8 @@ export interface GenerateOptions {
     /** chance instance */
     chance?: any;
   };
+  /** Enable jsonPath resolution for cross-references within generated data */
+  resolveJsonPath?: boolean;
 }
 
 export interface GenerateContext {
@@ -126,6 +128,8 @@ export interface GenerateContext {
     faker?: any;
     chance?: any;
   };
+  /** Enable jsonPath resolution for cross-references within generated data */
+  resolveJsonPath?: boolean;
 }
 
 export interface Random {

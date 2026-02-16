@@ -1,6 +1,65 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
 import { walk } from "../schema-walker.js";
 import { mergeSchemas } from "../merge.js";
+import { SCHEMA_KEYWORDS, isJsonSchema } from "../utils/schema-keywords.js";
+
+/**
+ * Get inferred properties from a schema object.
+ * If the schema has explicit 'properties', use those.
+ * Otherwise, treat non-keyword child objects as properties.
+ */
+function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSchema> {
+  // If schema has explicit properties, use those
+  if (schema.properties) {
+    return schema.properties;
+  }
+  
+  // If schema has type:object but no properties, check for inferred properties
+  if (schema.type === 'object' || schema.type === undefined) {
+    const inferred: Record<string, JsonSchema> = {};
+    let hasInferredProperties = false;
+    
+    for (const [key, value] of Object.entries(schema)) {
+      // Skip schema keywords
+      if (SCHEMA_KEYWORDS.has(key)) {
+        continue;
+      }
+      
+      // If it looks like a schema, use it as-is
+      if (isJsonSchema(value)) {
+        inferred[key] = value as JsonSchema;
+        hasInferredProperties = true;
+      } else {
+        // Treat as a const/literal value - wrap in a const schema
+        inferred[key] = { const: value };
+        hasInferredProperties = true;
+      }
+    }
+    
+    if (hasInferredProperties) {
+      return inferred;
+    }
+  }
+  
+  return {};
+}
+
+/**
+ * Get required properties from a schema object.
+ * If no explicit 'required' and we have inferred properties, all are required.
+ */
+function getInferredRequired(schema: JsonSchemaObject, inferredProperties: Record<string, JsonSchema>): string[] {
+  if (schema.required) {
+    return schema.required;
+  }
+  
+  // If we have inferred properties and no explicit type/properties, require all
+  if (schema.properties === undefined && Object.keys(inferredProperties).length > 0) {
+    return Object.keys(inferredProperties);
+  }
+  
+  return [];
+}
 
 export async function generateObject(
   schema: JsonSchemaObject,
@@ -10,12 +69,16 @@ export async function generateObject(
     return {};
   }
 
+  // Get inferred properties if no explicit properties
+  const inferredProperties = getInferredProperties(schema);
+  const inferredRequired = getInferredRequired(schema, inferredProperties);
+
   // Check for contradictory schema: additionalProperties:false but minProperties > available keys
   if (schema.additionalProperties === false) {
-    const hasProperties = schema.properties && Object.keys(schema.properties).length > 0;
+    const hasProperties = Object.keys(inferredProperties).length > 0;
     const hasPatternProperties = schema.patternProperties && Object.keys(schema.patternProperties).length > 0;
-    const definedKeys = new Set<string>(schema.properties ? Object.keys(schema.properties) : []);
-    const required = new Set(schema.required ?? []);
+    const definedKeys = new Set<string>(Object.keys(inferredProperties));
+    const required = new Set(inferredRequired);
     const requiredKeys = [...required].filter((k) => !definedKeys.has(k));
 
     // If minProperties is required but no way to generate them
@@ -38,7 +101,7 @@ export async function generateObject(
   const result: Record<string, unknown> = {};
   const definedKeys = new Set<string>();
 
-  const required = new Set(schema.required ?? []);
+  const required = new Set(inferredRequired);
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const fillProperties = ctx.fillProperties ?? true;
 
@@ -46,8 +109,8 @@ export async function generateObject(
   const shouldGenerateOptional = () => alwaysFakeOptionals || ctx.random.bool(ctx.optionalPropertyProbability);
 
   // Generate required properties first
-  if (schema.properties) {
-    for (const [key, propSchema] of Object.entries(schema.properties)) {
+  if (Object.keys(inferredProperties).length > 0) {
+    for (const [key, propSchema] of Object.entries(inferredProperties)) {
       definedKeys.add(key);
       const propCtx = { ...childCtx, path: `${childCtx.path}/${key}` };
       
@@ -151,7 +214,7 @@ export async function generateObject(
 
     // Check if we still can't meet minProperties
     if (Object.keys(result).length < minProps) {
-      const definedPropsList = Object.keys(schema.properties ?? {}).join(", ");
+      const definedPropsList = Object.keys(inferredProperties).join(", ");
       throw new Error(
         `properties '${definedPropsList}' were not found while additionalProperties is false in ${ctx.path}`
       );

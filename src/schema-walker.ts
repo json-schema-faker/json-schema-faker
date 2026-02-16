@@ -9,6 +9,7 @@ import { generateObject } from "./generators/object.js";
 import { generateArray } from "./generators/array.js";
 import { generateComposition } from "./generators/composition.js";
 import { resolveRef } from "./ref-resolver.js";
+import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
@@ -81,6 +82,12 @@ function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string {
   if (schema.properties || schema.required || schema.additionalProperties !== undefined || schema.patternProperties || schema.minProperties !== undefined || schema.maxProperties !== undefined) {
     return "object";
   }
+  
+  // Check for inferred properties (non-keyword keys that look like property definitions)
+  if (hasInferredProperties(schema)) {
+    return "object";
+  }
+  
   if (schema.items || schema.prefixItems || schema.contains || schema.minItems !== undefined || schema.maxItems !== undefined || schema.uniqueItems) {
     return "array";
   }
@@ -93,4 +100,27 @@ function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string {
 
   // No type info — pick randomly
   return ctx.random.pick(ALL_TYPES);
+}
+
+/**
+ * Check if a schema has inferred properties (non-keyword keys that could be property definitions)
+ */
+function hasInferredProperties(schema: JsonSchemaObject): boolean {
+  // Only consider if no explicit object keywords
+  if (schema.properties || schema.type === 'object' || schema.type === 'array') {
+    return false;
+  }
+  
+  for (const key of Object.keys(schema)) {
+    if (SCHEMA_KEYWORDS.has(key)) {
+      continue;
+    }
+    const value = schema[key];
+    // If it's an object, it could be a schema or a literal
+    if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+      return true;
+    }
+  }
+  
+  return false;
 }

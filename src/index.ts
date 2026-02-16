@@ -4,6 +4,7 @@ import { walk } from "./schema-walker.js";
 import { buildRefRegistry, registerRootSchema } from "./ref-resolver.js";
 import { createFormatRegistry, registerFormatGlobal } from "./formats/index.js";
 import { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
+import { resolveJsonPathsInValue } from "./generators/jsonpath-resolver.js";
 
 export type { JsonSchema, GenerateOptions, Random, RefResolver } from "./types.js";
 export { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
@@ -37,9 +38,17 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     alwaysFakeOptionals: options?.alwaysFakeOptionals,
     fillProperties: options?.fillProperties,
     extensions: options?.extensions,
+    resolveJsonPath: options?.resolveJsonPath,
   };
 
-  return walk(schema, ctx);
+  const result = await walk(schema, ctx);
+
+  // Post-process to resolve jsonPath references if enabled
+  if (options?.resolveJsonPath) {
+    return resolveJsonPathsInValue(result, schema, ctx, result);
+  }
+
+  return result;
 }
 
 export function createGenerator(options?: GenerateOptions) {
