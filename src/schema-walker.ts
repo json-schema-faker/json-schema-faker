@@ -19,12 +19,6 @@ function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext, r
     throw new Error(`ambiguous generator: both faker and chance are defined in ${ctx.path}`);
   }
 
-  // If the randomly selected type is "null", return null directly
-  // (faker generates strings, so it's not compatible with null type)
-  if (resolvedType === "null") {
-    return null;
-  }
-
   if (schema.faker !== undefined) {
     try {
       const result = resolveFaker(schema.faker, ctx);
@@ -79,7 +73,7 @@ function applyFormat(value: string, format: string, ctx: GenerateContext): strin
       }
     }
   }
-  
+
   if (format === "date-time") {
     // Ensure ISO 8601 format
     const dateValue = typeof value === "string" ? new Date(value) : value;
@@ -90,7 +84,7 @@ function applyFormat(value: string, format: string, ctx: GenerateContext): strin
       return new Date(value).toISOString();
     }
   }
-  
+
   // For other formats, return as-is (the format generator will be called later in generateString)
   return value;
 }
@@ -112,7 +106,7 @@ function castToSchemaType(value: unknown, type: string | string[] | undefined, p
     case "boolean":
       return Boolean(value);
     case "null":
-      return value === false ? null : value;
+      return null;
     default:
       return value;
   }
@@ -188,9 +182,9 @@ function resolveChance(chanceConfig: unknown, ctx: GenerateContext): unknown {
 
 function childContext(ctx: GenerateContext, segment: string): GenerateContext {
   const path = ctx.path === "/" ? `/${segment}` : `${ctx.path}/${segment}`;
-  return { 
-    ...ctx, 
-    depth: ctx.depth + 1, 
+  return {
+    ...ctx,
+    depth: ctx.depth + 1,
     path,
     // Preserve refDepthReached flag
     refDepthReached: ctx.refDepthReached,
@@ -214,13 +208,13 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     // so the same type is used throughout this walk call
     const types = schema.type;
     resolvedType = ctx.random.pick(types);
-    
+
     // Create a new context with the resolved type
     const extCtx: GenerateContext = {
       ...ctx,
       resolvedType
     };
-    
+
     const extResult = generateFromExtension(schema, extCtx, resolvedType);
     if (extResult !== undefined) {
       // Apply string truncation if result is a string and maxLength is set
@@ -315,7 +309,7 @@ function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string | n
   if (ctx.resolvedType !== undefined) {
     return ctx.resolvedType;
   }
-  
+
   if (typeof schema.type === "string") {
     const knownTypes = ["string", "number", "integer", "boolean", "null", "object", "array"];
     if (!knownTypes.includes(schema.type)) {
@@ -332,12 +326,12 @@ function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string | n
   if (schema.properties || schema.required || schema.additionalProperties !== undefined || schema.patternProperties || schema.minProperties !== undefined || schema.maxProperties !== undefined) {
     return "object";
   }
-  
+
   // Check for inferred properties (non-keyword keys that look like property definitions)
   if (hasInferredProperties(schema)) {
     return "object";
   }
-  
+
   if (schema.items || schema.prefixItems || schema.contains || schema.minItems !== undefined || schema.maxItems !== undefined || schema.uniqueItems) {
     return "array";
   }
@@ -360,7 +354,7 @@ function hasInferredProperties(schema: JsonSchemaObject): boolean {
   if (schema.properties || schema.type === 'object' || schema.type === 'array') {
     return false;
   }
-  
+
   for (const key of Object.keys(schema)) {
     if (SCHEMA_KEYWORDS.has(key)) {
       continue;
@@ -371,7 +365,7 @@ function hasInferredProperties(schema: JsonSchemaObject): boolean {
       return true;
     }
   }
-  
+
   return false;
 }
 

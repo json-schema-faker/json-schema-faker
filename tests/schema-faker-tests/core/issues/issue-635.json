@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should handle null",
-        "skip": true,
         "schema": {
           "type": ["string", "null"],
           "faker": {
@@ -13,11 +12,10 @@
         },
         "equal": null,
         "require": "core/extend/faker-extend",
-        "seed": 0.9999999999999999
+        "seed": 5
       },
       {
         "description": "should handle string",
-        "skip": true,
         "schema": {
           "type": ["string", "null"],
           "faker": {
