@@ -69,6 +69,7 @@ export const SCHEMA_KEYWORDS = new Set([
   "faker",
   "chance",
   "jsonPath",
+  "template",
 
   // Metadata
   "default",

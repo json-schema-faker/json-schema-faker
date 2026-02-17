@@ -311,7 +311,37 @@ export async function generateObject(
     pruneObjectProperties(result, ctx.pruneProperties);
   }
 
+  // Resolve template properties - replace #{propName} with generated values
+  resolveTemplates(result, inferredProperties);
+
   return result;
+}
+
+/**
+ * Resolve template properties in the generated object.
+ * Replaces #{propName} with the generated values.
+ */
+function resolveTemplates(
+  result: Record<string, unknown>,
+  properties: Record<string, JsonSchema>
+): void {
+  for (const [key, propSchema] of Object.entries(properties)) {
+    if (typeof propSchema !== "object" || propSchema === null) continue;
+    
+    const schema = propSchema as JsonSchemaObject;
+    if (schema.template === undefined) continue;
+    
+    const template = schema.template;
+    if (typeof template !== "string") continue;
+    
+    // Replace #{propName} with the generated value
+    const resolved = template.replace(/#\{(\w+)\}/g, (_, propName) => {
+      const value = result[propName];
+      return value !== undefined ? String(value) : "";
+    });
+    
+    result[key] = resolved;
+  }
 }
 
 /**

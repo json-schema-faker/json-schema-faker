@@ -27,6 +27,8 @@ export interface JsonSchemaObject {
   maxLength?: number;
   pattern?: string;
   format?: string;
+  /** Template string with #{propName} placeholders resolved from sibling properties */
+  template?: string;
 
   // Array
   items?: JsonSchema;

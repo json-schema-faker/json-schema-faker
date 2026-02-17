@@ -3,7 +3,6 @@
   "tests": [
     {
       "description": "should resolve values from siblings",
-      "skip": true,
       "schema": {
         "type": "object",
         "properties": {
