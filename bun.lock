@@ -3,7 +3,7 @@
   "configVersion": 1,
   "workspaces": {
     "": {
-      "name": "tiny-jsf",
+      "name": "json-schema-faker",
       "devDependencies": {
         "@faker-js/faker": "^10.3.0",
         "@types/bun": "^1.2.0",

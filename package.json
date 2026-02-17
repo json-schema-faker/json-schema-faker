@@ -1,6 +1,6 @@
 {
-  "name": "tiny-jsf",
-  "version": "0.1.0",
+  "name": "json-schema-faker",
+  "version": "0.6.0",
   "description": "Generate valid JSON data from JSON Schema definitions",
   "type": "module",
   "main": "src/index.ts",
