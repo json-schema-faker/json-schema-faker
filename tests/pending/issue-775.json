@@ -1,0 +1,41 @@
+{
+  "$id": "https://example.com/schemas/customer",
+  "type": "object",
+  "properties": {
+    "first_name": {
+      "$ref": "#/$defs/name"
+    },
+    "last_name": {
+      "$ref": "#/$defs/name"
+    },
+    "test": {
+      "type": "object",
+      "properties": {
+        "test2": {
+          "$ref": "#/$defs/name"
+        }
+      },
+      "required": [
+        "test2"
+      ]
+    }
+  },
+  "required": [
+    "first_name",
+    "last_name",
+    "test"
+  ],
+  "$defs": {
+    "name": {
+      "type": "object",
+      "properties": {
+        "kek": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "kek"
+      ]
+    }
+  }
+}

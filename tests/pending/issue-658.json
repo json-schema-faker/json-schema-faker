@@ -1,0 +1,68 @@
+{
+  "$ref": "#/definitions/resultInfoType",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "nameInfoType": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "type": "object"
+    },
+    "dataInfoType": {
+      "additionalProperties": false,
+      "properties": {
+        "requiredString": {
+          "type": "string"
+        },
+        "requiredNameInfoType": {
+          "$ref": "#/definitions/nameInfoType"
+        }
+      },
+      "required": [
+        "requiredString",
+        "requiredNameInfoType"
+      ],
+      "type": "object"
+    },
+    "surveyInfoType": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "$ref": "#/definitions/dataInfoType"
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "type": "object"
+    },
+    "resultInfoType": {
+      "additionalProperties": false,
+      "properties": {
+        "nameInfoType": {
+          "$ref": "#/definitions/nameInfoType"
+        },
+        "surveyInfoType": {
+          "$ref": "#/definitions/surveyInfoType"
+        }
+      },
+      "type": "object"
+    },
+    "stepInfoType": {
+      "additionalProperties": false,
+      "properties": {
+        "result": {
+          "$ref": "#/definitions/resultInfoType"
+        }
+      },
+      "required": [],
+      "type": "object"
+    }
+  }
+}

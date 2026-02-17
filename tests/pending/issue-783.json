@@ -1,0 +1,71 @@
+{
+  "$id": "BuiltParameters",
+  "title": "BuiltParameters",
+  "description": "The schema of BuiltParameters",
+  "type": "object",
+  "properties": {
+    "primitiveId": {
+      "type": "string"
+    },
+    "parameterId": {
+      "type": "string"
+    },
+    "parameterName": {
+      "type": "string"
+    },
+    "parameterType": {
+      "type": "string",
+      "enum": [
+        "GI",
+        "GI2",
+        "a"
+      ]
+    },
+    "parameterProperties": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "required": [
+    "primitiveId",
+    "parameterId",
+    "parameterName",
+    "parameterType"
+  ],
+  "dependencies": {
+    "parameterType": {
+      "oneOf": [
+        {
+          "properties": {
+            "parameterType": {
+              "enum": [
+                "GI",
+                "GI2"
+              ]
+            }
+          },
+          "not": {
+            "required": [
+              "parameterProperties"
+            ]
+          }
+        },
+        {
+          "not": {
+            "properties": {
+              "parameterType": {
+                "enum": [
+                  "GI",
+                  "GI2"
+                ]
+              }
+            }
+          },
+          "required": [
+            "parameterProperties"
+          ]
+        }
+      ]
+    }
+  }
+}

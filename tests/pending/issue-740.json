@@ -1,0 +1,46 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$ref": "#/definitions/Test",
+    "definitions": {
+        "Test": {
+            "type": "object",
+            "properties": {
+                "items": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ],
+                        "additionalProperties": false
+                    }
+                },
+                "itemsById": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "type": "object",
+                        "properties": {
+                            "value": {
+                                "type": "string"
+                            }
+                        },
+                        "required": [
+                            "value"
+                        ],
+                        "additionalProperties": false
+                    }
+                }
+            },
+            "required": [
+                "items",
+                "itemsById"
+            ],
+            "additionalProperties": false
+        }
+    }
+}
