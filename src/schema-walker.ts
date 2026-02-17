@@ -13,6 +13,123 @@ import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
+function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext): unknown {
+  if (schema.faker !== undefined && schema.chance !== undefined) {
+    throw new Error(`ambiguous generator: both faker and chance are defined in ${ctx.path}`);
+  }
+
+  if (schema.faker !== undefined) {
+    try {
+      const result = resolveFaker(schema.faker, ctx);
+      return castToSchemaType(result, schema.type, ctx.path);
+    } catch {
+      // If faker can't be resolved, fall through to default generation
+    }
+  }
+
+  if (schema.chance !== undefined) {
+    try {
+      const result = resolveChance(schema.chance, ctx);
+      return castToSchemaType(result, schema.type, ctx.path);
+    } catch {
+      // If chance can't be resolved, fall through to default generation
+    }
+  }
+
+  return undefined;
+}
+
+function castToSchemaType(value: unknown, type: string | string[] | undefined, path: string): unknown {
+  if (type === undefined) {
+    return value;
+  }
+
+  const targetType = Array.isArray(type) ? type[0] : type;
+
+  switch (targetType) {
+    case "string":
+      return value === null ? "null" : value === undefined ? "undefined" : String(value);
+    case "number":
+    case "integer":
+      const num = Number(value);
+      return targetType === "integer" ? Math.floor(num) : num;
+    case "boolean":
+      return Boolean(value);
+    case "null":
+      return value === false ? null : value;
+    default:
+      return value;
+  }
+}
+
+function resolveFaker(fakerConfig: unknown, ctx: GenerateContext): unknown {
+  if (!ctx.extensions?.faker) {
+    const fakerPath = typeof fakerConfig === "string" ? fakerConfig : JSON.stringify(fakerConfig);
+    throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
+  }
+
+  let fakerPath: string;
+  let fakerArgs: unknown[] | undefined;
+
+  if (typeof fakerConfig === "object" && fakerConfig !== null) {
+    const fakerObj = fakerConfig as Record<string, unknown>;
+    const keys = Object.keys(fakerObj);
+    if (keys.length > 0) {
+      fakerPath = keys[0];
+      fakerArgs = fakerObj[fakerPath] as unknown[];
+    } else {
+      throw new Error(`cannot resolve faker-generator for ${JSON.stringify(fakerConfig)} in ${ctx.path}`);
+    }
+  } else {
+    fakerPath = fakerConfig as string;
+  }
+
+  const parts = fakerPath.split(".");
+  let current: any = ctx.extensions.faker;
+  for (const part of parts) {
+    try {
+      current = current[part];
+    } catch {
+      throw new Error(`failed to resolve .${part} (${fakerPath})`);
+    }
+  }
+
+  if (typeof current === "function") {
+    return fakerArgs ? current(...fakerArgs) : current();
+  } else {
+    throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
+  }
+}
+
+function resolveChance(chanceConfig: unknown, ctx: GenerateContext): unknown {
+  if (!ctx.extensions?.chance) {
+    const chanceType = typeof chanceConfig === "string"
+      ? chanceConfig
+      : Object.keys(chanceConfig as Record<string, unknown>)[0];
+    throw new Error(`cannot resolve chance-generator for ${chanceType} in ${ctx.path}`);
+  }
+
+  if (typeof chanceConfig === "string") {
+    const generator = ctx.extensions.chance[chanceConfig];
+    if (typeof generator === "function") {
+      return generator.call(ctx.extensions.chance);
+    }
+    throw new Error(`cannot resolve chance-generator for ${chanceConfig} in ${ctx.path}`);
+  }
+
+  if (typeof chanceConfig === "object" && chanceConfig !== null) {
+    const chanceOptions = chanceConfig as Record<string, unknown>;
+    const key = Object.keys(chanceOptions)[0];
+    const options = chanceOptions[key] as Record<string, unknown> | undefined;
+    const generator = ctx.extensions.chance[key];
+    if (typeof generator === "function") {
+      return options ? generator.call(ctx.extensions.chance, options) : generator.call(ctx.extensions.chance);
+    }
+  }
+
+  throw new Error(`cannot resolve chance-generator in ${ctx.path}`);
+}
+
 function childContext(ctx: GenerateContext, segment: string): GenerateContext {
   const path = ctx.path === "/" ? `/${segment}` : `${ctx.path}/${segment}`;
   return { 
@@ -31,6 +148,12 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
   if (schema === false) {
     throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
+  }
+
+  // Check for faker/chance extensions BEFORE type resolution (works for all types)
+  const extResult = generateFromExtension(schema, ctx);
+  if (extResult !== undefined) {
+    return extResult;
   }
 
   // $ref resolution

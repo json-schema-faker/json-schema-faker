@@ -4,92 +4,10 @@ import { pad2 } from "../utils/helpers.js";
 
 const DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-function castToString(value: unknown): string {
-  if (value === null) return "null";
-  if (value === undefined) return "undefined";
-  return String(value);
-}
-
 export function generateString(
   schema: JsonSchemaObject,
   ctx: GenerateContext
 ): string {
-  // Check for ambiguous extension (both faker and chance defined)
-  if (schema.faker !== undefined && schema.chance !== undefined) {
-    throw new Error(`ambiguous generator: both faker and chance are defined in ${ctx.path}`);
-  }
-
-  // Check faker extension (user-provided)
-  if (schema.faker !== undefined) {
-    // Handle both string format (e.g., "name.firstName") and object format (e.g., { "custom.statement": [19] })
-    let fakerPath: string;
-    let fakerArgs: unknown[] | undefined;
-
-    if (typeof schema.faker === "object") {
-      const fakerObj = schema.faker as Record<string, unknown>;
-      const keys = Object.keys(fakerObj);
-      if (keys.length > 0) {
-        fakerPath = keys[0];
-        fakerArgs = fakerObj[fakerPath] as unknown[];
-      } else {
-        throw new Error(`cannot resolve faker-generator for ${JSON.stringify(schema.faker)} in ${ctx.path}`);
-      }
-    } else {
-      fakerPath = schema.faker as string;
-    }
-
-    // Use user-provided faker
-    if (ctx.extensions?.faker) {
-      const parts = fakerPath.split(".");
-      let current: any = ctx.extensions.faker;
-      for (const part of parts) {
-        try {
-          current = current[part];
-        } catch {
-          throw new Error(`failed to resolve .${part} (${fakerPath})`);
-        }
-      }
-      if (typeof current === "function") {
-        const fakerResult = fakerArgs ? current(...fakerArgs) : current();
-        return castToString(fakerResult);
-      } else {
-        throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
-      }
-    } else {
-      throw new Error(`cannot resolve faker-generator for ${fakerPath} in ${ctx.path}`);
-    }
-  }
-
-  // Check chance extension (user-provided)
-  if (schema.chance !== undefined) {
-    // Use user-provided chance
-    if (ctx.extensions?.chance) {
-      if (typeof schema.chance === "string") {
-        const chanceType = schema.chance as string;
-        const generator = ctx.extensions.chance[chanceType];
-        if (typeof generator === "function") {
-          const chanceResult = generator.call(ctx.extensions.chance);
-          return castToString(chanceResult);
-        }
-      } else if (typeof schema.chance === "object") {
-        const chanceOptions = schema.chance as Record<string, unknown>;
-        const key = Object.keys(chanceOptions)[0];
-        const options = chanceOptions[key] as Record<string, unknown> | undefined;
-        const generator = ctx.extensions.chance[key];
-        if (typeof generator === "function") {
-          const chanceResult = options ? generator.call(ctx.extensions.chance, options) : generator.call(ctx.extensions.chance);
-          return castToString(chanceResult);
-        }
-      }
-    }
-
-    const chanceType = typeof schema.chance === "string"
-      ? schema.chance
-      : Object.keys(schema.chance as Record<string, unknown>)[0];
-
-    throw new Error(`cannot resolve chance-generator for ${chanceType} in ${ctx.path}`);
-  }
-
   // Check format first
   if (schema.format) {
     // Handle date-time format with min/max constraints

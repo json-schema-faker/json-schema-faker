@@ -13,7 +13,6 @@
       },
       {
         "description": "should execute chance generator before default boolean type generator",
-        "skip": true,
         "schema": {
           "type": "boolean",
           "chance": {
