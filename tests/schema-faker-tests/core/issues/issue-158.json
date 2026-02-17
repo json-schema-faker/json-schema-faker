@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should fake all properties as expected",
-        "skip": true,
         "schema": {
           "properties": {
             "test": {

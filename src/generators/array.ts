@@ -120,7 +120,13 @@ export async function generateArray(
   }
 
   // Fill remaining with items schema (items: false means no additional items allowed)
-  if (schema.items !== false) {
+  // Only generate additional items if:
+  // 1. items is explicitly defined (not undefined), OR
+  // 2. prefixItems is NOT present (use items as fallback for non-tuple arrays)
+  const hasExplicitItems = schema.items !== undefined;
+  const hasPrefixItems = schema.prefixItems !== undefined;
+  
+  if (schema.items !== false && (hasExplicitItems || !hasPrefixItems)) {
     const itemSchema: JsonSchema = schema.items ?? {};
     while (result.length < targetLen) {
       const success = await addItem(itemSchema);

@@ -3,7 +3,7 @@
     "description": "oneOf/anyOf/allOf is deleted after one item generation",
     "schemas": [
       {
-        "definitions": {
+        "$defs": {
           "Element": {
             "anyOf": [
               {
@@ -21,10 +21,10 @@
         },
         "prefixItems": [
           {
-            "$ref": "#/definitions/Element"
+            "$ref": "#/$defs/Element"
           },
           {
-            "$ref": "#/definitions/Element"
+            "$ref": "#/$defs/Element"
           }
         ]
       }
@@ -32,7 +32,6 @@
     "tests": [
       {
         "description": "it will always generate two items",
-        "skip": true,
         "schema": "schemas.0",
         "count": 2,
         "valid": true
