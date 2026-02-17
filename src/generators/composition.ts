@@ -39,6 +39,9 @@ export async function generateComposition(
     const branches = [...oneOf];
     ctx.random.shuffle(branches);
     
+    // Get required from base schema (from allOf merging)
+    const baseRequired = base.required ?? [];
+    
     for (const branch of branches) {
       let branchObj = typeof branch === "object" && branch !== null ? branch : {};
       
@@ -48,13 +51,15 @@ export async function generateComposition(
         branchObj = resolved.schema as JsonSchemaObject;
       }
       
-      const branchRequired = branchObj.required;
+      const branchRequired = branchObj.required ?? [];
+      // Combine base required with branch required (union)
+      const combinedRequired = [...new Set([...baseRequired, ...branchRequired])];
       
-      // Build base with properties but with branch's required (not base's required)
+      // Build base with properties but with combined required
       // Also set optionalsProbability to 0 to only generate required properties
       const baseWithBranchRequired: JsonSchemaObject = { 
         ...base,
-        required: branchRequired 
+        required: combinedRequired
       };
       
       const merged = mergeSchemas([baseWithBranchRequired, branchObj]);
@@ -82,10 +87,11 @@ export async function generateComposition(
       pickedObj = resolved.schema as JsonSchemaObject;
     }
     
-    const pickedRequired = pickedObj.required;
+    const pickedRequired = pickedObj.required ?? [];
+    const combinedRequired = [...new Set([...baseRequired, ...pickedRequired])];
     const baseWithPickedRequired: JsonSchemaObject = { 
       ...base,
-      required: pickedRequired 
+      required: combinedRequired
     };
     const merged = mergeSchemas([baseWithPickedRequired, pickedObj]);
     const oneOfCtx: GenerateContext = {
