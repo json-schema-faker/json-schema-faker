@@ -28,7 +28,6 @@
       {
         "issue": 580,
         "description": "should apply oneOf for overlapping minimum/maximum",
-        "skip": true,
         "schema": {
           "type": "integer",
           "enum": [1, 2, 3, 4, 5, 6, 7, 8, 9],
