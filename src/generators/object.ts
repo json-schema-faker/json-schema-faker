@@ -3,6 +3,29 @@ import { walk } from "../schema-walker.js";
 import { mergeSchemas } from "../merge.js";
 import { SCHEMA_KEYWORDS, isJsonSchema } from "../utils/schema-keywords.js";
 
+/**
+ * Check if a generated value matches a constraint schema (enum, const)
+ */
+function matchesConstraint(value: unknown, constraint: JsonSchema): boolean {
+  if (typeof constraint !== "object" || constraint === null) {
+    return false;
+  }
+  
+  const constraintObj = constraint as JsonSchemaObject;
+  
+  // Check const
+  if (constraintObj.const !== undefined) {
+    return value === constraintObj.const;
+  }
+  
+  // Check enum
+  if (constraintObj.enum !== undefined) {
+    return constraintObj.enum.some((v) => v === value);
+  }
+  
+  return false;
+}
+
 function isImpossibleSchema(schema: JsonSchema): boolean {
   if (typeof schema === "boolean") {
     return !schema; // false schema = impossible
@@ -215,22 +238,51 @@ export async function generateObject(
       if (result[propName] !== undefined && !definedKeys.has(propName + "_dep")) {
         definedKeys.add(propName + "_dep");
         
-        // Add properties from the dependency schema
-        if (dependency.properties) {
-          for (const [depPropName, depPropSchema] of Object.entries(dependency.properties)) {
-            if (result[depPropName] === undefined) {
-              const depPropCtx = { ...childCtx, path: `${childCtx.path}/${depPropName}` };
-              result[depPropName] = await walk(depPropSchema as JsonSchema, depPropCtx);
+        // Find the matching branch in oneOf/anyOf/allOf based on the generated property value
+        const branches = dependency.oneOf ?? dependency.anyOf ?? dependency.allOf ?? [dependency];
+        
+        let matchingBranch: JsonSchemaObject | null = null;
+        
+        for (const branch of branches) {
+          if (typeof branch !== "object" || branch === null) continue;
+          
+          // Check if this branch's constraints match the generated property value
+          const branchProps = branch.properties;
+          if (branchProps && branchProps[propName]) {
+            const constraint = branchProps[propName];
+            const generatedValue = result[propName];
+            
+            // Check if the constraint matches the generated value
+            if (matchesConstraint(generatedValue, constraint)) {
+              matchingBranch = branch;
+              break;
             }
           }
         }
         
-        // Add required properties from the dependency schema
-        const depRequired = dependency.required;
-        if (Array.isArray(depRequired)) {
-          for (const reqProp of depRequired) {
-            if (result[reqProp] === undefined) {
-              const reqPropSchema = (dependency.properties as Record<string, JsonSchema>)?.[reqProp] ?? {};
+        // If no matching branch found, use the first one or the dependency itself
+        if (!matchingBranch && branches.length > 0 && typeof branches[0] === "object") {
+          matchingBranch = branches[0] as JsonSchemaObject;
+        }
+        
+        if (matchingBranch && matchingBranch.properties) {
+          // Generate dependent properties from the matching branch
+          // Always regenerate (overwrite) because additionalProperties may have generated wrong values
+          for (const [depPropName, depPropSchema] of Object.entries(matchingBranch.properties)) {
+            // Skip the dependency property itself (foo)
+            if (depPropName === propName) continue;
+            
+            const depPropCtx = { ...childCtx, path: `${childCtx.path}/${depPropName}` };
+            result[depPropName] = await walk(depPropSchema as JsonSchema, depPropCtx);
+          }
+          
+          // Handle required properties from the matching branch
+          if (matchingBranch.required) {
+            for (const reqProp of matchingBranch.required) {
+              // Skip the dependency property itself
+              if (reqProp === propName) continue;
+              
+              const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? {};
               const reqPropCtx = { ...childCtx, path: `${childCtx.path}/${reqProp}` };
               result[reqProp] = await walk(reqPropSchema, reqPropCtx);
             }
