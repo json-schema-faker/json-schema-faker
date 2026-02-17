@@ -36,22 +36,53 @@ export async function generateComposition(
   }
 
   if (oneOf) {
-    // Try each branch until one works
+    // For oneOf, we need to pick ONE branch and ensure the generated value
+    // only satisfies that branch (not multiple branches)
     const branches = [...oneOf];
     ctx.random.shuffle(branches);
     
     for (const branch of branches) {
-      const merged = mergeSchemas([base, branch]);
+      // For the chosen branch, we need to include base properties BUT only generate required
+      const branchObj = typeof branch === "object" && branch !== null ? branch : {};
+      const branchRequired = branchObj.required;
+      
+      // Build base with properties but with branch's required (not base's required)
+      // Also set optionalsProbability to 0 to only generate required properties
+      const baseWithBranchRequired: JsonSchemaObject = { 
+        ...base,
+        required: branchRequired 
+      };
+      
+      const merged = mergeSchemas([baseWithBranchRequired, branch]);
+      
+      // Create context with optionalsProbability: 0 to only generate required properties
+      const oneOfCtx: GenerateContext = {
+        ...ctx,
+        optionalsProbability: 0,
+        alwaysFakeOptionals: false,
+      };
+      
       try {
-        return await walk(merged, ctx);
+        return await walk(merged, oneOfCtx);
       } catch {
         // Try next branch
       }
     }
     // If all fail, try the first one anyway
     const picked = oneOf[0];
-    const merged = mergeSchemas([base, picked]);
-    return walk(merged, ctx);
+    const pickedObj = typeof picked === "object" && picked !== null ? picked : {};
+    const pickedRequired = pickedObj.required;
+    const baseWithPickedRequired: JsonSchemaObject = { 
+      ...base,
+      required: pickedRequired 
+    };
+    const merged = mergeSchemas([baseWithPickedRequired, picked]);
+    const oneOfCtx: GenerateContext = {
+      ...ctx,
+      optionalsProbability: 0,
+      alwaysFakeOptionals: false,
+    };
+    return walk(merged, oneOfCtx);
   }
 
   if (anyOf) {

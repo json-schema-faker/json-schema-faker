@@ -107,6 +107,11 @@ function mergePair(target: JsonSchemaObject, source: JsonSchemaObject): void {
   // Refs
   if (source.$ref) target.$ref = source.$ref;
   if (source.$defs) target.$defs = { ...(target.$defs ?? {}), ...source.$defs };
+
+  // Composition keywords - keep them for later processing
+  if (source.allOf) target.allOf = source.allOf;
+  if (source.anyOf) target.anyOf = source.anyOf;
+  if (source.oneOf) target.oneOf = source.oneOf;
 }
 
 function intersectTypes(
