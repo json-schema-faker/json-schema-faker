@@ -10,6 +10,7 @@ import { generateArray } from "./generators/array.js";
 import { generateComposition } from "./generators/composition.js";
 import { resolveRef } from "./ref-resolver.js";
 import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
+import { pad2 } from "./utils/helpers.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
@@ -21,7 +22,12 @@ function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext): 
   if (schema.faker !== undefined) {
     try {
       const result = resolveFaker(schema.faker, ctx);
-      return castToSchemaType(result, schema.type, ctx.path);
+      // Apply format after faker if specified
+      const stringResult = castToSchemaType(result, schema.type, ctx.path);
+      if (typeof stringResult === "string" && schema.format) {
+        return applyFormat(stringResult, schema.format, ctx);
+      }
+      return stringResult;
     } catch {
       // If faker can't be resolved, fall through to default generation
     }
@@ -30,13 +36,57 @@ function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext): 
   if (schema.chance !== undefined) {
     try {
       const result = resolveChance(schema.chance, ctx);
-      return castToSchemaType(result, schema.type, ctx.path);
+      // Apply format after chance if specified
+      const stringResult = castToSchemaType(result, schema.type, ctx.path);
+      if (typeof stringResult === "string" && schema.format) {
+        return applyFormat(stringResult, schema.format, ctx);
+      }
+      return stringResult;
     } catch {
       // If chance can't be resolved, fall through to default generation
     }
   }
 
   return undefined;
+}
+
+function applyFormat(value: string, format: string, ctx: GenerateContext): string {
+  // Handle date format conversions
+  if (format === "date") {
+    // faker's date.past returns a Date object or ISO string
+    const dateValue = typeof value === "string" ? new Date(value) : value;
+    if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+      const year = dateValue.getFullYear();
+      const month = pad2(dateValue.getMonth() + 1);
+      const day = pad2(dateValue.getDate());
+      return `${year}-${month}-${day}`;
+    }
+    // If it's already a date string, try to parse it
+    if (typeof value === "string") {
+      const parsed = Date.parse(value);
+      if (!isNaN(parsed)) {
+        const date = new Date(parsed);
+        const year = date.getFullYear();
+        const month = pad2(date.getMonth() + 1);
+        const day = pad2(date.getDate());
+        return `${year}-${month}-${day}`;
+      }
+    }
+  }
+  
+  if (format === "date-time") {
+    // Ensure ISO 8601 format
+    const dateValue = typeof value === "string" ? new Date(value) : value;
+    if (dateValue instanceof Date && !isNaN(dateValue.getTime())) {
+      return dateValue.toISOString();
+    }
+    if (typeof value === "string" && Date.parse(value)) {
+      return new Date(value).toISOString();
+    }
+  }
+  
+  // For other formats, return as-is (the format generator will be called later in generateString)
+  return value;
 }
 
 function castToSchemaType(value: unknown, type: string | string[] | undefined, path: string): unknown {

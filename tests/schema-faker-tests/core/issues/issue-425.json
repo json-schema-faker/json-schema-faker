@@ -3,7 +3,6 @@
   "tests": [
     {
       "description": "it will eventually generate phone property",
-      "skip": true,
       "schema": {
         "type": "object",
         "properties": {
