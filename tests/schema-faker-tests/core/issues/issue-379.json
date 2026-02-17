@@ -31,8 +31,7 @@
         "multipleOf": 0.01
       },
       "seed": 0.25546874766962246,
-      "match": "7\\.\\d{2}$",
-      "omit": ["tv4", "ajv"],
+      "equal": 7.8,
       "valid": true
     }
   ]

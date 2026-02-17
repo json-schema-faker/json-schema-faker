@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should pick just one property",
-        "skip": true,
         "schema": {
           "title": "timesync",
           "$schema": "https://json-schema.org/draft/2020-12/schema",

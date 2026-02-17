@@ -4,9 +4,8 @@
     "tests": [
       {
         "description": "should get combined as expected",
-        "skip": true,
         "schema": {
-          "definitions": {
+          "$defs": {
             "address": {
               "type": "object",
               "properties": {
@@ -19,10 +18,10 @@
           },
           "type": "object",
           "properties": {
-            "billing_address": { "$ref": "#/definitions/address" },
+            "billing_address": { "$ref": "#/$defs/address" },
             "shipping_address": {
               "allOf": [
-                { "$ref": "#/definitions/address" },
+                { "$ref": "#/$defs/address" },
                 { "properties":
                   { "type": { "enum": [ "residential", "business" ] } },
                   "required": ["type"]

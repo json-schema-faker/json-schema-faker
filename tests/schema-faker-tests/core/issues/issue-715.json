@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "will fix #710",
-        "skip": true,
         "schema": {
           "$defs": {
             "Def with Spaces": {
@@ -12,7 +11,7 @@
             }
           },
           "$id": "https://test.json",
-          "$schema": "http://json-schema.org/draft-07/schema#",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
           "properties": {
             "SomeProp": {
               "$ref": "#/$defs/Def with Spaces"

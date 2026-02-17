@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should pass an array, when encountered double square brackets",
-        "skip": true,
         "schema": {
           "type": "object",
           "properties": {

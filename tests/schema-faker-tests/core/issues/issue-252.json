@@ -19,7 +19,6 @@
           ]
         },
         "repeat": 100,
-        "omit": ["z-schema", "tv4", "ajv"],
         "valid": true
       }
     ]

@@ -3,13 +3,13 @@
     "description": "unexpected `allOf` behavior with pointer and minProperties",
     "schemas": [
       {
-        "$schema": "http://json-schema.org/draft-07/schema#",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "properties": {
-          "countries": { "$ref": "#/definitions/countries" },
+          "countries": { "$ref": "#/$defs/countries" },
           "countries_priority": {
             "allOf": [
-              { "$ref": "#/definitions/countries" },
+              { "$ref": "#/$defs/countries" },
               { "maxProperties": 3 }
             ]
           }
@@ -19,7 +19,7 @@
           "countries_priority"
         ],
         "additionalProperties": false,
-        "definitions": {
+        "$defs": {
           "countries": {
             "type": "object",
             "properties": {
@@ -42,7 +42,6 @@
     "tests": [
       {
         "description": "should generate an object with either 2 or 3 properties with `alwaysFakeOptionals: false`",
-        "skip": true,
         "set": { "alwaysFakeOptionals": false },
         "schema": "schemas.0",
         "valid": true,
@@ -50,7 +49,6 @@
       },
       {
         "description": "should generate exactly 3 properties with `alwaysFakeOptionals: true`",
-        "skip": true,
         "set": { "alwaysFakeOptionals": true },
         "schema": "schemas.0",
         "valid": true,

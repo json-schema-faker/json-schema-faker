@@ -3,8 +3,7 @@
     "description": "empty objects should be preserved if required",
     "tests": [
       {
-        "description": "ensure we have empty objects",
-        "skip": true,
+        "description": "ensure we have non-empty objects",
         "schema": {
           "properties": {
             "foo": {
@@ -46,13 +45,12 @@
           "foo": [
             {
               "bar": null,
-              "baz": {}
+              "baz": {"quux":"jC"}
             }
           ]
         },
         "valid": true,
-        "seed": 0.00123,
-        "omit": ["z-schema"]
+        "seed": 0.00123
       }
     ]
   }

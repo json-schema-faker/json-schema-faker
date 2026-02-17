@@ -4,19 +4,18 @@
     "tests": [
       {
         "description": "should generate all values as expected",
-        "skip": true,
         "schema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "$ref": "#/definitions/Obj",
-          "definitions": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "$ref": "#/$defs/Obj",
+          "$defs": {
             "Obj": {
               "type": "object",
               "properties": {
                 "time1": {
-                  "$ref": "#/definitions/DateTimeString"
+                  "$ref": "#/$defs/DateTimeString"
                 },
                 "time2": {
-                  "$ref": "#/definitions/DateTimeString"
+                  "$ref": "#/$defs/DateTimeString"
                 }
               },
               "required": [

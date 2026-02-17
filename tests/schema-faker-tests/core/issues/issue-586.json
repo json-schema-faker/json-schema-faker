@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should generate empty objects for required props",
-        "skip": true,
         "schema": {
           "id": "Profile",
           "type": "object",

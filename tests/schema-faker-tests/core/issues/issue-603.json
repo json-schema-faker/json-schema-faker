@@ -1,10 +1,9 @@
 [
   {
-    "description": "Fields missing when using 'allOf' inside 'definitions'",
+    "description": "Fields missing when using 'allOf' inside '$defs'",
     "tests": [
       {
         "description": "should eventually generate missing props",
-        "skip": true,
         "schema": {
           "allOf": [
             {
@@ -18,13 +17,13 @@
               ]
             },
             {
-              "$ref": "#/definitions/foo"
+              "$ref": "#/$defs/foo"
             },
             {
-              "$ref": "#/definitions/bar"
+              "$ref": "#/$defs/bar"
             }
           ],
-          "definitions": {
+          "$defs": {
             "foo": {
               "allOf": [
                 {
