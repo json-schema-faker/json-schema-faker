@@ -1,0 +1,2 @@
+dev:
+	@tequio-dev

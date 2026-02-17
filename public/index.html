@@ -1,0 +1,1086 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>JSON Schema Faker – Generate Realistic Test Data</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&display=swap"
+            rel="stylesheet"
+        />
+        <link rel="stylesheet" href="styles.css" />
+    </head>
+    <body>
+        <div class="grain"></div>
+        <div class="content-wrapper">
+            <!-- Header -->
+            <header
+                class="border-b border-gray-800 backdrop-blur-sm sticky top-0 z-50"
+                style="background: rgba(10, 14, 20, 0.8)"
+            >
+                <nav
+                    class="container mx-auto px-6 py-4 flex items-center justify-between"
+                >
+                    <div class="flex items-center gap-3">
+                        <div
+                            class="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center text-lg font-bold"
+                        >
+                            {<span class="text-gray-900">}</span>
+                        </div>
+                        <span class="text-xl font-semibold fraunces">JSON Schema Faker</span>
+                    </div>
+                    <div class="hidden md:flex items-center gap-8">
+                        <a
+                            href="#docs"
+                            class="nav-link"
+                            onclick="openDocsDialog()">Docs</a>
+                        <a
+                            href="#examples"
+                            class="nav-link"
+                            onclick="openDocsDialog()">Examples</a>
+                        <a
+                            href="#playground"
+                            class="nav-link"
+                            onclick="openDocsDialog()">Playground</a>
+                        <a
+                            target="_blank"
+                            href="https://github.com/json-schema-faker/json-schema-faker"
+                            class="nav-link">GitHub</a>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="badge">v0.6.0</span>
+                    </div>
+                </nav>
+            </header>
+
+            <div class="block md:hidden flex items-center justify-center gap-8 py-3 mx-auto border-b border-gray-800 sticky top-[73px] z-[99] bg-black-900 backdrop-blur-sm">
+                <a
+                    href="#docs"
+                    class="nav-link text-shadow-fixed"
+                    onclick="openDocsDialog()">Docs</a>
+                <a
+                    href="#examples"
+                    class="nav-link text-shadow-fixed"
+                    onclick="openDocsDialog()">Examples</a>
+                <a
+                    href="#playground"
+                    class="nav-link text-shadow-fixed"
+                    onclick="openDocsDialog()">Playground</a>
+                <a
+                    target="_blank"
+                    href="https://github.com/json-schema-faker/json-schema-faker"
+                    class="nav-link text-shadow-fixed">GitHub</a>
+            </div>
+
+            <!-- Hero Section -->
+            <section class="container mx-auto px-6 py-24 md:py-32">
+                <div class="max-w-5xl mx-auto">
+                    <div class="text-center space-y-8">
+                        <div class="fade-in-up delay-1">
+                            <div
+                                class="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full border border-green-500/30 bg-green-500/10"
+                            >
+                                <svg
+                                    class="w-4 h-4 text-green-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                <span class="text-sm text-green-400 font-medium">Trusted by developers worldwide</span>
+                            </div>
+                        </div>
+                        <h1
+                            class="text-5xl md:text-7xl font-bold fraunces leading-tight fade-in-up delay-2"
+                        >
+                            Fake Your<br />
+                            <span class="highlight">JSON Schemas</span>
+                        </h1>
+                        <p
+                            class="text-xl md:text-2xl text-gray-400 max-w-3xl mx-auto fade-in-up delay-3"
+                        >
+                            Generate valid JSON data from JSON Schema
+                            definitions. Zero production dependencies.
+                        </p>
+                        <div
+                            class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-8 fade-in-up delay-4"
+                        >
+                            <a
+                                href="#install"
+                                class="btn-primary w-full sm:w-auto text-center"
+                            >
+                                <span class="relative z-10">Get Started</span>
+                            </a>
+                            <a
+                                href="#examples"
+                                onclick="openDocsDialog()"
+                                class="btn-secondary w-full sm:w-auto"
+                            >
+                                View Examples
+                            </a>
+                        </div>
+                        <div
+                            class="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16 p-8 rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm fade-in-up delay-5"
+                        >
+                            <div class="stat-item">
+                                <div class="stat-number">10K+</div>
+                                <div class="stat-label">GitHub Stars</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">1M+</div>
+                                <div class="stat-label">Monthly Downloads</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-number">0</div>
+                                <div class="stat-label">Runtime Deps</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Code Example Section -->
+            <section class="container mx-auto px-6 py-16 md:py-24">
+                <div class="max-w-5xl mx-auto">
+                    <div class="grid md:grid-cols-2 gap-12 items-center">
+                        <div class="space-y-6">
+                            <h2 class="text-3xl md:text-4xl font-bold fraunces">
+                                Simple, Powerful API
+                            </h2>
+                            <p class="text-lg text-gray-400">
+                                Define your schema, generate valid JSON. It's
+                                that simple. Supports all JSON Schema 2019-09
+                                and 2020-12 features including $ref, arrays, and
+                                complex nested objects.
+                            </p>
+                            <ul class="space-y-3">
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-6 h-6 text-green-400 mt-1 flex-shrink-0"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"
+                                        ></path>
+                                    </svg>
+                                    <span class="text-gray-300">Full JSON Schema 2019-09 & 2020-12 support</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-6 h-6 text-green-400 mt-1 flex-shrink-0"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"
+                                        ></path>
+                                    </svg>
+                                    <span class="text-gray-300">Extensible with custom generators</span>
+                                </li>
+                                <li class="flex items-start gap-3">
+                                    <svg
+                                        class="w-6 h-6 text-green-400 mt-1 flex-shrink-0"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M5 13l4 4L19 7"
+                                        ></path>
+                                    </svg>
+                                    <span class="text-gray-300">Works in Node.js and browsers</span>
+                                </li>
+                            </ul>
+                        </div>
+                        <div class="code-block">
+                            <pre
+                                class="text-green-300"
+                            ><code><span class="text-purple-400">import</span> { generate } <span class="text-purple-400">from</span> <span class="text-yellow-300">'json-schema-faker'</span>;
+
+<span class="text-gray-500">// Define your schema</span>
+<span class="text-purple-400">const</span> schema = {
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">2</span> },
+    <span class="text-blue-300">email</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">'email'</span> },
+    <span class="text-blue-300">age</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span>, <span class="text-blue-300">minimum</span>: <span class="text-yellow-300">18</span>, <span class="text-blue-300">maximum</span>: <span class="text-yellow-300">80</span> }
+  },
+  <span class="text-blue-300">required</span>: [<span class="text-yellow-300">'name'</span>, <span class="text-yellow-300">'email'</span>]
+};
+
+<span class="text-gray-500">// Generate fake data</span>
+<span class="text-purple-400">const</span> sample = <span class="text-purple-400">await</span> generate(schema);</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Features Grid -->
+            <section class="container mx-auto px-6 py-16 md:py-24">
+                <div class="max-w-6xl mx-auto">
+                    <div class="text-center mb-16">
+                        <h2
+                            class="text-3xl md:text-5xl font-bold fraunces mb-4"
+                        >
+                            Everything You Need
+                        </h2>
+                        <p class="text-xl text-gray-400">
+                            Powerful features for comprehensive test data
+                            generation
+                        </p>
+                    </div>
+                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div class="feature-card">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-green-500/20 flex items-center justify-center mb-4"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-green-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2 fraunces">
+                                    JSON Schema Support
+                                </h3>
+                                <p class="text-gray-400 text-sm">
+                                    Full support for JSON Schema 2019-09 and
+                                    2020-12 specifications
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-purple-500/20 flex items-center justify-center mb-4"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-purple-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2 fraunces">
+                                    Extension Support
+                                </h3>
+                                <p class="text-gray-400 text-sm">
+                                    Optional faker.js or chance.js integration
+                                    via extensions option
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-blue-500/20 flex items-center justify-center mb-4"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-blue-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2 fraunces">
+                                    Custom Generators
+                                </h3>
+                                <p class="text-gray-400 text-sm">
+                                    Extend with your own custom data generators
+                                    and formats
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-pink-500/20 flex items-center justify-center mb-4"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-pink-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2 fraunces">
+                                    $ref Support
+                                </h3>
+                                <p class="text-gray-400 text-sm">
+                                    Full $ref support with cycle detection and
+                                    remote reference resolution
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-yellow-500/20 flex items-center justify-center mb-4"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-yellow-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2 fraunces">
+                                    Zero Dependencies
+                                </h3>
+                                <p class="text-gray-400 text-sm">
+                                    Lightweight with zero production
+                                    dependencies. Built for Bun and Node.js
+                                </p>
+                            </div>
+                        </div>
+                        <div class="feature-card">
+                            <div class="relative z-10">
+                                <div
+                                    class="w-12 h-12 rounded-lg bg-indigo-500/20 flex items-center justify-center mb-4"
+                                >
+                                    <svg
+                                        class="w-6 h-6 text-indigo-400"
+                                        fill="none"
+                                        stroke="currentColor"
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path
+                                            stroke-linecap="round"
+                                            stroke-linejoin="round"
+                                            stroke-width="2"
+                                            d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
+                                        ></path>
+                                    </svg>
+                                </div>
+                                <h3 class="text-xl font-semibold mb-2 fraunces">
+                                    Regex Patterns
+                                </h3>
+                                <p class="text-gray-400 text-sm">
+                                    AST-based regex parser generates matching
+                                    strings from pattern keywords
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- CTA Section -->
+            <section class="container mx-auto px-6 py-16 md:py-24">
+                <div class="max-w-4xl mx-auto">
+                    <div
+                        class="relative overflow-hidden rounded-3xl border border-gray-800"
+                        style="
+                            background: linear-gradient(
+                                135deg,
+                                rgba(0, 255, 136, 0.1) 0%,
+                                rgba(99, 102, 241, 0.1) 100%
+                            );
+                        "
+                    >
+                        <div
+                            class="absolute inset-0 bg-gradient-to-r from-green-500/10 to-purple-500/10"
+                        ></div>
+                        <div
+                            class="relative z-10 p-12 md:p-16 text-center space-y-6"
+                        >
+                            <h2
+                                id="install"
+                                class="text-3xl md:text-5xl font-bold fraunces"
+                            >
+                                Ready to Get Started?
+                            </h2>
+                            <p class="text-xl text-gray-300 max-w-2xl mx-auto">
+                                Install JSON Schema Faker and start generating
+                                realistic test data in seconds
+                            </p>
+                            <div class="code-block max-w-xl mx-auto mt-8">
+                                <pre
+                                    class="text-left"
+                                ><code><span class="text-gray-500"># npm</span>
+<span class="text-green-300">npm install json-schema-faker</span>
+
+<span class="text-gray-500"># bun</span>
+<span class="text-green-300">bun install json-schema-faker</span></code></pre>
+                            </div>
+                            <div
+                                class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+                            >
+                                <a
+                                    target="_blank"
+                                    href="https://github.com/json-schema-faker/json-schema-faker"
+                                    class="btn-primary w-full sm:w-auto"
+                                >
+                                    <span class="relative z-10">View on GitHub</span>
+                                </a>
+                                <a
+                                    href="#docs"
+                                    onclick="toggleDocsDialog()"
+                                    class="btn-secondary w-full sm:w-auto"
+                                >
+                                    Read the Docs
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer -->
+            <footer class="border-t border-gray-800 mt-24">
+                <div class="container mx-auto px-6 py-12">
+                    <div
+                        class="flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-400"
+                    >
+                        <p>© 2026 JSON Schema Faker. MIT License.</p>
+                        <div class="flex items-center gap-6">
+                            <span class="flex items-center gap-2">
+                                <svg
+                                    class="w-4 h-4 text-green-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                                        clip-rule="evenodd"
+                                    />
+                                </svg>
+                                Build: Passing
+                            </span>
+                            <span class="flex items-center gap-2">
+                                <svg
+                                    class="w-4 h-4 text-green-400"
+                                    fill="currentColor"
+                                    viewBox="0 0 20 20"
+                                >
+                                    <path
+                                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
+                                    />
+                                </svg>
+                                10k+ Stars
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </footer>
+        </div>
+
+        <div
+            id="dialog-modal"
+            class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-[99]"
+        >
+            <!-- Dialog Content Container -->
+            <div
+                class="bg-gray-900 rounded-xl w-[92dvw] h-[87dvh] flex flex-col"
+            >
+                <!-- Dialog Header -->
+                <div class="p-4 border-b border-green-500/30">
+                    <div class="flex gap-6 justify-between">
+                        <div class="flex gap-6">
+                            <a
+                                href="#docs"
+                                class="text-gray-400 flex gap-2 items-center"
+                                onclick="openDocsDialog()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/>
+                                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/>
+                                        <line x1="8" y1="7" x2="16" y2="7"/>
+                                        <line x1="8" y1="11" x2="14" y2="11"/>
+                                    </svg>
+                                Docs
+                            </a>
+                            <a
+                                href="#examples"
+                                class="text-gray-400 flex gap-2 items-center"
+                                onclick="openDocsDialog()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <polyline points="16 18 22 12 16 6"/>
+                                        <polyline points="8 6 2 12 8 18"/>
+                                        <line x1="12" y1="2" x2="12" y2="22" stroke-dasharray="2 2"/>
+                                    </svg>
+                                Examples
+                            </a>
+                            <a
+                                href="#playground"
+                                class="text-gray-400 flex gap-2 items-center"
+                                onclick="openDocsDialog()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m6.75 7.5 3 2.25-3 2.25m4.5 0h3m-9 8.25h13.5A2.25 2.25 0 0 0 21 18V6a2.25 2.25 0 0 0-2.25-2.25H5.25A2.25 2.25 0 0 0 3 6v12a2.25 2.25 0 0 0 2.25 2.25Z" />
+                                    </svg>
+                                Playground
+                            </a>
+                        </div>
+                    </div>
+                    <button
+                        id="close-dialog"
+                        class="absolute top-4 right-4 text-gray-200 hover:text-gray-400"
+                    >
+                        <!-- X icon (e.g., from Heroicons) -->
+                        <svg
+                            xmlns="http://www.w3.org"
+                            class="h-6 w-6"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                        >
+                            <path
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                                stroke-width="2"
+                                d="M6 18L18 6M6 6l12 12"
+                            />
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- Dialog Body (main content area, can scroll) -->
+                <div class="flex-grow overflow-y-auto dialog-body">
+                    <!-- Documentation Section -->
+                    <section id="docs" class="px-6 py-16 md:py-24">
+                        <div class="max-w-5xl mx-auto">
+                            <!-- Importing -->
+                            <div class="mb-12">
+                                <h3
+                                    class="section-subtitle mt-0"
+                                >
+                                    Importing
+                                </h3>
+                                <div class="code-block">
+                                    <pre><code><span class="text-purple-400">import</span> {
+    generate,
+    createGenerator,
+    registerFormat,
+} <span class="text-purple-400">from</span> <span class="text-yellow-300">"json-schema-faker"</span>;</code></pre>
+                                </div>
+                            </div>
+
+                            <!-- API -->
+                            <div class="mb-12">
+                                <h3
+                                    class="section-subtitle mt-0"
+                                >
+                                    API
+                                </h3>
+
+                                <div class="space-y-6">
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">generate(schema, options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">Main entry point. Returns a Promise&lt;unknown&gt;.</p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">const</span> value = <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"email"</span> });</code></pre>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">createGenerator(options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">Creates a reusable generator with auto-incrementing seeds.</p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">const</span> gen = createGenerator({ <span class="text-blue-300">seed</span>: <span class="text-yellow-300">42</span> });
+<span class="text-purple-400">const</span> a = <span class="text-purple-400">await</span> gen.generate(schema); <span class="text-gray-500">// seed 42</span>
+<span class="text-purple-400">const</span> b = <span class="text-purple-400">await</span> gen.generate(schema); <span class="text-gray-500">// seed 43</span></code></pre>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">registerFormat(name, generator)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">
+                                            Register a custom format globally.
+                                        </p>
+                                        <div class="code-block !p-4">
+                                            <pre><code>registerFormat(<span class="text-yellow-300">"phone"</span>, (random) => {
+    <span class="text-purple-400">const</span> area = random.int(<span class="text-yellow-300">200</span>, <span class="text-yellow-300">999</span>);
+    <span class="text-purple-400">const</span> num = random.int(<span class="text-yellow-300">1000000</span>, <span class="text-yellow-300">9999999</span>);
+    <span class="text-purple-400">return</span> <span class="text-yellow-300">`+1-${area}-${num}`</span>;
+});</code></pre>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Built-in Formats -->
+                            <div class="mb-12">
+                                <h3
+                                    class="section-subtitle mt-0"
+                                >
+                                    Built-in Formats
+                                </h3>
+                                <p class="text-gray-400 mb-4">
+                                    These formats are automatically available:
+                                </p>
+                                <div class="overflow-x-auto">
+                                    <table class="format-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Format</th>
+                                                <th>Example Output</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">date-time</td>
+                                                <td>2024-03-15T14:30:00Z</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">date</td>
+                                                <td>2024-03-15</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">time</td>
+                                                <td>14:30:00Z</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">email</td>
+                                                <td>user@example.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">uri</td>
+                                                <td>
+                                                    https://example.com/path
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">hostname</td>
+                                                <td>host.example.com</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">ipv4</td>
+                                                <td>192.168.1.1</td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">ipv6</td>
+                                                <td>
+                                                    2001:0db8:85a3:0000:0000:8a2e:0370:7334
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">uuid</td>
+                                                <td>
+                                                    550e8400-e29b-41d4-a716-446655440000
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td class="code-inline !bg-transparent">json-pointer</td>
+                                                <td>/users/0/name</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- OPTIONS -->
+                            <div class="mb-12">
+                                <h3
+                                    class="section-subtitle mt-0"
+                                >
+                                    Available Options
+                                </h3>
+                                <p>TODO</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="examples" class="px-6 py-16 md:py-24">
+                        <div class="max-w-5xl mx-auto">
+                            <!-- Primitive Types -->
+                            <h3 class="section-subtitle mt-0">Primitive Types</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">Null & Boolean</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-gray-500">// Null</span>
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"null"</span> });
+<span class="text-gray-500">// null</span>
+
+<span class="text-gray-500">// Boolean</span>
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"boolean"</span> });
+<span class="text-gray-500">// true or false</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- String -->
+                            <h3 class="section-subtitle">String</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    Basic String & Length Constraints
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> });
+<span class="text-gray-500">// "aB3xK9pL2"</span>
+
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">10</span> });
+<span class="text-gray-500">// "abcdefghij"</span>
+
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">maxLength</span>: <span class="text-yellow-300">5</span> });
+<span class="text-gray-500">// "abc"</span></code></pre>
+                                </div>
+                            </div>
+                            <div class="example-card">
+                                <h4 class="example-title">Regex Pattern</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">pattern</span>: <span class="text-yellow-300">"^[a-z]+$"</span> });
+<span class="text-gray-500">// "abcdef"</span>
+
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">pattern</span>: <span class="text-yellow-300">"^[0-9]{3}-[0-9]{4}$"</span> });
+<span class="text-gray-500">// "123-4567"</span></code></pre>
+                                </div>
+                            </div>
+                            <div class="example-card">
+                                <h4 class="example-title">Format (Built-in)</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"email"</span> });
+<span class="text-gray-500">// "user@example.com"</span>
+
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"uuid"</span> });
+<span class="text-gray-500">// "550e8400-e29b-41d4-a716-446655440000"</span></code></pre>
+                                </div>
+                            </div>
+                            <div class="example-card">
+                                <h4 class="example-title">Template Strings</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">firstName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">2</span> },
+    <span class="text-blue-300">lastName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">2</span> },
+    <span class="text-blue-300">fullName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">template</span>: <span class="text-yellow-300">"#{firstName} #{lastName}"</span> }
+  }
+});
+<span class="text-gray-500">// { firstName: "John", lastName: "Doe", fullName: "John Doe" }</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Numbers -->
+                            <h3 class="section-subtitle">Numbers</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">Integer</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> });
+<span class="text-gray-500">// -456 or 123</span>
+
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span>, <span class="text-blue-300">minimum</span>: <span class="text-yellow-300">1</span>, <span class="text-blue-300">maximum</span>: <span class="text-yellow-300">10</span> });
+<span class="text-gray-500">// 7</span>
+
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span>, <span class="text-blue-300">multipleOf</span>: <span class="text-yellow-300">5</span> });
+<span class="text-gray-500">// 15, 20, 25...</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Objects -->
+                            <h3 class="section-subtitle">Objects</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">Basic Object</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> },
+    <span class="text-blue-300">age</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> }
+  }
+});
+<span class="text-gray-500">// { name: "aB3xK9", age: 42 }</span></code></pre>
+                                </div>
+                            </div>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    Required & Optional Properties
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">id</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> },
+    <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> }
+  },
+  <span class="text-blue-300">required</span>: [<span class="text-yellow-300">"id"</span>, <span class="text-yellow-300">"name"</span>]
+}, { <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
+<span class="text-gray-500">// { id: 1, name: "John" }</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Arrays -->
+                            <h3 class="section-subtitle">Arrays</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">Basic Array</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>,
+  <span class="text-blue-300">items</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> },
+  <span class="text-blue-300">minItems</span>: <span class="text-yellow-300">3</span>,
+  <span class="text-blue-300">maxItems</span>: <span class="text-yellow-300">5</span>
+});
+<span class="text-gray-500">// [1, 2, 3, -4, 5]</span></code></pre>
+                                </div>
+                            </div>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    Tuple (prefixItems)
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>,
+  <span class="text-blue-300">prefixItems</span>: [
+    { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> },
+    { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> },
+    { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"boolean"</span> }
+  ]
+});
+<span class="text-gray-500">// ["hello", 42, true]</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Composition -->
+                            <h3 class="section-subtitle">Composition</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    allOf, anyOf, oneOf
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-gray-500">// allOf - merge properties</span>
+<span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">allOf</span>: [
+    { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">a</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> } } },
+    { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">b</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> } } }
+  ]
+});
+<span class="text-gray-500">// { a: "hello", b: 42 }</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- References -->
+                            <h3 class="section-subtitle">References</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">Internal $ref</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">person</span>: { <span class="text-blue-300">$ref</span>: <span class="text-yellow-300">"#/$defs/Person"</span> }
+  },
+  <span class="text-blue-300">$defs</span>: {
+    <span class="text-blue-300">Person</span>: {
+      <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+      <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> },
+        <span class="text-blue-300">age</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> }
+      }
+    }
+  }
+});
+<span class="text-gray-500">// { person: { name: "John", age: 42 } }</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Extensions -->
+                            <h3 class="section-subtitle">
+                                Extensions (faker/chance)
+                            </h3>
+                            <div class="example-card">
+                                <h4 class="example-title">Using faker</h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">import</span> { faker } <span class="text-purple-400">from</span> <span class="text-yellow-300">"@faker-js/faker"</span>;
+
+<span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">faker</span>: <span class="text-yellow-300">"person.fullName"</span>
+}, { <span class="text-blue-300">extensions</span>: { faker } });
+<span class="text-gray-500">// "John Doe"</span>
+
+<span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">faker</span>: <span class="text-yellow-300">"internet.email"</span>
+}, { <span class="text-blue-300">extensions</span>: { faker } });
+<span class="text-gray-500">// "john.doe@example.com"</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Custom Formats -->
+                            <h3 class="section-subtitle">Custom Formats</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    Inline Custom Formats
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>,
+  <span class="text-blue-300">format</span>: <span class="text-yellow-300">"phone"</span>
+}, {
+  <span class="text-blue-300">formats</span>: {
+    <span class="text-blue-300">phone</span>: (random) => <span class="text-yellow-300">`+1-${random.int(200, 999)}-${random.int(1000000, 9999999)}`</span>
+  }
+});
+<span class="text-gray-500">// "+1-555-1234567"</span></code></pre>
+                                </div>
+                            </div>
+
+                            <!-- Advanced Features -->
+                            <h3 class="section-subtitle">Advanced Features</h3>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    Default Values & Examples
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">default</span>: <span class="text-yellow-300">"Anonymous"</span> }
+  }
+}, { <span class="text-blue-300">useDefaultValue</span>: <span class="text-yellow-300">true</span> });
+<span class="text-gray-500">// { name: "Anonymous" }</span></code></pre>
+                                </div>
+                            </div>
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    JSONPath Resolution
+                                </h4>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">users</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>, <span class="text-blue-300">items</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">id</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> } } }, <span class="text-blue-300">minItems</span>: <span class="text-yellow-300">2</span> },
+    <span class="text-blue-300">firstId</span>: {}
+  }
+}, {
+  <span class="text-blue-300">resolveJsonPath</span>: <span class="text-yellow-300">true</span>,
+  <span class="text-blue-300">schema</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">firstId</span>: { <span class="text-blue-300">default</span>: { <span class="text-blue-300">$jsonPath</span>: <span class="text-yellow-300">"$.users[0].id"</span> } } } }
+});
+<span class="text-gray-500">// { users: [{id: 1}, {id: 2}], firstId: 1 }</span></code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+
+                    <section id="playground">
+                        <div class="main-container">
+                          <div class="editor-panel">
+                            <div class="panel-header">
+                              Schema Input
+                            </div>
+                            <div class="tabs">
+                              <div class="tab active" data-tab="schema">schema.json</div>
+                            </div>
+                            <div class="editor-container" id="inputEditor"></div>
+                          </div>
+
+                          <div class="output-panel">
+                            <div class="panel-header">
+                              Generated Output
+                            </div>
+                            <div class="editor-container" id="outputEditor"></div>
+                            <div class="status-bar">
+                              <span id="statusText">Ready</span>
+                              <span id="statusInfo"></span>
+                            </div>
+                            <div class="options-panel border-t border-green-500/30" id="optionsPanel">
+                              <div class="options-row">
+                                <div class="option-group">
+                                  <label for="optSeed">Seed:</label>
+                                  <input type="number" id="optSeed" placeholder="random">
+                                </div>
+                                <div class="option-group">
+                                  <label for="optMaxDepth">Max Depth:</label>
+                                  <input type="number" id="optMaxDepth" value="10">
+                                </div>
+                                <div class="option-group">
+                                  <label for="optOptionalsProb">Optionals Probability:</label>
+                                  <input type="number" id="optOptionalsProb" min="0" max="1" step="0.1" placeholder="0..1">
+                                </div>
+                                <div class="option-group">
+                                    <input type="checkbox" id="optAlwaysFakeOptionals">
+                                    <label for="optAlwaysFakeOptionals">Always Fake Optionals</label>
+                                </div>
+                                <div class="option-group">
+                                    <input type="checkbox" id="optUseExamples">
+                                    <label for="optUseExamples">Use Examples</label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Dialog Footer (optional) -->
+                <div class="p-4 border-t border-green-500/30 flex justify-between">
+                    <button
+                        onclick="toggleDocsDialog()"
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hidden md:block"
+                    >
+                        Close
+                    </button>
+                    <div id="playground-actions flex gap-2">
+                        <button id="toggleOptions" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Options</button>
+                        <button id="loadSample" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Load Sample</button>
+                        <button id="generateBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Generate</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/ace.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/mode-json.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-nord_dark.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker@8.4.1/dist/browserfaker.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/json-schema-faker@0.5.9/dist/bundle.min.js"></script>
+        <script src="main.js"></script>
+    </body>
+</html>
