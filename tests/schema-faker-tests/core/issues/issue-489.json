@@ -22,7 +22,6 @@
       },
       {
         "description": "merge both properties definitions",
-        "skip": true,
         "schema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
           "patternProperties": {

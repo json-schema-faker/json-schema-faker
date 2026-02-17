@@ -176,10 +176,28 @@ export async function generateObject(
       const isRequired = required.has(key);
       const isObjectType = typeof propSchema === "object" && propSchema !== null && propSchema.type === "object";
       
+      // Merge with matching patternProperties constraints
+      let mergedPropSchema = propSchema;
+      if (schema.patternProperties && typeof propSchema === "object" && propSchema !== null) {
+        const matchingPatterns: JsonSchema[] = [];
+        for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
+          try {
+            if (new RegExp(pattern).test(key)) {
+              matchingPatterns.push(patSchema);
+            }
+          } catch {
+            // Invalid regex pattern, skip
+          }
+        }
+        if (matchingPatterns.length > 0) {
+          mergedPropSchema = mergeSchemas([propSchema, ...matchingPatterns]) as JsonSchemaObject;
+        }
+      }
+      
       if (isRequired) {
-        result[key] = await walk(propSchema, propCtx);
+        result[key] = await walk(mergedPropSchema, propCtx);
       } else if (shouldGenerateOptional(key)) {
-        result[key] = await walk(propSchema, propCtx);
+        result[key] = await walk(mergedPropSchema, propCtx);
       } else if (isObjectType && !fillProperties) {
         // fillProperties: false - propagate required nested properties
         const nestedRequired = propSchema.required ?? [];
