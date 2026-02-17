@@ -20,7 +20,6 @@
       },
       {
         "description": "setting maxLength should truncate schema, not override",
-        "skip": true,
         "schema": {
           "type": "string",
           "minLength": 1,
@@ -29,9 +28,9 @@
         },
         "require": "core/extend/faker-extend",
         "set": {
-          "maxLength": 20
+          "maxLength": 3
         },
-        "count": 1
+        "count": 3
       }
     ]
   }

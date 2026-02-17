@@ -19,7 +19,7 @@ const extensionCache = new Map<string, ExtensionContext>();
 const sharedRemoteSchemaCache = new Map<string, JsonSchema>();
 
 function getSharedRemoteResolver() {
-  return createRemoteResolver({ 
+  return createRemoteResolver({
     fetch: globalThis.fetch,
     cache: sharedRemoteSchemaCache,
   });
@@ -289,15 +289,15 @@ export async function runSchemaFakerTest(
     }
   }
 
-  // Check "count" expectation (number of properties in object or items in array)
+  // Check "count" expectation (number of properties in object, items in array, chars in a string)
   if (testCase.count !== undefined) {
     let actualCount: number;
-    if (Array.isArray(value)) {
+    if (typeof value === 'string' || Array.isArray(value)) {
       actualCount = value.length;
     } else if (typeof value === "object" && value !== null) {
       actualCount = Object.keys(value).length;
     } else {
-      actualCount = 0;
+      actualCount = -1;
     }
     if (actualCount !== testCase.count) {
       throw new Error(

@@ -41,6 +41,8 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     refResolver: options?.refResolver,
     minItems: options?.minItems,
     maxItems: options?.maxItems,
+    minLength: options?.minLength,
+    maxLength: options?.maxLength,
     useDefaultValue: options?.useDefaultValue,
     path: "/",
     alwaysFakeOptionals: options?.alwaysFakeOptionals,

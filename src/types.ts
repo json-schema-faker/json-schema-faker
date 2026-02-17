@@ -86,6 +86,10 @@ export interface GenerateOptions {
   minItems?: number;
   /** Override schema maxItems for array generation */
   maxItems?: number;
+  /** Override schema minLength for string generation */
+  minLength?: number;
+  /** Override schema maxLength for string generation */
+  maxLength?: number;
   /** Use schema default values when generating */
   useDefaultValue?: boolean;
   /** Always generate optional properties */
@@ -139,6 +143,10 @@ export interface GenerateContext {
   minItems?: number;
   /** Override schema maxItems for array generation */
   maxItems?: number;
+  /** Override schema minLength for string generation */
+  minLength?: number;
+  /** Override schema maxLength for string generation */
+  maxLength?: number;
   /** Use schema default values when generating */
   useDefaultValue?: boolean;
   /** Current path in the schema (JSON pointer) */

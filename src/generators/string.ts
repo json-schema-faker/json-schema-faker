@@ -18,12 +18,14 @@ export function generateString(
     const formatGen = ctx.formatRegistry.get(schema.format);
     if (formatGen) {
       const result = formatGen(ctx.random);
-      // Respect length constraints if possible
-      if (schema.minLength !== undefined && result.length < schema.minLength) {
-        return padString(result, schema.minLength, ctx);
+      // Respect length constraints from both schema and context options
+      const effectiveMinLength = ctx.minLength ?? schema.minLength;
+      const effectiveMaxLength = ctx.maxLength ?? schema.maxLength;
+      if (effectiveMinLength !== undefined && result.length < effectiveMinLength) {
+        return padString(result, effectiveMinLength, ctx);
       }
-      if (schema.maxLength !== undefined && result.length > schema.maxLength) {
-        return result.slice(0, schema.maxLength);
+      if (effectiveMaxLength !== undefined && result.length > effectiveMaxLength) {
+        return result.slice(0, effectiveMaxLength);
       }
       return result;
     }
@@ -31,24 +33,26 @@ export function generateString(
 
   // Check pattern
   if (schema.pattern) {
+    const effectiveMinLength = ctx.minLength ?? schema.minLength;
+    const effectiveMaxLength = ctx.maxLength ?? schema.maxLength;
     const maxAttempts = 50;
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
       const result = generateFromRegex(schema.pattern, ctx.random);
-      if (schema.minLength !== undefined && result.length < schema.minLength) {
+      if (effectiveMinLength !== undefined && result.length < effectiveMinLength) {
         continue;
       }
-      if (schema.maxLength !== undefined && result.length > schema.maxLength) {
+      if (effectiveMaxLength !== undefined && result.length > effectiveMaxLength) {
         continue;
       }
       return result;
     }
     // Fallback: generate and slice/pad
     const result = generateFromRegex(schema.pattern, ctx.random);
-    if (schema.minLength !== undefined && result.length < schema.minLength) {
-      return padString(result, schema.minLength, ctx);
+    if (effectiveMinLength !== undefined && result.length < effectiveMinLength) {
+      return padString(result, effectiveMinLength, ctx);
     }
-    if (schema.maxLength !== undefined && result.length > schema.maxLength) {
-      return result.slice(0, schema.maxLength);
+    if (effectiveMaxLength !== undefined && result.length > effectiveMaxLength) {
+      return result.slice(0, effectiveMaxLength);
     }
     return result;
   }
@@ -61,6 +65,15 @@ export function generateString(
   for (let i = 0; i < length; i++) {
     result += ctx.random.pick([...DEFAULT_CHARS]);
   }
+
+  // Apply context maxLength/minLength as final truncation/padding (not for generation)
+  if (ctx.maxLength !== undefined && result.length > ctx.maxLength) {
+    result = result.slice(0, ctx.maxLength);
+  }
+  if (ctx.minLength !== undefined && result.length < ctx.minLength) {
+    result = padString(result, ctx.minLength, ctx);
+  }
+
   return result;
 }
 

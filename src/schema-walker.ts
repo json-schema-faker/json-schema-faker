@@ -153,6 +153,10 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   // Check for faker/chance extensions BEFORE type resolution (works for all types)
   const extResult = generateFromExtension(schema, ctx);
   if (extResult !== undefined) {
+    // Apply string truncation if result is a string and maxLength is set
+    if (typeof extResult === "string" && ctx.maxLength !== undefined && extResult.length > ctx.maxLength) {
+      return extResult.slice(0, ctx.maxLength);
+    }
     return extResult;
   }
 
