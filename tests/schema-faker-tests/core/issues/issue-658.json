@@ -1,0 +1,79 @@
+[
+  {
+    "description": "FIXME",
+    "tests": [
+      {
+        "description": "FIXME",
+        "schema": {
+          "$ref": "#/$defs/resultInfoType",
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "$defs": {
+            "nameInfoType": {
+              "additionalProperties": false,
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": [
+                "name"
+              ],
+              "type": "object"
+            },
+            "dataInfoType": {
+              "additionalProperties": false,
+              "properties": {
+                "requiredString": {
+                  "type": "string"
+                },
+                "requiredNameInfoType": {
+                  "$ref": "#/$defs/nameInfoType"
+                }
+              },
+              "required": [
+                "requiredString",
+                "requiredNameInfoType"
+              ],
+              "type": "object"
+            },
+            "surveyInfoType": {
+              "additionalProperties": false,
+              "properties": {
+                "data": {
+                  "$ref": "#/$defs/dataInfoType"
+                }
+              },
+              "required": [
+                "data"
+              ],
+              "type": "object"
+            },
+            "resultInfoType": {
+              "additionalProperties": false,
+              "properties": {
+                "nameInfoType": {
+                  "$ref": "#/$defs/nameInfoType"
+                },
+                "surveyInfoType": {
+                  "$ref": "#/$defs/surveyInfoType"
+                }
+              },
+              "type": "object"
+            },
+            "stepInfoType": {
+              "additionalProperties": false,
+              "properties": {
+                "result": {
+                  "$ref": "#/$defs/resultInfoType"
+                }
+              },
+              "required": [],
+              "type": "object"
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]
