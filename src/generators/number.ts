@@ -53,6 +53,5 @@ function generateMultipleOf(
 
   if (lo > hi) return lo * multipleOf; // fallback
   const factor = ctx.random.int(lo, hi);
-  // Round to avoid floating point issues
-  return Math.round(factor * multipleOf * 1e10) / 1e10;
+  return factor * multipleOf;
 }
