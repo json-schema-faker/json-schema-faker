@@ -597,11 +597,7 @@
                         <div class="max-w-5xl mx-auto">
                             <!-- Importing -->
                             <div class="mb-12">
-                                <h3
-                                    class="section-subtitle mt-0"
-                                >
-                                    Importing
-                                </h3>
+                                <h3 class="section-subtitle mt-0">Importing</h3>
                                 <div class="code-block">
                                     <pre><code><span class="text-purple-400">import</span> {
     generate,
@@ -613,12 +609,7 @@
 
                             <!-- API -->
                             <div class="mb-12">
-                                <h3
-                                    class="section-subtitle mt-0"
-                                >
-                                    API
-                                </h3>
-
+                                <h3 class="section-subtitle mt-0">API</h3>
                                 <div class="space-y-6">
                                     <div>
                                         <h4 class="example-title">
@@ -662,11 +653,7 @@
 
                             <!-- Built-in Formats -->
                             <div class="mb-12">
-                                <h3
-                                    class="section-subtitle mt-0"
-                                >
-                                    Built-in Formats
-                                </h3>
+                                <h3 class="section-subtitle mt-0">Built-in Formats</h3>
                                 <p class="text-gray-400 mb-4">
                                     These formats are automatically available:
                                 </p>
@@ -731,13 +718,665 @@
                             </div>
 
                             <!-- OPTIONS -->
-                            <div class="mb-12">
-                                <h3
-                                    class="section-subtitle mt-0"
-                                >
-                                    Available Options
-                                </h3>
-                                <p>TODO</p>
+                            <div>
+                                <h3 class="section-subtitle mt-0">Available Options</h3>
+                                <p class="text-gray-400 mb-4">Basic usage with options:</p>
+                                <div class="code-block mb-4">
+                                    <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">seed</span>: <span class="text-yellow-300">42</span>,
+    <span class="text-blue-300">maxDepth</span>: <span class="text-yellow-300">5</span>,
+    <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span>
+});</code></pre>
+                                </div>
+
+                                <p class="text-gray-400 mb-4">Options summary:</p>
+                                <div class="code-block mb-8">
+                                    <pre><code><span class="text-purple-400">interface</span> <span class="text-yellow-300">GenerateOptions</span> {
+    <span class="text-blue-300">seed</span>?: number;                         <span class="text-gray-500">// Deterministic generation</span>
+    <span class="text-blue-300">maxDepth</span>?: number;                     <span class="text-gray-500">// Limit nesting depth</span>
+    <span class="text-blue-300">maxDefaultItems</span>?: number;              <span class="text-gray-500">// Default: 3</span>
+    <span class="text-blue-300">optionalPropertyProbability</span>?: number;  <span class="text-gray-500">// Default: 0.5</span>
+    <span class="text-blue-300">optionalsProbability</span>?: number;         <span class="text-gray-500">// Alias</span>
+    <span class="text-blue-300">alwaysFakeOptionals</span>?: boolean;         <span class="text-gray-500">// Always include optionals</span>
+    <span class="text-blue-300">fillProperties</span>?: boolean;              <span class="text-gray-500">// Fill all properties</span>
+    <span class="text-blue-300">minItems</span>?: number;                     <span class="text-gray-500">// Override minItems</span>
+    <span class="text-blue-300">maxItems</span>?: number;                     <span class="text-gray-500">// Override maxItems</span>
+    <span class="text-blue-300">minLength</span>?: number;                    <span class="text-gray-500">// Override minLength</span>
+    <span class="text-blue-300">maxLength</span>?: number;                    <span class="text-gray-500">// Override maxLength</span>
+    <span class="text-blue-300">useDefaultValue</span>?: boolean;             <span class="text-gray-500">// Use schema defaults</span>
+    <span class="text-blue-300">useExamplesValue</span>?: boolean;            <span class="text-gray-500">// Use examples array</span>
+    <span class="text-blue-300">formats</span>?: Record&lt;string, Function&gt;;    <span class="text-gray-500">// Custom formats</span>
+    <span class="text-blue-300">refResolver</span>?: RefResolver;             <span class="text-gray-500">// Custom $ref resolver</span>
+    <span class="text-blue-300">refDepth</span>?: number;                     <span class="text-gray-500">// Set both min/max</span>
+    <span class="text-blue-300">refDepthMin</span>?: number;                  <span class="text-gray-500">// Minimum recursion</span>
+    <span class="text-blue-300">refDepthMax</span>?: number;                  <span class="text-gray-500">// Maximum recursion</span>
+    <span class="text-blue-300">resolveJsonPath</span>?: boolean;             <span class="text-gray-500">// Enable JSONPath</span>
+    <span class="text-blue-300">extensions</span>?: { faker?: any; chance?: any };
+    <span class="text-blue-300">minDateTime</span>?: string;                  <span class="text-gray-500">// ISO 8601 date</span>
+    <span class="text-blue-300">maxDateTime</span>?: string;                  <span class="text-gray-500">// ISO 8601 date</span>
+    <span class="text-blue-300">pruneProperties</span>?: string[];            <span class="text-gray-500">// Properties to remove</span>
+    <span class="text-blue-300">failOnInvalidTypes</span>?: boolean;          <span class="text-gray-500">// Default: false</span>
+    <span class="text-blue-300">defaultInvalidTypeProduct</span>?: unknown;   <span class="text-gray-500">// Fallback value</span>
+    <span class="text-blue-300">validateSchemaVersion</span>?: boolean;       <span class="text-gray-500">// Check $schema</span>
+    <span class="text-blue-300">fixedProbabilities</span>?: boolean;          <span class="text-gray-500">// Deterministic</span>
+}</code></pre></div>
+
+                                <!-- Seeding -->
+                                <section id="seeding" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Seeding & Randomness</h3>
+                                    <p class="text-gray-400 text-sm mb-8">Control randomness for reproducible results.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-green-400">seed</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Seed for the random number generator to produce deterministic output. Same seed produces same results.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                                    <pre><code><span class="text-gray-500">// Deterministic output</span>
+<span class="text-purple-400">const</span> r1 = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">seed</span>: <span class="text-yellow-300">12345</span> });
+<span class="text-purple-400">const</span> r2 = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">seed</span>: <span class="text-yellow-300">12345</span> });
+<span class="text-gray-500">// r1 === r2</span></code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-green-400">fixedProbabilities</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Use fixed/deterministic probabilities for testing purposes. Ensures consistent test results.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">seed</span>: <span class="text-yellow-300">42</span>,
+    <span class="text-blue-300">fixedProbabilities</span>: <span class="text-yellow-300">true</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Depth -->
+                                <section id="depth" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Depth Control</h3>
+                                    <p class="text-gray-400 mb-8">Limit nested structure generation.</p>
+
+                                    <div class="grid-options mb-12">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-blue-400">maxDepth</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Maximum depth for nested object/array generation. Prevents deeply nested structures.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">child</span>: { <span class="text-blue-300">$ref</span>: <span class="text-yellow-300">'#'</span> }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">maxDepth</span>: <span class="text-yellow-300">3</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Arrays -->
+                                <section id="arrays" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Array Generation</h3>
+                                    <p class="text-gray-400 mb-8">Override array constraints.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-pink-400">minItems</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Override schema minItems. Forces arrays to have at least this many items.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'array'</span>,
+    <span class="text-blue-300">items</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
+    <span class="text-blue-300">minItems</span>: <span class="text-yellow-300">2</span>
+};
+
+<span class="text-gray-500">// Override to generate at least 5 items</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">minItems</span>: <span class="text-yellow-300">5</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-pink-400">maxItems</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Override schema maxItems. Caps the maximum number of array items.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'array'</span>,
+    <span class="text-blue-300">items</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'number'</span> },
+    <span class="text-blue-300">maxItems</span>: <span class="text-yellow-300">100</span>
+};
+
+<span class="text-gray-500">// Cap at 10 items</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">maxItems</span>: <span class="text-yellow-300">10</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-pink-400">maxDefaultItems</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Maximum items for arrays without explicit length constraints. Default: 3</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">maxDefaultItems</span>: <span class="text-yellow-300">5</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Strings -->
+                                <section id="strings" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">String Generation</h3>
+                                    <p class="text-gray-400 mb-8">Override string length constraints.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-cyan-400">minLength</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Override schema minLength. Ensures strings are at least this long.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
+    <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">3</span>
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">10</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-cyan-400">maxLength</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Override schema maxLength. Caps the maximum string length.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
+    <span class="text-blue-300">maxLength</span>: <span class="text-yellow-300">1000</span>
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">maxLength</span>: <span class="text-yellow-300">50</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Optionals -->
+                                <section id="optionals" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Optional Properties</h3>
+                                    <p class="text-gray-400 mb-8">Control generation of optional schema properties.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-purple-400">optionalPropertyProbability</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Probability (0-1) of generating optional properties. 0 = never, 1 = always. Default: 0.5</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-gray-500">// 75% chance to include optionals</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">optionalPropertyProbability</span>: <span class="text-yellow-300">0.75</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-purple-400">optionalsProbability</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Alias for optionalPropertyProbability. Same functionality.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">optionalsProbability</span>: <span class="text-yellow-300">0.5</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-purple-400">alwaysFakeOptionals</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Always generate all optional properties regardless of probability.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-purple-400">fillProperties</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Fill properties beyond required. Forces all properties to be generated.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
+        <span class="text-blue-300">email</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> }
+    },
+    <span class="text-blue-300">required</span>: [<span class="text-yellow-300">'name'</span>]
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">fillProperties</span>: <span class="text-yellow-300">true</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Defaults -->
+                                <section id="defaults" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Defaults &amp; Examples</h3>
+                                    <p class="text-gray-400 mb-8">Use schema-defined default values and examples.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-teal-400">useDefaultValue</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Use schema default values when generating. Properties with defaults use those values.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">status</span>: {
+            <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
+            <span class="text-blue-300">default</span>: <span class="text-yellow-300">'pending'</span>
+        }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">useDefaultValue</span>: <span class="text-yellow-300">true</span>
+});
+<span class="text-gray-500">// { status: 'pending' }</span></code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-teal-400">useExamplesValue</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Use examples array values when generating. Picks from examples array.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">role</span>: {
+            <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
+            <span class="text-blue-300">examples</span>: [<span class="text-yellow-300">'admin'</span>, <span class="text-yellow-300">'user'</span>, <span class="text-yellow-300">'guest'</span>]
+        }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">useExamplesValue</span>: <span class="text-yellow-300">true</span>
+});
+<span class="text-gray-500">// { role: 'admin' } or 'user' or 'guest'</span></code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Formats -->
+                                <section id="formats" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Custom Formats</h3>
+                                    <p class="text-gray-400 mb-8">Register custom format generators.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card lg:col-span-2">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-rose-400">formats</h3>
+                                                    <span class="option-type">Record&lt;string, Function&gt;</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Record of custom format name to generator function. Define your own formats for string generation.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">customId</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">'custom-id'</span> },
+        <span class="text-blue-300">color</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">'hex-color'</span> }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">formats</span>: {
+        <span class="text-yellow-300">'custom-id'</span>: (random) => <span class="text-yellow-300">`ID-${random.int(1000, 9999)}`</span>,
+        <span class="text-yellow-300">'hex-color'</span>: (random) => {
+            <span class="text-purple-400">const</span> hex = random.int(<span class="text-yellow-300">0</span>, <span class="text-yellow-300">16777215</span>).toString(<span class="text-yellow-300">16</span>);
+            <span class="text-purple-400">return</span> <span class="text-yellow-300">'#'</span> + hex.padStart(<span class="text-yellow-300">6</span>, <span class="text-yellow-300">'0'</span>);
+        }
+    }
+});</code></pre>
+                                                </div>
+
+                                                <div class="mt-4 p-4 bg-gray-800/50 rounded-lg">
+                                                    <h4 class="text-sm font-semibold text-gray-300 mb-3">Built-in Formats</h4>
+                                                    <div class="flex flex-wrap gap-2">
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">date-time</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">email</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">uri</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">hostname</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">ipv4</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">ipv6</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">uuid</span>
+                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">json-pointer</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- References -->
+                                <section id="refs" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">References &amp; Resolution</h3>
+                                    <p class="text-gray-400 mb-8">Handle $ref and external schema resolution.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-orange-400">refResolver</h3>
+                                                    <span class="option-type">RefResolver</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Custom function to resolve $ref references. Fetch from external sources or databases.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">refResolver</span>: <span class="text-purple-400">async</span> (ref) => {
+        <span class="text-purple-400">if</span> (ref.startsWith(<span class="text-yellow-300">'https://'</span>)) {
+            <span class="text-purple-400">return</span> <span class="text-purple-400">await</span> <span class="text-yellow-300">fetch</span>(ref).then(<span class="text-yellow-300">r</span> => r.json());
+        }
+    }
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-orange-400">refDepth</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Set both refDepthMin and refDepthMax to the same value for exact recursion levels.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-gray-500">// Exactly 3 levels of recursion</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">refDepth</span>: <span class="text-yellow-300">3</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-orange-400">refDepthMin</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Minimum reference depth for recursive schemas. Ensures minimum recursion levels.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                                    <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">refDepthMin</span>: <span class="text-yellow-300">2</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-orange-400">refDepthMax</h3>
+                                                    <span class="option-type">number</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Maximum reference depth for recursive schemas. Prevents infinite recursion.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                                    <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">refDepthMax</span>: <span class="text-yellow-300">5</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-orange-400">resolveJsonPath</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Enable JSONPath resolution for cross-references within generated data. Allows referencing other generated values.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">userId</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span> },
+        <span class="text-blue-300">firstId</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span> }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">resolveJsonPath</span>: <span class="text-yellow-300">true</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Extensions -->
+                                <section id="extensions" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">External Extensions</h3>
+                                    <p class="text-gray-400 mb-8">Use Faker.js or Chance.js for generation.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card lg:col-span-2">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-indigo-400">extensions</h3>
+                                                    <span class="option-type">object</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">External extensions for generating values using faker.js or chance.js. Pass instances to enable advanced data generation.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">import</span> { faker } <span class="text-purple-400">from</span> <span class="text-yellow-300">'@faker-js/faker'</span>;
+<span class="text-purple-400">import</span> Chance <span class="text-purple-400">from</span> <span class="text-yellow-300">'chance'</span>;
+
+<span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">faker</span>: <span class="text-yellow-300">'person.fullName'</span> },
+        <span class="text-blue-300">email</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">chance</span>: <span class="text-yellow-300">'email'</span> },
+        <span class="text-blue-300">avatar</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">faker</span>: <span class="text-yellow-300">'image.avatar'</span> }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">extensions</span>: { faker, chance: <span class="text-purple-400">new</span> Chance() }
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- DateTime -->
+                                <section id="datetime" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Date &amp; Time</h3>
+                                    <p class="text-gray-400 mb-8">Configure date-time format constraints.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-yellow-400">minDateTime</h3>
+                                                    <span class="option-type">string</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Minimum date/time for date-time format (ISO 8601). Limits generated dates to after this timestamp.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(
+    { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">'date-time'</span> },
+    {
+        <span class="text-blue-300">minDateTime</span>: <span class="text-yellow-300">'2020-01-01T00:00:00Z'</span>,
+        <span class="text-blue-300">maxDateTime</span>: <span class="text-yellow-300">'2024-12-31T23:59:59Z'</span>
+    }
+);</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-yellow-400">maxDateTime</h3>
+                                                    <span class="option-type">string</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Maximum date/time for date-time format (ISO 8601). Limits generated dates to before this timestamp.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">minDateTime</span>: <span class="text-yellow-300">'2023-01-01T00:00:00Z'</span>,
+    <span class="text-blue-300">maxDateTime</span>: <span class="text-yellow-300">'2025-12-31T23:59:59Z'</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Advanced -->
+                                <section id="advanced" class="mb-12">
+                                    <h3 class="section-subtitle mt-0">Advanced Options</h3>
+                                    <p class="text-gray-400 mb-8">Error handling, pruning, and schema validation.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">pruneProperties</h3>
+                                                    <span class="option-type">string[]</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Remove specified properties from generated objects. Useful for filtering sensitive data.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">id</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span> },
+        <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
+        <span class="text-blue-300">password</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">pruneProperties</span>: [<span class="text-yellow-300">'password'</span>, <span class="text-yellow-300">'internalNote'</span>]
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">failOnInvalidTypes</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Throw error on invalid types or return default. Default: false (returns default product).</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-gray-500">// Return default for invalid types</span>
+<span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">failOnInvalidTypes</span>: <span class="text-yellow-300">false</span> });
+
+<span class="text-gray-500">// Throw error on invalid types</span>
+<span class="text-purple-400">await</span> generate(schema, { <span class="text-blue-300">failOnInvalidTypes</span>: <span class="text-yellow-300">true</span> });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">defaultInvalidTypeProduct</h3>
+                                                    <span class="option-type">unknown</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Default value to return for invalid types when failOnInvalidTypes is false.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">failOnInvalidTypes</span>: <span class="text-yellow-300">false</span>,
+    <span class="text-blue-300">defaultInvalidTypeProduct</span>: <span class="text-yellow-300">null</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">validateSchemaVersion</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Validate that $schema is 2020-12. Throws error if unsupported version.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">$schema</span>: <span class="text-yellow-300">'https://json-schema.org/draft/2020-12/schema'</span>,
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: { <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> } }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">validateSchemaVersion</span>: <span class="text-yellow-300">true</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
                             </div>
                         </div>
                     </section>
@@ -1062,15 +1701,18 @@
                 <!-- Dialog Footer (optional) -->
                 <div class="p-4 border-t border-green-500/30 flex justify-between">
                     <button
+                        id="close-dialog"
                         onclick="toggleDocsDialog()"
-                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded hidden md:block"
+                        class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded"
                     >
                         Close
                     </button>
-                    <div id="playground-actions flex gap-2">
-                        <button id="toggleOptions" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Options</button>
-                        <button id="loadSample" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Load Sample</button>
-                        <button id="generateBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Generate</button>
+                    <div id="playground-actions">
+                        <span class="flex gap-2">
+                            <button id="toggleOptions" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Options</button>
+                            <button id="loadSample" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Load Sample</button>
+                            <button id="generateBtn" class="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded">Generate</button>
+                        </span>
                     </div>
                 </div>
             </div>

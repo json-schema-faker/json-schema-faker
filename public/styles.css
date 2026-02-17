@@ -58,10 +58,11 @@ body {
     display: block;
 }
 
-.dialog-body section {
+
+.dialog-body > section {
     display: none;
 }
-.dialog-body section:target {
+.dialog-body > section:target {
     display: block;
 }
 
@@ -392,7 +393,7 @@ body {
 .format-table {
     width: 100%;
     border-collapse: collapse;
-    margin: 1.5rem 0;
+    margin: 0;
 }
 
 .format-table th,
@@ -555,6 +556,10 @@ body {
   flex-wrap: wrap;
 }
 
+.option-card {
+    margin-bottom: 2rem;
+}
+
 .option-group {
   display: flex;
   align-items: center;
@@ -590,5 +595,11 @@ body {
   .editor-panel,
   .output-panel {
     border-right: none;
+  }
+
+  .modal-active
+      #dialog-modal:has(section:target[id="playground"])
+      #close-dialog {
+      display: none;
   }
 }
