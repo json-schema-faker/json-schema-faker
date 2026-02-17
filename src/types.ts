@@ -129,6 +129,8 @@ export interface GenerateOptions {
   minDateTime?: string;
   /** Maximum date/time for date-time format */
   maxDateTime?: string;
+  /** Validate that $schema is 2020-12 (throws if not). Default: false for backwards compatibility */
+  validateSchemaVersion?: boolean;
 }
 
 export interface GenerateContext {

@@ -12,7 +12,29 @@ export { createRemoteResolver, type RemoteResolverOptions } from "./remote-resol
 // Global format registry shared across calls
 const globalFormatRegistry = createFormatRegistry();
 
+// List of JSON Schema versions compatible with this implementation
+const SUPPORTED_SCHEMA_VERSIONS = new Set([
+  "https://json-schema.org/draft/2020-12/schema",
+  "https://json-schema.org/draft/2019-09/schema",
+  "http://json-schema.org/draft-07/schema",
+  "http://json-schema.org/draft-07/schema#",
+  "http://json-schema.org/draft-06/schema",
+  "http://json-schema.org/draft-06/schema#",
+  "http://json-schema.org/draft-04/schema",
+  "http://json-schema.org/draft-04/schema#",
+]);
+
 export async function generate(schema: JsonSchema, options?: GenerateOptions): Promise<unknown> {
+  // Validate $schema if present (opt-in via validateSchemaVersion option, defaults to false)
+  if (options?.validateSchemaVersion === true) {
+    if (typeof schema === "object" && schema !== null && "$schema" in schema) {
+      const schemaUri = (schema as Record<string, unknown>).$schema;
+      if (typeof schemaUri === "string" && !SUPPORTED_SCHEMA_VERSIONS.has(schemaUri)) {
+        throw new Error(`Unsupported JSON Schema version: ${schemaUri}. Supported versions: ${[...SUPPORTED_SCHEMA_VERSIONS].join(", ")}`);
+      }
+    }
+  }
+
   const random = createRandom(options?.seed ?? 1);
   const refRegistry = buildRefRegistry(schema);
   registerRootSchema(schema, refRegistry);
