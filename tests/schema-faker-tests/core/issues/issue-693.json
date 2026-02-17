@@ -4,28 +4,28 @@
     "tests": [
       {
         "description": "always return generator value when same type is randomly selected",
-        "skip": true,
         "schema": {
           "type": [
             "string",
             "null"
           ],
-          "faker": "name.firstName"
+          "faker": "person.firstName"
         },
-        "seed": 0.0000000000000001,
+        "require": "core/extend/faker-extend",
+        "seed": 0,
         "type": "string"
       },
       {
         "description": "never return generator value when different type is randomly selected",
-        "skip": true,
         "schema": {
           "type": [
             "string",
             "null"
           ],
-          "faker": "name.firstName"
+          "faker": "person.firstName"
         },
-        "seed": 0.9999999999999999,
+        "require": "core/extend/faker-extend",
+        "seed": 1,
         "equal": null
       }
     ]

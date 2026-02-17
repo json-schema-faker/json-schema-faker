@@ -14,16 +14,22 @@ import { pad2 } from "./utils/helpers.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
-function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext): unknown {
+function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext, resolvedType?: string): unknown {
   if (schema.faker !== undefined && schema.chance !== undefined) {
     throw new Error(`ambiguous generator: both faker and chance are defined in ${ctx.path}`);
+  }
+
+  // If the randomly selected type is "null", return null directly
+  // (faker generates strings, so it's not compatible with null type)
+  if (resolvedType === "null") {
+    return null;
   }
 
   if (schema.faker !== undefined) {
     try {
       const result = resolveFaker(schema.faker, ctx);
       // Apply format after faker if specified
-      const stringResult = castToSchemaType(result, schema.type, ctx.path);
+      const stringResult = castToSchemaType(result, resolvedType ?? schema.type, ctx.path);
       if (typeof stringResult === "string" && schema.format) {
         return applyFormat(stringResult, schema.format, ctx);
       }
@@ -37,7 +43,7 @@ function generateFromExtension(schema: JsonSchemaObject, ctx: GenerateContext): 
     try {
       const result = resolveChance(schema.chance, ctx);
       // Apply format after chance if specified
-      const stringResult = castToSchemaType(result, schema.type, ctx.path);
+      const stringResult = castToSchemaType(result, resolvedType ?? schema.type, ctx.path);
       if (typeof stringResult === "string" && schema.format) {
         return applyFormat(stringResult, schema.format, ctx);
       }
@@ -200,14 +206,38 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
   }
 
-  // Check for faker/chance extensions BEFORE type resolution (works for all types)
-  const extResult = generateFromExtension(schema, ctx);
-  if (extResult !== undefined) {
-    // Apply string truncation if result is a string and maxLength is set
-    if (typeof extResult === "string" && ctx.maxLength !== undefined && extResult.length > ctx.maxLength) {
-      return extResult.slice(0, ctx.maxLength);
+  // Check for faker/chance extensions - but first resolve type if it's an array
+  // so we know which type was randomly selected
+  let resolvedType: string | undefined;
+  if (Array.isArray(schema.type)) {
+    // For type arrays, pick a random type and store it in context
+    // so the same type is used throughout this walk call
+    const types = schema.type;
+    resolvedType = ctx.random.pick(types);
+    
+    // Create a new context with the resolved type
+    const extCtx: GenerateContext = {
+      ...ctx,
+      resolvedType
+    };
+    
+    const extResult = generateFromExtension(schema, extCtx, resolvedType);
+    if (extResult !== undefined) {
+      // Apply string truncation if result is a string and maxLength is set
+      if (typeof extResult === "string" && extCtx.maxLength !== undefined && extResult.length > extCtx.maxLength) {
+        return extResult.slice(0, extCtx.maxLength);
+      }
+      return extResult;
     }
-    return extResult;
+  } else {
+    const extResult = generateFromExtension(schema, ctx, resolvedType);
+    if (extResult !== undefined) {
+      // Apply string truncation if result is a string and maxLength is set
+      if (typeof extResult === "string" && ctx.maxLength !== undefined && extResult.length > ctx.maxLength) {
+        return extResult.slice(0, ctx.maxLength);
+      }
+      return extResult;
+    }
   }
 
   // $ref resolution
@@ -281,6 +311,11 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
 }
 
 function resolveType(schema: JsonSchemaObject, ctx: GenerateContext): string | null {
+  // Use pre-resolved type if available (set earlier in the walk)
+  if (ctx.resolvedType !== undefined) {
+    return ctx.resolvedType;
+  }
+  
   if (typeof schema.type === "string") {
     const knownTypes = ["string", "number", "integer", "boolean", "null", "object", "array"];
     if (!knownTypes.includes(schema.type)) {

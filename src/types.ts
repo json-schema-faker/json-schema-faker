@@ -190,6 +190,8 @@ export interface GenerateContext {
   minDateTime?: string;
   /** Maximum date/time for date-time format */
   maxDateTime?: string;
+  /** Pre-resolved type (from type array) to ensure consistent type selection */
+  resolvedType?: string;
 }
 
 export interface Random {
