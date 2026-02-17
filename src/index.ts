@@ -15,13 +15,7 @@ const globalFormatRegistry = createFormatRegistry();
 // List of JSON Schema versions compatible with this implementation
 const SUPPORTED_SCHEMA_VERSIONS = new Set([
   "https://json-schema.org/draft/2020-12/schema",
-  "https://json-schema.org/draft/2019-09/schema",
-  "http://json-schema.org/draft-07/schema",
-  "http://json-schema.org/draft-07/schema#",
-  "http://json-schema.org/draft-06/schema",
-  "http://json-schema.org/draft-06/schema#",
-  "http://json-schema.org/draft-04/schema",
-  "http://json-schema.org/draft-04/schema#",
+  "https://json-schema.org/draft/2019-09/schema"
 ]);
 
 export async function generate(schema: JsonSchema, options?: GenerateOptions): Promise<unknown> {
