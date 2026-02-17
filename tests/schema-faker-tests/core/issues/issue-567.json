@@ -3,7 +3,6 @@
   "tests": [
     {
       "description": "should combine subschemas from given items",
-      "skip": true,
       "schema": {
         "allOf": [
           {

@@ -8,13 +8,32 @@ export function mergeSchemas(schemas: JsonSchema[]): JsonSchemaObject {
       if (!schema) return { not: {} } as JsonSchemaObject; // false schema
       continue; // true schema adds nothing
     }
-    mergePair(result, schema);
+    mergePairInto(result, schema);
   }
 
   return result;
 }
 
-function mergePair(target: JsonSchemaObject, source: JsonSchemaObject): void {
+/**
+ * Merge two JSON schemas together, returning a new merged schema
+ */
+function mergePair(a: JsonSchema, b: JsonSchema): JsonSchemaObject {
+  if (typeof a === "boolean" || typeof b === "boolean") {
+    return {};
+  }
+  if (typeof a !== "object" || a === null) {
+    return typeof b === "object" && b !== null ? b as JsonSchemaObject : {};
+  }
+  if (typeof b !== "object" || b === null) {
+    return a as JsonSchemaObject;
+  }
+  
+  const result: JsonSchemaObject = { ...a };
+  mergePairInto(result, b);
+  return result;
+}
+
+function mergePairInto(target: JsonSchemaObject, source: JsonSchemaObject): void {
   // Type intersection
   if (source.type !== undefined) {
     if (target.type === undefined) {
@@ -69,7 +88,28 @@ function mergePair(target: JsonSchemaObject, source: JsonSchemaObject): void {
   }
   if (source.uniqueItems) target.uniqueItems = true;
   if (source.items !== undefined) target.items = source.items;
-  if (source.prefixItems !== undefined) target.prefixItems = source.prefixItems;
+  if (source.prefixItems !== undefined) {
+    // Merge prefixItems by merging each corresponding element
+    if (target.prefixItems === undefined) {
+      target.prefixItems = source.prefixItems;
+    } else {
+      const merged: JsonSchema[] = [];
+      const maxLen = Math.max(target.prefixItems.length, source.prefixItems.length);
+      for (let i = 0; i < maxLen; i++) {
+        const targetItem = target.prefixItems[i];
+        const sourceItem = source.prefixItems[i];
+        if (targetItem !== undefined && sourceItem !== undefined) {
+          // Merge both items
+          merged.push(mergePair(targetItem, sourceItem));
+        } else if (targetItem !== undefined) {
+          merged.push(targetItem);
+        } else if (sourceItem !== undefined) {
+          merged.push(sourceItem);
+        }
+      }
+      target.prefixItems = merged;
+    }
+  }
   if (source.contains !== undefined) target.contains = source.contains;
 
   // Object — merge properties, union required
