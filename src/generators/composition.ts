@@ -36,14 +36,18 @@ export async function generateComposition(
   }
 
   if (oneOf) {
-    // For oneOf, we need to pick ONE branch and ensure the generated value
-    // only satisfies that branch (not multiple branches)
     const branches = [...oneOf];
     ctx.random.shuffle(branches);
     
     for (const branch of branches) {
-      // For the chosen branch, we need to include base properties BUT only generate required
-      const branchObj = typeof branch === "object" && branch !== null ? branch : {};
+      let branchObj = typeof branch === "object" && branch !== null ? branch : {};
+      
+      // Resolve $ref if present to get the actual schema with required properties
+      if (branchObj.$ref) {
+        const resolved = await resolveRef(branchObj, ctx);
+        branchObj = resolved.schema as JsonSchemaObject;
+      }
+      
       const branchRequired = branchObj.required;
       
       // Build base with properties but with branch's required (not base's required)
@@ -53,7 +57,7 @@ export async function generateComposition(
         required: branchRequired 
       };
       
-      const merged = mergeSchemas([baseWithBranchRequired, branch]);
+      const merged = mergeSchemas([baseWithBranchRequired, branchObj]);
       
       // Create context with optionalsProbability: 0 to only generate required properties
       const oneOfCtx: GenerateContext = {
@@ -70,13 +74,20 @@ export async function generateComposition(
     }
     // If all fail, try the first one anyway
     const picked = oneOf[0];
-    const pickedObj = typeof picked === "object" && picked !== null ? picked : {};
+    let pickedObj = typeof picked === "object" && picked !== null ? picked : {};
+    
+    // Resolve $ref if present to get the actual schema with required properties
+    if (pickedObj.$ref) {
+      const resolved = await resolveRef(pickedObj, ctx);
+      pickedObj = resolved.schema as JsonSchemaObject;
+    }
+    
     const pickedRequired = pickedObj.required;
     const baseWithPickedRequired: JsonSchemaObject = { 
       ...base,
       required: pickedRequired 
     };
-    const merged = mergeSchemas([baseWithPickedRequired, picked]);
+    const merged = mergeSchemas([baseWithPickedRequired, pickedObj]);
     const oneOfCtx: GenerateContext = {
       ...ctx,
       optionalsProbability: 0,

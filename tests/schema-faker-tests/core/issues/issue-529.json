@@ -3,9 +3,8 @@
   "tests": [
     {
       "description": "should not skip required properties",
-      "skip": true,
       "schema": {
-        "$schema": "http://json-schema.org/draft-06/schema#",
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
         "type": "object",
         "required": [
           "filters"
@@ -16,16 +15,16 @@
             "items": {
               "oneOf": [
                 {
-                  "$ref": "#/definitions/FilterAgc"
+                  "$ref": "#/$defs/FilterAgc"
                 },
                 {
-                  "$ref": "#/definitions/FilterSubspace"
+                  "$ref": "#/$defs/FilterSubspace"
                 }
               ]
             }
           }
         },
-        "definitions": {
+        "$defs": {
           "FilterAgc": {
             "type": "object",
             "required": [
@@ -33,7 +32,7 @@
             ],
             "properties": {
               "params": {
-                "$ref": "#/definitions/FilterAgcParams"
+                "$ref": "#/$defs/FilterAgcParams"
               },
               "enabled": {
                 "type": "boolean"
@@ -58,7 +57,7 @@
             ],
             "properties": {
               "params": {
-                "$ref": "#/definitions/FilterSubspaceParams"
+                "$ref": "#/$defs/FilterSubspaceParams"
               },
               "enabled": {
                 "type": "boolean"
