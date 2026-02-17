@@ -3,38 +3,38 @@ const dialogModal = document.getElementById("dialog-modal");
 
 let isOpen;
 function toggleDocsDialog() {
-    dialogModal.classList.toggle("hidden");
-    document.body.classList.toggle("modal-active");
-    isOpen = document.body.classList.contains("modal-active");
+  dialogModal.classList.toggle("hidden");
+  document.body.classList.toggle("modal-active");
+  isOpen = document.body.classList.contains("modal-active");
 
-    if (!isOpen) {
-        history.replaceState(null, document.title, '/');
-    }
+  if (!isOpen) {
+    history.replaceState(null, document.title, '/');
+  }
 }
 
 function openDocsDialog() {
-    if (isOpen) return;
-    toggleDocsDialog();
+  if (isOpen) return;
+  toggleDocsDialog();
 }
 
 function closeDialog(e) {
-    if (e.target === dialogModal) toggleDocsDialog();
+  if (e.target === dialogModal) toggleDocsDialog();
 }
 
 closeDialogButton.addEventListener("click", toggleDocsDialog);
 dialogModal.addEventListener("click", closeDialog);
 
 document.onkeydown = function (evt) {
-    evt = evt || window.event;
-    var isEscape = false;
-    if ("key" in evt) {
-        isEscape = evt.key === "Escape" || evt.key === "Esc";
-    } else {
-        isEscape = evt.keyCode === 27;
-    }
-    if (isEscape && isOpen) {
-        toggleDocsDialog();
-    }
+  evt = evt || window.event;
+  var isEscape = false;
+  if ("key" in evt) {
+    isEscape = evt.key === "Escape" || evt.key === "Esc";
+  } else {
+    isEscape = evt.keyCode === 27;
+  }
+  if (isEscape && isOpen) {
+    toggleDocsDialog();
+  }
 };
 
 if (window.faker) {
