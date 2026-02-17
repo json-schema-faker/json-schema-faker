@@ -4,6 +4,14 @@ import { pad2 } from "../utils/helpers.js";
 
 const DEFAULT_CHARS = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+function canPatternMatchNonEmpty(pattern: string): boolean {
+  // Patterns that only match empty string
+  if (pattern === "^" || pattern === "$" || pattern === "^$") {
+    return false;
+  }
+  return true;
+}
+
 export function generateString(
   schema: JsonSchemaObject,
   ctx: GenerateContext
@@ -46,10 +54,20 @@ export function generateString(
       }
       return result;
     }
-    // Fallback: generate and slice/pad
+    // Fallback: after max attempts, try to generate valid output
+    // If pattern only matches empty string (^, $, ^$), return empty string as last resort
+    // Otherwise, pad to meet minLength
     const result = generateFromRegex(schema.pattern, ctx.random);
+    
+    // Check if pattern can match non-empty strings
+    const patternCanMatchNonEmpty = canPatternMatchNonEmpty(schema.pattern);
+    
     if (effectiveMinLength !== undefined && result.length < effectiveMinLength) {
-      return padString(result, effectiveMinLength, ctx);
+      // Only pad if pattern can match non-empty strings
+      if (patternCanMatchNonEmpty) {
+        return padString(result, effectiveMinLength, ctx);
+      }
+      // Pattern only matches empty string, return as-is (may violate minLength)
     }
     if (effectiveMaxLength !== undefined && result.length > effectiveMaxLength) {
       return result.slice(0, effectiveMaxLength);
