@@ -1,3 +1,8 @@
+# defaults
+src := build
+target := gh-pages
+message := Release: $(shell date)
+
 .PHONY: dev test test_all typecheck build build_clean watch debug lint check ci help
 
 dev:
@@ -26,6 +31,16 @@ debug:
 
 lint:
 	bun run lint 2>/dev/null || echo "No lint script"
+
+pages:
+	@(git worktree remove $(src) --force > /dev/null 2>&1) || true
+	@git worktree add $(src) $(target)
+	@cd $(src) && rm -rf *
+	@cp -r public/* $(src)
+
+deploy:
+	@cd $(src) && git add . && git commit -m "$(message)"
+	@git push origin $(target) -f
 
 check: typecheck test
 
