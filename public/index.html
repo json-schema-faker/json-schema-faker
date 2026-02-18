@@ -1450,7 +1450,7 @@
                             </div>
                             <div class="example-card">
                                 <h4 class="example-title">Template Strings</h4>
-                                <p class="text-gray-400 mb-3 text-sm">Create derived values that reference other properties in the same object. Use #{propertyName} placeholders to build computed strings like full names or formatted addresses.</p>
+                                <p class="text-gray-400 mb-3 text-sm">Create derived values that reference other properties in the same object. Use #{propertyName} placeholders to build computed strings like full names or formatted addresses. Note: Use alwaysFakeOptionals to ensure all referenced properties are generated.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1459,8 +1459,8 @@
     <span class="text-blue-300">lastName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">2</span> },
     <span class="text-blue-300">fullName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">template</span>: <span class="text-yellow-300">"#{firstName} #{lastName}"</span> }
   }
-});
-<span class="text-gray-500">// { firstName: "John", lastName: "Doe", fullName: "John Doe" }</span></code></pre>
+}, { <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
+<span class="text-gray-500">// { firstName: "Ab", lastName: "Cd", fullName: "Ab Cd" }</span></code></pre>
                                 </div>
                             </div>
 
@@ -1490,7 +1490,7 @@
                             <p class="text-gray-400 mb-6">Generate JSON objects with properties. Define property schemas, mark required fields, and control which properties appear in the output.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Basic Object</h4>
-                                <p class="text-gray-400 mb-3 text-sm">Create objects with typed properties. Each property can have its own schema defining type, constraints, and format. Properties not in the required array are optional.</p>
+                                <p class="text-gray-400 mb-3 text-sm">Create objects with typed properties. Each property can have its own schema defining type, constraints, and format. Properties not in the required array are optional. Use alwaysFakeOptionals to include all properties.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1498,7 +1498,7 @@
     <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> },
     <span class="text-blue-300">age</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> }
   }
-});
+}, { <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
 <span class="text-gray-500">// { name: "aB3xK9", age: 42 }</span></code></pre>
                                 </div>
                             </div>
@@ -1561,7 +1561,7 @@
                                 <h4 class="example-title">
                                     allOf, anyOf, oneOf
                                 </h4>
-                                <p class="text-gray-400 mb-3 text-sm">allOf merges all subschemas into one object. anyOf picks one subschema randomly. oneOf validates against exactly one subschema. Use these for flexible schema composition.</p>
+                                <p class="text-gray-400 mb-3 text-sm">allOf merges all subschemas into one object. anyOf picks one subschema randomly. oneOf validates against exactly one subschema. Use these for flexible schema composition. Add alwaysFakeOptionals to include all merged properties.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-gray-500">// allOf - merge all properties into single object</span>
 <span class="text-purple-400">await</span> generate({
@@ -1569,7 +1569,7 @@
     { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">a</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> } } },
     { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">b</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> } } }
   ]
-});
+}, { <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
 <span class="text-gray-500">// { a: "hello", b: 42 }</span></code></pre>
                                 </div>
                             </div>
@@ -1579,7 +1579,7 @@
                             <p class="text-gray-400 mb-6">Use $ref to reference schemas defined in $defs or definitions. This enables schema reuse, recursion, and modular schema design.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Internal $ref</h4>
-                                <p class="text-gray-400 mb-3 text-sm">Reference schemas defined in $defs (or definitions) using JSON Pointer syntax. The $ref is resolved and replaced with the referenced schema. Use this for reusable type definitions and recursive structures.</p>
+                                <p class="text-gray-400 mb-3 text-sm">Reference schemas defined in $defs (or definitions) using JSON Pointer syntax. The $ref is resolved and replaced with the referenced schema. Use this for reusable type definitions and recursive structures. Add alwaysFakeOptionals to include all properties in referenced schemas.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1595,8 +1595,8 @@
       }
     }
   }
-});
-<span class="text-gray-500">// { person: { name: "John", age: 42 } }</span></code></pre>
+}, { <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
+<span class="text-gray-500">// { person: { name: "Ab", age: 42 } }</span></code></pre>
                                 </div>
                             </div>
 
@@ -1653,14 +1653,14 @@
                                 <h4 class="example-title">
                                     Default Values & Examples
                                 </h4>
-                                <p class="text-gray-400 mb-3 text-sm">Use schema-defined default values with useDefaultValue option. Properties with a default keyword will use that value instead of generating random data. Similarly, useExamplesValue picks from the examples array.</p>
+                                <p class="text-gray-400 mb-3 text-sm">Use schema-defined default values with useDefaultValue option. Properties with a default keyword will use that value instead of generating random data. Similarly, useExamplesValue picks from the examples array. Add alwaysFakeOptionals to ensure the property is included.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
   <span class="text-blue-300">properties</span>: {
     <span class="text-blue-300">name</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">default</span>: <span class="text-yellow-300">"Anonymous"</span> }
   }
-}, { <span class="text-blue-300">useDefaultValue</span>: <span class="text-yellow-300">true</span> });
+}, { <span class="text-blue-300">useDefaultValue</span>: <span class="text-yellow-300">true</span>, <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
 <span class="text-gray-500">// { name: "Anonymous" }</span></code></pre>
                                 </div>
                             </div>
@@ -1668,19 +1668,26 @@
                                 <h4 class="example-title">
                                     JSONPath Resolution
                                 </h4>
-                                <p class="text-gray-400 mb-3 text-sm">Enable JSONPath resolution to reference values elsewhere in the generated output. Use $jsonPath in default values to create derived properties that reference sibling or nested values dynamically.</p>
+                                <p class="text-gray-400 mb-3 text-sm">Enable JSONPath resolution to reference values elsewhere in the generated output. Add a jsonPath property to your schema to create derived properties that reference sibling or nested values dynamically.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
   <span class="text-blue-300">properties</span>: {
-    <span class="text-blue-300">users</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>, <span class="text-blue-300">items</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">id</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> } } }, <span class="text-blue-300">minItems</span>: <span class="text-yellow-300">2</span> },
-    <span class="text-blue-300">firstId</span>: {}
+    <span class="text-blue-300">users</span>: {
+      <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>,
+      <span class="text-blue-300">items</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">id</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> } } },
+      <span class="text-blue-300">minItems</span>: <span class="text-yellow-300">2</span>
+    },
+    <span class="text-blue-300">firstUserId</span>: {
+      <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span>,
+      <span class="text-blue-300">jsonPath</span>: <span class="text-yellow-300">"$.users[0].id"</span>
+    }
   }
 }, {
   <span class="text-blue-300">resolveJsonPath</span>: <span class="text-yellow-300">true</span>,
-  <span class="text-blue-300">schema</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">firstId</span>: { <span class="text-blue-300">default</span>: { <span class="text-blue-300">$jsonPath</span>: <span class="text-yellow-300">"$.users[0].id"</span> } } } }
+  <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span>
 });
-<span class="text-gray-500">// { users: [{id: 1}, {id: 2}], firstId: 1 }</span></code></pre>
+<span class="text-gray-500">// { users: [{id: 123}, {id: 456}], firstUserId: 123 }</span></code></pre>
                                 </div>
                             </div>
                         </div>
