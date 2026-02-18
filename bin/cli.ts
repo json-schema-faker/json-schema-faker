@@ -35,43 +35,44 @@ function printHelp(): void {
   console.log(`
 json-schema-faker v${VERSION}
 
-Usage: jsf <schema.json> [output.json] [count] [options.json]
+Usage: jsf <schema.json> [options]
        jsf --help
        jsf --version
 
 Generate fake JSON data from JSON Schema.
 
 Arguments:
-  schema.json     Path to JSON schema file (required)
-  output.json     Path to output file (default: stdout)
-  count           Number of items to generate (wraps in array)
-  options.json    Path to options file (.js or .json)
+  schema.json         Path to JSON schema file (use - for stdin)
 
-Options via CLI flags:
-  --seed <n>           Random seed for deterministic output
-  --max-depth <n>      Maximum recursion depth (default: 5)
-  --min-items <n>      Override minItems for arrays
-  --max-items <n>      Override maxItems for arrays
-  --min-length <n>     Override minLength for strings
-  --max-length <n>     Override maxLength for strings
-  --optionals <0-1>    Probability for optional properties (default: 0.5)
-  --all-optionals      Include all optional properties
-  --use-defaults       Use schema default values
-  --use-examples       Use schema examples values
-  --resolve-jsonpath   Enable JSONPath resolution
-  --prune <props>      Comma-separated properties to remove
-  --pretty             Pretty print output (default: true)
-  --no-pretty          Compact output
-  -h, --help           Show this help
-  -v, --version        Show version
+Options:
+  -o, --output <file>   Output file path (default: stdout)
+  -c, --count <n>       Generate N items as array
+      --options <file>  Path to options JSON file
+  
+  --seed <n>            Random seed for deterministic output
+  --max-depth <n>       Maximum recursion depth (default: 5)
+  --min-items <n>       Override minItems for arrays
+  --max-items <n>       Override maxItems for arrays
+  --min-length <n>      Override minLength for strings
+  --max-length <n>      Override maxLength for strings
+  --optionals <0-1>     Probability for optional properties (default: 0.5)
+  --all-optionals       Include all optional properties
+  --use-defaults        Use schema default values
+  --use-examples        Use schema examples values
+  --resolve-jsonpath    Enable JSONPath resolution
+  --prune <props>       Comma-separated properties to remove
+  --pretty              Pretty print output (default)
+  --no-pretty           Compact output
+  -h, --help            Show this help
+  -v, --version         Show version
 
 Examples:
   jsf schema.json
-  jsf schema.json output.json
-  jsf schema.json output.json 10
-  jsf schema.json output.json none options.js
-  jsf schema.json --seed 42 --all-optionals
+  jsf schema.json -o output.json
+  jsf schema.json -c 10 --seed 42
+  jsf schema.json --all-optionals --seed 42
   cat schema.json | jsf -
+  cat schema.json | jsf - -o output.json
 `);
 }
 
@@ -137,6 +138,24 @@ function parseArgs(args: string[]): {
       continue;
     }
 
+    // Output file
+    if ((arg === "-o" || arg === "--output") && args[i + 1]) {
+      result.outputPath = args[++i];
+      continue;
+    }
+
+    // Count
+    if ((arg === "-c" || arg === "--count") && args[i + 1]) {
+      result.count = parseInt(args[++i], 10);
+      continue;
+    }
+
+    // Options file
+    if (arg === "--options" && args[i + 1]) {
+      result.optionsPath = args[++i];
+      continue;
+    }
+
     if (arg === "--seed" && args[i + 1]) {
       result.cliOptions.seed = parseInt(args[++i], 10);
       continue;
@@ -182,6 +201,12 @@ function parseArgs(args: string[]): {
       continue;
     }
 
+    // Single dash is stdin, not an option
+    if (arg === "-") {
+      positional.push(arg);
+      continue;
+    }
+
     if (arg.startsWith("-")) {
       console.error(`Unknown option: ${arg}`);
       process.exit(1);
@@ -190,21 +215,9 @@ function parseArgs(args: string[]): {
     positional.push(arg);
   }
 
-  // Parse positional arguments
+  // Schema is the only positional argument
   if (positional.length >= 1) {
     result.schemaPath = positional[0];
-  }
-
-  if (positional.length >= 2 && positional[1] !== "none") {
-    result.outputPath = positional[1];
-  }
-
-  if (positional.length >= 3 && positional[2] !== "none") {
-    result.count = parseInt(positional[2], 10);
-  }
-
-  if (positional.length >= 4 && positional[3] !== "none") {
-    result.optionsPath = positional[3];
   }
 
   return result;
@@ -215,13 +228,6 @@ function loadOptionsFile(path: string): OptionsFile {
 
   if (!existsSync(resolvedPath)) {
     console.error(`Options file not found: ${resolvedPath}`);
-    process.exit(1);
-  }
-
-  if (path.endsWith(".js") || path.endsWith(".mjs")) {
-    // For .js files, we need to use dynamic import
-    // This won't work with compiled binary, so we'll only support .json
-    console.error(`JavaScript options files not supported in binary. Use .json instead.`);
     process.exit(1);
   }
 
@@ -236,7 +242,6 @@ function loadOptionsFile(path: string): OptionsFile {
 
 async function readSchema(path: string): Promise<JsonSchema> {
   if (path === "-") {
-    // Read from stdin
     const chunks: Buffer[] = [];
     for await (const chunk of process.stdin) {
       chunks.push(chunk);
@@ -283,20 +288,15 @@ async function main(): Promise<void> {
     process.exit(1);
   }
 
-  // Load schema
   const schema = await readSchema(schemaPath);
 
-  // Load options file if provided
   const fileOptions = optionsPath ? loadOptionsFile(optionsPath) : {};
-
-  // Merge options (CLI takes precedence)
   const options = { ...fileOptions, ...cliOptions } as CliOptions;
 
   try {
     let result: unknown;
 
     if (count !== null && count > 1) {
-      // Generate array of items
       const items: unknown[] = [];
       for (let i = 0; i < count; i++) {
         const item = await generate(schema, {
@@ -307,7 +307,6 @@ async function main(): Promise<void> {
       }
       result = items;
     } else {
-      // Generate single item
       result = await generate(schema, options);
     }
 

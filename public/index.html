@@ -645,16 +645,16 @@
 
                                 <div class="example-card mb-6">
                                     <h4 class="example-title">Basic Usage</h4>
-                                    <p class="text-gray-400 mb-3 text-sm">Generate JSON from a schema file. Output to stdout or save to a file.</p>
+                                    <p class="text-gray-400 mb-3 text-sm">Generate JSON from a schema file. Output to stdout or save to a file with <code class="code-inline">-o</code>.</p>
                                     <div class="code-block !p-4">
                                 <pre><code><span class="text-gray-500"># Generate to stdout</span>
 jsf schema.json
 
 <span class="text-gray-500"># Save to file</span>
-jsf schema.json output.json
+jsf schema.json -o output.json
 
 <span class="text-gray-500"># Generate 10 items as array</span>
-jsf schema.json output.json 10</code></pre>
+jsf schema.json -c 10</code></pre>
                             </div>
                         </div>
 
@@ -675,13 +675,19 @@ jsf schema.json --min-items 5 --max-length 20
 jsf schema.json --use-defaults --use-examples
 
 <span class="text-gray-500"># Read from stdin</span>
-cat schema.json | jsf -</code></pre>
+cat schema.json | jsf -
+
+<span class="text-gray-500"># Combine options</span>
+jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                     </div>
                                 </div>
 
                                 <div class="bg-gray-800/50 rounded-lg p-4">
                                     <h4 class="text-sm font-semibold text-gray-300 mb-3">Available Flags</h4>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                        <div><code class="text-green-400">-o, --output &lt;file&gt;</code> <span class="text-gray-500">Output file</span></div>
+                                        <div><code class="text-green-400">-c, --count &lt;n&gt;</code> <span class="text-gray-500">Array count</span></div>
+                                        <div><code class="text-green-400">--options &lt;file&gt;</code> <span class="text-gray-500">Options JSON</span></div>
                                         <div><code class="text-green-400">--seed &lt;n&gt;</code> <span class="text-gray-500">Random seed</span></div>
                                         <div><code class="text-green-400">--max-depth &lt;n&gt;</code> <span class="text-gray-500">Max recursion</span></div>
                                         <div><code class="text-green-400">--min-items &lt;n&gt;</code> <span class="text-gray-500">Min array items</span></div>
@@ -691,9 +697,6 @@ cat schema.json | jsf -</code></pre>
                                         <div><code class="text-green-400">--optionals &lt;0-1&gt;</code> <span class="text-gray-500">Probability</span></div>
                                         <div><code class="text-green-400">--all-optionals</code> <span class="text-gray-500">Include all</span></div>
                                         <div><code class="text-green-400">--use-defaults</code> <span class="text-gray-500">Use defaults</span></div>
-                                        <div><code class="text-green-400">--use-examples</code> <span class="text-gray-500">Use examples</span></div>
-                                        <div><code class="text-green-400">--resolve-jsonpath</code> <span class="text-gray-500">Enable JSONPath</span></div>
-                                        <div><code class="text-green-400">--prune &lt;props&gt;</code> <span class="text-gray-500">Remove props</span></div>
                                     </div>
                                 </div>
                             </div>
