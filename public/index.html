@@ -1385,14 +1385,16 @@
                         <div class="max-w-5xl mx-auto">
                             <!-- Primitive Types -->
                             <h3 class="section-subtitle mt-0">Primitive Types</h3>
+                            <p class="text-gray-400 mb-6">Generate basic JSON primitive values: null, boolean, string, and number types. These form the foundation of all JSON Schema data generation.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Null & Boolean</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Generate null values or random boolean values. Boolean schemas produce true or false with equal probability. These are the simplest schema types and always produce predictable outputs.</p>
                                 <div class="code-block !p-4">
-                                    <pre><code><span class="text-gray-500">// Null</span>
+                                    <pre><code><span class="text-gray-500">// Null - always returns null</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"null"</span> });
 <span class="text-gray-500">// null</span>
 
-<span class="text-gray-500">// Boolean</span>
+<span class="text-gray-500">// Boolean - randomly true or false</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"boolean"</span> });
 <span class="text-gray-500">// true or false</span></code></pre>
                                 </div>
@@ -1400,43 +1402,55 @@
 
                             <!-- String -->
                             <h3 class="section-subtitle">String</h3>
+                            <p class="text-gray-400 mb-6">Generate string values with various constraints. Control length, match regex patterns, use built-in formats, or create template strings that reference other properties.</p>
                             <div class="example-card">
                                 <h4 class="example-title">
                                     Basic String & Length Constraints
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Generate random alphanumeric strings. Use minLength and maxLength to control string size. Without constraints, strings default to 8 characters with mixed case letters and numbers.</p>
                                 <div class="code-block !p-4">
-                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> });
+                                    <pre><code><span class="text-gray-500">// Basic string - random alphanumeric</span>
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> });
 <span class="text-gray-500">// "aB3xK9pL2"</span>
 
+<span class="text-gray-500">// Minimum length constraint</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">minLength</span>: <span class="text-yellow-300">10</span> });
 <span class="text-gray-500">// "abcdefghij"</span>
 
+<span class="text-gray-500">// Maximum length constraint</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">maxLength</span>: <span class="text-yellow-300">5</span> });
 <span class="text-gray-500">// "abc"</span></code></pre>
                                 </div>
                             </div>
                             <div class="example-card">
                                 <h4 class="example-title">Regex Pattern</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Generate strings that match a regex pattern using an AST-based parser. The generator analyzes your pattern and produces valid matching strings. Supports character classes, quantifiers, and groups.</p>
                                 <div class="code-block !p-4">
-                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">pattern</span>: <span class="text-yellow-300">"^[a-z]+$"</span> });
+                                    <pre><code><span class="text-gray-500">// Match lowercase letters only</span>
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">pattern</span>: <span class="text-yellow-300">"^[a-z]+$"</span> });
 <span class="text-gray-500">// "abcdef"</span>
 
+<span class="text-gray-500">// Phone number format: 3 digits, dash, 4 digits</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">pattern</span>: <span class="text-yellow-300">"^[0-9]{3}-[0-9]{4}$"</span> });
 <span class="text-gray-500">// "123-4567"</span></code></pre>
                                 </div>
                             </div>
                             <div class="example-card">
                                 <h4 class="example-title">Format (Built-in)</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Use built-in formats to generate realistic data like emails, URIs, UUIDs, IP addresses, and dates. These formats produce RFC-compliant values without requiring external libraries.</p>
                                 <div class="code-block !p-4">
-                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"email"</span> });
+                                    <pre><code><span class="text-gray-500">// Email format - RFC 5322 compliant</span>
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"email"</span> });
 <span class="text-gray-500">// "user@example.com"</span>
 
+<span class="text-gray-500">// UUID format - RFC 4122 compliant</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"uuid"</span> });
 <span class="text-gray-500">// "550e8400-e29b-41d4-a716-446655440000"</span></code></pre>
                                 </div>
                             </div>
                             <div class="example-card">
                                 <h4 class="example-title">Template Strings</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Create derived values that reference other properties in the same object. Use #{propertyName} placeholders to build computed strings like full names or formatted addresses.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1452,15 +1466,20 @@
 
                             <!-- Numbers -->
                             <h3 class="section-subtitle">Numbers</h3>
+                            <p class="text-gray-400 mb-6">Generate integer and number (float) values with constraints. Control ranges with minimum/maximum, enforce multiples, or generate negative values.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Integer</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Generate whole numbers. Use minimum and maximum to define acceptable ranges. The multipleOf constraint ensures values are divisible by a specific number.</p>
                                 <div class="code-block !p-4">
-                                    <pre><code><span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> });
+                                    <pre><code><span class="text-gray-500">// Random integer (can be negative)</span>
+<span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span> });
 <span class="text-gray-500">// -456 or 123</span>
 
+<span class="text-gray-500">// Bounded range: 1 to 10</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span>, <span class="text-blue-300">minimum</span>: <span class="text-yellow-300">1</span>, <span class="text-blue-300">maximum</span>: <span class="text-yellow-300">10</span> });
 <span class="text-gray-500">// 7</span>
 
+<span class="text-gray-500">// Multiples of 5</span>
 <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"integer"</span>, <span class="text-blue-300">multipleOf</span>: <span class="text-yellow-300">5</span> });
 <span class="text-gray-500">// 15, 20, 25...</span></code></pre>
                                 </div>
@@ -1468,8 +1487,10 @@
 
                             <!-- Objects -->
                             <h3 class="section-subtitle">Objects</h3>
+                            <p class="text-gray-400 mb-6">Generate JSON objects with properties. Define property schemas, mark required fields, and control which properties appear in the output.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Basic Object</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Create objects with typed properties. Each property can have its own schema defining type, constraints, and format. Properties not in the required array are optional.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1485,6 +1506,7 @@
                                 <h4 class="example-title">
                                     Required & Optional Properties
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Control which properties appear using the required array. Properties not required are optional and may be omitted. Use alwaysFakeOptionals to include all properties regardless of required status.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1500,8 +1522,10 @@
 
                             <!-- Arrays -->
                             <h3 class="section-subtitle">Arrays</h3>
+                            <p class="text-gray-400 mb-6">Generate arrays of values. Control array length, enforce unique items, or create tuples with specific item types at each position.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Basic Array</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Create arrays where all items conform to a single schema. Use minItems and maxItems to control array size. Items are generated independently with random values.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>,
@@ -1516,6 +1540,7 @@
                                 <h4 class="example-title">
                                     Tuple (prefixItems)
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Create fixed-length arrays where each position has a specific type. Use prefixItems to define schemas for each position in order. This creates typed tuples similar to database rows.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"array"</span>,
@@ -1531,12 +1556,14 @@
 
                             <!-- Composition -->
                             <h3 class="section-subtitle">Composition</h3>
+                            <p class="text-gray-400 mb-6">Combine schemas using allOf, anyOf, and oneOf. These powerful keywords let you build complex schemas from simpler components.</p>
                             <div class="example-card">
                                 <h4 class="example-title">
                                     allOf, anyOf, oneOf
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">allOf merges all subschemas into one object. anyOf picks one subschema randomly. oneOf validates against exactly one subschema. Use these for flexible schema composition.</p>
                                 <div class="code-block !p-4">
-                                    <pre><code><span class="text-gray-500">// allOf - merge properties</span>
+                                    <pre><code><span class="text-gray-500">// allOf - merge all properties into single object</span>
 <span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">allOf</span>: [
     { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>, <span class="text-blue-300">properties</span>: { <span class="text-blue-300">a</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> } } },
@@ -1549,8 +1576,10 @@
 
                             <!-- References -->
                             <h3 class="section-subtitle">References</h3>
+                            <p class="text-gray-400 mb-6">Use $ref to reference schemas defined in $defs or definitions. This enables schema reuse, recursion, and modular schema design.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Internal $ref</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Reference schemas defined in $defs (or definitions) using JSON Pointer syntax. The $ref is resolved and replaced with the referenced schema. Use this for reusable type definitions and recursive structures.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1575,16 +1604,20 @@
                             <h3 class="section-subtitle">
                                 Extensions (faker/chance)
                             </h3>
+                            <p class="text-gray-400 mb-6">Integrate @faker-js/faker or chance for realistic test data. Add the faker or chance keyword to your schema with a method path to generate contextual data.</p>
                             <div class="example-card">
                                 <h4 class="example-title">Using faker</h4>
+                                <p class="text-gray-400 mb-3 text-sm">Pass a faker instance via extensions option. Then use the faker keyword in schemas with dot-notation method paths like 'person.fullName' or 'internet.email'. Supports all faker methods for localized, realistic data.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">import</span> { faker } <span class="text-purple-400">from</span> <span class="text-yellow-300">"@faker-js/faker"</span>;
 
+<span class="text-gray-500">// Generate realistic names</span>
 <span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">faker</span>: <span class="text-yellow-300">"person.fullName"</span>
 }, { <span class="text-blue-300">extensions</span>: { faker } });
 <span class="text-gray-500">// "John Doe"</span>
 
+<span class="text-gray-500">// Generate realistic emails</span>
 <span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">faker</span>: <span class="text-yellow-300">"internet.email"</span>
 }, { <span class="text-blue-300">extensions</span>: { faker } });
@@ -1594,10 +1627,12 @@
 
                             <!-- Custom Formats -->
                             <h3 class="section-subtitle">Custom Formats</h3>
+                            <p class="text-gray-400 mb-6">Define your own format generators for domain-specific data like phone numbers, IDs, or codes. Custom formats receive a random instance for generating values.</p>
                             <div class="example-card">
                                 <h4 class="example-title">
                                     Inline Custom Formats
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Pass custom format generators via the formats option. Each generator receives a random object with methods like int(), pick(), and bool() for generating deterministic random values.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>,
@@ -1613,10 +1648,12 @@
 
                             <!-- Advanced Features -->
                             <h3 class="section-subtitle">Advanced Features</h3>
+                            <p class="text-gray-400 mb-6">Advanced capabilities including default values, examples array, JSONPath cross-references, and more for sophisticated data generation scenarios.</p>
                             <div class="example-card">
                                 <h4 class="example-title">
                                     Default Values & Examples
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Use schema-defined default values with useDefaultValue option. Properties with a default keyword will use that value instead of generating random data. Similarly, useExamplesValue picks from the examples array.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
@@ -1631,6 +1668,7 @@
                                 <h4 class="example-title">
                                     JSONPath Resolution
                                 </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Enable JSONPath resolution to reference values elsewhere in the generated output. Use $jsonPath in default values to create derived properties that reference sibling or nested values dynamically.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
