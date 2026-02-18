@@ -33,6 +33,8 @@ const data = await generate({
 ## Install
 
 ```bash
+npm install json-schema-faker
+# or
 bun add json-schema-faker
 ```
 

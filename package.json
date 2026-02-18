@@ -2,10 +2,46 @@
   "name": "json-schema-faker",
   "version": "0.6.0",
   "description": "Generate valid JSON data from JSON Schema definitions",
+  "keywords": [
+    "json",
+    "json-schema",
+    "faker",
+    "mock",
+    "generator",
+    "fake-data",
+    "test-data",
+    "json-schema-faker"
+  ],
+  "author": "Alvaro Cabrera <pateketrueke@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/json-schema-faker/json-schema-faker.git"
+  },
+  "bugs": {
+    "url": "https://github.com/json-schema-faker/json-schema-faker/issues"
+  },
+  "homepage": "https://json-schema-faker.js.org/",
   "type": "module",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "build:clean": "rm -rf dist && bun run build",
+    "prepublishOnly": "bun run build:clean && bun test",
     "test": "bun test",
     "test:all": "NO_SKIP=1 bun test",
     "typecheck": "tsc --noEmit"
@@ -18,5 +54,9 @@
     "chance": "^1.1.13",
     "mockjs": "^1.1.0",
     "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
+
