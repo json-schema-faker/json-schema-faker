@@ -123,11 +123,29 @@ export async function generateArray(
   // Only generate additional items if:
   // 1. items is explicitly defined (not undefined), OR
   // 2. prefixItems is NOT present (use items as fallback for non-tuple arrays)
+  // 3. additionalItems is defined (not false) when prefixItems is present
   const hasExplicitItems = schema.items !== undefined;
   const hasPrefixItems = schema.prefixItems !== undefined;
+  const hasAdditionalItems = schema.additionalItems !== undefined;
   
-  if (schema.items !== false && (hasExplicitItems || !hasPrefixItems)) {
-    const itemSchema: JsonSchema = schema.items ?? {};
+  // Determine the schema to use for additional items
+  let additionalItemSchema: JsonSchema | undefined;
+  if (hasPrefixItems) {
+    // For tuple syntax, use additionalItems if defined, otherwise fall back to items
+    if (hasAdditionalItems) {
+      additionalItemSchema = schema.additionalItems as JsonSchema;
+    } else if (schema.items !== undefined) {
+      // When additionalItems is not specified, default to using items schema
+      additionalItemSchema = schema.items as JsonSchema;
+    }
+    // If neither additionalItems nor items is defined, additionalItemSchema stays undefined (allow any)
+  } else {
+    // For regular arrays, use items
+    additionalItemSchema = schema.items as JsonSchema | undefined;
+  }
+  
+  if (additionalItemSchema !== false && additionalItemSchema !== undefined) {
+    const itemSchema: JsonSchema = additionalItemSchema ?? {};
     while (result.length < targetLen) {
       const success = await addItem(itemSchema);
       if (!success) break; // Stop if we can't generate more unique items

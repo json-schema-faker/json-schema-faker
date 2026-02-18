@@ -6,6 +6,7 @@ import { generateHostname } from "./hostname.js";
 import { generateIpv4, generateIpv6 } from "./ip.js";
 import { generateUuid } from "./uuid.js";
 import { generateJsonPointer } from "./json-pointer.js";
+import { generateDuration } from "./duration.js";
 
 export type FormatGenerator = (random: Random) => string;
 
@@ -13,6 +14,7 @@ const builtinFormats: Map<string, FormatGenerator> = new Map([
   ["date-time", generateDateTime],
   ["date", generateDate],
   ["time", generateTime],
+  ["duration", generateDuration],
   ["email", generateEmail],
   ["idn-email", generateEmail],
   ["uri", generateUri],
