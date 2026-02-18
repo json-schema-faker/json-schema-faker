@@ -1,0 +1,27 @@
+[
+  {
+    "description": "Issue #791 - not.enum regression",
+    "tests": [
+      {
+        "description": "should generate string not matching enum values",
+        "schema": {
+          "type": "string",
+          "not": {
+            "enum": ["foo", "bar", "baz"]
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate string not matching any of multiple enum values",
+        "schema": {
+          "not": {
+            "enum": ["a", "b", "c", "d", "e"]
+          },
+          "type": "string"
+        },
+        "valid": true
+      }
+    ]
+  }
+]

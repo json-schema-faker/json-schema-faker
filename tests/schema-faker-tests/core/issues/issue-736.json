@@ -1,0 +1,47 @@
+[
+  {
+    "description": "Issue #736 - Re-use fake values via jsonPath",
+    "tests": [
+      {
+        "description": "should resolve jsonPath references in template strings",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "firstName": {
+              "type": "string"
+            },
+            "lastName": {
+              "type": "string"
+            },
+            "fullName": {
+              "type": "string",
+              "template": "#{firstName} #{lastName}"
+            }
+          },
+          "required": ["firstName", "lastName", "fullName"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should use resolveJsonPath option for cross-referencing",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "userId": {
+              "type": "integer"
+            },
+            "userName": {
+              "type": "string"
+            },
+            "userRef": {
+              "type": "string",
+              "template": "user-#{userId}"
+            }
+          },
+          "required": ["userId", "userName", "userRef"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

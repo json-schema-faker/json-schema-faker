@@ -1,0 +1,39 @@
+[
+  {
+    "description": "Issue #808 - Empty objects for string data types",
+    "tests": [
+      {
+        "description": "should generate strings in object properties consistently",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string",
+              "format": "email"
+            },
+            "description": {
+              "type": "string"
+            }
+          },
+          "required": ["name", "email", "description"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate string array items",
+        "schema": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 3,
+          "maxItems": 5
+        },
+        "valid": true
+      }
+    ]
+  }
+]

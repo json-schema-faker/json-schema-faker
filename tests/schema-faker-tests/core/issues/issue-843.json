@@ -1,0 +1,63 @@
+[
+  {
+    "description": "Issue #843 - Bad data for ref pointing to another ref",
+    "tests": [
+      {
+        "description": "should correctly resolve chained $ref",
+        "schema": {
+          "$ref": "#/$defs/outer",
+          "$defs": {
+            "middle": {
+              "$ref": "#/$defs/inner"
+            },
+            "inner": {
+              "type": "object",
+              "properties": {
+                "value": {
+                  "type": "string"
+                }
+              },
+              "required": ["value"]
+            },
+            "outer": {
+              "$ref": "#/$defs/middle"
+            }
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "should resolve ref chain with array items",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "items": {
+              "type": "array",
+              "items": {
+                "$ref": "#/$defs/item"
+              }
+            }
+          },
+          "$defs": {
+            "wrapper": {
+              "$ref": "#/$defs/item"
+            },
+            "item": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "integer"
+                },
+                "name": {
+                  "type": "string"
+                }
+              },
+              "required": ["id"]
+            }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

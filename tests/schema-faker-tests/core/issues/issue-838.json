@@ -1,0 +1,41 @@
+[
+  {
+    "description": "Issue #838 - Inconsistent schema with additionalProperties and direct property",
+    "tests": [
+      {
+        "description": "should handle object with additionalProperties and overlapping direct properties",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": {
+            "type": "string"
+          },
+          "required": ["name"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should handle additionalProperties false with patternProperties",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "fixed": {
+              "type": "string"
+            }
+          },
+          "patternProperties": {
+            "^s_": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        },
+        "valid": true
+      }
+    ]
+  }
+]
