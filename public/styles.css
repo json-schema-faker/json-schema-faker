@@ -32,6 +32,7 @@ body {
     background-color: var(--dark) !important;
 }
 
+.example-card + .section-subtitle,
 .example-card + .example-card {
     margin-top: 1rem;
 }

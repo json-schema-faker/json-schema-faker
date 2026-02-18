@@ -1,4 +1,4 @@
-const closeDialogButton = document.getElementById("close-dialog");
+const closeDialogIcon = document.getElementById("x-close-dialog");
 const dialogModal = document.getElementById("dialog-modal");
 
 let isOpen;
@@ -21,7 +21,7 @@ function closeDialog(e) {
   if (e.target === dialogModal) toggleDocsDialog();
 }
 
-closeDialogButton.addEventListener("click", toggleDocsDialog);
+closeDialogIcon.addEventListener("click", toggleDocsDialog);
 dialogModal.addEventListener("click", closeDialog);
 
 document.onkeydown = function (evt) {
