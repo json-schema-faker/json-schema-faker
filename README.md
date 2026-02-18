@@ -232,10 +232,13 @@ Download platform-specific binaries from [GitHub Releases](https://github.com/js
 ## Development
 
 ```bash
-bun test                    # Run all tests
-bun test tests/unit/array   # Run a single test file
-bun run typecheck           # TypeScript type checking
-bun test:all                # Run all tests including skipped
+make dev          # Run development mode (tequio-dev)
+make test         # Run all tests
+make test_all     # Run all tests including skipped
+make typecheck    # TypeScript type checking
+make build        # Build the project
+make check        # Run typecheck + test
+make ci           # Full CI check (typecheck + test_all + build)
 ```
 
 ## License
