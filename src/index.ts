@@ -48,8 +48,7 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     random,
     maxDepth: options?.maxDepth ?? (refDepthMax ? refDepthMax + 20 : 5),
     maxDefaultItems: options?.maxDefaultItems ?? 3,
-    // optionalsProbability is an alias for optionalPropertyProbability
-    optionalPropertyProbability: options?.optionalsProbability ?? options?.optionalPropertyProbability ?? 0.5,
+    optionalsProbability: options?.optionalsProbability ?? 0.5,
     depth: 0,
     refRegistry,
     refStack: new Set(),
@@ -62,8 +61,6 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     useDefaultValue: options?.useDefaultValue,
     path: "/",
     alwaysFakeOptionals: options?.alwaysFakeOptionals,
-    // Pass through the optionalsProbability and fixedProbabilities options
-    optionalsProbability: options?.optionalsProbability ?? options?.optionalPropertyProbability,
     fixedProbabilities: options?.fixedProbabilities,
     fillProperties: options?.fillProperties,
     extensions: options?.extensions,

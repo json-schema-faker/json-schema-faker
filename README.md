@@ -94,11 +94,11 @@ await generate(schema, {
   maxDefaultItems: 3,                // Default max array items (default: 3)
 
   // Property generation
-  optionalPropertyProbability: 0.5,  // Probability of optional properties (default: 0.5)
-  alwaysFakeOptionals: true,         // Always generate optional properties
-  fillProperties: true,              // Fill beyond required properties
-  fixedProbabilities: true,          // Deterministic probabilities for testing
-  pruneProperties: ["internal"],     // Remove properties from output
+  optionalsProbability: 0.5,           // Probability of optional properties (default: 0.5)
+  alwaysFakeOptionals: true,           // Always generate optional properties
+  fillProperties: true,                // Fill beyond required properties
+  fixedProbabilities: true,            // Deterministic probabilities for testing
+  pruneProperties: ["internal"],       // Remove properties from output
 
   // Schema overrides
   minItems: 2,                       // Override schema minItems

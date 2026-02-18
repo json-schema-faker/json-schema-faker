@@ -773,8 +773,7 @@ cat schema.json | jsf -</code></pre>
     <span class="text-blue-300">seed</span>?: number;                         <span class="text-gray-500">// Deterministic generation</span>
     <span class="text-blue-300">maxDepth</span>?: number;                     <span class="text-gray-500">// Limit nesting depth</span>
     <span class="text-blue-300">maxDefaultItems</span>?: number;              <span class="text-gray-500">// Default: 3</span>
-    <span class="text-blue-300">optionalPropertyProbability</span>?: number;  <span class="text-gray-500">// Default: 0.5</span>
-    <span class="text-blue-300">optionalsProbability</span>?: number;         <span class="text-gray-500">// Alias</span>
+    <span class="text-blue-300">optionalsProbability</span>?: number;         <span class="text-gray-500">// Default: 0.5</span>
     <span class="text-blue-300">alwaysFakeOptionals</span>?: boolean;         <span class="text-gray-500">// Always include optionals</span>
     <span class="text-blue-300">fillProperties</span>?: boolean;              <span class="text-gray-500">// Fill all properties</span>
     <span class="text-blue-300">minItems</span>?: number;                     <span class="text-gray-500">// Override minItems</span>
@@ -983,29 +982,14 @@ cat schema.json | jsf -</code></pre>
                                         <div class="option-card">
                                             <div class="relative">
                                                 <div class="flex items-start justify-between mb-4">
-                                                    <h3 class="text-lg font-semibold text-purple-400">optionalPropertyProbability</h3>
+                                                    <h3 class="text-lg font-semibold text-purple-400">optionalsProbability</h3>
                                                     <span class="option-type">number</span>
                                                 </div>
                                                 <p class="text-gray-400 mb-4">Probability (0-1) of generating optional properties. <code class="code-inline">0</code> = never, <code class="code-inline">1</code> = always. <code class="code-inline">Default: 0.5</code></p>
                                                 <div class="code-block !p-4 !text-sm">
                                             <pre><code><span class="text-gray-500">// 75% chance to include optionals</span>
 <span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
-    <span class="text-blue-300">optionalPropertyProbability</span>: <span class="text-yellow-300">0.75</span>
-});</code></pre>
-                                                </div>
-                                            </div>
-                                        </div>
-
-                                        <div class="option-card">
-                                            <div class="relative">
-                                                <div class="flex items-start justify-between mb-4">
-                                                    <h3 class="text-lg font-semibold text-purple-400">optionalsProbability</h3>
-                                                    <span class="option-type">number</span>
-                                                </div>
-                                                <p class="text-gray-400 mb-4">Alias for <code class="code-inline">optionalPropertyProbability</code>. Same functionality.</p>
-                                                <div class="code-block !p-4 !text-sm">
-                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
-    <span class="text-blue-300">optionalsProbability</span>: <span class="text-yellow-300">0.5</span>
+    <span class="text-blue-300">optionalsProbability</span>: <span class="text-yellow-300">0.75</span>
 });</code></pre>
                                                 </div>
                                             </div>

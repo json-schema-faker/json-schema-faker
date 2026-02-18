@@ -81,7 +81,8 @@ export interface GenerateOptions {
   seed?: number;
   maxDepth?: number;
   maxDefaultItems?: number;
-  optionalPropertyProbability?: number;
+  /** Probability (0-1) of generating optional properties */
+  optionalsProbability?: number;
   formats?: Record<string, (random: Random) => string>;
   refResolver?: RefResolver;
   /** Override schema minItems for array generation */
@@ -96,8 +97,6 @@ export interface GenerateOptions {
   useDefaultValue?: boolean;
   /** Always generate optional properties */
   alwaysFakeOptionals?: boolean;
-  /** Alias for optionalPropertyProbability - probability (0-1) of generating optional properties */
-  optionalsProbability?: number;
   /** Use fixed/deterministic probabilities for testing */
   fixedProbabilities?: boolean;
   /** Fill properties beyond required (for nested required propagation) */
@@ -137,7 +136,7 @@ export interface GenerateContext {
   random: Random;
   maxDepth: number;
   maxDefaultItems: number;
-  optionalPropertyProbability: number;
+  optionalsProbability: number;
   depth: number;
   refRegistry: Map<string, JsonSchema>;
   refStack: Set<string>;
@@ -157,8 +156,6 @@ export interface GenerateContext {
   path: string;
   /** Always generate optional properties */
   alwaysFakeOptionals?: boolean;
-  /** Probability (0-1) of generating optional properties - mirrors optionalsProbability option */
-  optionalsProbability?: number;
   /** Use fixed/deterministic probabilities for testing */
   fixedProbabilities?: boolean;
   /** Fill properties beyond required (for nested required propagation) */

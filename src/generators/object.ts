@@ -142,7 +142,7 @@ export async function generateObject(
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const fillProperties = ctx.fillProperties ?? true;
   const useFixedProbabilities = ctx.fixedProbabilities ?? false;
-  const optionalsProbability = ctx.optionalsProbability ?? ctx.optionalPropertyProbability ?? 0.5;
+  const optionalsProbability = ctx.optionalsProbability ?? 0.5;
 
   // Get optional property keys
   const optionalKeys = Object.keys(inferredProperties).filter(key => !required.has(key));

@@ -104,7 +104,7 @@ export async function generateArray(
   
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const useFixedProbabilities = ctx.fixedProbabilities ?? false;
-  const optionalsProbability = ctx.optionalsProbability ?? ctx.optionalPropertyProbability ?? 0.5;
+  const optionalsProbability = ctx.optionalsProbability ?? 0.5;
 
   if (alwaysFakeOptionals) {
     // alwaysFakeOptionals overrides probabilities - generate maximum items
