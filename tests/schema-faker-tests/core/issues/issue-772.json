@@ -1,0 +1,64 @@
+[
+  {
+    "description": "allOf with anyOf and const constraints",
+    "tests": [
+      {
+        "description": "should handle allOf containing anyOf with const constraints",
+        "skip": true,
+        "schema": {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "a": {
+                      "type": "string"
+                    },
+                    "b": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "a",
+                    "b"
+                  ],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "c": {
+                      "type": "string"
+                    },
+                    "d": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "c",
+                    "d"
+                  ],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "a": {
+                  "const": "azer"
+                }
+              },
+              "required": [
+                "a"
+              ],
+              "additionalProperties": true
+            }
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

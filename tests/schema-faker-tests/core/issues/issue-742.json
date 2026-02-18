@@ -1,0 +1,31 @@
+[
+  {
+    "description": "Auto-increment option for array items",
+    "tests": [
+      {
+        "description": "should support autoIncrement and initialOffset for integer properties",
+        "skip": true,
+        "schema": {
+          "type": "array",
+          "minItems": 5,
+          "maxItems": 5,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "integer",
+                "minimum": 1,
+                "autoIncrement": true,
+                "initialOffset": 1
+              }
+            },
+            "required": [
+              "id"
+            ]
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]
