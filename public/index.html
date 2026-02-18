@@ -54,26 +54,25 @@
                         <span class="badge">v0.6.0</span>
                     </div>
                 </nav>
+                <div class="block md:hidden flex items-center justify-center gap-8 pb-3 mx-auto">
+                    <a
+                        href="#docs"
+                        class="nav-link"
+                        onclick="openDocsDialog()">Docs</a>
+                    <a
+                        href="#examples"
+                        class="nav-link"
+                        onclick="openDocsDialog()">Examples</a>
+                    <a
+                        href="#playground"
+                        class="nav-link"
+                        onclick="openDocsDialog()">Playground</a>
+                    <a
+                        target="_blank"
+                        href="https://github.com/json-schema-faker/json-schema-faker"
+                        class="nav-link">GitHub</a>
+                </div>
             </header>
-
-            <div class="block md:hidden flex items-center justify-center gap-8 py-3 mx-auto border-b border-gray-800 sticky top-[73px] z-[99] bg-black-900 backdrop-blur-sm">
-                <a
-                    href="#docs"
-                    class="nav-link text-shadow-fixed"
-                    onclick="openDocsDialog()">Docs</a>
-                <a
-                    href="#examples"
-                    class="nav-link text-shadow-fixed"
-                    onclick="openDocsDialog()">Examples</a>
-                <a
-                    href="#playground"
-                    class="nav-link text-shadow-fixed"
-                    onclick="openDocsDialog()">Playground</a>
-                <a
-                    target="_blank"
-                    href="https://github.com/json-schema-faker/json-schema-faker"
-                    class="nav-link text-shadow-fixed">GitHub</a>
-            </div>
 
             <!-- Hero Section -->
             <section class="container mx-auto px-6 py-24 md:py-32">
@@ -147,7 +146,7 @@
             </section>
 
             <!-- Code Example Section -->
-            <section class="container mx-auto px-6 py-16">
+            <section class="container mx-auto px-6 py-6">
                 <div class="max-w-5xl mx-auto">
                     <div class="grid md:grid-cols-2 gap-12 items-center">
                         <div class="space-y-6">
@@ -235,7 +234,7 @@
             </section>
 
             <!-- Features Grid -->
-            <section class="container mx-auto px-6 py-16">
+            <section class="container mx-auto px-6 py-6">
                 <div class="max-w-6xl mx-auto">
                     <div class="text-center mb-16">
                         <h2
@@ -422,7 +421,7 @@
             </section>
 
             <!-- CTA Section -->
-            <section class="container mx-auto px-6 py-16">
+            <section class="container mx-auto px-6 py-6">
                 <div class="max-w-4xl mx-auto">
                     <div
                         class="relative overflow-hidden rounded-3xl border border-gray-800"
@@ -591,7 +590,7 @@
                 <!-- Dialog Body (main content area, can scroll) -->
                 <div class="flex-grow overflow-y-auto dialog-body">
                     <!-- Documentation Section -->
-                    <section id="docs" class="px-6 py-16">
+                    <section id="docs" class="px-6 py-6">
                         <!-- Sticky Table of Contents (desktop) -->
                         <div class="sticky top-4 z-[99] md:float-left">
                             <div class="hidden md:block">
@@ -612,20 +611,20 @@
                                 </nav>
                             </div>
                             <!-- Table of Contents (mobile) -->
-                            <div class="md:hidden rounded-lg mb-8 p-4 bg-gray-800/50 backdrop-blur-sm">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-3">Contents</h4>
+                            <div class="md:hidden rounded-lg mb-8 p-4 bg-white/20 backdrop-blur-sm">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-3 text-green-400">Contents</h4>
                                 <div class="grid md:grid-cols-4 grid-cols-3 gap-2 text-sm">
-                                    <a href="#seeding" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Seeding</a>
-                                    <a href="#arrays" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Arrays</a>
-                                    <a href="#strings" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Strings</a>
-                                    <a href="#optionals" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Optionals</a>
-                                    <a href="#defaults" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Defaults</a>
-                                    <a href="#formats" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Formats</a>
-                                    <a href="#refs" class="text-gray-400 hover:text-green-400 text-shadow-fixed">References</a>
-                                    <a href="#extensions" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Extensions</a>
-                                    <a href="#datetime" class="text-gray-400 hover:text-green-400">Date/Time</a>
-                                    <a href="#advanced" class="text-gray-400 hover:text-green-400 text-shadow-fixed">Advanced</a>
-                                    <a href="#cli" class="text-gray-400 hover:text-green-400 text-shadow-fixed">CLI</a>
+                                    <a href="#seeding" class=" hover:text-green-400 text-shadow-fixed">Seeding</a>
+                                    <a href="#arrays" class=" hover:text-green-400 text-shadow-fixed">Arrays</a>
+                                    <a href="#strings" class=" hover:text-green-400 text-shadow-fixed">Strings</a>
+                                    <a href="#optionals" class=" hover:text-green-400 text-shadow-fixed">Optionals</a>
+                                    <a href="#defaults" class=" hover:text-green-400 text-shadow-fixed">Defaults</a>
+                                    <a href="#formats" class=" hover:text-green-400 text-shadow-fixed">Formats</a>
+                                    <a href="#refs" class=" hover:text-green-400 text-shadow-fixed">References</a>
+                                    <a href="#extensions" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
+                                    <a href="#datetime" class=" hover:text-green-400">Date/Time</a>
+                                    <a href="#advanced" class=" hover:text-green-400 text-shadow-fixed">Advanced</a>
+                                    <a href="#cli" class=" hover:text-green-400 text-shadow-fixed">CLI</a>
                                 </div>
                             </div>
                         </div>
@@ -702,7 +701,7 @@ cat schema.json | jsf -</code></pre>
                             <!-- Importing -->
                             <div class="mb-12">
                                 <h3 class="section-subtitle fraunces">Programmatic Usage</h3>
-                                <p class="text-gray-400 mb-3">Use named imports:</p>
+                                <p class="text-gray-400 mb-3">Import what you need using named imports:</p>
                                 <div class="code-block">
                                     <pre><code><span class="text-purple-400">import</span> {
     generate,
@@ -720,7 +719,7 @@ cat schema.json | jsf -</code></pre>
                                         <h4 class="example-title">
                                             <code class="code-inline">generate(schema, options?)</code>
                                         </h4>
-                                        <p class="text-gray-400 mb-3">Main entry point. Returns a Promise&lt;unknown&gt;.</p>
+                                        <p class="text-gray-400 mb-3">Main entry point. Returns a <code class="code-inline">Promise&lt;unknown&gt;</code>.</p>
                                         <div class="code-block !p-4">
                                             <pre><code><span class="text-purple-400">const</span> value = <span class="text-purple-400">await</span> generate({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"email"</span> });</code></pre>
                                         </div>
@@ -753,72 +752,6 @@ cat schema.json | jsf -</code></pre>
 });</code></pre>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-
-                            <!-- Built-in Formats -->
-                            <div class="mb-12">
-                                <h3 class="section-subtitle fraunces">Built-in Formats</h3>
-                                <p class="text-gray-400 mb-4">
-                                    These formats are automatically available:
-                                </p>
-                                <div class="overflow-x-auto">
-                                    <table class="format-table">
-                                        <thead>
-                                            <tr>
-                                                <th>Format</th>
-                                                <th>Example Output</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">date-time</td>
-                                                <td>2024-03-15T14:30:00Z</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">date</td>
-                                                <td>2024-03-15</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">time</td>
-                                                <td>14:30:00Z</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">email</td>
-                                                <td>user@example.com</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">uri</td>
-                                                <td>
-                                                    https://example.com/path
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">hostname</td>
-                                                <td>host.example.com</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">ipv4</td>
-                                                <td>192.168.1.1</td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">ipv6</td>
-                                                <td>
-                                                    2001:0db8:85a3:0000:0000:8a2e:0370:7334
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">uuid</td>
-                                                <td>
-                                                    550e8400-e29b-41d4-a716-446655440000
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td class="code-inline !bg-transparent">json-pointer</td>
-                                                <td>/users/0/name</td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
                                 </div>
                             </div>
 
@@ -1211,16 +1144,66 @@ cat schema.json | jsf -</code></pre>
                                                 </div>
 
                                                 <div class="mt-4 p-4 bg-gray-800/50 rounded-lg">
-                                                    <h4 class="text-sm font-semibold text-gray-300 mb-3">Built-in Formats</h4>
-                                                    <div class="flex flex-wrap gap-2">
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">date-time</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">email</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">uri</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">hostname</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">ipv4</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">ipv6</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">uuid</span>
-                                                        <span class="px-2 py-1 bg-gray-700 rounded text-xs text-green-400">json-pointer</span>
+                                                    <p class="text-gray-400 mb-4">
+                                                        These formats are automatically available:
+                                                    </p>
+                                                    <div class="overflow-x-auto">
+                                                        <table class="format-table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th>Format</th>
+                                                                    <th>Example Output</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">date-time</td>
+                                                                    <td>2024-03-15T14:30:00Z</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">date</td>
+                                                                    <td>2024-03-15</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">time</td>
+                                                                    <td>14:30:00Z</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">email</td>
+                                                                    <td>user@example.com</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">uri</td>
+                                                                    <td>
+                                                                        https://example.com/path
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">hostname</td>
+                                                                    <td>host.example.com</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">ipv4</td>
+                                                                    <td>192.168.1.1</td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">ipv6</td>
+                                                                    <td>
+                                                                        2001:0db8:85a3:0000:0000:8a2e:0370:7334
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">uuid</td>
+                                                                    <td>
+                                                                        550e8400-e29b-41d4-a716-446655440000
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td class="code-inline !bg-transparent">json-pointer</td>
+                                                                    <td>/users/0/name</td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
                                                     </div>
                                                 </div>
                                             </div>
@@ -1486,7 +1469,7 @@ cat schema.json | jsf -</code></pre>
                         </div>
                     </section>
 
-                    <section id="examples" class="px-6 py-16">
+                    <section id="examples" class="px-6 py-6">
                         <!-- Sticky Table of Contents (desktop) -->
                         <div class="sticky top-4 z-[99] md:float-left">
                             <div class="hidden md:block">
@@ -1505,19 +1488,19 @@ cat schema.json | jsf -</code></pre>
                                 </nav>
                             </div>
                             <!-- Table of Contents (mobile) -->
-                            <div class="md:hidden mb-8 p-4 bg-gray-800/50 backdrop-blur-sm rounded-lg">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-3">Examples</h4>
+                            <div class="md:hidden mb-8 p-4 bg-white/20 backdrop-blur-sm rounded-lg">
+                                <h4 class="text-sm font-semibold text-gray-300 mb-3 text-green-400">Examples</h4>
                                 <div class="grid grid-cols-3 md:grid-cols-4 gap-2 text-sm">
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Primitives</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Strings</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Numbers</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Objects</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Arrays</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Composition</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">References</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Extensions</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Formats</a>
-                                    <a href="#" class="text-gray-400 hover:text-green-400">Advanced</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Primitives</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Strings</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Numbers</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Objects</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Arrays</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Composition</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">References</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Formats</a>
+                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Advanced</a>
                                 </div>
                             </div>
                         </div>
@@ -1590,7 +1573,7 @@ cat schema.json | jsf -</code></pre>
                             </div>
                             <div class="example-card">
                                 <h4 class="example-title">Template Strings</h4>
-                                <p class="text-gray-400 mb-3 text-sm">Create derived values that reference other properties in the same object. Use #{propertyName} placeholders to build computed strings like full names or formatted addresses. Note: Use alwaysFakeOptionals to ensure all referenced properties are generated.</p>
+                                <p class="text-gray-400 mb-3 text-sm">Create derived values that reference other properties in the same object. Use <code class="code-inline"">#{propertyName}</code> placeholders to build computed strings like full names or formatted addresses. Note: Use <code class="code-inline">alwaysFakeOptionals</code> to ensure all referenced properties are generated.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-purple-400">await</span> generate({
   <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,

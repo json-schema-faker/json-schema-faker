@@ -151,7 +151,7 @@ body {
 
 html,
 body {
-    scrollbar-color: #00ff88 black;
+    scrollbar-color: #00ff88 rgba(0, 0, 0, .3);
     scrollbar-width: thin;
     scrollbar-gutter: stable;
 }
@@ -341,15 +341,9 @@ body {
     letter-spacing: 0.05em;
 }
 
-.format-table td:first-child {
-    color: var(--accent);
-    font-family: "JetBrains Mono", monospace;
-}
-
-.format-table td:last-child {
-    color: var(--text-dim);
-    font-family: "JetBrains Mono", monospace;
-    font-size: 0.875rem;
+.format-table tr:last-child th,
+.format-table tr:last-child td {
+    border-bottom: 0;
 }
 
 .example-title {
