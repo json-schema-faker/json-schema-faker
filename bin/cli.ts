@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import { generate } from "../src/index.js";
-import type { JsonSchema, GenerateOptions } from "../src/types.js";
+import type { JsonSchema } from "../src/types.js";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 import { resolve } from "path";
 

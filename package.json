@@ -42,13 +42,14 @@
     "LICENSE"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.build.json",
+    "build": "bun build ./src/index.ts --outdir=./dist --target=node --minify --sourcemap --external:@faker-js/faker --external:chance && tsc -p tsconfig.build.json",
     "build:clean": "rm -rf dist && bun run build",
+    "build:cli": "bun build ./bin/cli.ts --outdir=./dist/bin --target=node --external:@faker-js/faker --external:chance",
     "build:bin": "bun run build:bin:linux && bun run build:bin:darwin && bun run build:bin:windows",
     "build:bin:linux": "bun build --compile --target=bun-linux-x64 --outfile=dist/bin/jsf-linux-x64 bin/cli.ts && bun build --compile --target=bun-linux-arm64 --outfile=dist/bin/jsf-linux-arm64 bin/cli.ts",
     "build:bin:darwin": "bun build --compile --target=bun-darwin-x64 --outfile=dist/bin/jsf-darwin-x64 bin/cli.ts && bun build --compile --target=bun-darwin-arm64 --outfile=dist/bin/jsf-darwin-arm64 bin/cli.ts",
     "build:bin:windows": "bun build --compile --target=bun-windows-x64 --outfile=dist/bin/jsf-windows-x64.exe bin/cli.ts",
-    "prepublishOnly": "bun run build:clean && bun test",
+    "prepublishOnly": "bun run build:clean && bun run build:cli && bun test",
     "test": "bun test",
     "test:all": "NO_SKIP=1 bun test",
     "typecheck": "tsc --noEmit"
@@ -66,4 +67,3 @@
     "node": ">=18"
   }
 }
-

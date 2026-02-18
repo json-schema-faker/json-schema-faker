@@ -5,10 +5,9 @@
     "outDir": "./dist",
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
-    "types": ["bun"],
-    "moduleResolution": "node"
+    "emitDeclarationOnly": true,
+    "types": ["bun"]
   },
-  "include": ["src/**/*.ts", "bin/**/*.ts"],
+  "include": ["src/**/*.ts"],
   "exclude": ["tests/**/*", "node_modules"]
 }
