@@ -78,4 +78,78 @@ describe("object generator", () => {
     };
     await assertValidMultipleSeeds(schema, 100, generate);
   });
+
+  describe("github issues", () => {
+    test.skip("issue #846: meta data used as properties", async () => {
+      const schema = {
+        $schema: "http://json-schema.org/draft-07/schema#",
+        $id: "test",
+        description: "test",
+        type: "object",
+        properties: {
+          nested: {
+            $ref: "#/definitions/Nested",
+          },
+        },
+        required: ["nested"],
+        additionalProperties: false,
+        definitions: {
+          Nested: {
+            description: "This won't be in the generated data!",
+            type: "object",
+            properties: {
+              no_bug_here: {
+                $ref: "#/definitions/CorruptedWhenNested",
+              },
+              buggedPropertyWhenNested: {
+                type: "object",
+                $ref: "#/definitions/Nested2",
+              },
+            },
+            additionalProperties: false,
+          },
+          CorruptedWhenNested: {
+            type: "object",
+            properties: {
+              buggedProperty: {
+                $ref: "#/definitions/NestedDefinitionWhichGetsCorrupted",
+              },
+              buggedProperties: {
+                type: "array",
+                items: {
+                  $ref: "#/definitions/NestedDefinitionWhichGetsCorrupted",
+                },
+              },
+            },
+            additionalProperties: false,
+          },
+          NestedDefinitionWhichGetsCorrupted: {
+            type: "object",
+            properties: {
+              name: {
+                type: "string",
+              },
+              address: {
+                type: "string",
+              },
+            },
+            additionalProperties: false,
+          },
+          Nested2: {
+            type: "object",
+            properties: {
+              will_bug_here: {
+                $ref: "#/definitions/CorruptedWhenNested",
+              },
+            },
+            additionalProperties: false,
+          },
+        },
+      };
+
+      const val = await generate(schema as any);
+      expect(val).not.toHaveProperty("description");
+      assertValid(schema as any, val);
+    });
+  });
 });

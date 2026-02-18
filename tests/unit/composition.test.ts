@@ -128,3 +128,24 @@ describe("if/then/else", () => {
     }
   });
 });
+
+describe("github issues", () => {
+  test.skip("issue #727: allOf with contains should include all required items", async () => {
+    const schema = {
+      $schema: "http://json-schema.org/draft-07/schema",
+      type: "array",
+      items: { type: "string" },
+      allOf: [
+        { contains: { const: "A" } },
+        { contains: { const: "B" } },
+      ],
+    };
+
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema as any, { seed }) as string[];
+      expect(val).toContain("A");
+      expect(val).toContain("B");
+      assertValid(schema as any, val);
+    }
+  });
+});

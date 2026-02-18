@@ -1,0 +1,70 @@
+[
+  {
+    "description": "primitive $refs resolve as objects - issue #801",
+    "tests": [
+      {
+        "description": "should resolve primitive refs correctly in nested objects",
+        "schema": {
+          "$defs": {
+            "CategoryId": {
+              "type": "integer",
+              "minimum": 0
+            }
+          },
+          "type": "object",
+          "properties": {
+            "category": {
+              "type": "object",
+              "properties": {
+                "id": { "$ref": "#/$defs/CategoryId" }
+              },
+              "required": ["id"]
+            }
+          },
+          "required": ["category"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should resolve string refs in nested objects",
+        "schema": {
+          "$defs": {
+            "Name": { "type": "string" }
+          },
+          "type": "object",
+          "properties": {
+            "person": {
+              "type": "object",
+              "properties": {
+                "name": { "$ref": "#/$defs/Name" }
+              },
+              "required": ["name"]
+            }
+          },
+          "required": ["person"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should resolve boolean refs in nested objects",
+        "schema": {
+          "$defs": {
+            "Flag": { "type": "boolean" }
+          },
+          "type": "object",
+          "properties": {
+            "config": {
+              "type": "object",
+              "properties": {
+                "enabled": { "$ref": "#/$defs/Flag" }
+              },
+              "required": ["enabled"]
+            }
+          },
+          "required": ["config"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

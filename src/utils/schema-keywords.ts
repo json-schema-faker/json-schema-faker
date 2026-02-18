@@ -8,6 +8,7 @@ export const SCHEMA_KEYWORDS = new Set([
   "$id",
   "$ref",
   "$defs", // replaces "definitions" from draft-04
+  "definitions", // legacy from draft-04
   "$anchor",
   "$dynamicRef",
   "$dynamicAnchor",

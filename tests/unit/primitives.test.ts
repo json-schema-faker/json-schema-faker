@@ -129,4 +129,36 @@ describe("enum/const generator", () => {
   test("validates across seeds", async () => {
     await assertValidMultipleSeeds({ enum: ["a", "b", "c"] }, 100, generate);
   });
+
+  describe("github issues", () => {
+    test.skip("issue #728: invalid enums when using refs multiple times", async () => {
+      const schema = {
+        type: "object",
+        properties: {
+          prop1: { $ref: "#/definitions/EnumType", description: "My prop1 description." },
+          prop2: { $ref: "#/definitions/PropType", description: "My prop2 description." },
+          prop3: { $ref: "#/definitions/EnumType", description: "My prop3 description." },
+          prop4: { $ref: "#/definitions/PropType", description: "My prop4 description." },
+        },
+        required: ["prop1", "prop2", "prop3", "prop4"],
+        additionalProperties: false,
+        definitions: {
+          EnumType: { type: "string", enum: ["Value1", "Value2"], description: "My enum description." },
+          PropType: {
+            type: "object",
+            properties: { subProp: { $ref: "#/definitions/EnumType", description: "Sub Prop Description" } },
+            additionalProperties: false,
+          },
+        },
+      };
+
+      const val = await generate(schema as any);
+      expect(val).toHaveProperty("prop1");
+      expect(val).toHaveProperty("prop2");
+      expect(val).toHaveProperty("prop3");
+      expect(val).toHaveProperty("prop4");
+
+      assertValid(schema as any, val);
+    });
+  });
 });
