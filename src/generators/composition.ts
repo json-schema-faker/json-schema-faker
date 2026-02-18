@@ -139,23 +139,28 @@ async function generateConditional(
   elseSchema: JsonSchema | undefined,
   ctx: GenerateContext
 ): Promise<unknown> {
-  // Coin flip: satisfy `if` (use then) or don't (use else)
-  const satisfyIf = ctx.random.bool();
-
-  if (satisfyIf && thenSchema !== undefined) {
-    // Merge base + if + then
-    const merged = mergeSchemas([base, ifSchema, thenSchema]);
-    return walk(merged, ctx);
-  } else if (!satisfyIf && elseSchema !== undefined) {
-    // Merge base + else
-    const merged = mergeSchemas([base, elseSchema]);
-    return walk(merged, ctx);
-  } else if (thenSchema !== undefined) {
-    const merged = mergeSchemas([base, ifSchema, thenSchema]);
-    return walk(merged, ctx);
-  } else {
-    return walk(base, ctx);
+  // Try the "if + then" branch first (preferred per JSON Schema semantics)
+  if (thenSchema !== undefined) {
+    const mergedIfThen = mergeSchemas([base, ifSchema, thenSchema]);
+    try {
+      return await walk(mergedIfThen, ctx);
+    } catch {
+      // If then branch fails, fall through to try else
+    }
   }
+
+  // If then failed or wasn't defined, try else branch
+  if (elseSchema !== undefined) {
+    const mergedElse = mergeSchemas([base, elseSchema]);
+    try {
+      return await walk(mergedElse, ctx);
+    } catch {
+      // If else also fails, fall through
+    }
+  }
+
+  // Fallback: just try base schema
+  return walk(base, ctx);
 }
 
 async function generateNot(

@@ -121,10 +121,34 @@ describe("if/then/else", () => {
       then: { properties: { value: { minimum: 100 } } },
       else: { properties: { value: { maximum: 0 } } },
     };
-    // Just check it generates valid objects without throwing
     for (let seed = 1; seed <= 20; seed++) {
-      const val = await generate(schema, { seed });
+      const val = await generate(schema, { seed }) as { kind: string; value: number };
       expect(typeof val).toBe("object");
+      if (val.kind === "a") {
+        expect(val.value).toBeGreaterThanOrEqual(100);
+      } else {
+        expect(val.value).toBeLessThanOrEqual(0);
+      }
+    }
+  });
+
+  test("if/then without else falls back to base", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        kind: { type: "string" as const, enum: ["a", "b"] },
+        value: { type: "number" as const },
+      },
+      required: ["kind", "value"],
+      if: { properties: { kind: { const: "a" } } },
+      then: { properties: { value: { minimum: 100 } } },
+    };
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as { kind: string; value: number };
+      expect(typeof val).toBe("object");
+      if (val.kind === "a") {
+        expect(val.value).toBeGreaterThanOrEqual(100);
+      }
     }
   });
 });
