@@ -1,0 +1,559 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/comprehensive-test-schema.json",
+  "title": "Comprehensive Test Schema",
+  "description": "A schema that exercises all features of tiny-jsf",
+  "$defs": {
+    "uuid": {
+      "type": "string",
+      "format": "uuid"
+    },
+    "email": {
+      "type": "string",
+      "format": "email"
+    },
+    "dateTime": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "ipv4": {
+      "type": "string",
+      "format": "ipv4"
+    },
+    "ipv6": {
+      "type": "string",
+      "format": "ipv6"
+    },
+    "uri": {
+      "type": "string",
+      "format": "uri"
+    },
+    "hostname": {
+      "type": "string",
+      "format": "hostname"
+    },
+    "jsonPointer": {
+      "type": "string",
+      "format": "json-pointer"
+    },
+    "positiveInteger": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "nonNegativeInteger": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "boundedNumber": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 100,
+      "multipleOf": 0.5
+    },
+    "personName": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 50,
+      "pattern": "^[A-Z][a-z]+( [A-Z][a-z]+)*$"
+    },
+    "address": {
+      "type": "object",
+      "properties": {
+        "street": { "type": "string", "minLength": 5 },
+        "city": { "type": "string", "minLength": 2 },
+        "state": { "type": "string", "minLength": 2, "maxLength": 2 },
+        "zipCode": { "type": "string", "pattern": "^\\d{5}(-\\d{4})?$" },
+        "country": { "type": "string", "default": "USA" }
+      },
+      "required": ["street", "city", "state", "zipCode"]
+    },
+    "phoneNumber": {
+      "type": "string",
+      "pattern": "^\\+?\\d{1,3}[-.\\s]?\\(?\\d{3}\\)?[-.\\s]?\\d{3}[-.\\s]?\\d{4}$"
+    },
+    "tags": {
+      "type": "array",
+      "items": { "type": "string", "minLength": 2, "maxLength": 20 },
+      "minItems": 1,
+      "maxItems": 5,
+      "uniqueItems": true
+    },
+    "coordinates": {
+      "type": "object",
+      "properties": {
+        "latitude": { "type": "number", "minimum": -90, "maximum": 90 },
+        "longitude": { "type": "number", "minimum": -180, "maximum": 180 }
+      },
+      "required": ["latitude", "longitude"]
+    },
+    "recursiveNode": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer", "autoIncrement": true },
+        "value": { "type": "string" },
+        "children": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/recursiveNode" },
+          "maxItems": 3
+        }
+      },
+      "required": ["id", "value"]
+    },
+    "conditionalUser": {
+      "type": "object",
+      "properties": {
+        "userType": { "type": "string", "enum": ["admin", "regular", "guest"] },
+        "permissions": { "type": "array", "items": { "type": "string" } },
+        "accessLevel": { "type": "integer" }
+      },
+      "required": ["userType"],
+      "if": { "properties": { "userType": { "const": "admin" } } },
+      "then": { "properties": { "accessLevel": { "minimum": 100 } } },
+      "else": { "properties": { "accessLevel": { "maximum": 50 } } }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "integer",
+      "autoIncrement": true,
+      "initialOffset": 1000
+    },
+    "uuidField": {
+      "$ref": "#/$defs/uuid"
+    },
+    "nullField": {
+      "type": "null"
+    },
+    "booleanField": {
+      "type": "boolean"
+    },
+    "integerField": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 1000
+    },
+    "integerExclusive": {
+      "type": "integer",
+      "exclusiveMinimum": 0,
+      "exclusiveMaximum": 100
+    },
+    "integerMultipleOf": {
+      "type": "integer",
+      "multipleOf": 7,
+      "minimum": 0,
+      "maximum": 100
+    },
+    "numberField": {
+      "type": "number",
+      "minimum": -50.5,
+      "maximum": 50.5
+    },
+    "numberExclusive": {
+      "type": "number",
+      "exclusiveMinimum": -10,
+      "exclusiveMaximum": 10
+    },
+    "numberMultipleOf": {
+      "type": "number",
+      "multipleOf": 0.25,
+      "minimum": 0,
+      "maximum": 10
+    },
+    "stringField": {
+      "type": "string"
+    },
+    "stringMinMaxLength": {
+      "type": "string",
+      "minLength": 5,
+      "maxLength": 20
+    },
+    "stringPattern": {
+      "type": "string",
+      "pattern": "^[A-Z]{3}-\\d{4}[A-Z]{2}$"
+    },
+    "stringPatternDigits": {
+      "type": "string",
+      "pattern": "^\\d{3}-\\d{4}$"
+    },
+    "stringPatternAlts": {
+      "type": "string",
+      "pattern": "^(foo|bar|baz)-\\d{3}$"
+    },
+    "stringFormatEmail": {
+      "$ref": "#/$defs/email"
+    },
+    "stringFormatDateTime": {
+      "$ref": "#/$defs/dateTime"
+    },
+    "stringFormatDate": {
+      "type": "string",
+      "format": "date"
+    },
+    "stringFormatTime": {
+      "type": "string",
+      "format": "time"
+    },
+    "stringFormatUri": {
+      "$ref": "#/$defs/uri"
+    },
+    "stringFormatHostname": {
+      "$ref": "#/$defs/hostname"
+    },
+    "stringFormatIpv4": {
+      "$ref": "#/$defs/ipv4"
+    },
+    "stringFormatIpv6": {
+      "$ref": "#/$defs/ipv6"
+    },
+    "stringFormatJsonPointer": {
+      "$ref": "#/$defs/jsonPointer"
+    },
+    "stringWithDefault": {
+      "type": "string",
+      "default": "default value"
+    },
+    "stringWithExamples": {
+      "type": "string",
+      "examples": ["example1", "example2", "example3"]
+    },
+    "stringTemplate": {
+      "type": "string",
+      "template": "#{firstName} #{lastName}"
+    },
+    "enumField": {
+      "enum": ["pending", "active", "completed", "cancelled"]
+    },
+    "enumMixedTypes": {
+      "enum": [1, "two", null, true, { "key": "value" }]
+    },
+    "constField": {
+      "const": "always-this-value"
+    },
+    "constNumber": {
+      "const": 42
+    },
+    "constObject": {
+      "const": { "status": "locked" }
+    },
+    "constArray": {
+      "const": ["a", "b", "c"]
+    },
+    "arraySimple": {
+      "type": "array",
+      "items": { "type": "integer" }
+    },
+    "arrayTypedItems": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/positiveInteger" }
+    },
+    "arrayMinMaxItems": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 2,
+      "maxItems": 10
+    },
+    "arrayUniqueItems": {
+      "type": "array",
+      "items": { "type": "integer" },
+      "uniqueItems": true,
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "arrayPrefixItems": {
+      "type": "array",
+      "prefixItems": [
+        { "type": "string" },
+        { "type": "integer" },
+        { "type": "boolean" }
+      ]
+    },
+    "arrayContains": {
+      "type": "array",
+      "items": { "type": "string" },
+      "contains": { "pattern": "^important-" },
+      "minContains": 1,
+      "maxContains": 3,
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "arrayOfObjects": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "value": { "type": "number" }
+        },
+        "required": ["name"]
+      },
+      "minItems": 2,
+      "maxItems": 4
+    },
+    "arrayOfArrays": {
+      "type": "array",
+      "items": {
+        "type": "array",
+        "items": { "type": "integer" },
+        "minItems": 1,
+        "maxItems": 3
+      },
+      "minItems": 2,
+      "maxItems": 3
+    },
+    "tags": {
+      "$ref": "#/$defs/tags"
+    },
+    "objectSimple": {
+      "type": "object"
+    },
+    "objectWithProperties": {
+      "type": "object",
+      "properties": {
+        "name": { "$ref": "#/$defs/personName" },
+        "age": { "type": "integer", "minimum": 0, "maximum": 150 },
+        "email": { "$ref": "#/$defs/email" },
+        "active": { "type": "boolean" }
+      },
+      "required": ["name", "age", "email"]
+    },
+    "objectWithAdditionalProperties": {
+      "type": "object",
+      "properties": {
+        "id": { "type": "integer" }
+      },
+      "additionalProperties": { "type": "string" }
+    },
+    "objectNoAdditionalProperties": {
+      "type": "object",
+      "properties": {
+        "fixed": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "objectPatternProperties": {
+      "type": "object",
+      "patternProperties": {
+        "^s_": { "type": "string" },
+        "^i_": { "type": "integer" }
+      }
+    },
+    "objectMinMaxProperties": {
+      "type": "object",
+      "properties": {
+        "a": { "type": "string" },
+        "b": { "type": "string" },
+        "c": { "type": "string" },
+        "d": { "type": "string" },
+        "e": { "type": "string" }
+      },
+      "minProperties": 2,
+      "maxProperties": 4
+    },
+    "objectPropertyNames": {
+      "type": "object",
+      "propertyNames": {
+        "pattern": "^[a-z][a-z0-9_]*$",
+        "minLength": 1,
+        "maxLength": 20
+      }
+    },
+    "address": {
+      "$ref": "#/$defs/address"
+    },
+    "phoneNumbers": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/phoneNumber" },
+      "minItems": 1,
+      "maxItems": 3
+    },
+    "coordinates": {
+      "$ref": "#/$defs/coordinates"
+    },
+    "recursiveNode": {
+      "$ref": "#/$defs/recursiveNode"
+    },
+    "allOfMerge": {
+      "allOf": [
+        { "type": "object", "properties": { "a": { "type": "string" } }, "required": ["a"] },
+        { "type": "object", "properties": { "b": { "type": "integer" } }, "required": ["b"] },
+        { "type": "object", "properties": { "c": { "type": "boolean" } } }
+      ]
+    },
+    "allOfNumberBounds": {
+      "allOf": [
+        { "type": "integer", "minimum": 10 },
+        { "type": "integer", "maximum": 100 },
+        { "multipleOf": 5 }
+      ]
+    },
+    "anyOfTypes": {
+      "anyOf": [
+        { "type": "string" },
+        { "type": "integer" },
+        { "type": "boolean" }
+      ]
+    },
+    "anyOfSchemas": {
+      "anyOf": [
+        { "type": "object", "properties": { "kind": { "const": "a" } } },
+        { "type": "object", "properties": { "kind": { "const": "b" } } }
+      ]
+    },
+    "oneOfTypes": {
+      "oneOf": [
+        { "type": "string" },
+        { "type": "integer" },
+        { "type": "boolean" },
+        { "type": "array" }
+      ]
+    },
+    "oneOfSchemas": {
+      "oneOf": [
+        { "type": "object", "properties": { "type": { "const": "circle" }, "radius": { "type": "number" } } },
+        { "type": "object", "properties": { "type": { "const": "square" }, "side": { "type": "number" } } },
+        { "type": "object", "properties": { "type": { "const": "triangle" }, "base": { "type": "number" }, "height": { "type": "number" } } }
+      ]
+    },
+    "notString": {
+      "not": { "type": "string" }
+    },
+    "notEnum": {
+      "not": { "enum": ["forbidden", "blocked", "denied"] }
+    },
+    "conditionalUser": {
+      "$ref": "#/$defs/conditionalUser"
+    },
+    "ifThenElseComplex": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["draft", "published", "archived"] },
+        "title": { "type": "string" },
+        "publishedAt": { "type": "string", "format": "date-time" },
+        "archivedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["status"],
+      "if": { "properties": { "status": { "const": "published" } } },
+      "then": { "required": ["publishedAt"], "properties": { "publishedAt": { "format": "date-time" } } },
+      "else": { "if": { "properties": { "status": { "const": "archived" } } }, "then": { "required": ["archivedAt"] } }
+    },
+    "nestedAllOfAnyOf": {
+      "allOf": [
+        {
+          "anyOf": [
+            { "type": "object", "properties": { "x": { "type": "integer" } } },
+            { "type": "object", "properties": { "x": { "type": "string" } } }
+          ]
+        },
+        { "type": "object", "properties": { "y": { "type": "boolean" } } }
+      ]
+    },
+    "combinationAllOfOneOf": {
+      "allOf": [
+        { "type": "object", "properties": { "base": { "type": "string" } } },
+        {
+          "oneOf": [
+            { "type": "object", "properties": { "variant": { "const": "A" } } },
+            { "type": "object", "properties": { "variant": { "const": "B" } } }
+          ]
+        }
+      ]
+    },
+    "typeArray": {
+      "type": ["string", "integer", "null"]
+    },
+    "typeArrayWithConstraints": {
+      "type": ["string", "integer"],
+      "minimum": 0,
+      "minLength": 3
+    },
+    "objectWithRefInArray": {
+      "type": "object",
+      "properties": {
+        "items": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/positiveInteger" }
+        }
+      }
+    },
+    "deeplyNestedObject": {
+      "type": "object",
+      "properties": {
+        "level1": {
+          "type": "object",
+          "properties": {
+            "level2": {
+              "type": "object",
+              "properties": {
+                "level3": {
+                  "type": "object",
+                  "properties": {
+                    "value": { "type": "string" }
+                  },
+                  "required": ["value"]
+                }
+              },
+              "required": ["level3"]
+            }
+          },
+          "required": ["level2"]
+        }
+      },
+      "required": ["level1"]
+    },
+    "mixedArrayTypes": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "integer" },
+          { "type": "object", "properties": { "type": { "const": "obj" } } }
+        ]
+      },
+      "minItems": 3,
+      "maxItems": 5
+    },
+    "objectWithEnumInProperty": {
+      "type": "object",
+      "properties": {
+        "status": { "enum": ["active", "inactive"] },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "source": { "enum": ["api", "web", "mobile"] },
+            "priority": { "enum": [1, 2, 3, 4, 5] }
+          }
+        }
+      }
+    },
+    "complexWithDefaults": {
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "default": "Unknown" },
+        "count": { "type": "integer", "default": 0 },
+        "active": { "type": "boolean", "default": true },
+        "tags": { "type": "array", "default": ["default-tag"], "items": { "type": "string" } },
+        "metadata": {
+          "type": "object",
+          "default": { "version": "1.0" },
+          "properties": {
+            "version": { "type": "string" }
+          }
+        }
+      }
+    }
+  },
+  "required": [
+    "id",
+    "uuidField",
+    "booleanField",
+    "integerField",
+    "numberField",
+    "stringField",
+    "enumField",
+    "constField",
+    "arraySimple",
+    "objectSimple",
+    "objectWithProperties"
+  ]
+}

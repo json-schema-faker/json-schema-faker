@@ -6,12 +6,9 @@
         "description": "should resolve from remote definitions",
         "schema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "title": "Static Analysis Results Format (SARIF) Version 2.1.0-rtm.5 address fragment",
-          "id": "https://sarif/address-fragment.json",
-          "description": "A dynamic fragment of a SARIF schema.",
           "allOf": [
             {
-              "$ref": "https://raw.githubusercontent.com/schemastore/schemastore/master/src/schemas/json/sarif-2.1.0-rtm.5.json#/definitions/address"
+              "$ref": "https://json-schema.org/draft/2020-12/output/schema"
             }
           ]
         },
