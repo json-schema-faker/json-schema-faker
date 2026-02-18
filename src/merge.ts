@@ -114,7 +114,7 @@ function mergePairInto(target: JsonSchemaObject, source: JsonSchemaObject): void
 
   // Object — merge properties, union required
   if (source.properties) {
-    target.properties = { ...(target.properties ?? {}), ...source.properties };
+    target.properties = deepMergeProperties(target.properties ?? {}, source.properties);
   }
   if (source.required) {
     target.required = [...new Set([...(target.required ?? []), ...source.required])];
@@ -165,4 +165,25 @@ function intersectTypes(
   if (intersection.length === 0) return aArr[0]; // fallback
   if (intersection.length === 1) return intersection[0];
   return intersection;
+}
+
+function deepMergeProperties(
+  target: Record<string, JsonSchema>,
+  source: Record<string, JsonSchema>
+): Record<string, JsonSchema> {
+  const result: Record<string, JsonSchema> = { ...target };
+
+  for (const [key, sourceSchema] of Object.entries(source)) {
+    const targetSchema = target[key];
+
+    if (targetSchema === undefined) {
+      result[key] = sourceSchema;
+    } else if (typeof targetSchema === "object" && typeof sourceSchema === "object") {
+      result[key] = mergePair(targetSchema, sourceSchema) as JsonSchema;
+    } else {
+      result[key] = sourceSchema;
+    }
+  }
+
+  return result;
 }

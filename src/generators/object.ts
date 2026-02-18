@@ -266,6 +266,9 @@ export async function generateObject(
           
           // Check if this branch's constraints match the generated property value
           const branchProps = branch.properties;
+          const branchNot = branch.not as JsonSchemaObject | undefined;
+          
+          // Check positive constraint first
           if (branchProps && branchProps[propName]) {
             const constraint = branchProps[propName];
             const generatedValue = result[propName];
@@ -276,11 +279,49 @@ export async function generateObject(
               break;
             }
           }
+          
+          // Check "not" constraint - if the property value doesn't match the "not" properties, this branch may apply
+          if (branchNot?.properties) {
+            const notPropConstraints = branchNot.properties[propName];
+            if (notPropConstraints) {
+              const generatedValue = result[propName];
+              // If generated value does NOT match the "not" constraint, this branch applies
+              if (!matchesConstraint(generatedValue, notPropConstraints)) {
+                matchingBranch = branch;
+                break;
+              }
+            }
+          }
         }
         
         // If no matching branch found, use the first one or the dependency itself
         if (!matchingBranch && branches.length > 0 && typeof branches[0] === "object") {
           matchingBranch = branches[0] as JsonSchemaObject;
+        }
+        
+        // Handle not constraints - remove properties that should not be present
+        if (matchingBranch?.not) {
+          const notSchema = matchingBranch.not as JsonSchemaObject;
+          if (notSchema.required && Array.isArray(notSchema.required)) {
+            for (const forbiddenProp of notSchema.required) {
+              delete result[forbiddenProp];
+            }
+          }
+        }
+        
+        // Handle required properties from the matching branch (even without properties)
+        if (matchingBranch?.required) {
+          for (const reqProp of matchingBranch.required) {
+            // Skip the dependency property itself
+            if (reqProp === propName) continue;
+            
+            // Skip if already generated
+            if (result[reqProp] !== undefined) continue;
+            
+            const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? { type: "object" };
+            const reqPropCtx = { ...childCtx, path: `${childCtx.path}/${reqProp}` };
+            result[reqProp] = await walk(reqPropSchema, reqPropCtx);
+          }
         }
         
         if (matchingBranch && matchingBranch.properties) {
@@ -292,18 +333,6 @@ export async function generateObject(
             
             const depPropCtx = { ...childCtx, path: `${childCtx.path}/${depPropName}` };
             result[depPropName] = await walk(depPropSchema as JsonSchema, depPropCtx);
-          }
-          
-          // Handle required properties from the matching branch
-          if (matchingBranch.required) {
-            for (const reqProp of matchingBranch.required) {
-              // Skip the dependency property itself
-              if (reqProp === propName) continue;
-              
-              const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? {};
-              const reqPropCtx = { ...childCtx, path: `${childCtx.path}/${reqProp}` };
-              result[reqProp] = await walk(reqPropSchema, reqPropCtx);
-            }
           }
         }
       }

@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should handle dependencies with oneOf and not constraints",
-        "skip": true,
         "schema": {
           "$id": "BuiltParameters",
           "title": "BuiltParameters",
