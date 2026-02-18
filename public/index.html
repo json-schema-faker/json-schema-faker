@@ -593,9 +593,77 @@
                     <!-- Documentation Section -->
                     <section id="docs" class="px-6 py-16 md:py-24">
                         <div class="max-w-5xl mx-auto">
+                            <!-- CLI -->
+                            <div class="mb-12">
+                                <h3 class="section-subtitle fraunces">Command Line Interface</h3>
+                                <p class="text-gray-400 mb-8">Use <code class="code-inline">jsf</code> from the command line to generate JSON data from schema files.</p>
+
+                                <div class="example-card mb-6">
+                                    <h4 class="example-title">Installation</h4>
+                                    <p class="text-gray-400 mb-3 text-sm">Install globally to use the <code class="code-inline">jsf</code> command anywhere.</p>
+                                    <div class="code-block !p-4">
+                                        <pre><code>npm install -g json-schema-faker</code></pre>
+                                    </div>
+                                </div>
+
+                                <div class="example-card mb-6">
+                                    <h4 class="example-title">Basic Usage</h4>
+                                    <p class="text-gray-400 mb-3 text-sm">Generate JSON from a schema file. Output to stdout or save to a file.</p>
+                                    <div class="code-block !p-4">
+                                <pre><code><span class="text-gray-500"># Generate to stdout</span>
+jsf schema.json
+
+<span class="text-gray-500"># Save to file</span>
+jsf schema.json output.json
+
+<span class="text-gray-500"># Generate 10 items as array</span>
+jsf schema.json output.json 10</code></pre>
+                            </div>
+                        </div>
+
+                        <div class="example-card mb-6">
+                            <h4 class="example-title">CLI Options</h4>
+                            <p class="text-gray-400 mb-3 text-sm">Control generation with command-line flags.</p>
+                            <div class="code-block !p-4">
+                                <pre><code><span class="text-gray-500"># Deterministic output with seed</span>
+jsf schema.json --seed 42
+
+<span class="text-gray-500"># Include all optional properties</span>
+jsf schema.json --all-optionals
+
+<span class="text-gray-500"># Override array/string constraints</span>
+jsf schema.json --min-items 5 --max-length 20
+
+<span class="text-gray-500"># Use schema defaults and examples</span>
+jsf schema.json --use-defaults --use-examples
+
+<span class="text-gray-500"># Read from stdin</span>
+cat schema.json | jsf -</code></pre>
+                                    </div>
+                                </div>
+
+                                <div class="bg-gray-800/50 rounded-lg p-4">
+                                    <h4 class="text-sm font-semibold text-gray-300 mb-3">Available Flags</h4>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2 text-sm">
+                                        <div><code class="text-green-400">--seed &lt;n&gt;</code> <span class="text-gray-500">Random seed</span></div>
+                                        <div><code class="text-green-400">--max-depth &lt;n&gt;</code> <span class="text-gray-500">Max recursion</span></div>
+                                        <div><code class="text-green-400">--min-items &lt;n&gt;</code> <span class="text-gray-500">Min array items</span></div>
+                                        <div><code class="text-green-400">--max-items &lt;n&gt;</code> <span class="text-gray-500">Max array items</span></div>
+                                        <div><code class="text-green-400">--min-length &lt;n&gt;</code> <span class="text-gray-500">Min string length</span></div>
+                                        <div><code class="text-green-400">--max-length &lt;n&gt;</code> <span class="text-gray-500">Max string length</span></div>
+                                        <div><code class="text-green-400">--optionals &lt;0-1&gt;</code> <span class="text-gray-500">Probability</span></div>
+                                        <div><code class="text-green-400">--all-optionals</code> <span class="text-gray-500">Include all</span></div>
+                                        <div><code class="text-green-400">--use-defaults</code> <span class="text-gray-500">Use defaults</span></div>
+                                        <div><code class="text-green-400">--use-examples</code> <span class="text-gray-500">Use examples</span></div>
+                                        <div><code class="text-green-400">--resolve-jsonpath</code> <span class="text-gray-500">Enable JSONPath</span></div>
+                                        <div><code class="text-green-400">--prune &lt;props&gt;</code> <span class="text-gray-500">Remove props</span></div>
+                                    </div>
+                                </div>
+                            </div>
+
                             <!-- Importing -->
                             <div class="mb-12">
-                                <h3 class="section-subtitle fraunces">Importing</h3>
+                                <h3 class="section-subtitle fraunces">Programmatic Usage</h3>
                                 <p class="text-gray-400 mb-3">Use named imports:</p>
                                 <div class="code-block">
                                     <pre><code><span class="text-purple-400">import</span> {
