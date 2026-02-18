@@ -1666,7 +1666,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
 
                             <!-- Composition -->
                             <h3 class="section-subtitle fraunces">Composition</h3>
-                            <p class="text-gray-400 mb-6">Combine schemas using <code class="code-inline">allOf</code>, <code class="code-inline">anyOf</code>, and <code class="code-inline">oneOf</code>. These powerful keywords let you build complex schemas from simpler components.</p>
+                            <p class="text-gray-400 mb-6">Combine schemas using <code class="code-inline">allOf</code>, <code class="code-inline">anyOf</code>, <code class="code-inline">oneOf</code>, and <code class="code-inline">if</code>/<code class="code-inline">then</code>/<code class="code-inline">else</code>. These powerful keywords let you build complex schemas from simpler components.</p>
                             <div class="example-card">
                                 <h4 class="example-title">
                                     allOf, anyOf, oneOf
@@ -1681,6 +1681,29 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
   ]
 }, { <span class="text-blue-300">alwaysFakeOptionals</span>: <span class="text-yellow-300">true</span> });
 <span class="text-gray-500">// { a: "hello", b: 42 }</span></code></pre>
+                                </div>
+                            </div>
+
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    if, then, else
+                                </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Conditional schema generation. If the <code class="code-inline">if</code> schema can be satisfied, the <code class="code-inline">then</code> schema is applied. Otherwise, the <code class="code-inline">else</code> schema is used (if defined). Falls back to base schema if both branches fail.</p>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">status</span>: { <span class="text-blue-300">enum</span>: [<span class="text-yellow-300">"draft"</span>, <span class="text-yellow-300">"published"</span>] },
+    <span class="text-blue-300">publishedAt</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> }
+  },
+  <span class="text-blue-300">required</span>: [<span class="text-yellow-300">"status"</span>],
+  <span class="text-blue-300">if</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">status</span>: { <span class="text-blue-300">const</span>: <span class="text-yellow-300">"published"</span> } } },
+  <span class="text-blue-300">then</span>: { <span class="text-blue-300">required</span>: [<span class="text-yellow-300">"publishedAt"</span>] },
+  <span class="text-blue-300">else</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">publishedAt</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"null"</span> } } }
+});
+<span class="text-gray-500">// { status: "published", publishedAt: "2024-01-15T10:30:00Z" }</span>
+<span class="text-gray-500">// OR</span>
+<span class="text-gray-500">// { status: "draft", publishedAt: null }</span></code></pre>
                                 </div>
                             </div>
 

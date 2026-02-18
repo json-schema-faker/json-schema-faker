@@ -120,7 +120,7 @@ tests/
 
 Use clear, descriptive commit messages:
 - `fix: resolve circular $ref detection`
-- `feat: add support for if/then/else`
+- `feat: add support for new format`
 - `test: add coverage for array minItems`
 
 ## Getting Help

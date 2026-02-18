@@ -22,7 +22,7 @@ const data = await generate({
 - Supports JSON Schema 2019-09 and 2020-12
 - Deterministic output via seeded PRNG (Mulberry32)
 - All standard types: null, boolean, integer, number, string, array, object
-- Composition keywords: `allOf`, `anyOf`, `oneOf`, `not`, `if`/`then`/`else`
+- Composition keywords: `allOf`, `anyOf`, `oneOf`, `not`, `if`/`then`/`else` (JSON Schema 2020-12)
 - `$ref` resolution with cycle detection and configurable recursion depth
 - Remote `$ref` resolution (HTTP/file) via `createRemoteResolver()`
 - Built-in format generators: date-time, email, uri, hostname, ipv4/ipv6, uuid, json-pointer
