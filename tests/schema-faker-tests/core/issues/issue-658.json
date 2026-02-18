@@ -1,9 +1,12 @@
 [
   {
-    "description": "FIXME",
+    "description": "Deeply nested $refs with required properties",
     "tests": [
       {
-        "description": "FIXME",
+        "description": "should generate all required properties through nested $ref chain",
+        "set": {
+          "maxDepth": 8
+        },
         "schema": {
           "$ref": "#/$defs/resultInfoType",
           "$schema": "https://json-schema.org/draft/2020-12/schema",
