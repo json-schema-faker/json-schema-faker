@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should generate nested objects with $ref references",
-        "skip": true,
         "schema": {
           "$id": "https://example.com/schemas/customer",
           "type": "object",

@@ -4,7 +4,6 @@
     "tests": [
       {
         "description": "should support autoIncrement and initialOffset for integer properties",
-        "skip": true,
         "schema": {
           "type": "array",
           "minItems": 5,

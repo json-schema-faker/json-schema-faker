@@ -4,11 +4,9 @@
     "tests": [
       {
         "description": "should generate array items and object additionalProperties",
-        "skip": true,
         "schema": {
-          "$schema": "http://json-schema.org/draft-07/schema#",
-          "$ref": "#/definitions/Test",
-          "definitions": {
+          "$ref": "#/$defs/Test",
+          "$defs": {
             "Test": {
               "type": "object",
               "properties": {
