@@ -40,3 +40,46 @@ jobs:
           npm publish --tag ${{ github.event.inputs.tag || 'latest' }} --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+  build-binaries:
+    needs: build-and-publish
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            target: bun-linux-x64
+            artifact: jsf-linux-x64
+          - os: ubuntu-latest
+            target: bun-linux-arm64
+            artifact: jsf-linux-arm64
+          - os: macos-latest
+            target: bun-darwin-x64
+            artifact: jsf-darwin-x64
+          - os: macos-latest
+            target: bun-darwin-arm64
+            artifact: jsf-darwin-arm64
+          - os: windows-latest
+            target: bun-windows-x64
+            artifact: jsf-windows-x64.exe
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      - name: Build binary
+        run: bun build --compile --target=${{ matrix.target }} --outfile=dist/bin/${{ matrix.artifact }} bin/cli.ts
+
+      - name: Upload binary to release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: dist/bin/${{ matrix.artifact }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

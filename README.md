@@ -157,6 +157,75 @@ await generate({
 
 Values are automatically cast to match the schema's `type`.
 
+## CLI
+
+Install globally to use from command line:
+
+```bash
+npm install -g json-schema-faker
+jsf schema.json output.json
+```
+
+### CLI Usage
+
+```bash
+jsf <schema.json> [output.json] [count] [options.json]
+```
+
+**Arguments:**
+- `schema.json` - Path to JSON schema file (required, use `-` for stdin)
+- `output.json` - Path to output file (default: stdout)
+- `count` - Number of items to generate (wraps result in array)
+- `options.json` - Path to options file (.json)
+
+**Options:**
+```
+--seed <n>           Random seed for deterministic output
+--max-depth <n>      Maximum recursion depth (default: 5)
+--min-items <n>      Override minItems for arrays
+--max-items <n>      Override maxItems for arrays
+--min-length <n>     Override minLength for strings
+--max-length <n>     Override maxLength for strings
+--optionals <0-1>    Probability for optional properties
+--all-optionals      Include all optional properties
+--use-defaults       Use schema default values
+--use-examples       Use schema examples values
+--resolve-jsonpath   Enable JSONPath resolution
+--prune <props>      Comma-separated properties to remove
+--pretty             Pretty print output (default)
+--no-pretty          Compact output
+```
+
+**Examples:**
+```bash
+# Generate to stdout
+jsf schema.json
+
+# Generate to file
+jsf schema.json output.json
+
+# Generate 10 items as array
+jsf schema.json output.json 10
+
+# With seed for reproducible output
+jsf schema.json --seed 42
+
+# Include all optional properties
+jsf schema.json --all-optionals
+
+# Read from stdin
+cat schema.json | jsf -
+```
+
+### Standalone Binaries
+
+Download platform-specific binaries from [GitHub Releases](https://github.com/json-schema-faker/json-schema-faker/releases):
+- `jsf-linux-x64`
+- `jsf-linux-arm64`
+- `jsf-darwin-x64` (macOS Intel)
+- `jsf-darwin-arm64` (macOS Apple Silicon)
+- `jsf-windows-x64.exe`
+
 ## Development
 
 ```bash
