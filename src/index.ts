@@ -105,3 +105,53 @@ export function registerFormat(
 ): void {
   registerFormatGlobal(name, generator, globalFormatRegistry);
 }
+
+export interface GenerateJsonOptions extends GenerateOptions {
+  pretty?: boolean;
+}
+
+export async function generateJson(schema: JsonSchema, options?: GenerateJsonOptions): Promise<string> {
+  const json = await generate(schema, options);
+  const stringifyOptions = options?.pretty !== false 
+    ? { space: 2, ...options?.jsonStringifyOptions }
+    : { space: 0, ...options?.jsonStringifyOptions };
+  return JSON.stringify(json, stringifyOptions.replacer, stringifyOptions.space);
+}
+
+export function createJsonGenerator(options?: GenerateJsonOptions) {
+  const baseOptions = { ...options };
+  let callCount = 0;
+
+  return {
+    generate(schema: JsonSchema): Promise<string> {
+      const seed = (baseOptions.seed ?? 1) + callCount++;
+      return generateJson(schema, { ...baseOptions, seed });
+    },
+  };
+}
+
+export interface GenerateYamlOptions extends GenerateOptions {
+  pretty?: boolean;
+}
+
+export async function generateYaml(schema: JsonSchema, options?: GenerateYamlOptions): Promise<string> {
+  const yamlLib = options?.yaml ?? options?.extensions?.yaml;
+  if (!yamlLib) {
+    throw new Error("YAML support requires 'yaml' package. Provide via options.extensions.yaml or options.yaml.");
+  }
+  const json = await generate(schema, options);
+  const yamlOptions = options?.pretty !== false ? { indent: 2, lineWidth: 0 } : {};
+  return yamlLib.stringify(json as any, yamlOptions);
+}
+
+export function createYamlGenerator(options?: GenerateYamlOptions) {
+  const baseOptions = { ...options };
+  let callCount = 0;
+
+  return {
+    generate(schema: JsonSchema): Promise<string> {
+      const seed = (baseOptions.seed ?? 1) + callCount++;
+      return generateYaml(schema, { ...baseOptions, seed });
+    },
+  };
+}

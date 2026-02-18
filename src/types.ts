@@ -101,13 +101,17 @@ export interface GenerateOptions {
   fixedProbabilities?: boolean;
   /** Fill properties beyond required (for nested required propagation) */
   fillProperties?: boolean;
-  /** External extensions for generating values (e.g., faker, chance) */
+  /** External extensions for generating values (e.g., faker, chance, yaml) */
   extensions?: {
     /** @faker-js/faker instance */
     faker?: any;
     /** chance instance */
     chance?: any;
+    /** YAML library instance (must have stringify method) */
+    yaml?: any;
   };
+  /** @deprecated Use extensions.yaml instead */
+  yaml?: any;
   /** Enable jsonPath resolution for cross-references within generated data */
   resolveJsonPath?: boolean;
   /** Minimum reference depth for recursive schemas */
@@ -130,6 +134,13 @@ export interface GenerateOptions {
   maxDateTime?: string;
   /** Validate that $schema is 2020-12 (throws if not). Default: false for backwards compatibility */
   validateSchemaVersion?: boolean;
+  /** Options to pass to JSON.stringify for generateJSON */
+  jsonStringifyOptions?: {
+    /** JSON.stringify space parameter */
+    space?: number | string;
+    /** JSON.stringify replacer function */
+    replacer?: (key: string, value: unknown) => unknown;
+  };
 }
 
 export interface GenerateContext {
