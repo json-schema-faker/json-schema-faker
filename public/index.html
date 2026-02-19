@@ -1880,6 +1880,10 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             <div class="tabs" id="tabStrip">
                               <!-- tabs rendered by JS -->
                               <button class="tab-add" id="tabAdd" title="Add schema">+</button>
+                              <div class="format-toggle" id="formatToggle">
+                                <button class="format-btn active" id="btnFormatJSON" title="JSON mode">JSON</button>
+                                <button class="format-btn" id="btnFormatYAML" title="YAML mode">YAML</button>
+                              </div>
                             </div>
                             <div class="editor-container" id="inputEditor"></div>
                           </div>
@@ -2056,9 +2060,17 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/ace.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/mode-json.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/mode-yaml.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-nord_dark.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-github_dark.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker@8.4.1/dist/browserfaker.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/json-schema-faker@0.5.9/dist/bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
         <script src="main.js"></script>
+        <script>
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+          }
+        </script>
     </body>
 </html>

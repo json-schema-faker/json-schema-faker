@@ -521,6 +521,38 @@ body {
     color: var(--accent);
 }
 
+.format-toggle {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+    padding: 0 8px;
+}
+
+.format-btn {
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: inherit;
+    background: none;
+    border: 1px solid var(--light);
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 3px;
+    line-height: 1.4;
+    transition: all 0.15s;
+}
+
+.format-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+.format-btn.active {
+    background: var(--light);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
 .status-bar {
     display: flex;
     align-items: center;

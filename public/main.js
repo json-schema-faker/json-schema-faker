@@ -47,6 +47,13 @@ if (window.faker) {
   JSONSchemaFaker.extend('faker', () => window.faker);
 }
 
+// Inject dynamic version into badge
+{
+  const ver = window.JSONSchemaFaker?.version ?? '0.6.0';
+  const badge = document.querySelector('.badge');
+  if (badge) badge.textContent = `v${ver}`;
+}
+
 // ─── Editors ────────────────────────────────────────────────────────────────
 
 const inputEditor = ace.edit('inputEditor');
@@ -69,6 +76,55 @@ outputEditor.setOptions({
   useSoftTabs: true,
   readOnly: true
 });
+
+// ─── Format toggle (JSON / YAML) ─────────────────────────────────────────────
+
+let inputFormat = 'json'; // 'json' | 'yaml'
+
+function stripComments(str) {
+  // Remove block and line comments for JSONC support
+  return str
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/^\s*\/\/[^\n\r]*/g, '');
+}
+
+function parseInput(text) {
+  if (inputFormat === 'yaml') {
+    return jsyaml.load(text);
+  }
+  return JSON.parse(stripComments(text));
+}
+
+function setInputFormat(fmt) {
+  if (fmt === inputFormat) return;
+  const prev = inputFormat;
+  inputFormat = fmt;
+
+  // Toggle active state on buttons
+  document.getElementById('btnFormatJSON').classList.toggle('active', fmt === 'json');
+  document.getElementById('btnFormatYAML').classList.toggle('active', fmt === 'yaml');
+
+  // Switch ACE mode
+  inputEditor.session.setMode(`ace/mode/${fmt}`);
+
+  // Convert editor content
+  const text = inputEditor.getValue();
+  try {
+    if (fmt === 'yaml' && prev === 'json') {
+      const obj = JSON.parse(stripComments(text));
+      inputEditor.setValue(jsyaml.dump(obj, { indent: 2 }), -1);
+    } else if (fmt === 'json' && prev === 'yaml') {
+      const obj = jsyaml.load(text);
+      inputEditor.setValue(JSON.stringify(obj, null, 2), -1);
+    }
+  } catch { /* leave content as-is if parse fails */ }
+
+  // Sync active tab content
+  saveActiveTab();
+}
+
+document.getElementById('btnFormatJSON').addEventListener('click', () => setInputFormat('json'));
+document.getElementById('btnFormatYAML').addEventListener('click', () => setInputFormat('yaml'));
 
 // ─── Tab state ───────────────────────────────────────────────────────────────
 
@@ -355,13 +411,15 @@ async function generateOutput() {
   await new Promise(r => setTimeout(r, 150));
 
   try {
-    // Parse all tabs as schemas
+    // Parse all tabs as schemas (active tab uses current format, others always JSON)
     const parsedSchemas = [];
     for (const tab of tabs) {
       try {
-        parsedSchemas.push({ tab, schema: JSON.parse(tab.content) });
+        const isActive = tab.id === activeTabId;
+        const schema = isActive ? parseInput(tab.content) : JSON.parse(stripComments(tab.content));
+        parsedSchemas.push({ tab, schema });
       } catch (e) {
-        throw new Error(`JSON parse error in "${tab.name}": ${e.message}`);
+        throw new Error(`Parse error in "${tab.name}": ${e.message}`);
       }
     }
 
