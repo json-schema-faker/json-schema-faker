@@ -521,6 +521,11 @@ body {
     color: var(--accent);
 }
 
+.toc-active {
+    color: var(--accent) !important;
+    font-weight: 600;
+}
+
 .format-toggle {
     display: flex;
     align-items: center;
@@ -692,6 +697,10 @@ body {
 }
 
 @media (max-width: 768px) {
+    span[id]:empty {
+        transform: translateY(-13em);
+    }
+
     .main-container {
         flex-direction: column;
     }

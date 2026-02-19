@@ -520,3 +520,45 @@ inputEditor.setValue(tabs[0].content, -1);
 
 renderTabs();
 generateOutput();
+
+// Highlight TOC links when their section anchors enter the viewport
+(function setupTocObserver() {
+  const anchors = document.querySelectorAll('#docs [id^="docs-"], #examples [id^="ex-"]');
+  if (!anchors.length) return;
+
+  const tocLinks = document.querySelectorAll('nav a[href^="#docs-"], nav a[href^="#ex-"], div a[href^="#docs-"], div a[href^="#ex-"]');
+
+  function setActive(id) {
+    tocLinks.forEach(a => {
+      if (a.getAttribute('href') === '#' + id) {
+        a.classList.add('toc-active');
+      } else {
+        a.classList.remove('toc-active');
+      }
+    });
+  }
+
+  // Track which anchors are visible; activate the topmost one
+  const visible = new Set();
+
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        visible.add(entry.target.id);
+      } else {
+        visible.delete(entry.target.id);
+      }
+    });
+
+    if (visible.size === 0) return;
+
+    // Pick the topmost visible anchor in DOM order
+    let topId = null;
+    anchors.forEach(anchor => {
+      if (visible.has(anchor.id) && topId === null) topId = anchor.id;
+    });
+    if (topId) setActive(topId);
+  }, { rootMargin: '0px 0px -60% 0px', threshold: 0 });
+
+  anchors.forEach(anchor => observer.observe(anchor));
+})();
