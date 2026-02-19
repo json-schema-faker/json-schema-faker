@@ -687,6 +687,10 @@ body {
     flex-shrink: 0;
 }
 
+.main-container {
+    overflow: hidden;
+}
+
 @media (max-width: 768px) {
     .main-container {
         flex-direction: column;

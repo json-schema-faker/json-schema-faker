@@ -119,6 +119,17 @@ function setInputFormat(fmt) {
     }
   } catch { /* leave content as-is if parse fails */ }
 
+  // Rename active tab extension to match new format
+  const activeTab = getActiveTab();
+  if (activeTab) {
+    if (fmt === 'yaml' && activeTab.name.endsWith('.json')) {
+      activeTab.name = activeTab.name.replace(/\.json$/, '.yaml');
+    } else if (fmt === 'json' && activeTab.name.endsWith('.yaml')) {
+      activeTab.name = activeTab.name.replace(/\.yaml$/, '.json');
+    }
+    renderTabs();
+  }
+
   // Sync active tab content
   saveActiveTab();
 }

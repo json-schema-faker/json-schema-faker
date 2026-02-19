@@ -11,7 +11,7 @@ const PRECACHE = [
   'https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-nord_dark.min.js',
   'https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-github_dark.min.js',
   'https://cdn.jsdelivr.net/npm/@faker-js/faker@8.4.1/dist/browserfaker.min.js',
-  'https://cdn.jsdelivr.net/npm/json-schema-faker@0.5.9/dist/bundle.min.js',
+  '/jsf.bundle.js',
   'https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js',
 ];
 

@@ -43,6 +43,7 @@
   ],
   "scripts": {
     "build": "bun build ./src/index.ts --outdir=./dist --target=node --minify --sourcemap --external:@faker-js/faker --external:chance && tsc -p tsconfig.build.json",
+    "build:playground": "bun build ./src/browser.ts --outfile=./public/jsf.bundle.js --target=browser --minify --format=iife --external:@faker-js/faker --external:chance",
     "build:clean": "rm -rf dist && bun run build",
     "build:cli": "bun build ./bin/cli.ts --outdir=./dist/bin --target=node --external:@faker-js/faker --external:chance",
     "build:bin": "bun run build:bin:linux && bun run build:bin:darwin && bun run build:bin:windows",
