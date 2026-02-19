@@ -21,6 +21,14 @@ body {
     overflow-x: hidden;
 }
 
+span[id]:empty {
+    display: block;
+    height: 1em;
+}
+span[id]:empty:first-child {
+    height: 0;
+}
+
 #playground-actions {
     display: none;
 }
@@ -42,8 +50,12 @@ body {
 }
 
 .modal-active #dialog-modal:has(section:target[id="docs"]) a[href="#docs"],
+.modal-active #dialog-modal:has([id^="docs-"]:target) a[href="#docs"],
 .modal-active
     #dialog-modal:has(section:target[id="examples"])
+    a[href="#examples"],
+.modal-active
+    #dialog-modal:has([id^="ex-"]:target)
     a[href="#examples"],
 .modal-active
     #dialog-modal:has(section:target[id="playground"])
@@ -61,6 +73,12 @@ body {
     display: none;
 }
 .dialog-body > section:target {
+    display: block;
+}
+.dialog-body:has([id^="docs-"]:target) > #docs {
+    display: block;
+}
+.dialog-body:has([id^="ex-"]:target) > #examples {
     display: block;
 }
 

@@ -24,6 +24,12 @@ function closeDialog(e) {
 closeDialogIcon.addEventListener("click", toggleDocsDialog);
 dialogModal.addEventListener("click", closeDialog);
 
+const hash = window.location.hash.slice(1);
+if (hash === 'docs' || hash === 'examples' || hash === 'playground' ||
+    hash.startsWith('docs-') || hash.startsWith('ex-')) {
+  openDocsDialog();
+}
+
 document.onkeydown = function (evt) {
   evt = evt || window.event;
   var isEscape = false;
