@@ -24,7 +24,8 @@ const JSONSchemaFaker = {
   },
 
   async resolve(schema: unknown, refs?: unknown[]) {
-    return generate(schema as any, { ..._options });
+    const seed = _options.seed ?? Date.now();
+    return generate(schema as any, { ..._options, seed });
   },
 
   format: registerFormat,

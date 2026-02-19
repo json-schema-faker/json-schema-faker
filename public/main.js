@@ -97,17 +97,18 @@ function parseInput(text) {
   return JSON.parse(stripComments(text));
 }
 
+// Apply format state (buttons + ACE mode) without converting editor content
+function applyFormat(fmt) {
+  inputFormat = fmt;
+  document.getElementById('btnFormatJSON').classList.toggle('active', fmt === 'json');
+  document.getElementById('btnFormatYAML').classList.toggle('active', fmt === 'yaml');
+  inputEditor.session.setMode(`ace/mode/${fmt}`);
+}
+
 function setInputFormat(fmt) {
   if (fmt === inputFormat) return;
   const prev = inputFormat;
-  inputFormat = fmt;
-
-  // Toggle active state on buttons
-  document.getElementById('btnFormatJSON').classList.toggle('active', fmt === 'json');
-  document.getElementById('btnFormatYAML').classList.toggle('active', fmt === 'yaml');
-
-  // Switch ACE mode
-  inputEditor.session.setMode(`ace/mode/${fmt}`);
+  applyFormat(fmt);
 
   // Convert editor content
   const text = inputEditor.getValue();
@@ -596,6 +597,9 @@ function applyGistToTabs(gist) {
   if (!files.length) return;
   tabs = files.map(f => makeTab(f.filename, f.content ?? ''));
   activeTabId = tabs[0].id;
+  // Detect format from the first tab's filename
+  const fmt = tabs[0].name.endsWith('.yaml') || tabs[0].name.endsWith('.yml') ? 'yaml' : 'json';
+  applyFormat(fmt);
   inputEditor.setValue(tabs[0].content, -1);
   persistTabs();
   renderTabs();
