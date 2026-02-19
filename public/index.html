@@ -1858,8 +1858,9 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             <div class="panel-header">
                               Schema Input
                             </div>
-                            <div class="tabs">
-                              <div class="tab active" data-tab="schema">schema.json</div>
+                            <div class="tabs" id="tabStrip">
+                              <!-- tabs rendered by JS -->
+                              <button class="tab-add" id="tabAdd" title="Add schema">+</button>
                             </div>
                             <div class="editor-container" id="inputEditor"></div>
                           </div>
@@ -1870,7 +1871,10 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
                             <div class="editor-container" id="outputEditor"></div>
                             <div class="status-bar">
-                              <span id="statusText">Ready</span>
+                              <span class="status-left">
+                                <span id="statusIcon" class="status-icon"></span>
+                                <span id="statusText">Ready</span>
+                              </span>
                               <span id="statusInfo"></span>
                             </div>
                             <div class="options-panel border-t border-green-500/30" id="optionsPanel">

@@ -47,6 +47,8 @@ if (window.faker) {
   JSONSchemaFaker.extend('faker', () => window.faker);
 }
 
+// ─── Editors ────────────────────────────────────────────────────────────────
+
 const inputEditor = ace.edit('inputEditor');
 inputEditor.setTheme('ace/theme/nord_dark');
 inputEditor.session.setMode('ace/mode/json');
@@ -68,74 +70,192 @@ outputEditor.setOptions({
   readOnly: true
 });
 
-const sampleSchema = {
-  "$schema": "http://json-schema.org/draft-07/schema#",
-  "type": "object",
-  "properties": {
-    "id": {
-      "type": "integer",
-      "minimum": 1,
-      "maximum": 1000
-    },
-    "name": {
-      "type": "string",
-      "minLength": 5,
-      "maxLength": 50
-    },
-    "email": {
-      "type": "string",
-      "format": "email"
-    },
-    "avatar": {
-      "type": "string",
-      "format": "uri"
-    },
-    "role": {
-      "type": "string",
-      "enum": ["admin", "user", "guest"]
-    },
-    "active": {
-      "type": "boolean"
-    },
-    "createdAt": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "tags": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "minItems": 2,
-      "maxItems": 5
-    },
-    "address": {
+// ─── Tab state ───────────────────────────────────────────────────────────────
+
+let tabIdCounter = 0;
+
+function makeTab(name, content) {
+  return { id: ++tabIdCounter, name, content };
+}
+
+// tabs initialized after sampleSchemas is defined (see Init section)
+let tabs = [];
+let activeTabId = null;
+
+function getActiveTab() {
+  return tabs.find(t => t.id === activeTabId);
+}
+
+function saveActiveTab() {
+  const tab = getActiveTab();
+  if (tab) tab.content = inputEditor.getValue();
+}
+
+function loadTab(id) {
+  saveActiveTab();
+  activeTabId = id;
+  const tab = getActiveTab();
+  if (tab) {
+    inputEditor.setValue(tab.content, -1);
+    inputEditor.focus();
+  }
+  renderTabs();
+}
+
+function addTab() {
+  saveActiveTab();
+  const name = `schema${tabs.length + 1}.json`;
+  const content = JSON.stringify({ "$id": name, "type": "object", "properties": {} }, null, 2);
+  const tab = makeTab(name, content);
+  tabs.push(tab);
+  activeTabId = tab.id;
+  inputEditor.setValue(tab.content, -1);
+  inputEditor.focus();
+  renderTabs();
+  // Focus the name of the new tab for immediate renaming
+  const nameEl = document.querySelector(`.tab[data-id="${tab.id}"] .tab-name`);
+  if (nameEl) {
+    nameEl.focus();
+    document.execCommand('selectAll', false, null);
+  }
+}
+
+function deleteTab(id) {
+  if (tabs.length === 1) return;
+  const idx = tabs.findIndex(t => t.id === id);
+  tabs = tabs.filter(t => t.id !== id);
+  if (activeTabId === id) {
+    const next = tabs[Math.min(idx, tabs.length - 1)];
+    activeTabId = next.id;
+    inputEditor.setValue(next.content, -1);
+  }
+  renderTabs();
+}
+
+function renameTab(id, newName) {
+  const tab = tabs.find(t => t.id === id);
+  if (tab && newName.trim()) tab.name = newName.trim();
+}
+
+function renderTabs() {
+  const strip = document.getElementById('tabStrip');
+  const addBtn = document.getElementById('tabAdd');
+
+  // Remove existing tab elements (keep the + button)
+  strip.querySelectorAll('.tab').forEach(el => el.remove());
+
+  tabs.forEach(tab => {
+    const el = document.createElement('div');
+    el.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
+    el.dataset.id = tab.id;
+
+    const nameEl = document.createElement('span');
+    nameEl.className = 'tab-name';
+    nameEl.textContent = tab.name;
+    nameEl.contentEditable = 'false';
+    nameEl.title = 'Double-click to rename';
+
+    nameEl.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      nameEl.contentEditable = 'true';
+      nameEl.focus();
+      const range = document.createRange();
+      range.selectNodeContents(nameEl);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+    });
+
+    nameEl.addEventListener('blur', () => {
+      nameEl.contentEditable = 'false';
+      renameTab(tab.id, nameEl.textContent);
+      nameEl.textContent = tabs.find(t => t.id === tab.id)?.name ?? nameEl.textContent;
+    });
+
+    nameEl.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
+      if (e.key === 'Escape') {
+        nameEl.textContent = tabs.find(t => t.id === tab.id)?.name ?? nameEl.textContent;
+        nameEl.contentEditable = 'false';
+        nameEl.blur();
+      }
+    });
+
+    const closeBtn = document.createElement('button');
+    closeBtn.className = 'tab-close';
+    closeBtn.textContent = '×';
+    closeBtn.title = 'Remove tab';
+    closeBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      deleteTab(tab.id);
+    });
+
+    el.append(nameEl, closeBtn);
+
+    el.addEventListener('click', () => {
+      if (tab.id !== activeTabId) loadTab(tab.id);
+    });
+
+    strip.insertBefore(el, addBtn);
+  });
+}
+
+document.getElementById('tabAdd').addEventListener('click', addTab);
+
+// ─── Sample schema ────────────────────────────────────────────────────────────
+
+const sampleSchemas = [
+  {
+    name: 'address.json',
+    schema: {
+      "$id": "address.json",
+      "$schema": "http://json-schema.org/draft-07/schema#",
       "type": "object",
       "properties": {
-        "street": { "type": "string" },
-        "city": { "type": "string" },
+        "street":  { "type": "string" },
+        "city":    { "type": "string" },
         "country": { "type": "string" },
         "zipCode": { "type": "string", "pattern": "^\\d{5}$" }
       },
       "required": ["city", "country"]
-    },
-    "score": {
-      "type": "number",
-      "minimum": 0,
-      "maximum": 100,
-      "multipleOf": 0.5
     }
   },
-  "required": ["id", "name", "email", "role"]
-};
+  {
+    name: 'user.json',
+    schema: {
+      "$id": "user.json",
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "type": "object",
+      "properties": {
+        "id":        { "type": "integer", "minimum": 1, "maximum": 1000 },
+        "name":      { "type": "string", "minLength": 5, "maxLength": 50 },
+        "email":     { "type": "string", "format": "email" },
+        "role":      { "type": "string", "enum": ["admin", "user", "guest"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "address":   { "$ref": "address.json" }
+      },
+      "required": ["id", "name", "email", "role"]
+    }
+  }
+];
 
-inputEditor.setValue(JSON.stringify(sampleSchema, null, 2), -1);
+// ─── Status ──────────────────────────────────────────────────────────────────
+
+const STATUS_ICONS = {
+  success: `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#3fb950"><polyline points="20 6 9 17 4 12"/></svg>`,
+  error:   `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#f85149"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`,
+  info:    `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>`,
+};
 
 function setStatus(text, type = 'info') {
   const statusEl = document.getElementById('statusText');
+  const iconEl = document.getElementById('statusIcon');
   statusEl.textContent = text;
   statusEl.className = type;
+  iconEl.innerHTML = STATUS_ICONS[type] ?? '';
 }
+
+// ─── Options ─────────────────────────────────────────────────────────────────
 
 function getOptions() {
   const options = {};
@@ -160,17 +280,84 @@ function getOptions() {
   return options;
 }
 
+// ─── Ref rewriter ─────────────────────────────────────────────────────────────
+
+// Sanitize a schema id/name into a valid JSON Pointer token (no '/' or '~')
+function defKey(id) {
+  return id.replace(/~/g, '~0').replace(/\//g, '~1');
+}
+
+// Rewrites $ref values that point to external schema IDs to #/$defs/<key>
+// so they resolve correctly when schemas are inlined into root $defs.
+function rewriteRefs(schema, externalSchemas) {
+  if (typeof schema !== 'object' || schema === null) return schema;
+  if (Array.isArray(schema)) return schema.map(item => rewriteRefs(item, externalSchemas));
+
+  const result = {};
+  for (const [key, value] of Object.entries(schema)) {
+    if (key === '$ref' && typeof value === 'string') {
+      const base = value.split('#')[0];
+      const fragment = value.includes('#') ? value.slice(value.indexOf('#') + 1) : '';
+      if (base && externalSchemas.has(base)) {
+        const k = defKey(base);
+        result[key] = fragment ? `#/$defs/${k}${fragment}` : `#/$defs/${k}`;
+      } else {
+        result[key] = value;
+      }
+    } else {
+      result[key] = rewriteRefs(value, externalSchemas);
+    }
+  }
+  return result;
+}
+
+// ─── Generate ─────────────────────────────────────────────────────────────────
+
 async function generateOutput() {
+  saveActiveTab();
   const startTime = performance.now();
   setStatus('Generating...', 'info');
+  await new Promise(r => setTimeout(r, 150));
 
   try {
-    const schemaText = inputEditor.getValue();
-    const schema = JSON.parse(schemaText);
-    const options = getOptions();
+    // Parse all tabs as schemas
+    const parsedSchemas = [];
+    for (const tab of tabs) {
+      try {
+        parsedSchemas.push({ tab, schema: JSON.parse(tab.content) });
+      } catch (e) {
+        throw new Error(`JSON parse error in "${tab.name}": ${e.message}`);
+      }
+    }
 
+    // Root schema = active tab
+    const activeEntry = parsedSchemas.find(e => e.tab.id === activeTabId);
+    const rootSchema = activeEntry.schema;
+
+    // Build external schema map (id/name → schema), excluding root
+    const externalSchemas = new Map();
+    for (const { tab, schema } of parsedSchemas) {
+      if (schema === rootSchema) continue;
+      const id = (typeof schema === 'object' && schema.$id) ? schema.$id : tab.name;
+      externalSchemas.set(id, schema);
+    }
+
+    // If multiple schemas, inline externals into root $defs and rewrite $refs
+    let resolveSchema = rootSchema;
+    if (externalSchemas.size > 0) {
+      const defs = { ...(rootSchema.$defs ?? {}) };
+      for (const [id, schema] of externalSchemas) {
+        const { $id: _id, $schema: _s, ...rest } = (typeof schema === 'object' ? schema : {});
+        defs[defKey(id)] = rest;
+      }
+      // Deep-clone root and rewrite external $refs to #/$defs/<id>
+      resolveSchema = rewriteRefs(JSON.parse(JSON.stringify(rootSchema)), externalSchemas);
+      resolveSchema.$defs = defs;
+    }
+
+    const options = getOptions();
     JSONSchemaFaker.option(options);
-    const result = await JSONSchemaFaker.resolve(schema);
+    const result = await JSONSchemaFaker.resolve(resolveSchema);
 
     outputEditor.setValue(JSON.stringify(result, null, 2), -1);
 
@@ -187,7 +374,12 @@ async function generateOutput() {
 document.getElementById('generateBtn').addEventListener('click', generateOutput);
 
 document.getElementById('loadSample').addEventListener('click', () => {
-  inputEditor.setValue(JSON.stringify(sampleSchema, null, 2), -1);
+  // Load sample as multiple tabs
+  tabs = sampleSchemas.map(s => makeTab(s.name, JSON.stringify(s.schema, null, 2)));
+  activeTabId = tabs[tabs.length - 1].id; // activate root (user.json)
+  inputEditor.setValue(getActiveTab().content, -1);
+  renderTabs();
+  generateOutput();
 });
 
 document.getElementById('toggleOptions').addEventListener('click', () => {
@@ -201,4 +393,26 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// ─── Init ─────────────────────────────────────────────────────────────────────
+
+const defaultSchema = {
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "id":        { "type": "integer", "minimum": 1, "maximum": 1000 },
+    "name":      { "type": "string", "minLength": 5, "maxLength": 50 },
+    "email":     { "type": "string", "format": "email" },
+    "role":      { "type": "string", "enum": ["admin", "user", "guest"] },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "active":    { "type": "boolean" },
+    "score":     { "type": "number", "minimum": 0, "maximum": 100, "multipleOf": 0.5 }
+  },
+  "required": ["id", "name", "email", "role"]
+};
+
+tabs = [makeTab('schema.json', JSON.stringify(defaultSchema, null, 2))];
+activeTabId = tabs[0].id;
+inputEditor.setValue(tabs[0].content, -1);
+
+renderTabs();
 generateOutput();

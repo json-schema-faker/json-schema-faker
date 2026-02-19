@@ -463,6 +463,63 @@ body {
     border-bottom-color: var(--accent);
 }
 
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-name {
+    outline: none;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    min-width: 2ch;
+    max-width: 160px;
+    cursor: pointer;
+}
+
+.tab-name:focus {
+    cursor: text;
+    border-bottom: 1px solid var(--accent);
+}
+
+.tab-close {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.tab:hover .tab-close,
+.tab.active .tab-close {
+    display: inline;
+}
+
+.tab-close:hover {
+    color: var(--text-primary);
+}
+
+.tab-add {
+    padding: 6px 12px;
+    font-size: 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+    align-self: center;
+}
+
+.tab-add:hover {
+    color: var(--accent);
+}
+
 .status-bar {
     display: flex;
     align-items: center;
@@ -471,6 +528,17 @@ body {
     background: var(--bg-secondary);
     font-size: 11px;
     color: var(--text-secondary);
+}
+
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-icon {
+    display: inline-flex;
+    align-items: center;
 }
 
 .status-bar .error {
