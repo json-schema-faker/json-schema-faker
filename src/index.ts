@@ -5,9 +5,11 @@ import { buildRefRegistry, registerRootSchema } from "./ref-resolver.js";
 import { createFormatRegistry, registerFormatGlobal } from "./formats/index.js";
 import { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
 import { resolveJsonPathsInValue } from "./generators/jsonpath-resolver.js";
+import { registerExtension, resetExtension, type ExtensionCallback } from "./extensions.js";
 
 export type { JsonSchema, GenerateOptions, Random, RefResolver } from "./types.js";
 export { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
+export type { ExtensionCallback } from "./extensions.js";
 
 // Global format registry shared across calls
 const globalFormatRegistry = createFormatRegistry();
@@ -107,6 +109,14 @@ export function registerFormat(
   generator: (random: Random) => string
 ): void {
   registerFormatGlobal(name, generator, globalFormatRegistry);
+}
+
+export function define(name: string, callback: ExtensionCallback): void {
+  registerExtension(name, callback);
+}
+
+export function reset(name?: string): void {
+  resetExtension(name);
 }
 
 export interface GenerateJsonOptions extends GenerateOptions {

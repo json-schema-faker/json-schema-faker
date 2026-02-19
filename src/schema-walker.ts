@@ -11,6 +11,7 @@ import { generateComposition } from "./generators/composition.js";
 import { resolveRef } from "./ref-resolver.js";
 import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
 import { pad2 } from "./utils/helpers.js";
+import { generateFromExtensions } from "./extensions.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
@@ -246,6 +247,12 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
       }
       return extResult;
     }
+  }
+
+  // Custom keyword extensions (jsf.define)
+  const customExtResult = generateFromExtensions(schema, ctx);
+  if (customExtResult !== undefined) {
+    return customExtResult;
   }
 
   // $ref resolution

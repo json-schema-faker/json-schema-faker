@@ -27,8 +27,10 @@ const data = await generate({
 - Remote `$ref` resolution (HTTP/file) via `createRemoteResolver()`
 - Built-in format generators: date-time, email, uri, hostname, ipv4/ipv6, uuid, json-pointer
 - Regex `pattern` support via AST-based string generator
+- Built-in keywords: `autoIncrement`, `template` (string interpolation)
 - Extension support for [faker](https://fakerjs.dev/) and [chance](https://chancejs.com/)
-- Custom format registration
+- Custom format registration via `registerFormat()`
+- Custom keyword extensions via `define()`
 
 ## Install
 
@@ -82,6 +84,29 @@ const resolver = createRemoteResolver({
 });
 
 await generate(schema, { refResolver: resolver });
+```
+
+### `define(name, callback)`
+
+Register a custom keyword generator. The callback receives `value` (keyword value from schema) and `schema` (full schema). Use `this` to persist state across calls.
+
+```typescript
+define("counter", function() {
+  return ++this.count;
+});
+
+define("uuid", function() {
+  return crypto.randomUUID();
+});
+```
+
+### `reset(name?)`
+
+Clear registered custom keywords. Call without arguments to clear all.
+
+```typescript
+reset("counter"); // clear specific
+reset();          // clear all
 ```
 
 ## Options
