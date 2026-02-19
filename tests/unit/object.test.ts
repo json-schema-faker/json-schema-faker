@@ -80,30 +80,29 @@ describe("object generator", () => {
   });
 
   describe("github issues", () => {
-    test.skip("issue #846: meta data used as properties", async () => {
+    test("issue #846: meta data used as properties", async () => {
       const schema = {
-        $schema: "http://json-schema.org/draft-07/schema#",
         $id: "test",
         description: "test",
         type: "object",
         properties: {
           nested: {
-            $ref: "#/definitions/Nested",
+            $ref: "#/$defs/Nested",
           },
         },
         required: ["nested"],
         additionalProperties: false,
-        definitions: {
+        $defs: {
           Nested: {
             description: "This won't be in the generated data!",
             type: "object",
             properties: {
               no_bug_here: {
-                $ref: "#/definitions/CorruptedWhenNested",
+                $ref: "#/$defs/CorruptedWhenNested",
               },
               buggedPropertyWhenNested: {
                 type: "object",
-                $ref: "#/definitions/Nested2",
+                $ref: "#/$defs/Nested2",
               },
             },
             additionalProperties: false,
@@ -112,12 +111,12 @@ describe("object generator", () => {
             type: "object",
             properties: {
               buggedProperty: {
-                $ref: "#/definitions/NestedDefinitionWhichGetsCorrupted",
+                $ref: "#/$defs/NestedDefinitionWhichGetsCorrupted",
               },
               buggedProperties: {
                 type: "array",
                 items: {
-                  $ref: "#/definitions/NestedDefinitionWhichGetsCorrupted",
+                  $ref: "#/$defs/NestedDefinitionWhichGetsCorrupted",
                 },
               },
             },
@@ -139,7 +138,7 @@ describe("object generator", () => {
             type: "object",
             properties: {
               will_bug_here: {
-                $ref: "#/definitions/CorruptedWhenNested",
+                $ref: "#/$defs/CorruptedWhenNested",
               },
             },
             additionalProperties: false,

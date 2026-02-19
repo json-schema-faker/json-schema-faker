@@ -5,7 +5,6 @@
       {
         "description": "should not leak description as a property when $ref has sibling description",
         "schema": {
-          "$id": "test",
           "description": "test",
           "type": "object",
           "properties": {

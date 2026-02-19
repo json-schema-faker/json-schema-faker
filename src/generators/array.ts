@@ -209,6 +209,9 @@ export async function generateArray(
 
   // Handle containsAll: multiple contains constraints collected from allOf merging
   if (schema.containsAll) {
+    // Track positions already claimed by a containsAll item so they won't be overwritten
+    const claimedPositions = new Set<number>();
+
     for (const containsSchema of schema.containsAll) {
       let item = await walk(containsSchema, childCtx);
 
@@ -234,13 +237,32 @@ export async function generateArray(
       if (result.length < maxItems) {
         const pos = ctx.random.int(0, result.length);
         result.splice(pos, 0, item);
+        // Shift claimed positions that are >= insertion point
+        const shifted = new Set<number>();
+        for (const p of claimedPositions) {
+          shifted.add(p >= pos ? p + 1 : p);
+        }
+        claimedPositions.clear();
+        for (const p of shifted) claimedPositions.add(p);
+        claimedPositions.add(pos);
       } else if (result.length > 0) {
-        const pos = ctx.random.int(0, result.length - 1);
-        result[pos] = item;
+        // Only overwrite positions not already claimed by a previous containsAll item
+        const available = Array.from({ length: result.length }, (_, i) => i)
+          .filter(i => !claimedPositions.has(i));
+        if (available.length > 0) {
+          const pos = available[ctx.random.int(0, available.length - 1)];
+          result[pos] = item;
+          claimedPositions.add(pos);
+        }
+        // If all positions are claimed, push beyond maxItems temporarily
+        else {
+          result.push(item);
+          claimedPositions.add(result.length - 1);
+        }
       }
     }
 
-    // Trim to maxItems if containsAll pushed us over
+    // Trim to maxItems if containsAll pushed us over (preserve claimed positions)
     while (result.length > maxItems) {
       result.pop();
     }

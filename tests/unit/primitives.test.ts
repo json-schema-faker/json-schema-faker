@@ -131,28 +131,28 @@ describe("enum/const generator", () => {
   });
 
   describe("github issues", () => {
-    test.skip("issue #728: invalid enums when using refs multiple times", async () => {
+    test("issue #728: invalid enums when using refs multiple times", async () => {
       const schema = {
         type: "object",
         properties: {
-          prop1: { $ref: "#/definitions/EnumType", description: "My prop1 description." },
-          prop2: { $ref: "#/definitions/PropType", description: "My prop2 description." },
-          prop3: { $ref: "#/definitions/EnumType", description: "My prop3 description." },
-          prop4: { $ref: "#/definitions/PropType", description: "My prop4 description." },
+          prop1: { $ref: "#/$defs/EnumType", description: "My prop1 description." },
+          prop2: { $ref: "#/$defs/PropType", description: "My prop2 description." },
+          prop3: { $ref: "#/$defs/EnumType", description: "My prop3 description." },
+          prop4: { $ref: "#/$defs/PropType", description: "My prop4 description." },
         },
         required: ["prop1", "prop2", "prop3", "prop4"],
         additionalProperties: false,
-        definitions: {
+        $defs: {
           EnumType: { type: "string", enum: ["Value1", "Value2"], description: "My enum description." },
           PropType: {
             type: "object",
-            properties: { subProp: { $ref: "#/definitions/EnumType", description: "Sub Prop Description" } },
+            properties: { subProp: { $ref: "#/$defs/EnumType", description: "Sub Prop Description" } },
             additionalProperties: false,
           },
         },
       };
 
-      const val = await generate(schema as any);
+      const val = await generate(schema as any, { alwaysFakeOptionals: true });
       expect(val).toHaveProperty("prop1");
       expect(val).toHaveProperty("prop2");
       expect(val).toHaveProperty("prop3");

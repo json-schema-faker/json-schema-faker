@@ -30,7 +30,7 @@ describe("Issue #739 - Generate hangs with strict patternProperties", () => {
 });
 
 describe("Issue #588 - optionalsProbability + maxItems can produce oversized arrays", () => {
-  test.skip("should not produce arrays larger than maxItems when optionalsProbability is set and minItems is undefined", async () => {
+  test("should not produce arrays larger than maxItems when optionalsProbability is set and minItems is undefined", async () => {
     // When minItems is undefined, random.number() may return a large negative number
     // which Math.abs() turns into a large positive — violating maxItems.
     const schema = {

@@ -154,9 +154,8 @@ describe("if/then/else", () => {
 });
 
 describe("github issues", () => {
-  test.skip("issue #727: allOf with contains should include all required items", async () => {
+  test("issue #727: allOf with contains should include all required items", async () => {
     const schema = {
-      $schema: "http://json-schema.org/draft-07/schema",
       type: "array",
       items: { type: "string" },
       allOf: [
