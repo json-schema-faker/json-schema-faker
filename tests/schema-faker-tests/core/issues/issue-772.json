@@ -1,9 +1,9 @@
 [
   {
-    "description": "allOf with anyOf and const constraints",
+    "description": "Issue #772 - allOf with anyOf and additionalProperties: false constraint propagation",
     "tests": [
       {
-        "description": "should handle allOf containing anyOf with const constraints",
+        "description": "allOf[anyOf[{a,b},{c,d}], {a:const}] should produce valid output matching the first anyOf branch",
         "schema": {
           "allOf": [
             {
@@ -11,33 +11,19 @@
                 {
                   "type": "object",
                   "properties": {
-                    "a": {
-                      "type": "string"
-                    },
-                    "b": {
-                      "type": "string"
-                    }
+                    "a": { "type": "string" },
+                    "b": { "type": "string" }
                   },
-                  "required": [
-                    "a",
-                    "b"
-                  ],
+                  "required": ["a", "b"],
                   "additionalProperties": false
                 },
                 {
                   "type": "object",
                   "properties": {
-                    "c": {
-                      "type": "string"
-                    },
-                    "d": {
-                      "type": "string"
-                    }
+                    "c": { "type": "string" },
+                    "d": { "type": "string" }
                   },
-                  "required": [
-                    "c",
-                    "d"
-                  ],
+                  "required": ["c", "d"],
                   "additionalProperties": false
                 }
               ]
@@ -45,18 +31,78 @@
             {
               "type": "object",
               "properties": {
-                "a": {
-                  "const": "azer"
-                }
+                "a": { "const": "azer" }
               },
-              "required": [
-                "a"
-              ],
+              "required": ["a"],
               "additionalProperties": true
             }
           ]
         },
         "valid": true
+      },
+      {
+        "description": "simple anyOf with additionalProperties: false generates a valid single branch",
+        "schema": {
+          "anyOf": [
+            {
+              "type": "object",
+              "properties": {
+                "a": { "type": "string" },
+                "b": { "type": "string" }
+              },
+              "required": ["a", "b"],
+              "additionalProperties": false
+            },
+            {
+              "type": "object",
+              "properties": {
+                "c": { "type": "string" },
+                "d": { "type": "string" }
+              },
+              "required": ["c", "d"],
+              "additionalProperties": false
+            }
+          ]
+        },
+        "valid": true
+      },
+      {
+        "description": "known limitation: allOf[anyOf[{a,b},{c,d}], {c:const}] picks first anyOf branch and merges c into it, producing invalid output",
+        "schema": {
+          "allOf": [
+            {
+              "anyOf": [
+                {
+                  "type": "object",
+                  "properties": {
+                    "a": { "type": "string" },
+                    "b": { "type": "string" }
+                  },
+                  "required": ["a", "b"],
+                  "additionalProperties": false
+                },
+                {
+                  "type": "object",
+                  "properties": {
+                    "c": { "type": "string" },
+                    "d": { "type": "string" }
+                  },
+                  "required": ["c", "d"],
+                  "additionalProperties": false
+                }
+              ]
+            },
+            {
+              "type": "object",
+              "properties": {
+                "c": { "const": "hello" }
+              },
+              "required": ["c"],
+              "additionalProperties": true
+            }
+          ]
+        },
+        "valid": false
       }
     ]
   }

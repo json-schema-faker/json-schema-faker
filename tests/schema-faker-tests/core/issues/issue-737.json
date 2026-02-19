@@ -1,0 +1,41 @@
+[
+  {
+    "description": "Issue #737 - #{propName} interpolation in faker args is not supported (use template instead)",
+    "tests": [
+      {
+        "description": "template #{propName} correctly interpolates sibling property values",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "firstName": { "type": "string" },
+            "lastName": { "type": "string" },
+            "email": {
+              "type": "string",
+              "template": "#{firstName}.#{lastName}@example.com"
+            }
+          },
+          "required": ["firstName", "lastName", "email"]
+        },
+        "valid": true
+      },
+      {
+        "description": "known limitation: #{propName} in faker args is passed as a literal string, not interpolated",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "firstName": { "type": "string" },
+            "lastName": { "type": "string" },
+            "email": {
+              "type": "string",
+              "faker": {
+                "internet.email": ["#{firstName}", "#{lastName}", "gmail.com"]
+              }
+            }
+          },
+          "required": ["firstName", "lastName", "email"]
+        },
+        "valid": false
+      }
+    ]
+  }
+]
