@@ -952,3 +952,147 @@ const defaultSchema = {
 
   anchors.forEach(anchor => observer.observe(anchor));
 })();
+
+// ─── Search ─────────────────────────────────────────────────────────────────────
+
+(function initSearch() {
+  const searchInput = document.getElementById('docsSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  if (!searchInput) return;
+
+  // Define searchable sections
+  const sectionIds = [
+    'docs-cli', 'docs-api',
+    'docs-seeding', 'docs-depth', 'docs-arrays',
+    'docs-strings', 'docs-optionals', 'docs-defaults', 'docs-formats',
+    'docs-refs', 'docs-extensions', 'docs-keywords', 'docs-builtin',
+    'docs-datetime', 'docs-advanced'
+  ];
+
+  // Build search index from DOM
+  const searchIndex = sectionIds.map(id => {
+    const el = document.querySelector(`#${id} + section`);
+    if (!el) return null;
+
+    // Get title from h3 or h4 within the section
+    const titleEl = el.querySelector('h3, h4');
+    const title = titleEl ? titleEl.textContent.trim() : id.replace('docs-', '');
+
+    // Get all text content (cleaned)
+    let content = '';
+    el.querySelectorAll('p, li, code, pre').forEach(node => {
+      content += ' ' + node.textContent.replace(/\s+/g, ' ').trim();
+    });
+
+    return { id, title, content: content.slice(0, 1000) };
+  }).filter(Boolean);
+
+  // Initialize Fuse
+  const fuse = new Fuse(searchIndex, {
+    keys: ['title', 'content'],
+    threshold: 0.4,
+    ignoreLocation: true,
+    includeMatches: true
+  });
+
+  function getSectionContainer(id) {
+    // Find the section container that holds this id
+    const el = document.querySelector(`#${id} + section`);
+    if (!el) return null;
+    return el;
+  }
+
+function filterSections(query) {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      // Reset - show all
+      sectionIds.forEach(id => {
+        const el = getSectionContainer(id);
+        if (el) {
+          el.classList.remove('hidden');
+          el.style.display = '';
+        }
+      });
+      // Reset TOC links
+      const tocLinks = document.querySelectorAll('#docsToc > a');
+      tocLinks.forEach(link => {
+        link.classList.remove('hidden');
+        link.style.display = '';
+      });
+      return;
+    }
+
+    const results = fuse.search(normalizedQuery);
+    const matchedIds = new Set(results.map(r => r.item.id));
+
+    sectionIds.forEach(id => {
+      const el = getSectionContainer(id);
+      if (el) {
+        if (matchedIds.has(id)) {
+          el.classList.remove('hidden');
+          el.style.display = '';
+        } else {
+          el.classList.add('hidden');
+          el.style.display = 'none';
+        }
+      }
+    });
+
+    // Filter sidebar TOC links
+    const tocLinks = document.querySelectorAll('#docsToc > a');
+    tocLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      const linkId = href.replace('#', '');
+      if (matchedIds.has(linkId)) {
+        link.classList.remove('hidden');
+        link.style.display = '';
+      } else {
+        link.classList.add('hidden');
+        link.style.display = 'none';
+      }
+    });
+  }
+
+  // Input handler with debounce
+  let debounceTimer;
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value;
+    clearBtn.classList.toggle('hidden', !query);
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      filterSections(query);
+    }, 150);
+  });
+
+  // Clear button
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    filterSections('');
+    searchInput.focus();
+  });
+
+  // Keyboard shortcut: Cmd/Ctrl+K
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      // Open dialog if closed
+      if (!isOpen) openDocsDialog();
+      searchInput.focus();
+      searchInput.select();
+    }
+  });
+
+  // Clear search when closing dialog
+  const originalToggle = toggleDocsDialog;
+  toggleDocsDialog = function() {
+    originalToggle();
+    if (!isOpen) {
+      searchInput.value = '';
+      clearBtn.classList.add('hidden');
+      filterSections('');
+    }
+  };
+})();
