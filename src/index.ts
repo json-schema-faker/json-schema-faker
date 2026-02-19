@@ -20,7 +20,8 @@ const SUPPORTED_SCHEMA_VERSIONS = new Set([
 
 export async function generate(schema: JsonSchema, options?: GenerateOptions): Promise<unknown> {
   // Validate $schema if present (opt-in via validateSchemaVersion option, defaults to false)
-  if (options?.validateSchemaVersion === true) {
+  // Skip when propAliases is set — the user is explicitly opting into compat mode for older drafts
+  if (options?.validateSchemaVersion === true && !options?.propAliases) {
     if (typeof schema === "object" && schema !== null && "$schema" in schema) {
       const schemaUri = (schema as Record<string, unknown>).$schema;
       if (typeof schemaUri === "string" && !SUPPORTED_SCHEMA_VERSIONS.has(schemaUri)) {
@@ -114,7 +115,7 @@ export interface GenerateJsonOptions extends GenerateOptions {
 
 export async function generateJson(schema: JsonSchema, options?: GenerateJsonOptions): Promise<string> {
   const json = await generate(schema, options);
-  const stringifyOptions = options?.pretty !== false 
+  const stringifyOptions = options?.pretty !== false
     ? { space: 2, ...options?.jsonStringifyOptions }
     : { space: 0, ...options?.jsonStringifyOptions };
   return JSON.stringify(json, stringifyOptions.replacer, stringifyOptions.space);
