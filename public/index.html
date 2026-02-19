@@ -1877,28 +1877,133 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                               </span>
                               <span id="statusInfo"></span>
                             </div>
-                            <div class="options-panel border-t border-green-500/30" id="optionsPanel">
-                              <div class="options-row">
-                                <div class="option-group">
-                                  <label for="optSeed">Seed:</label>
-                                  <input type="number" id="optSeed" placeholder="random">
+                            <div class="options-panel bg-black/75" id="optionsPanel">
+                              <div class="options-grid">
+
+                                <!-- Randomness -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Randomness</div>
+                                  <div class="option-row">
+                                    <label for="optSeed">Seed</label>
+                                    <input type="number" id="optSeed" placeholder="random">
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optFixedProbabilities">
+                                    <label for="optFixedProbabilities">Fixed probabilities</label>
+                                  </div>
                                 </div>
-                                <div class="option-group">
-                                  <label for="optMaxDepth">Max Depth:</label>
-                                  <input type="number" id="optMaxDepth" value="10">
+
+                                <!-- Depth -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Depth</div>
+                                  <div class="option-row">
+                                    <label for="optMaxDepth">Max depth</label>
+                                    <input type="number" id="optMaxDepth" value="10">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optRefDepthMin">Ref depth min</label>
+                                    <input type="number" id="optRefDepthMin" placeholder="—">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optRefDepthMax">Ref depth max</label>
+                                    <input type="number" id="optRefDepthMax" placeholder="—">
+                                  </div>
                                 </div>
-                                <div class="option-group">
-                                  <label for="optOptionalsProb">Optionals Probability:</label>
-                                  <input type="number" id="optOptionalsProb" min="0" max="1" step="0.1" placeholder="0..1">
+
+                                <!-- Arrays -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Arrays</div>
+                                  <div class="option-row">
+                                    <label for="optMinItems">Min items</label>
+                                    <input type="number" id="optMinItems" placeholder="schema">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxItems">Max items</label>
+                                    <input type="number" id="optMaxItems" placeholder="schema">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxDefaultItems">Default items</label>
+                                    <input type="number" id="optMaxDefaultItems" placeholder="3">
+                                  </div>
                                 </div>
-                                <div class="option-group">
+
+                                <!-- Strings -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Strings</div>
+                                  <div class="option-row">
+                                    <label for="optMinLength">Min length</label>
+                                    <input type="number" id="optMinLength" placeholder="schema">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxLength">Max length</label>
+                                    <input type="number" id="optMaxLength" placeholder="schema">
+                                  </div>
+                                </div>
+
+                                <!-- Properties -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Properties</div>
+                                  <div class="option-row">
+                                    <label for="optOptionalsProb">Optionals prob.</label>
+                                    <input type="number" id="optOptionalsProb" min="0" max="1" step="0.1" placeholder="0.5">
+                                  </div>
+                                  <div class="option-row checkbox">
                                     <input type="checkbox" id="optAlwaysFakeOptionals">
-                                    <label for="optAlwaysFakeOptionals">Always Fake Optionals</label>
+                                    <label for="optAlwaysFakeOptionals">Always fake optionals</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optFillProperties">
+                                    <label for="optFillProperties">Fill properties</label>
+                                  </div>
                                 </div>
-                                <div class="option-group">
+
+                                <!-- Values -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Values</div>
+                                  <div class="option-row checkbox">
                                     <input type="checkbox" id="optUseExamples">
-                                    <label for="optUseExamples">Use Examples</label>
+                                    <label for="optUseExamples">Use examples array</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optUseDefaultValue">
+                                    <label for="optUseDefaultValue">Use default value</label>
+                                  </div>
                                 </div>
+
+                                <!-- Date / Time -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Date / Time</div>
+                                  <div class="option-row">
+                                    <label for="optMinDateTime">Min date-time</label>
+                                    <input type="text" id="optMinDateTime" class="wide" placeholder="2020-01-01T00:00:00Z">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxDateTime">Max date-time</label>
+                                    <input type="text" id="optMaxDateTime" class="wide" placeholder="2099-12-31T23:59:59Z">
+                                  </div>
+                                </div>
+
+                                <!-- Advanced -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Advanced</div>
+                                  <div class="option-row">
+                                    <label for="optPruneProperties">Prune properties</label>
+                                    <input type="text" id="optPruneProperties" class="wide" placeholder="prop1, prop2">
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optResolveJsonPath">
+                                    <label for="optResolveJsonPath">Resolve JSON path</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optFailOnInvalidTypes">
+                                    <label for="optFailOnInvalidTypes">Fail on invalid types</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optValidateSchemaVersion">
+                                    <label for="optValidateSchemaVersion">Validate schema version</label>
+                                  </div>
+                                </div>
+
                               </div>
                             </div>
                           </div>

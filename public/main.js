@@ -260,22 +260,55 @@ function setStatus(text, type = 'info') {
 function getOptions() {
   const options = {};
 
+  // Randomness
   const seed = document.getElementById('optSeed').value;
   if (seed) options.seed = parseInt(seed);
+  if (document.getElementById('optFixedProbabilities').checked) options.fixedProbabilities = true;
 
+  // Depth
   const maxDepth = document.getElementById('optMaxDepth').value;
   if (maxDepth) options.maxDepth = parseInt(maxDepth);
+  const refDepthMin = document.getElementById('optRefDepthMin').value;
+  if (refDepthMin) options.refDepthMin = parseInt(refDepthMin);
+  const refDepthMax = document.getElementById('optRefDepthMax').value;
+  if (refDepthMax) options.refDepthMax = parseInt(refDepthMax);
 
+  // Arrays
+  const minItems = document.getElementById('optMinItems').value;
+  if (minItems) options.minItems = parseInt(minItems);
+  const maxItems = document.getElementById('optMaxItems').value;
+  if (maxItems) options.maxItems = parseInt(maxItems);
+  const maxDefaultItems = document.getElementById('optMaxDefaultItems').value;
+  if (maxDefaultItems) options.maxDefaultItems = parseInt(maxDefaultItems);
+
+  // Strings
+  const minLength = document.getElementById('optMinLength').value;
+  if (minLength) options.minLength = parseInt(minLength);
+  const maxLength = document.getElementById('optMaxLength').value;
+  if (maxLength) options.maxLength = parseInt(maxLength);
+
+  // Properties
   const optionalsProb = document.getElementById('optOptionalsProb').value;
   if (optionalsProb) options.optionalsProbability = parseFloat(optionalsProb);
+  if (document.getElementById('optAlwaysFakeOptionals').checked) options.alwaysFakeOptionals = true;
+  if (document.getElementById('optFillProperties').checked) options.fillProperties = true;
 
-  if (document.getElementById('optAlwaysFakeOptionals').checked) {
-    options.alwaysFakeOptionals = true;
-  }
+  // Values
+  if (document.getElementById('optUseExamples').checked) options.useExamplesValue = true;
+  if (document.getElementById('optUseDefaultValue').checked) options.useDefaultValue = true;
 
-  if (document.getElementById('optUseExamples').checked) {
-    options.useExamplesValue = true;
-  }
+  // Date/Time
+  const minDateTime = document.getElementById('optMinDateTime').value.trim();
+  if (minDateTime) options.minDateTime = minDateTime;
+  const maxDateTime = document.getElementById('optMaxDateTime').value.trim();
+  if (maxDateTime) options.maxDateTime = maxDateTime;
+
+  // Advanced
+  const pruneProperties = document.getElementById('optPruneProperties').value.trim();
+  if (pruneProperties) options.pruneProperties = pruneProperties.split(',').map(s => s.trim()).filter(Boolean);
+  if (document.getElementById('optResolveJsonPath').checked) options.resolveJsonPath = true;
+  if (document.getElementById('optFailOnInvalidTypes').checked) options.failOnInvalidTypes = true;
+  if (document.getElementById('optValidateSchemaVersion').checked) options.validateSchemaVersion = true;
 
   return options;
 }
