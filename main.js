@@ -248,11 +248,20 @@ function renderTabs() {
     el.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
     el.dataset.id = tab.id;
 
+    // Split name and extension
+    const lastDot = tab.name.lastIndexOf('.');
+    const namePart = lastDot > 0 ? tab.name.slice(0, lastDot) : tab.name;
+    const extPart = lastDot > 0 ? tab.name.slice(lastDot) : '';
+
     const nameEl = document.createElement('span');
     nameEl.className = 'tab-name';
-    nameEl.textContent = tab.name;
+    nameEl.textContent = namePart;
     nameEl.contentEditable = 'false';
     nameEl.title = 'Double-click to rename';
+
+    const extEl = document.createElement('span');
+    extEl.className = 'tab-ext';
+    extEl.textContent = extPart;
 
     nameEl.addEventListener('dblclick', (e) => {
       e.stopPropagation();
@@ -267,14 +276,26 @@ function renderTabs() {
 
     nameEl.addEventListener('blur', () => {
       nameEl.contentEditable = 'false';
-      renameTab(tab.id, nameEl.textContent);
-      nameEl.textContent = tabs.find(t => t.id === tab.id)?.name ?? nameEl.textContent;
+      const newName = nameEl.textContent.trim();
+      const currentExt = (() => {
+        const lastDot = tab.name.lastIndexOf('.');
+        return lastDot > 0 ? tab.name.slice(lastDot) : '';
+      })();
+      if (newName) {
+        tab.name = newName + currentExt;
+        persistTabs();
+      }
+      renderTabs();
     });
 
     nameEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
       if (e.key === 'Escape') {
-        nameEl.textContent = tabs.find(t => t.id === tab.id)?.name ?? nameEl.textContent;
+        const currentName = (() => {
+          const lastDot = tab.name.lastIndexOf('.');
+          return lastDot > 0 ? tab.name.slice(0, lastDot) : tab.name;
+        })();
+        nameEl.textContent = currentName;
         nameEl.contentEditable = 'false';
         nameEl.blur();
       }
@@ -289,7 +310,7 @@ function renderTabs() {
       deleteTab(tab.id);
     });
 
-    el.append(nameEl, closeBtn);
+    el.append(nameEl, extEl, closeBtn);
 
     el.addEventListener('click', () => {
       if (tab.id !== activeTabId) loadTab(tab.id);
@@ -454,6 +475,8 @@ async function generateOutput() {
   await new Promise(r => setTimeout(r, 150));
 
   try {
+    applyFormat(tabs[0].name.includes('.json') ? 'json' : 'yaml');
+
     // Parse all tabs as schemas (always honor format)
     const parsedSchemas = [];
     for (const tab of tabs) {
@@ -928,4 +951,152 @@ const defaultSchema = {
   }, { rootMargin: '0px 0px -60% 0px', threshold: 0 });
 
   anchors.forEach(anchor => observer.observe(anchor));
+})();
+
+// ─── Search ─────────────────────────────────────────────────────────────────────
+
+(function initSearch() {
+  const searchInput = document.getElementById('docsSearch');
+  const clearBtn = document.getElementById('clearSearch');
+  if (!searchInput) return;
+
+  // Define searchable sections
+  const sectionIds = [
+    'docs-cli', 'docs-api',
+    'docs-seeding', 'docs-depth', 'docs-arrays',
+    'docs-strings', 'docs-optionals', 'docs-defaults', 'docs-formats',
+    'docs-refs', 'docs-extensions', 'docs-keywords', 'docs-builtin',
+    'docs-datetime', 'docs-advanced'
+  ];
+
+  // Build search index from DOM
+  const searchIndex = sectionIds.map(id => {
+    const el = document.querySelector(`#${id} + section`);
+    if (!el) return null;
+
+    // Get title from h3 or h4 within the section
+    const titleEl = el.querySelector('h3, h4');
+    const title = titleEl ? titleEl.textContent.trim() : id.replace('docs-', '');
+
+    // Get all text content (cleaned)
+    let content = '';
+    el.querySelectorAll('p, li, code, pre').forEach(node => {
+      content += ' ' + node.textContent.replace(/\s+/g, ' ').trim();
+    });
+
+    return { id, title, content: content.slice(0, 1000) };
+  }).filter(Boolean);
+
+  // Initialize Fuse
+  const fuse = new Fuse(searchIndex, {
+    keys: ['title', 'content'],
+    threshold: 0.4,
+    ignoreLocation: true,
+    includeMatches: true
+  });
+
+  function getSectionContainer(id) {
+    // Find the section container that holds this id
+    const el = document.querySelector(`#${id} + section`);
+    if (!el) return null;
+    return el;
+  }
+
+  function filterSections(query) {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    if (!normalizedQuery) {
+      // Reset dimmed class
+      sectionIds.forEach(id => {
+        const el = getSectionContainer(id);
+        if (el) {
+          el.classList.remove('search-dimmed');
+          el.style.opacity = '';
+        }
+      });
+      // Reset TOC links
+      const tocLinks = document.querySelectorAll('#docsToc > a');
+      tocLinks.forEach(link => {
+        link.classList.remove('search-dimmed');
+        link.style.opacity = '';
+      });
+      return;
+    }
+
+    const results = fuse.search(normalizedQuery);
+    const matchedIds = new Set(results.map(r => r.item.id));
+
+    // Dim non-matching sections (keep visible but gray)
+    sectionIds.forEach(id => {
+      const el = getSectionContainer(id);
+      if (el) {
+        if (matchedIds.has(id)) {
+          el.classList.remove('search-dimmed');
+          el.style.opacity = '';
+        } else {
+          el.classList.add('search-dimmed');
+          el.style.opacity = '0.3';
+        }
+      }
+    });
+
+    // Dim non-matching TOC links
+    const tocLinks = document.querySelectorAll('#docsToc > a');
+    tocLinks.forEach(link => {
+      const href = link.getAttribute('href');
+      const linkId = href.replace('#', '');
+      if (matchedIds.has(linkId)) {
+        link.classList.remove('search-dimmed');
+        link.style.opacity = '';
+      } else {
+        link.classList.add('search-dimmed');
+        link.style.opacity = '0.3';
+      }
+    });
+  }
+
+  // Input handler with debounce
+  let debounceTimer;
+  searchInput.addEventListener('input', () => {
+    const query = searchInput.value;
+    clearBtn.classList.toggle('hidden', !query);
+
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(() => {
+      filterSections(query);
+    }, 150);
+  });
+
+  // Clear button
+  clearBtn.addEventListener('click', () => {
+    searchInput.value = '';
+    clearBtn.classList.add('hidden');
+    filterSections('');
+    searchInput.focus();
+  });
+
+  // Keyboard shortcut: Cmd/Ctrl+K
+  document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+      e.preventDefault();
+      // Open dialog if closed
+      if (!isOpen) {
+        openDocsDialog();
+      }
+      location.hash = 'docs';
+      searchInput.focus();
+      searchInput.select();
+    }
+  });
+
+  // Clear search when closing dialog
+  const originalToggle = toggleDocsDialog;
+  toggleDocsDialog = function() {
+    originalToggle();
+    if (!isOpen) {
+      searchInput.value = '';
+      clearBtn.classList.add('hidden');
+      filterSections('');
+    }
+  };
 })();
