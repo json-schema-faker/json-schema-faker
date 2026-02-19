@@ -1,44 +1,73 @@
 [
   {
-    "description": "Issue #736 - Re-use fake values via jsonPath",
+    "description": "Issue #736 - OpenAPI schemas with #/components/schemas/ $ref resolution",
     "tests": [
       {
-        "description": "should resolve jsonPath references in template strings",
+        "description": "OpenAPI-style $ref resolved via refs map (Category embedded)",
         "schema": {
           "type": "object",
+          "required": ["name"],
           "properties": {
-            "firstName": {
-              "type": "string"
-            },
-            "lastName": {
-              "type": "string"
-            },
-            "fullName": {
-              "type": "string",
-              "template": "#{firstName} #{lastName}"
-            }
-          },
-          "required": ["firstName", "lastName", "fullName"]
+            "name": { "type": "string" },
+            "category": { "$ref": "#/components/schemas/Category" },
+            "status": { "type": "string", "enum": ["available", "pending", "sold"] }
+          }
         },
+        "refs": [
+          {
+            "id": "#/components/schemas/Category",
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" }
+            }
+          }
+        ],
         "valid": true
       },
       {
-        "description": "should use resolveJsonPath option for cross-referencing",
+        "description": "OpenAPI-style nested $ref chain resolved via refs map",
         "schema": {
           "type": "object",
+          "required": ["name", "photoUrls"],
           "properties": {
-            "userId": {
-              "type": "integer"
-            },
-            "userName": {
-              "type": "string"
-            },
-            "userRef": {
-              "type": "string",
-              "template": "user-#{userId}"
+            "name": { "type": "string" },
+            "photoUrls": { "type": "array", "items": { "type": "string" } },
+            "category": { "$ref": "#/components/schemas/Category" },
+            "status": { "type": "string", "enum": ["available", "pending", "sold"] }
+          }
+        },
+        "refs": [
+          {
+            "id": "#/components/schemas/Category",
+            "type": "object",
+            "properties": {
+              "id": { "type": "integer" },
+              "name": { "type": "string" }
             }
+          }
+        ],
+        "valid": true
+      },
+      {
+        "description": "workaround: rewrite OpenAPI $ref paths using $defs",
+        "schema": {
+          "type": "object",
+          "required": ["name"],
+          "properties": {
+            "name": { "type": "string" },
+            "category": { "$ref": "#/$defs/Category" },
+            "status": { "type": "string", "enum": ["available", "pending", "sold"] }
           },
-          "required": ["userId", "userName", "userRef"]
+          "$defs": {
+            "Category": {
+              "type": "object",
+              "properties": {
+                "id": { "type": "integer" },
+                "name": { "type": "string" }
+              }
+            }
+          }
         },
         "valid": true
       }
