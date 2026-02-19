@@ -68,7 +68,7 @@ if (window.faker) {
 
 const inputEditor = ace.edit('inputEditor');
 inputEditor.setTheme('ace/theme/nord_dark');
-inputEditor.session.setMode('ace/mode/json');
+inputEditor.session.setMode('ace/mode/javascript');
 inputEditor.setOptions({
   fontSize: '13px',
   showPrintMargin: false,
@@ -77,7 +77,7 @@ inputEditor.setOptions({
 });
 
 const outputEditor = ace.edit('outputEditor');
-outputEditor.setTheme('ace/theme/github_dark');
+outputEditor.setTheme('ace/theme/nord_dark');
 outputEditor.session.setMode('ace/mode/json');
 outputEditor.setOptions({
   fontSize: '13px',
@@ -95,13 +95,14 @@ function stripComments(str) {
   // Remove block and line comments for JSONC support
   return str
     .replace(/\/\*[\s\S]*?\*\//g, '')
-    .replace(/^\s*\/\/[^\n\r]*/g, '');
+    .replace(/(?:^\s*|\s+)\/\/[^\n\r]*/g, '');
 }
 
-function parseInput(text) {
-  if (inputFormat === 'yaml') {
+function parseInput(text, isYaml) {
+  if (isYaml) {
     return jsyaml.load(text);
   }
+  // JSON format always supports comments (JSONC behavior)
   return JSON.parse(stripComments(text));
 }
 
@@ -110,7 +111,9 @@ function applyFormat(fmt) {
   inputFormat = fmt;
   document.getElementById('btnFormatJSON').classList.toggle('active', fmt === 'json');
   document.getElementById('btnFormatYAML').classList.toggle('active', fmt === 'yaml');
-  inputEditor.session.setMode(`ace/mode/${fmt}`);
+  // Use JavaScript mode for JSON (handles comments in syntax highlighting)
+  const aceMode = fmt === 'json' ? 'javascript' : fmt;
+  inputEditor.session.setMode(`ace/mode/${aceMode}`);
 }
 
 function setInputFormat(fmt) {
@@ -121,11 +124,19 @@ function setInputFormat(fmt) {
   // Convert editor content
   const text = inputEditor.getValue();
   try {
-    if (fmt === 'yaml' && prev === 'json') {
-      const obj = JSON.parse(stripComments(text));
+    // Parse from previous format
+    let obj;
+    if (prev === 'yaml') {
+      obj = jsyaml.load(text);
+    } else {
+      // json - strip comments before parsing
+      obj = JSON.parse(stripComments(text));
+    }
+
+    // Convert to new format
+    if (fmt === 'yaml') {
       inputEditor.setValue(jsyaml.dump(obj, { indent: 2 }), -1);
-    } else if (fmt === 'json' && prev === 'yaml') {
-      const obj = jsyaml.load(text);
+    } else {
       inputEditor.setValue(JSON.stringify(obj, null, 2), -1);
     }
   } catch { /* leave content as-is if parse fails */ }
@@ -443,12 +454,14 @@ async function generateOutput() {
   await new Promise(r => setTimeout(r, 150));
 
   try {
-    // Parse all tabs as schemas (active tab uses current format, others always JSON)
+    // Parse all tabs as schemas (always honor format)
     const parsedSchemas = [];
     for (const tab of tabs) {
       try {
         const isActive = tab.id === activeTabId;
-        const schema = isActive ? parseInput(tab.content) : JSON.parse(stripComments(tab.content));
+        const schema = isActive
+          ? parseInput(tab.content, inputFormat === 'yaml')
+          : parseInput(stripComments(tab.content), tab.name.includes('.yaml'));
         parsedSchemas.push({ tab, schema });
       } catch (e) {
         throw new Error(`Parse error in "${tab.name}": ${e.message}`);

@@ -608,6 +608,8 @@
                                     <a href="#docs-formats" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Formats</a>
                                     <a href="#docs-refs" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">References</a>
                                     <a href="#docs-extensions" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Extensions</a>
+                                    <a href="#docs-keywords" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Custom Keywords</a>
+                                    <a href="#docs-builtin" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Built-in Keywords</a>
                                     <a href="#docs-datetime" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Date/Time</a>
                                     <a href="#docs-advanced" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Advanced</a>
                                 </nav>
@@ -627,6 +629,8 @@
                                     <a href="#docs-formats" class=" hover:text-green-400 text-shadow-fixed">Formats</a>
                                     <a href="#docs-refs" class=" hover:text-green-400 text-shadow-fixed">References</a>
                                     <a href="#docs-extensions" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
+                                    <a href="#docs-keywords" class=" hover:text-green-400 text-shadow-fixed">Keywords</a>
+                                    <a href="#docs-builtin" class=" hover:text-green-400 text-shadow-fixed">Built-in</a>
                                     <a href="#docs-datetime" class=" hover:text-green-400 text-shadow-fixed">Date/Time</a>
                                     <a href="#docs-advanced" class=" hover:text-green-400 text-shadow-fixed">Advanced</a>
                                 </div>
@@ -716,6 +720,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     generate,
     createGenerator,
     registerFormat,
+    define,
+    reset,
 } <span class="text-purple-400">from</span> <span class="text-yellow-300">"json-schema-faker"</span>;</code></pre>
                                 </div>
                             </div>
@@ -759,6 +765,24 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-purple-400">const</span> num = random.int(<span class="text-yellow-300">1000000</span>, <span class="text-yellow-300">9999999</span>);
     <span class="text-purple-400">return</span> <span class="text-yellow-300">`+1-${area}-${num}`</span>;
 });</code></pre>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">createRemoteResolver(options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">
+                                            Create a resolver for external <code class="code-inline">$ref</code> schemas (HTTP URLs or local files).
+                                        </p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">import</span> { createRemoteResolver } <span class="text-purple-400">from</span> <span class="text-yellow-300">'json-schema-faker'</span>;
+
+<span class="text-purple-400">const</span> resolver = createRemoteResolver({
+    <span class="text-blue-300">baseUrl</span>: <span class="text-yellow-300">'https://example.com/schemas/'</span>
+});
+
+<span class="text-purple-400">await</span> generate(schema, { refResolver: resolver });</code></pre>
                                         </div>
                                     </div>
                                 </div>
@@ -1333,6 +1357,123 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
 <span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
     <span class="text-blue-300">extensions</span>: { faker, chance: <span class="text-purple-400">new</span> Chance() }
 });</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Custom Keywords -->
+                                <span id="docs-keywords"></span>
+                                <section class="mb-12">
+                                    <h3 class="section-subtitle fraunces">Custom Keywords</h3>
+                                    <p class="text-gray-400 mb-8">Define custom keyword generators to extend schema processing.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card lg:col-span-2">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-green-400">define(name, callback)</h3>
+                                                    <span class="option-type">function</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Register a custom keyword generator. The callback receives <code class="code-inline">value</code> (keyword value from schema) and <code class="code-inline">schema</code> (full schema object). Use <code class="code-inline">this</code> to persist state across calls.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">import</span> { generate, define, reset } <span class="text-purple-400">from</span> <span class="text-yellow-300">'json-schema-faker'</span>;
+
+<span class="text-gray-500">// Sequential counter</span>
+define(<span class="text-yellow-300">'counter'</span>, <span class="text-purple-400">function</span>() {
+    <span class="text-purple-400">return</span> ++<span class="text-purple-400">this</span>.count;
+});
+
+<span class="text-gray-500">// Custom generator</span>
+define(<span class="text-yellow-300">'uuid'</span>, <span class="text-purple-400">function</span>() {
+    <span class="text-purple-400">return</span> crypto.randomUUID();
+});
+
+<span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">id</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span>, <span class="text-blue-300">counter</span>: <span class="text-yellow-300">true</span> },
+        <span class="text-blue-300">uuid</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>, <span class="text-blue-300">uuid</span>: <span class="text-yellow-300">true</span> }
+    }
+};
+
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema);
+<span class="text-gray-500">// { id: 1, uuid: "550e8400-e29b-41d4-a716-446655440000" }</span></code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-green-400">reset(name?)</h3>
+                                                    <span class="option-type">function</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Clear registered keywords. Call without arguments to clear all.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-gray-500">// Clear specific keyword</span>
+reset(<span class="text-yellow-300">'counter'</span>);
+
+<span class="text-gray-500">// Clear all keywords</span>
+reset();</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
+
+                                <!-- Built-in Keywords -->
+                                <span id="docs-builtin"></span>
+                                <section class="mb-12">
+                                    <h3 class="section-subtitle fraunces">Built-in Keywords</h3>
+                                    <p class="text-gray-400 mb-8">JSON Schema Faker includes built-in keywords for common patterns.</p>
+
+                                    <div class="grid-options">
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-cyan-400">autoIncrement</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Generate sequential integers. Use <code class="code-inline">initialOffset</code> to set the starting value.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">id</span>: { 
+            <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span>, 
+            <span class="text-blue-300">autoIncrement</span>: <span class="text-yellow-300">true</span>,
+            <span class="text-blue-300">initialOffset</span>: <span class="text-yellow-300">1000</span> 
+        }
+    }
+};
+
+<span class="text-purple-400">await</span> generate(schema); <span class="text-gray-500">// { id: 1000 }</span>
+<span class="text-purple-400">await</span> generate(schema); <span class="text-gray-500">// { id: 1001 }</span></code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-cyan-400">template</h3>
+                                                    <span class="option-type">string</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">String template with <code class="code-inline">#{propName}</code> placeholders resolved from sibling properties.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">firstName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
+        <span class="text-blue-300">lastName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
+        <span class="text-blue-300">fullName</span>: { 
+            <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
+            <span class="text-blue-300">template</span>: <span class="text-yellow-300">"#{firstName} #{lastName}"</span>
+        }
+    }
+};</code></pre>
                                                 </div>
                                             </div>
                                         </div>
@@ -1914,7 +2055,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                               <!-- tabs rendered by JS -->
                               <button class="tab-add" id="tabAdd" title="Add schema">+</button>
                               <div class="format-toggle" id="formatToggle">
-                                <button class="format-btn active" id="btnFormatJSON" title="JSON mode">JSON</button>
+                                <button class="format-btn active" id="btnFormatJSON" title="JSON with Comments mode">JSON</button>
                                 <button class="format-btn" id="btnFormatYAML" title="YAML mode">YAML</button>
                               </div>
                             </div>
