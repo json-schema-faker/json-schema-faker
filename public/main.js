@@ -248,11 +248,20 @@ function renderTabs() {
     el.className = 'tab' + (tab.id === activeTabId ? ' active' : '');
     el.dataset.id = tab.id;
 
+    // Split name and extension
+    const lastDot = tab.name.lastIndexOf('.');
+    const namePart = lastDot > 0 ? tab.name.slice(0, lastDot) : tab.name;
+    const extPart = lastDot > 0 ? tab.name.slice(lastDot) : '';
+
     const nameEl = document.createElement('span');
     nameEl.className = 'tab-name';
-    nameEl.textContent = tab.name;
+    nameEl.textContent = namePart;
     nameEl.contentEditable = 'false';
     nameEl.title = 'Double-click to rename';
+
+    const extEl = document.createElement('span');
+    extEl.className = 'tab-ext';
+    extEl.textContent = extPart;
 
     nameEl.addEventListener('dblclick', (e) => {
       e.stopPropagation();
@@ -267,14 +276,26 @@ function renderTabs() {
 
     nameEl.addEventListener('blur', () => {
       nameEl.contentEditable = 'false';
-      renameTab(tab.id, nameEl.textContent);
-      nameEl.textContent = tabs.find(t => t.id === tab.id)?.name ?? nameEl.textContent;
+      const newName = nameEl.textContent.trim();
+      const currentExt = (() => {
+        const lastDot = tab.name.lastIndexOf('.');
+        return lastDot > 0 ? tab.name.slice(lastDot) : '';
+      })();
+      if (newName) {
+        tab.name = newName + currentExt;
+        persistTabs();
+      }
+      renderTabs();
     });
 
     nameEl.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') { e.preventDefault(); nameEl.blur(); }
       if (e.key === 'Escape') {
-        nameEl.textContent = tabs.find(t => t.id === tab.id)?.name ?? nameEl.textContent;
+        const currentName = (() => {
+          const lastDot = tab.name.lastIndexOf('.');
+          return lastDot > 0 ? tab.name.slice(0, lastDot) : tab.name;
+        })();
+        nameEl.textContent = currentName;
         nameEl.contentEditable = 'false';
         nameEl.blur();
       }
@@ -289,7 +310,7 @@ function renderTabs() {
       deleteTab(tab.id);
     });
 
-    el.append(nameEl, closeBtn);
+    el.append(nameEl, extEl, closeBtn);
 
     el.addEventListener('click', () => {
       if (tab.id !== activeTabId) loadTab(tab.id);

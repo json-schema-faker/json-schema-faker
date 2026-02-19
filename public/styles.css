@@ -501,6 +501,13 @@ body {
     border-bottom: 1px solid var(--accent);
 }
 
+.tab-ext {
+    color: var(--text-secondary);
+    opacity: 0.7;
+    pointer-events: none;
+    user-select: none;
+}
+
 .tab-close {
     display: none;
     background: none;
