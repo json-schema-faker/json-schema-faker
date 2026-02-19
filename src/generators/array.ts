@@ -6,12 +6,14 @@ export async function generateArray(
   ctx: GenerateContext
 ): Promise<unknown[]> {
   if (ctx.depth >= ctx.maxDepth) {
-    return [];
+    const needed = schema.minItems ?? 0;
+    return needed > 0 ? Array.from({ length: needed }, () => null) : [];
   }
 
-  // Check if refDepth max was reached - generate empty array
+  // Check if refDepth max was reached - generate stub array respecting minItems
   if (ctx.refDepthReached) {
-    return [];
+    const needed = schema.minItems ?? 0;
+    return needed > 0 ? Array.from({ length: needed }, () => null) : [];
   }
 
   // Check for contradictory schema: items:false but minItems > 0
@@ -31,23 +33,31 @@ export async function generateArray(
   // Track if we've hit the ref depth limit
   const maxRefDepth = ctx.refDepthMax;
 
-  // Use context overrides if provided, otherwise use schema values
+  // Compute effective min/max. Schema constraints are hard bounds.
   let minItems = ctx.minItems ?? schema.minItems ?? 0;
   let maxItems = ctx.maxItems ?? schema.maxItems ?? Math.max(minItems, ctx.maxDefaultItems);
 
-  // If schema has explicit maxItems, it's a hard upper bound - context cannot exceed it
+  // schema.maxItems is a hard upper bound — no output may exceed it
   if (schema.maxItems !== undefined && maxItems > schema.maxItems) {
     maxItems = schema.maxItems;
   }
-  
-  // Ensure minItems doesn't exceed maxItems
-  if (minItems > maxItems) {
-    minItems = maxItems;
+
+  // schema.minItems is a hard lower bound — no output may go below it;
+  // it overrides ctx.maxItems if necessary to keep the output schema-valid
+  if (schema.minItems !== undefined && minItems < schema.minItems) {
+    minItems = schema.minItems;
   }
-  
-  // Ensure minItems doesn't exceed maxItems
-  if (minItems > maxItems) {
-    // If context raised minItems above schema's maxItems, cap it at maxItems
+
+  // Ensure range is valid. When schema.maxItems is set it is the absolute ceiling.
+  // When it is not set, schema.minItems drives the floor upward.
+  if (maxItems < minItems) {
+    if (schema.maxItems !== undefined) {
+      // schema.maxItems is the hard cap — clamp minItems down to it
+      minItems = maxItems;
+    } else {
+      // No schema upper bound — let schema.minItems drive maxItems up
+      maxItems = minItems;
+    }
   }
 
   // When alwaysFakeOptionals is true, use maxItems as the target
@@ -96,10 +106,10 @@ export async function generateArray(
   // Determine target length
   let targetLen: number;
   
-  // If refDepth has reached maxRefDepth - 1, don't generate any items (return empty array)
-  // This ensures the next level (where refDepth == maxRefDepth) returns {}
+  // If refDepth has reached maxRefDepth - 1, don't generate items beyond what minItems requires
   if (maxRefDepth !== undefined && ctx.refDepth >= maxRefDepth - 1) {
-    return [];
+    const needed = schema.minItems ?? 0;
+    return needed > 0 ? Array.from({ length: needed }, () => null) : [];
   }
   
   const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
@@ -192,6 +202,45 @@ export async function generateArray(
     }
 
     // Trim to maxItems if contains pushed us over
+    while (result.length > maxItems) {
+      result.pop();
+    }
+  }
+
+  // Handle containsAll: multiple contains constraints collected from allOf merging
+  if (schema.containsAll) {
+    for (const containsSchema of schema.containsAll) {
+      let item = await walk(containsSchema, childCtx);
+
+      if (seen) {
+        const key = JSON.stringify(item);
+        if (seen.has(key)) {
+          let uniqueFound = false;
+          for (let attempts = 0; attempts < 50; attempts++) {
+            item = await walk(containsSchema, childCtx);
+            const newKey = JSON.stringify(item);
+            if (!seen.has(newKey)) {
+              seen.add(newKey);
+              uniqueFound = true;
+              break;
+            }
+          }
+          if (!uniqueFound) continue;
+        } else {
+          seen.add(key);
+        }
+      }
+
+      if (result.length < maxItems) {
+        const pos = ctx.random.int(0, result.length);
+        result.splice(pos, 0, item);
+      } else if (result.length > 0) {
+        const pos = ctx.random.int(0, result.length - 1);
+        result[pos] = item;
+      }
+    }
+
+    // Trim to maxItems if containsAll pushed us over
     while (result.length > maxItems) {
       result.pop();
     }

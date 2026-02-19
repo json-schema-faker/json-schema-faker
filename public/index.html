@@ -804,6 +804,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-blue-300">defaultInvalidTypeProduct</span>?: unknown;   <span class="text-gray-500">// Fallback value</span>
     <span class="text-blue-300">validateSchemaVersion</span>?: boolean;       <span class="text-gray-500">// Check $schema</span>
     <span class="text-blue-300">fixedProbabilities</span>?: boolean;          <span class="text-gray-500">// Deterministic</span>
+    <span class="text-blue-300">propAliases</span>?: Record&lt;string, string&gt;;  <span class="text-gray-500">// Remap schema keys</span>
 }</code></pre></div>
 
                                 <!-- Seeding -->
@@ -1465,6 +1466,24 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="option-card">
+                                            <div class="flex items-start justify-between mb-4">
+                                                <h3 class="text-lg font-semibold text-red-400">propAliases</h3>
+                                                <span class="option-type">Record&lt;string, string&gt;</span>
+                                            </div>
+                                            <p class="text-gray-400 mb-4">Remap schema property names before processing. Useful for non-identifier extension keys (e.g. <code class="code-inline">x-faker</code>) or older Draft 04 <code class="code-inline">definitions</code> compatibility.</p>
+                                            <div class="code-block !p-4 !text-sm">
+                                        <pre><code><span class="text-gray-500">// Map x-faker to faker so non-identifier keys work</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">propAliases</span>: { <span class="text-yellow-300">'x-faker'</span>: <span class="text-yellow-300">'faker'</span> }
+});
+
+<span class="text-gray-500">// Support Draft 04 definitions keyword</span>
+<span class="text-purple-400">const</span> result2 = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">propAliases</span>: { <span class="text-yellow-300">'definitions'</span>: <span class="text-yellow-300">'$defs'</span> }
+});</code></pre>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
 
@@ -2001,6 +2020,10 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                   <div class="option-row checkbox">
                                     <input type="checkbox" id="optValidateSchemaVersion">
                                     <label for="optValidateSchemaVersion">Validate schema version</label>
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optPropAliases">Prop aliases</label>
+                                    <input type="text" id="optPropAliases" class="wide" placeholder='{"x-faker":"faker"}'>
                                   </div>
                                 </div>
 

@@ -200,6 +200,20 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
   }
 
+  // Apply propAliases: remap custom schema keys to known ones before processing
+  if (ctx.propAliases && typeof schema === 'object' && schema !== null) {
+    const schemaObj = schema as JsonSchemaObject;
+    let patched: JsonSchemaObject | null = null;
+    for (const [from, to] of Object.entries(ctx.propAliases)) {
+      if (from in schemaObj && !(to in schemaObj)) {
+        if (!patched) patched = { ...schemaObj };
+        patched[to] = patched[from];
+        delete patched[from];
+      }
+    }
+    if (patched) schema = patched;
+  }
+
   // Check for faker/chance extensions - but first resolve type if it's an array
   // so we know which type was randomly selected
   let resolvedType: string | undefined;

@@ -15,7 +15,7 @@
               "faker": "person.fullName"
             },
             "children": {
-              "$ref": "#/definitions/node"
+              "$ref": "#/$defs/node"
             }
           },
           "required": [
@@ -27,7 +27,7 @@
       "required": [
         "user"
       ],
-      "definitions": {
+      "$defs": {
         "node": {
           "type": "array",
           "items": {
@@ -40,7 +40,7 @@
             "Children": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/node"
+                "$ref": "#/$defs/node"
               },
               "minItems": 5
             }

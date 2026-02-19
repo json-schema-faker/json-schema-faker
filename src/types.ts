@@ -6,7 +6,6 @@ export interface JsonSchemaObject {
   $id?: string;
   $ref?: string;
   $defs?: Record<string, JsonSchema>;
-  definitions?: Record<string, JsonSchema>;
 
   // Type
   type?: string | string[];
@@ -34,6 +33,8 @@ export interface JsonSchemaObject {
   items?: JsonSchema;
   prefixItems?: JsonSchema[];
   contains?: JsonSchema;
+  /** Internal: multiple contains constraints collected from allOf merging */
+  containsAll?: JsonSchema[];
   minItems?: number;
   maxItems?: number;
   uniqueItems?: boolean;
@@ -134,6 +135,8 @@ export interface GenerateOptions {
   maxDateTime?: string;
   /** Validate that $schema is 2020-12 (throws if not). Default: false for backwards compatibility */
   validateSchemaVersion?: boolean;
+  /** Remap schema property names before processing. E.g. { "x-faker": "faker", "definitions": "$defs" } */
+  propAliases?: Record<string, string>;
   /** Options to pass to JSON.stringify for generateJSON */
   jsonStringifyOptions?: {
     /** JSON.stringify space parameter */
@@ -202,6 +205,8 @@ export interface GenerateContext {
   maxDateTime?: string;
   /** Pre-resolved type (from type array) to ensure consistent type selection */
   resolvedType?: string;
+  /** Remap schema property names before processing. E.g. { "x-faker": "faker" } */
+  propAliases?: Record<string, string>;
 }
 
 export interface Random {

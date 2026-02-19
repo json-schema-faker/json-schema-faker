@@ -4,19 +4,19 @@
     "schemas": [
       {
         "type": "object",
-        "definitions": {
+        "$defs": {
           "inner": {
             "aString": {
               "allOf": [
                 { "type": "string" },
-                { "$ref": "#/definitions/rules" }
+                { "$ref": "#/$defs/rules" }
               ]
             }
           },
           "rules": {
             "allOf": [
-              { "$ref": "#/definitions/twoChars" },
-              { "$ref": "#/definitions/asEmail" }
+              { "$ref": "#/$defs/twoChars" },
+              { "$ref": "#/$defs/asEmail" }
             ]
           },
           "twoChars": {
@@ -33,7 +33,7 @@
               "type": "object",
               "properties": {
                 "allOf": [
-                  { "$ref": "#/definitions/inner" }
+                  { "$ref": "#/$defs/inner" }
                 ]
               },
               "required": ["aString"]

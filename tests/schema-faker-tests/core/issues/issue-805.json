@@ -1,0 +1,28 @@
+[
+  {
+    "description": "Issue #805 - Extension with non-identifier property name (x-faker) doesn't work",
+    "tests": [
+      {
+        "description": "should use x-faker extension when registered under non-identifier key name",
+        "require": "core/extend/faker-extend",
+        "set": { "propAliases": { "x-faker": "faker" } },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-faker": "person.fullName"
+            },
+            "email": {
+              "type": "string",
+              "format": "email",
+              "x-faker": "internet.email"
+            }
+          },
+          "required": ["name", "email"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

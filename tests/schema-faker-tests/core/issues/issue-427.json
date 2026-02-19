@@ -23,14 +23,14 @@
             ]
           },
           "b": {
-            "$ref": "#/definitions/B"
+            "$ref": "#/$defs/B"
           }
         },
         "required": [
           "a",
           "b"
         ],
-        "definitions": {
+        "$defs": {
           "B": {
             "type": "object",
             "additionalProperties": false,
@@ -44,10 +44,10 @@
               "b3": {
                 "anyOf": [
                   {
-                    "$ref": "#/definitions/C"
+                    "$ref": "#/$defs/C"
                   },
                   {
-                    "$ref": "#/definitions/D"
+                    "$ref": "#/$defs/D"
                   }
                 ]
               }
@@ -81,7 +81,7 @@
                 "type": "string"
               },
               "d2": {
-                "$ref": "#/definitions/B"
+                "$ref": "#/$defs/B"
               }
             },
             "required": [

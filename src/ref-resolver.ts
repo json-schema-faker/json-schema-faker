@@ -21,13 +21,6 @@ export function buildRefRegistry(schema: JsonSchema): Map<string, JsonSchema> {
     }
   }
 
-  // Legacy definitions
-  if (schema.definitions) {
-    for (const [name, def] of Object.entries(schema.definitions)) {
-      registry.set(`#/definitions/${name}`, def);
-    }
-  }
-
   return registry;
 }
 
@@ -74,11 +67,11 @@ export async function resolveRef(
   } else {
     // Check registry first for non-fragment refs
     resolved = ctx.refRegistry.get(ref);
-    
+
     // If not in registry and we have a refResolver, try that
     if (resolved === undefined && ctx.refResolver) {
       baseSchema = await ctx.refResolver(ref);
-      
+
       // Extract the fragment from the full schema if the ref has a fragment
       const hashIndex = ref.indexOf("#");
       if (hashIndex !== -1) {
@@ -91,18 +84,13 @@ export async function resolveRef(
       } else {
         resolved = baseSchema;
       }
-      
-      // Register the base schema's definitions in the registry
+
+      // Register the remote schema's $defs in the registry
       if (baseSchema && typeof baseSchema === "object" && baseSchema !== null) {
         const fetchedSchema = baseSchema as JsonSchemaObject;
         if (fetchedSchema.$defs) {
           for (const [name, def] of Object.entries(fetchedSchema.$defs)) {
             ctx.refRegistry.set(`#/$defs/${name}`, def);
-          }
-        }
-        if (fetchedSchema.definitions) {
-          for (const [name, def] of Object.entries(fetchedSchema.definitions)) {
-            ctx.refRegistry.set(`#/definitions/${name}`, def);
           }
         }
       }
@@ -114,9 +102,14 @@ export async function resolveRef(
   }
 
   // Merge sibling keywords with resolved ref (Draft 2020-12 behavior)
+  // Strip pure annotation keywords — they must not override the resolved schema or leak as properties
+  const ANNOTATION_KEYWORDS = new Set(['description', 'title', '$comment', 'readOnly', 'writeOnly', 'deprecated']);
   const { $ref, ...siblings } = schema;
-  if (Object.keys(siblings).length > 0 && typeof resolved === "object" && resolved !== null) {
-    resolved = { ...(resolved as JsonSchemaObject), ...siblings };
+  const generativeSiblings = Object.fromEntries(
+    Object.entries(siblings).filter(([k]) => !ANNOTATION_KEYWORDS.has(k))
+  );
+  if (Object.keys(generativeSiblings).length > 0 && typeof resolved === "object" && resolved !== null) {
+    resolved = { ...(resolved as JsonSchemaObject), ...generativeSiblings };
   }
 
   const newCtx: GenerateContext = {
@@ -147,19 +140,10 @@ function scanDefs(
     const { $id, ...schemaWithoutId } = schema;
     registry.set($id, schemaWithoutId);
   }
-  
+
   if (schema.$defs) {
     for (const [name, def] of Object.entries(schema.$defs)) {
       const path = `${basePath}/$defs/${name}`;
-      registry.set(path, def);
-      if (typeof def === "object" && def !== null) {
-        scanDefs(def as JsonSchemaObject, path, registry);
-      }
-    }
-  }
-  if (schema.definitions) {
-    for (const [name, def] of Object.entries(schema.definitions)) {
-      const path = `${basePath}/definitions/${name}`;
       registry.set(path, def);
       if (typeof def === "object" && def !== null) {
         scanDefs(def as JsonSchemaObject, path, registry);

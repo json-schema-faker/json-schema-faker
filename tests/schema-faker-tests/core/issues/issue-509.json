@@ -10,15 +10,15 @@
         "type": "object",
         "oneOf": [
           {
-            "$ref": "#/definitions/openc2_command",
+            "$ref": "#/$defs/openc2_command",
             "description": "a message defined by an action-target pair that is sent from a producer and received by a consumer."
           },
           {
-            "$ref": "#/definitions/openc2_response",
+            "$ref": "#/$defs/openc2_response",
             "description": "a message from a consumer to a producer acknowledging a command or returning the requested resources or status to a previously received command."
           }
         ],
-        "definitions": {
+        "$defs": {
           "action": {
             "title": "openc2 action",
             "type": "string",
@@ -193,11 +193,11 @@
               },
               "payload": {
                 "description": "choice of literal content or url.",
-                "$ref": "#/definitions/payload"
+                "$ref": "#/$defs/payload"
               },
               "hashes": {
                 "description": "hashes of the payload content.",
-                "$ref": "#/definitions/hashes"
+                "$ref": "#/$defs/hashes"
               }
             },
             "minProperties": 1,
@@ -218,11 +218,11 @@
             "properties": {
               "hostname": {
                 "description": "a hostname that can be used to connect to this device over a network.",
-                "$ref": "#/definitions/hostname"
+                "$ref": "#/$defs/hostname"
               },
               "idn_hostname": {
                 "description": "an internationalized hostname that can be used to connect to this device over a network.",
-                "$ref": "#/definitions/idn_hostname"
+                "$ref": "#/$defs/idn_hostname"
               },
               "device_id": {
                 "description": "an identifier that refers to this device within an inventory or management system",
@@ -284,7 +284,7 @@
               },
               "hashes": {
                 "description": "one or more cryptographic hash codes of the file contents.",
-                "$ref": "#/definitions/hashes"
+                "$ref": "#/$defs/hashes"
               }
             },
             "minProperties": 1,
@@ -296,15 +296,15 @@
             "properties": {
               "md5": {
                 "description": "md5 hash as defined in rfc 1321.",
-                "$ref": "#/definitions/binary"
+                "$ref": "#/$defs/binary"
               },
               "sha1": {
                 "description": "sha1 hash as defined in rfc 6234.",
-                "$ref": "#/definitions/binary"
+                "$ref": "#/$defs/binary"
               },
               "sha256": {
                 "description": "sha256 hash as defined in rfc 6234.",
-                "$ref": "#/definitions/binary"
+                "$ref": "#/$defs/binary"
               }
             },
             "minProperties": 1,
@@ -336,23 +336,23 @@
             "properties": {
               "src_addr": {
                 "description": "ipv4 source address range.",
-                "$ref": "#/definitions/ipv4_net"
+                "$ref": "#/$defs/ipv4_net"
               },
               "src_port": {
                 "description": "source service per rfc 6335.",
-                "$ref": "#/definitions/port"
+                "$ref": "#/$defs/port"
               },
               "dst_addr": {
                 "description": "ipv4 destination address range.",
-                "$ref": "#/definitions/ipv4_net"
+                "$ref": "#/$defs/ipv4_net"
               },
               "dst_port": {
                 "description": "destination service per rfc 6335.",
-                "$ref": "#/definitions/port"
+                "$ref": "#/$defs/port"
               },
               "protocol": {
                 "description": "layer 4 protocol (e.g., tcp) - see l4_protocol section.",
-                "$ref": "#/definitions/l4_protocol"
+                "$ref": "#/$defs/l4_protocol"
               }
             },
             "minProperties": 1,
@@ -364,23 +364,23 @@
             "properties": {
               "src_addr": {
                 "description": "ipv6 source address range.",
-                "$ref": "#/definitions/ipv6_net"
+                "$ref": "#/$defs/ipv6_net"
               },
               "src_port": {
                 "description": "source service per rfc 6335.",
-                "$ref": "#/definitions/port"
+                "$ref": "#/$defs/port"
               },
               "dst_addr": {
                 "description": "ipv6 destination address range.",
-                "$ref": "#/definitions/ipv6_net"
+                "$ref": "#/$defs/ipv6_net"
               },
               "dst_port": {
                 "description": "destination service per rfc 6335.",
-                "$ref": "#/definitions/port"
+                "$ref": "#/$defs/port"
               },
               "protocol": {
                 "description": "layer 4 protocol (e.g., tcp) - see l4_protocol section.",
-                "$ref": "#/definitions/l4_protocol"
+                "$ref": "#/$defs/l4_protocol"
               }
             },
             "minProperties": 1,
@@ -433,23 +433,23 @@
             "type": "object",
             "properties": {
               "action": {
-                "$ref": "#/definitions/action",
+                "$ref": "#/$defs/action",
                 "description": "the task or activity to be performed (i.e., the 'verb')."
               },
               "target": {
-                "$ref": "#/definitions/target",
+                "$ref": "#/$defs/target",
                 "description": "the object of the action. the action is performed on the target."
               },
               "args": {
-                "$ref": "#/definitions/args",
+                "$ref": "#/$defs/args",
                 "description": "additional information that applies to the command."
               },
               "actuator": {
-                "$ref": "#/definitions/actuator",
+                "$ref": "#/$defs/actuator",
                 "description": "the subject of the action. the actuator executes the action on the target."
               },
               "command_id": {
-                "$ref": "#/definitions/command_id",
+                "$ref": "#/$defs/command_id",
                 "description": "an identifier of this command."
               }
             },
@@ -464,7 +464,7 @@
             "type": "object",
             "properties": {
               "status": {
-                "$ref": "#/definitions/status",
+                "$ref": "#/$defs/status",
                 "description": "an integer status code."
               },
               "status_text": {
@@ -472,7 +472,7 @@
                 "description": "a free-form human-readable description of the response status."
               },
               "results": {
-                "$ref": "#/definitions/results",
+                "$ref": "#/$defs/results",
                 "description": "map of key:value pairs that contain additional results based on the invoking command."
               }
             },
@@ -506,11 +506,11 @@
             "properties": {
               "bin": {
                 "description": "specifies the data contained in the artifact.",
-                "$ref": "#/definitions/binary"
+                "$ref": "#/$defs/binary"
               },
               "url": {
                 "description": "must be a valid url that resolves to the un-encoded content.",
-                "$ref": "#/definitions/uri"
+                "$ref": "#/$defs/uri"
               }
             },
             "minProperties": 1,
@@ -542,11 +542,11 @@
               },
               "executable": {
                 "description": "executable that was executed to start the process.",
-                "$ref": "#/definitions/file"
+                "$ref": "#/$defs/file"
               },
               "parent": {
                 "description": "process that spawned this one.",
-                "$ref": "#/definitions/process"
+                "$ref": "#/$defs/process"
               },
               "command_line": {
                 "description": "the full command line invocation used to start this process, including all arguments.",
@@ -592,7 +592,7 @@
                 "minItems": 1
               },
               "pairs": {
-                "$ref": "#/definitions/pairs",
+                "$ref": "#/$defs/pairs",
                 "description": "list of targets applicable to each supported action."
               },
               "rate_limit": {
@@ -664,75 +664,75 @@
             "type": "object",
             "properties": {
               "artifact": {
-                "$ref": "#/definitions/artifact",
+                "$ref": "#/$defs/artifact",
                 "description": "an array of bytes representing a file-like object or a link to that object."
               },
               "command": {
-                "$ref": "#/definitions/command_id",
+                "$ref": "#/$defs/command_id",
                 "description": "a reference to a previously issued command."
               },
               "device": {
-                "$ref": "#/definitions/device",
+                "$ref": "#/$defs/device",
                 "description": "the properties of a hardware device."
               },
               "domain_name": {
-                "$ref": "#/definitions/domain_name",
+                "$ref": "#/$defs/domain_name",
                 "description": "a network domain name."
               },
               "email_addr": {
-                "$ref": "#/definitions/email_addr",
+                "$ref": "#/$defs/email_addr",
                 "description": "a single email address."
               },
               "features": {
-                "$ref": "#/definitions/features",
+                "$ref": "#/$defs/features",
                 "description": "a set of items used with the query action to determine an actuator's capabilities."
               },
               "file": {
-                "$ref": "#/definitions/file",
+                "$ref": "#/$defs/file",
                 "description": "properties of a file."
               },
               "idn_domain_name": {
-                "$ref": "#/definitions/idn_domain_name",
+                "$ref": "#/$defs/idn_domain_name",
                 "description": "an internationalized domain name."
               },
               "idn_email_addr": {
-                "$ref": "#/definitions/idn_email_addr",
+                "$ref": "#/$defs/idn_email_addr",
                 "description": "a single internationalized email address."
               },
               "ipv4_net": {
-                "$ref": "#/definitions/ipv4_net",
+                "$ref": "#/$defs/ipv4_net",
                 "description": "an ipv4 address range including cidr prefix length."
               },
               "ipv6_net": {
-                "$ref": "#/definitions/ipv6_net",
+                "$ref": "#/$defs/ipv6_net",
                 "description": "an ipv6 address range including prefix length."
               },
               "ipv4_connection": {
-                "$ref": "#/definitions/ipv4_connection",
+                "$ref": "#/$defs/ipv4_connection",
                 "description": "a 5-tuple of source and destination ipv4 address ranges, source and destination ports, and protocol."
               },
               "ipv6_connection": {
-                "$ref": "#/definitions/ipv6_connection",
+                "$ref": "#/$defs/ipv6_connection",
                 "description": "a 5-tuple of source and destination ipv6 address ranges, source and destination ports, and protocol."
               },
               "iri": {
-                "$ref": "#/definitions/uri",
+                "$ref": "#/$defs/uri",
                 "description": "an internationalized resource identifier (iri)."
               },
               "mac_addr": {
-                "$ref": "#/definitions/mac_addr",
+                "$ref": "#/$defs/mac_addr",
                 "description": "a media access control (mac) address - eui-48 or eui-64."
               },
               "process": {
-                "$ref": "#/definitions/process",
+                "$ref": "#/$defs/process",
                 "description": "common properties of an instance of a computer program as executed on an operating system."
               },
               "properties": {
-                "$ref": "#/definitions/properties",
+                "$ref": "#/$defs/properties",
                 "description": "data attribute associated with an actuator."
               },
               "uri": {
-                "$ref": "#/definitions/uri",
+                "$ref": "#/$defs/uri",
                 "description": "a uniform resource identifier(uri)."
               }
             },

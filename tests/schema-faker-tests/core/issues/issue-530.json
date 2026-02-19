@@ -6,13 +6,13 @@
         "description": "should resolve circular-refs now",
         "schema": {
           "type": "object",
-          "definitions": {
+          "$defs": {
             "collectionDef": {
               "additionalProperties": false,
               "properties": {
                 "a": {
                   "items": {
-                    "$ref": "#/definitions/aDef"
+                    "$ref": "#/$defs/aDef"
                   },
                   "type": "array"
                 },
@@ -31,7 +31,7 @@
               "properties": {
                 "subA": {
                   "items": {
-                    "$ref": "#/definitions/aDef"
+                    "$ref": "#/$defs/aDef"
                   },
                   "type": "array"
                 },
@@ -52,7 +52,7 @@
               "faker": "internet.email"
             },
             "collection": {
-              "$ref": "#/definitions/collectionDef"
+              "$ref": "#/$defs/collectionDef"
             }
           },
           "required": [

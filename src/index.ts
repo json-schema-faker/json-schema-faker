@@ -1,4 +1,4 @@
-import type { JsonSchema, GenerateOptions, GenerateContext, Random, RefResolver } from "./types.js";
+import type { JsonSchema, JsonSchemaObject, GenerateOptions, GenerateContext, Random, RefResolver } from "./types.js";
 import { createRandom } from "./random.js";
 import { walk } from "./schema-walker.js";
 import { buildRefRegistry, registerRootSchema } from "./ref-resolver.js";
@@ -30,8 +30,9 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
   }
 
   const random = createRandom(options?.seed ?? 1);
-  const refRegistry = buildRefRegistry(schema);
-  registerRootSchema(schema, refRegistry);
+  const schema_ = options?.propAliases ? applyPropAliasesToSchema(schema, options.propAliases) : schema;
+  const refRegistry = buildRefRegistry(schema_);
+  registerRootSchema(schema_, refRegistry);
 
   const formatRegistry = options?.formats
     ? createFormatRegistry(options.formats)
@@ -75,9 +76,10 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     defaultInvalidTypeProduct: options?.defaultInvalidTypeProduct,
     minDateTime: options?.minDateTime,
     maxDateTime: options?.maxDateTime,
+    propAliases: options?.propAliases,
   };
 
-  const result = await walk(schema, ctx);
+  const result = await walk(schema_, ctx);
 
   // Post-process to resolve jsonPath references if enabled
   if (options?.resolveJsonPath) {
@@ -154,4 +156,22 @@ export function createYamlGenerator(options?: GenerateYamlOptions) {
       return generateYaml(schema, { ...baseOptions, seed });
     },
   };
+}
+
+/**
+ * Apply propAliases to a schema object (shallow — top-level keys only).
+ * This is used pre-processing so the ref registry sees the renamed keys.
+ */
+function applyPropAliasesToSchema(schema: JsonSchema, aliases: Record<string, string>): JsonSchema {
+  if (typeof schema !== 'object' || schema === null) return schema;
+  const obj = schema as JsonSchemaObject;
+  let patched: JsonSchemaObject | null = null;
+  for (const [from, to] of Object.entries(aliases)) {
+    if (from in obj && !(to in obj)) {
+      if (!patched) patched = { ...obj };
+      patched[to] = patched[from];
+      delete patched[from];
+    }
+  }
+  return patched ?? schema;
 }

@@ -110,7 +110,17 @@ function mergePairInto(target: JsonSchemaObject, source: JsonSchemaObject): void
       target.prefixItems = merged;
     }
   }
-  if (source.contains !== undefined) target.contains = source.contains;
+  if (source.contains !== undefined) {
+    // Collect multiple contains constraints from allOf into containsAll
+    if (target.containsAll !== undefined) {
+      target.containsAll = [...target.containsAll, source.contains];
+    } else if (target.contains !== undefined) {
+      target.containsAll = [target.contains, source.contains];
+      delete target.contains;
+    } else {
+      target.contains = source.contains;
+    }
+  }
 
   // Object — merge properties, union required
   if (source.properties) {

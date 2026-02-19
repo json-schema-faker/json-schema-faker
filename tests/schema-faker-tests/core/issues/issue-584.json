@@ -5,8 +5,8 @@
       {
         "description": "should create items recursively",
         "schema": {
-          "$ref": "#/definitions/A",
-          "definitions": {
+          "$ref": "#/$defs/A",
+          "$defs": {
             "A": {
               "type": "object",
               "additionalProperties": false,
@@ -14,11 +14,11 @@
                 "nodeA": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/A"
+                    "$ref": "#/$defs/A"
                   }
                 },
                 "nodeB": {
-                  "$ref": "#/definitions/B"
+                  "$ref": "#/$defs/B"
                 }
               }
             },
@@ -29,7 +29,7 @@
                 "nodeB": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/B"
+                    "$ref": "#/$defs/B"
                   }
                 }
               }

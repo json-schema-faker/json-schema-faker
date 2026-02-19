@@ -1,0 +1,27 @@
+[
+  {
+    "description": "Issue #699 - Global maxItems option should not violate schema's minItems",
+    "tests": [
+      {
+        "description": "should generate at least minItems items even when global maxItems is smaller",
+        "schema": {
+          "$id": "sample",
+          "title": "Sample",
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "test": {
+              "type": "array",
+              "title": "Test",
+              "items": { "type": "string" },
+              "minItems": 3
+            }
+          },
+          "required": ["test"]
+        },
+        "set": { "maxItems": 1 },
+        "valid": true
+      }
+    ]
+  }
+]

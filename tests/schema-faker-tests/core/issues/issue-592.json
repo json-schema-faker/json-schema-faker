@@ -6,7 +6,7 @@
         "description": "should eventually generate most props without hanging out",
         "schema": {
           "$schema": "https://json-schema.org/draft/2020-12/schema",
-          "definitions": {
+          "$defs": {
             "MaterialClass": {
               "type": "object",
               "properties": {
@@ -33,7 +33,7 @@
                 "MaterialClassProperties": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/MaterialClassProperty"
+                    "$ref": "#/$defs/MaterialClassProperty"
                   }
                 },
                 "ExternalReference": {
@@ -57,7 +57,7 @@
                   "type": "integer"
                 },
                 "Entity": {
-                  "$ref": "#/definitions/MaterialClass"
+                  "$ref": "#/$defs/MaterialClass"
                 },
                 "Value": {
                   "type": "string",
@@ -183,7 +183,7 @@
                 "MaterialLotProperties": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/MaterialLotProperty"
+                    "$ref": "#/$defs/MaterialLotProperty"
                   }
                 },
                 "ExternalReference": {
@@ -207,7 +207,7 @@
                   "type": "integer"
                 },
                 "Entity": {
-                  "$ref": "#/definitions/MaterialLot"
+                  "$ref": "#/$defs/MaterialLot"
                 },
                 "Value": {
                   "type": "string",
@@ -270,19 +270,19 @@
             "MaterialDefinitionProperties": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/MaterialDefinitionProperty"
+                "$ref": "#/$defs/MaterialDefinitionProperty"
               }
             },
             "MaterialLots": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/MaterialLot"
+                "$ref": "#/$defs/MaterialLot"
               }
             },
             "MaterialClasses": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/MaterialClass"
+                "$ref": "#/$defs/MaterialClass"
               }
             },
             "ExternalReference": {

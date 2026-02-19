@@ -309,6 +309,8 @@ function getOptions() {
   if (document.getElementById('optResolveJsonPath').checked) options.resolveJsonPath = true;
   if (document.getElementById('optFailOnInvalidTypes').checked) options.failOnInvalidTypes = true;
   if (document.getElementById('optValidateSchemaVersion').checked) options.validateSchemaVersion = true;
+  const propAliases = document.getElementById('optPropAliases').value.trim();
+  if (propAliases) { try { options.propAliases = JSON.parse(propAliases); } catch {} }
 
   return options;
 }

@@ -1,0 +1,67 @@
+[
+  {
+    "description": "Issue #466 - if/then/else support (Draft 07)",
+    "tests": [
+      {
+        "description": "should generate object satisfying if+then branch (foo constrained to us)",
+        "schema": {
+          "type": "object",
+          "required": ["country"],
+          "properties": {
+            "country": {
+              "type": "string",
+              "enum": ["us", "other"]
+            },
+            "zipcode": {
+              "type": ["string", "null"]
+            }
+          },
+          "if": { "properties": { "country": { "const": "us" } } },
+          "then": {
+            "required": ["zipcode"],
+            "properties": { "zipcode": { "type": "string" } }
+          }
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate object with if/then/else (else: false forces if+then branch)",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "foo": { "type": "string" },
+            "bar": { "type": "string" }
+          },
+          "if": {
+            "properties": { "foo": { "enum": ["bar"] } },
+            "required": ["foo"]
+          },
+          "then": { "required": ["bar"] },
+          "else": false
+        },
+        "valid": true
+      },
+      {
+        "description": "should generate object satisfying if+else branch",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "type": { "type": "string", "enum": ["a", "b"] },
+            "value": { "type": "string" }
+          },
+          "if": {
+            "properties": { "type": { "const": "a" } }
+          },
+          "then": {
+            "required": ["value"],
+            "properties": { "value": { "minLength": 1 } }
+          },
+          "else": {
+            "properties": { "value": { "type": "string", "maxLength": 0 } }
+          }
+        },
+        "valid": true
+      }
+    ]
+  }
+]

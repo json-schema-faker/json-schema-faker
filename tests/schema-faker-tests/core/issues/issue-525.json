@@ -1,0 +1,26 @@
+[
+  {
+    "description": "Issue #525 - Global minItems option should not override schema's minItems",
+    "tests": [
+      {
+        "description": "schema minItems should take precedence over global option minItems when schema value is higher",
+        "schema": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 10
+        },
+        "set": { "minItems": 5 },
+        "valid": true
+      },
+      {
+        "description": "global option minItems should apply when schema has no minItems",
+        "schema": {
+          "type": "array",
+          "items": { "type": "string" }
+        },
+        "set": { "minItems": 5 },
+        "valid": true
+      }
+    ]
+  }
+]

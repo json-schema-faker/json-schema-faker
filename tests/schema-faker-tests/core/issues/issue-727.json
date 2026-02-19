@@ -1,0 +1,19 @@
+[
+  {
+    "description": "Issue #727 - allOf with multiple contains only honors last item",
+    "tests": [
+      {
+        "description": "should generate array containing both A and B when allOf has two contains constraints",
+        "schema": {
+          "type": "array",
+          "items": { "type": "string" },
+          "allOf": [
+            { "contains": { "const": "A" } },
+            { "contains": { "const": "B" } }
+          ]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

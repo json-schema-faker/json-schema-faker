@@ -5,7 +5,7 @@
       {
         "description": "should resolve local definitions",
         "schema": {
-          "definitions": {
+          "$defs": {
             "foo": {
               "type": "object",
               "properties": {
@@ -15,7 +15,7 @@
               }
             }
           },
-          "$ref": "#/definitions/foo"
+          "$ref": "#/$defs/foo"
         },
         "sync": true,
         "valid": true

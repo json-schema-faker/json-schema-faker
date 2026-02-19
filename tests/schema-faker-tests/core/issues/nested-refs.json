@@ -8,13 +8,13 @@
         "type": "object",
         "properties": {
           "hello": {
-            "$ref": "#/definitions/middle"
+            "$ref": "#/$defs/middle"
           }
         },
         "required": ["hello"],
-        "definitions": {
+        "$defs": {
           "middle": {
-            "$ref": "#/definitions/world"
+            "$ref": "#/$defs/world"
           },
           "world": {
             "type": "string",

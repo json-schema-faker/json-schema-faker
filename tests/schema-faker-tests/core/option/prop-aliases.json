@@ -1,0 +1,55 @@
+[
+  {
+    "description": "propAliases option — remap schema property names before processing",
+    "tests": [
+      {
+        "description": "should map x-faker to faker when propAliases is set",
+        "require": "core/extend/faker-extend",
+        "set": { "propAliases": { "x-faker": "faker" } },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "x-faker": "person.fullName"
+            }
+          },
+          "required": ["name"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should map x-chance to chance when propAliases is set",
+        "require": "core/extend/chance-extend",
+        "set": { "propAliases": { "x-chance": "chance" } },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "age": {
+              "type": "integer",
+              "x-chance": "age"
+            }
+          },
+          "required": ["age"]
+        },
+        "valid": true
+      },
+      {
+        "description": "should not remap key when target key already exists in schema",
+        "set": { "propAliases": { "x-faker": "faker" } },
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string",
+              "faker": "person.lastName",
+              "x-faker": "person.fullName"
+            }
+          },
+          "required": ["name"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

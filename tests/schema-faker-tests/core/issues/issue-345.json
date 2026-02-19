@@ -5,7 +5,7 @@
       "description": "it will work as expected",
       "schema": {
         "type": "object",
-        "definitions": {
+        "$defs": {
           "DefaultCyclic_106": {
             "type": "object",
             "properties": {
@@ -13,7 +13,7 @@
                 "type": "integer"
               },
               "me": {
-                "$ref": "#/definitions/DefaultCyclic_106"
+                "$ref": "#/$defs/DefaultCyclic_106"
               }
             },
             "additionalProperties": false,
@@ -27,7 +27,7 @@
             "type": "integer"
           },
           "me": {
-            "$ref": "#/definitions/DefaultCyclic_106"
+            "$ref": "#/$defs/DefaultCyclic_106"
           }
         },
         "required": [

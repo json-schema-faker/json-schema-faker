@@ -18,7 +18,7 @@
                 "pattern": "^(\"){1}[a-zA-Z0-9]{1,}(\"){1}$"
               },
               "name_reference": {
-                "$ref": "#/definitions/name_ref_1"
+                "$ref": "#/$defs/name_ref_1"
               }
             }
           },
@@ -31,7 +31,7 @@
         "required": [
           "name"
         ],
-        "definitions": {
+        "$defs": {
           "portal-profile_ref_3": {
             "type": "object",
             "required": [
@@ -145,7 +145,7 @@
             ],
             "properties": {
               "secondary-role": {
-                "$ref": "#/definitions/secondary-role_ref_11"
+                "$ref": "#/$defs/secondary-role_ref_11"
               },
               "vsa": {
                 "type": "boolean"
@@ -165,7 +165,7 @@
                     ]
                   },
                   "portal-profile_reference": {
-                    "$ref": "#/definitions/portal-profile_ref_3"
+                    "$ref": "#/$defs/portal-profile_ref_3"
                   }
                 },
                 "oneOf": [
@@ -191,7 +191,7 @@
                     ]
                   },
                   "user-id-tagged_reference": {
-                    "$ref": "#/definitions/user-id-tagged_ref_8"
+                    "$ref": "#/$defs/user-id-tagged_ref_8"
                   }
                 },
                 "oneOf": [
@@ -217,7 +217,7 @@
                     ]
                   },
                   "server-redirect_reference": {
-                    "$ref": "#/definitions/server-redirect_ref_10"
+                    "$ref": "#/$defs/server-redirect_ref_10"
                   }
                 },
                 "anyOf": [
@@ -253,7 +253,7 @@
                     ]
                   },
                   "policy_reference": {
-                    "$ref": "#/definitions/policy_ref_4"
+                    "$ref": "#/$defs/policy_ref_4"
                   }
                 },
                 "oneOf": [
@@ -270,7 +270,7 @@
                 ]
               },
               "reauth-period": {
-                "$ref": "#/definitions/reauth-period_ref_5"
+                "$ref": "#/$defs/reauth-period_ref_5"
               },
               "user-id": {
                 "type": "object",
@@ -282,7 +282,7 @@
                     ]
                   },
                   "user-id_reference": {
-                    "$ref": "#/definitions/user-id_ref_6"
+                    "$ref": "#/$defs/user-id_ref_6"
                   }
                 },
                 "oneOf": [
@@ -308,7 +308,7 @@
                     ]
                   },
                   "user-name-tagged_reference": {
-                    "$ref": "#/definitions/user-name-tagged_ref_9"
+                    "$ref": "#/$defs/user-name-tagged_ref_9"
                   }
                 },
                 "oneOf": [
@@ -334,7 +334,7 @@
                     ]
                   },
                   "user-name_reference": {
-                    "$ref": "#/definitions/user-name_ref_7"
+                    "$ref": "#/$defs/user-name_ref_7"
                   }
                 },
                 "oneOf": [

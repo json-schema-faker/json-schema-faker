@@ -5,7 +5,7 @@
       {
         "description": "should handle internal $refs",
         "schema": {
-          "definitions": {
+          "$defs": {
             "integer": {
               "type": "integer"
             },
@@ -17,15 +17,15 @@
           "type": "object",
           "properties": {
             "weakNumber": {
-              "$ref": "#/definitions/integer"
+              "$ref": "#/$defs/integer"
             },
             "multipleOf5": {
               "allOf": [
                 {
-                  "$ref": "#/definitions/positive"
+                  "$ref": "#/$defs/positive"
                 },
                 {
-                  "$ref": "#/definitions/integer"
+                  "$ref": "#/$defs/integer"
                 },
                 {
                   "multipleOf": 5

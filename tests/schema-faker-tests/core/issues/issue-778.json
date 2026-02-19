@@ -1,0 +1,16 @@
+[
+  {
+    "description": "Issue #778 - Invalid data for strings with both pattern and format (known limitation)",
+    "tests": [
+      {
+        "description": "string with pattern and format generates pattern-conforming output but may not be valid for format",
+        "schema": {
+          "type": "string",
+          "pattern": "^202.*Z$",
+          "format": "date-time"
+        },
+        "valid": false
+      }
+    ]
+  }
+]

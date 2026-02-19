@@ -4,13 +4,13 @@
     "schemas": [
       {
         "type": "object",
-        "definitions": {
+        "$defs": {
           "aDef": {
             "additionalProperties": false,
             "properties": {
               "subA": {
                 "items": {
-                  "$ref": "#/definitions/aDef"
+                  "$ref": "#/$defs/aDef"
                 },
                 "type": "array"
               }
@@ -24,7 +24,7 @@
             "additionalProperties": false,
             "properties": {
               "a": {
-                "$ref": "#/definitions/aDef"
+                "$ref": "#/$defs/aDef"
               }
             },
             "type": "object",

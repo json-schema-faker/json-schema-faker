@@ -1,0 +1,36 @@
+[
+  {
+    "description": "Issue #641 - Circular dependencies ignore minItems",
+    "tests": [
+      {
+        "description": "should generate arrays with minItems even in circular reference schemas",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "id": { "type": "number" },
+            "name": { "type": "string" },
+            "parent": {
+              "oneOf": [
+                { "type": "null" },
+                { "$ref": "#" }
+              ]
+            },
+            "categories": {
+              "type": "array",
+              "minItems": 1,
+              "items": {
+                "type": "object",
+                "properties": {
+                  "categoryName": { "type": "string" }
+                },
+                "required": ["categoryName"]
+              }
+            }
+          },
+          "required": ["id", "name", "categories"]
+        },
+        "valid": true
+      }
+    ]
+  }
+]

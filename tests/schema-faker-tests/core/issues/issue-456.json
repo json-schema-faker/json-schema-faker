@@ -3,20 +3,20 @@
     "description": "Optional maxItems, minItems and maxLength doesn't work",
     "tests": [
       {
-        "description": "minItems/maxItems will override schema",
+        "description": "schema minItems/maxItems are hard bounds; options cannot violate them",
         "schema": {
           "type": "array",
-          "minItems": 100,
-          "maxItems": 200,
+          "minItems": 3,
+          "maxItems": 5,
           "items": {
             "type": "integer"
           }
         },
         "set": {
           "minItems": 1,
-          "maxItems": 1
+          "maxItems": 10
         },
-        "count": 1
+        "valid": true
       },
       {
         "description": "setting maxLength should truncate schema, not override",

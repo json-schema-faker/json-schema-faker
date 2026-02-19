@@ -599,6 +599,10 @@ body {
     border-bottom: 1px solid var(--border-color);
 }
 
+.option-card + .option-card {
+    margin-top: 2rem;
+}
+
 .option-row {
     display: grid;
     grid-template-columns: 1fr auto;

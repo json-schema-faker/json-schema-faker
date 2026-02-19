@@ -12,14 +12,14 @@
               "current": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/current-account"
+                  "$ref": "#/$defs/current-account"
                 },
                 "minItems": 1
               },
               "escrow": {
                 "type": "array",
                 "items": {
-                  "$ref": "#/definitions/current-account"
+                  "$ref": "#/$defs/current-account"
                 },
                 "minItems": 1
               }
@@ -28,7 +28,7 @@
               "current"
             ]
           },
-          "definitions": {
+          "$defs": {
             "current-account": {
               "title": "Current Account",
               "type": "object",

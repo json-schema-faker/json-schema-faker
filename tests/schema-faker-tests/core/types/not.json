@@ -49,7 +49,7 @@
             },
             "action": {
               "description": "Configure the action.",
-              "$ref": "#/definitions/action_ref_1"
+              "$ref": "#/$defs/action_ref_1"
             },
             "uri": {
               "type": "string",
@@ -84,7 +84,7 @@
               ]
             }
           ],
-          "definitions": {
+          "$defs": {
             "action_ref_1": {
               "type": "object",
               "properties": {

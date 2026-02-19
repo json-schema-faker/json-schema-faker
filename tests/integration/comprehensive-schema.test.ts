@@ -251,17 +251,35 @@ describe("Comprehensive Schema - All Features", () => {
     expect(result).toBeDefined();
   });
 
-  test("generates with definitions (draft 07 style)", async () => {
+  test("generates with $defs (modern style)", async () => {
+    const schema = {
+      $defs: {
+        myNumber: { type: "number", minimum: 0 }
+      },
+      type: "object",
+      properties: {
+        refd: { "$ref": "#/$defs/myNumber" }
+      }
+    };
+    const result = await generate(schema as any, { seed: 42, alwaysFakeOptionals: true });
+    expect(result).toBeDefined();
+  });
+
+  test("generates with definitions (draft 07 style) via propAliases", async () => {
     const schema = {
       definitions: {
         myNumber: { type: "number", minimum: 0 }
       },
       type: "object",
       properties: {
-        refd: { "$ref": "#/definitions/myNumber" }
+        refd: { "$ref": "#/$defs/myNumber" }
       }
     };
-    const result = await generate(schema as any, { seed: 42, alwaysFakeOptionals: true });
+    const result = await generate(schema as any, {
+      seed: 42,
+      alwaysFakeOptionals: true,
+      propAliases: { definitions: "$defs" }
+    });
     expect(result).toBeDefined();
   });
 });

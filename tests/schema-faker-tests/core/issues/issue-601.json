@@ -9,13 +9,13 @@
           "additionalProperties": false,
           "properties": {
             "property1": {
-              "$ref": "#/definitions/Enum"
+              "$ref": "#/$defs/Enum"
             },
             "property2": {
-              "$ref": "#/definitions/Enum"
+              "$ref": "#/$defs/Enum"
             }
           },
-          "definitions": {
+          "$defs": {
             "Enum": {
               "type": "integer",
               "description": "",

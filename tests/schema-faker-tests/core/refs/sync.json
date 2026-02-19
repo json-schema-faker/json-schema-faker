@@ -11,13 +11,13 @@
           "required": ["value", "other"],
           "properties": {
             "value": {
-              "$ref": "#/definitions/test"
+              "$ref": "#/$defs/test"
             },
             "other": {
-              "$ref": "#/definitions/other"
+              "$ref": "#/$defs/other"
             }
           },
-          "definitions": {
+          "$defs": {
             "test": {
               "type": "string"
             },
@@ -35,10 +35,10 @@
           "type": "object",
           "properties": {
             "value": {
-              "$ref": "#/definitions/test"
+              "$ref": "#/$defs/test"
             }
           },
-          "definitions": {
+          "$defs": {
             "test": {
               "type": "string"
             }

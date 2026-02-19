@@ -14,11 +14,11 @@
             "Topics": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Topic"
+                "$ref": "#/$defs/Topic"
               }
             }
           },
-          "definitions": {
+          "$defs": {
             "Topic": {
               "type": "object",
               "properties": {
@@ -28,7 +28,7 @@
                 "Posts": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/definitions/Post"
+                    "$ref": "#/$defs/Post"
                   }
                 }
               }
