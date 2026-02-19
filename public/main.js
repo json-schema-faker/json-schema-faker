@@ -1002,23 +1002,23 @@ const defaultSchema = {
     return el;
   }
 
-function filterSections(query) {
+  function filterSections(query) {
     const normalizedQuery = query.trim().toLowerCase();
 
     if (!normalizedQuery) {
-      // Reset - show all
+      // Reset dimmed class
       sectionIds.forEach(id => {
         const el = getSectionContainer(id);
         if (el) {
-          el.classList.remove('hidden');
-          el.style.display = '';
+          el.classList.remove('search-dimmed');
+          el.style.opacity = '';
         }
       });
       // Reset TOC links
       const tocLinks = document.querySelectorAll('#docsToc > a');
       tocLinks.forEach(link => {
-        link.classList.remove('hidden');
-        link.style.display = '';
+        link.classList.remove('search-dimmed');
+        link.style.opacity = '';
       });
       return;
     }
@@ -1026,30 +1026,31 @@ function filterSections(query) {
     const results = fuse.search(normalizedQuery);
     const matchedIds = new Set(results.map(r => r.item.id));
 
+    // Dim non-matching sections (keep visible but gray)
     sectionIds.forEach(id => {
       const el = getSectionContainer(id);
       if (el) {
         if (matchedIds.has(id)) {
-          el.classList.remove('hidden');
-          el.style.display = '';
+          el.classList.remove('search-dimmed');
+          el.style.opacity = '';
         } else {
-          el.classList.add('hidden');
-          el.style.display = 'none';
+          el.classList.add('search-dimmed');
+          el.style.opacity = '0.3';
         }
       }
     });
 
-    // Filter sidebar TOC links
+    // Dim non-matching TOC links
     const tocLinks = document.querySelectorAll('#docsToc > a');
     tocLinks.forEach(link => {
       const href = link.getAttribute('href');
       const linkId = href.replace('#', '');
       if (matchedIds.has(linkId)) {
-        link.classList.remove('hidden');
-        link.style.display = '';
+        link.classList.remove('search-dimmed');
+        link.style.opacity = '';
       } else {
-        link.classList.add('hidden');
-        link.style.display = 'none';
+        link.classList.add('search-dimmed');
+        link.style.opacity = '0.3';
       }
     });
   }
@@ -1079,7 +1080,10 @@ function filterSections(query) {
     if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
       e.preventDefault();
       // Open dialog if closed
-      if (!isOpen) openDocsDialog();
+      if (!isOpen) {
+        openDocsDialog();
+      }
+      location.hash = 'docs';
       searchInput.focus();
       searchInput.select();
     }
