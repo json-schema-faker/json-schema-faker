@@ -25,6 +25,14 @@ function closeDialog(e) {
 closeDialogIcon.addEventListener("click", toggleDocsDialog);
 dialogModal.addEventListener("click", closeDialog);
 
+// Clear .section-active when navigating to a non-playground section
+dialogModal.addEventListener("click", (e) => {
+  const a = e.target.closest('a[href]');
+  if (a && a.getAttribute('href') !== '#playground') {
+    document.getElementById('playground').classList.remove('section-active');
+  }
+});
+
 const hash = window.location.hash.slice(1);
 if (hash === 'docs' || hash === 'examples' || hash === 'playground' ||
     hash.startsWith('docs-') || hash.startsWith('ex-')) {
