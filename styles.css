@@ -21,6 +21,14 @@ body {
     overflow-x: hidden;
 }
 
+span[id]:empty {
+    display: block;
+    height: 1em;
+}
+span[id]:empty:first-child {
+    height: 0;
+}
+
 #playground-actions {
     display: none;
 }
@@ -42,17 +50,27 @@ body {
 }
 
 .modal-active #dialog-modal:has(section:target[id="docs"]) a[href="#docs"],
+.modal-active #dialog-modal:has([id^="docs-"]:target) a[href="#docs"],
 .modal-active
     #dialog-modal:has(section:target[id="examples"])
     a[href="#examples"],
 .modal-active
+    #dialog-modal:has([id^="ex-"]:target)
+    a[href="#examples"],
+.modal-active
     #dialog-modal:has(section:target[id="playground"])
+    a[href="#playground"],
+.modal-active
+    #dialog-modal:has(#playground.section-active)
     a[href="#playground"] {
     font-weight: bold;
     color: white;
 }
 .modal-active
     #dialog-modal:has(section:target[id="playground"])
+    #playground-actions,
+.modal-active
+    #dialog-modal:has(#playground.section-active)
     #playground-actions {
     display: block;
 }
@@ -60,7 +78,14 @@ body {
 .dialog-body > section {
     display: none;
 }
-.dialog-body > section:target {
+.dialog-body > section:target,
+.dialog-body > section.section-active {
+    display: block;
+}
+.dialog-body:has([id^="docs-"]:target) > #docs {
+    display: block;
+}
+.dialog-body:has([id^="ex-"]:target) > #examples {
     display: block;
 }
 
@@ -395,12 +420,13 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
+    position: relative;
 }
 
 .panel-header {
+    gap: 1rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 10px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
@@ -409,6 +435,13 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
+    position: relative;
+}
+
+.panel-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .editor-container {
@@ -425,6 +458,7 @@ body {
     display: flex;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
 .tab {
@@ -445,6 +479,259 @@ body {
     border-bottom-color: var(--accent);
 }
 
+.tab {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.tab-name {
+    outline: none;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font: inherit;
+    min-width: 2ch;
+    max-width: 160px;
+    cursor: pointer;
+}
+
+.tab-name:focus {
+    cursor: text;
+    border-bottom: 1px solid var(--accent);
+}
+
+.tab-close {
+    display: none;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.tab:hover .tab-close,
+.tab.active .tab-close {
+    display: inline;
+}
+
+.tab-close:hover {
+    color: var(--text-primary);
+}
+
+.tab-add {
+    padding: 6px 12px;
+    font-size: 16px;
+    background: none;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    line-height: 1;
+    align-self: center;
+}
+
+.tab-add:hover {
+    color: var(--accent);
+}
+
+.toc-active {
+    color: var(--accent) !important;
+    font-weight: 600;
+}
+
+/* ─── Gist UI ─────────────────────────────────────────────────────────────── */
+
+.gist-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.gist-toolbar.hidden,
+.gist-load-panel.hidden {
+    display: none;
+}
+
+.gist-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 7px;
+    font-size: 11px;
+    font-family: inherit;
+    background: none;
+    border: 1px solid var(--light);
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 3px;
+    line-height: 1.4;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.gist-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+.gist-btn-danger:hover {
+    color: #f85149;
+    border-color: #f85149;
+}
+
+.gist-load-panel {
+    position: absolute;
+    top: calc(100% + 2px);
+    z-index: 50;
+    background: var(--mid);
+    border: 1px solid var(--light);
+    border-radius: 6px;
+    padding: 8px;
+    min-width: 280px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gist-load-row {
+    display: flex;
+    gap: 4px;
+}
+
+.gist-id-input {
+    flex: 1;
+    padding: 4px 8px;
+    background: var(--dark);
+    border: 1px solid var(--light);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+}
+
+.gist-id-input:focus {
+    border-color: var(--accent);
+}
+
+.gist-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: inherit;
+    background: var(--light);
+    border: 1px solid var(--light);
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.gist-action-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.gist-list {
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.gist-list-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    background: var(--dark);
+    border: 1px solid var(--light);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-dim);
+    transition: all 0.15s;
+}
+
+.gist-list-item:hover {
+    color: var(--text);
+    border-color: var(--accent);
+}
+
+.gist-list-item-body {
+    flex: 1;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.gist-list-item .gist-item-id {
+    font-size: 10px;
+    color: var(--text-dim);
+    opacity: 0.6;
+    margin-top: 2px;
+}
+
+.gist-list-delete {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.4;
+    padding: 2px 4px;
+    color: inherit;
+    transition: opacity 0.15s;
+}
+
+.gist-list-delete:hover {
+    opacity: 1;
+    color: #f87171;
+}
+
+.gist-user-info {
+    font-size: 11px;
+    color: var(--accent);
+    white-space: nowrap;
+}
+
+.format-toggle {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    margin-left: auto;
+    padding: 0 8px;
+}
+
+.format-btn {
+    padding: 3px 8px;
+    font-size: 10px;
+    font-family: inherit;
+    background: none;
+    border: 1px solid var(--light);
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 3px;
+    line-height: 1.4;
+    transition: all 0.15s;
+}
+
+.format-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+.format-btn.active {
+    background: var(--light);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
 .status-bar {
     display: flex;
     align-items: center;
@@ -453,6 +740,17 @@ body {
     background: var(--bg-secondary);
     font-size: 11px;
     color: var(--text-secondary);
+}
+
+.status-left {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.status-icon {
+    display: inline-flex;
+    align-items: center;
 }
 
 .status-bar .error {
@@ -464,53 +762,121 @@ body {
 }
 
 .options-panel {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
     padding: 12px 16px;
     background: var(--bg-secondary);
-    display: none;
+    border-top: 1px solid var(--border-color);
+    max-height: 75%;
+    overflow-y: auto;
+    z-index: 10;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(8px);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
 }
 
 .options-panel.open {
-    display: block;
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0s;
 }
 
-.options-row {
+
+.options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px 24px;
+    padding: 4px 0 8px;
+}
+
+.options-block {
     display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-}
-
-.option-card {
-    margin-bottom: 2rem;
-}
-
-.option-group {
-    display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 8px;
 }
 
-.option-group label {
-    font-size: 12px;
-    color: var(--text-secondary);
+.options-block-title {
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent);
+    opacity: 0.6;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--border-color);
 }
 
-.option-group input[type="number"] {
-    width: 80px;
-    padding: 4px 8px;
+.option-card + .option-card {
+    margin-top: 2rem;
+}
+
+.option-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    min-height: 24px;
+}
+
+.option-row label {
+    font-size: 12px;
+    color: var(--text-secondary);
+    white-space: nowrap;
+    cursor: pointer;
+}
+
+.option-row input[type="number"],
+.option-row input[type="text"],
+.option-row input[type="password"] {
+    width: 72px;
+    padding: 3px 6px;
     border-radius: 4px;
-    border: 1px solid var(--accent);
+    border: 1px solid var(--border-color);
     background: var(--bg-tertiary);
     color: var(--text-primary);
     font-size: 12px;
+    font-family: inherit;
+    text-align: right;
+    transition: border-color 0.1s;
 }
 
-.option-group input[type="checkbox"] {
-    width: 16px;
-    height: 16px;
+.option-row input[type="number"]:focus,
+.option-row input[type="text"]:focus,
+.option-row input[type="password"]:focus {
+    outline: none;
+    border-color: var(--accent);
+}
+
+.option-row input[type="text"].wide {
+    width: 140px;
+    text-align: left;
+}
+
+.option-row.checkbox {
+    grid-template-columns: auto 1fr;
+}
+
+.option-row input[type="checkbox"] {
+    width: 14px;
+    height: 14px;
     accent-color: var(--accent);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+.main-container {
+    overflow: hidden;
 }
 
 @media (max-width: 768px) {
+    span[id]:empty {
+        transform: translateY(-13em);
+    }
+
     .main-container {
         flex-direction: column;
     }
@@ -522,6 +888,9 @@ body {
 
     .modal-active
         #dialog-modal:has(section:target[id="playground"])
+        #close-dialog,
+    .modal-active
+        #dialog-modal:has(#playground.section-active)
         #close-dialog {
         display: none;
     }

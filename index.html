@@ -590,48 +590,53 @@
                 <!-- Dialog Body (main content area, can scroll) -->
                 <div class="flex-grow overflow-y-auto dialog-body">
                     <!-- Documentation Section -->
-                    <section id="docs" class="px-6 py-6">
+                    <section id="docs" class="px-6 py-6 section-content">
+                        <div class="max-w-5xl mx-auto">
                         <!-- Sticky Table of Contents (desktop) -->
-                        <div class="sticky top-4 z-[99] md:float-left">
+                        <div class="sticky top-6 z-[99] md:float-left">
                             <div class="hidden md:block">
                                 <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">On this page</h4>
                                 <nav class="space-y-1 text-sm">
-                                    <a href="#seeding" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Seeding</a>
-                                    <a href="#depth" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Depth</a>
-                                    <a href="#arrays" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Arrays</a>
-                                    <a href="#strings" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Strings</a>
-                                    <a href="#optionals" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Optionals</a>
-                                    <a href="#defaults" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Defaults</a>
-                                    <a href="#formats" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Formats</a>
-                                    <a href="#refs" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">References</a>
-                                    <a href="#extensions" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Extensions</a>
-                                    <a href="#datetime" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Date/Time</a>
-                                    <a href="#advanced" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Advanced</a>
-                                    <a href="#cli" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">CLI</a>
+                                    <a href="#docs-cli" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">CLI</a>
+                                    <a href="#docs-api" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">APIs</a>
+                                    <a href="#docs-seeding" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Seeding</a>
+                                    <a href="#docs-depth" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Depth</a>
+                                    <a href="#docs-arrays" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Arrays</a>
+                                    <a href="#docs-strings" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Strings</a>
+                                    <a href="#docs-optionals" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Optionals</a>
+                                    <a href="#docs-defaults" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Defaults</a>
+                                    <a href="#docs-formats" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Formats</a>
+                                    <a href="#docs-refs" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">References</a>
+                                    <a href="#docs-extensions" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Extensions</a>
+                                    <a href="#docs-datetime" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Date/Time</a>
+                                    <a href="#docs-advanced" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Advanced</a>
                                 </nav>
                             </div>
                             <!-- Table of Contents (mobile) -->
                             <div class="md:hidden rounded-lg mb-8 p-4 bg-white/20 backdrop-blur-sm">
                                 <h4 class="text-sm font-semibold text-gray-300 mb-3 text-green-400">Contents</h4>
                                 <div class="grid md:grid-cols-4 grid-cols-3 gap-2 text-sm">
-                                    <a href="#seeding" class=" hover:text-green-400 text-shadow-fixed">Seeding</a>
-                                    <a href="#arrays" class=" hover:text-green-400 text-shadow-fixed">Arrays</a>
-                                    <a href="#strings" class=" hover:text-green-400 text-shadow-fixed">Strings</a>
-                                    <a href="#optionals" class=" hover:text-green-400 text-shadow-fixed">Optionals</a>
-                                    <a href="#defaults" class=" hover:text-green-400 text-shadow-fixed">Defaults</a>
-                                    <a href="#formats" class=" hover:text-green-400 text-shadow-fixed">Formats</a>
-                                    <a href="#refs" class=" hover:text-green-400 text-shadow-fixed">References</a>
-                                    <a href="#extensions" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
-                                    <a href="#datetime" class=" hover:text-green-400">Date/Time</a>
-                                    <a href="#advanced" class=" hover:text-green-400 text-shadow-fixed">Advanced</a>
-                                    <a href="#cli" class=" hover:text-green-400 text-shadow-fixed">CLI</a>
+                                    <a href="#docs-cli" class=" hover:text-green-400 text-shadow-fixed">CLI</a>
+                                    <a href="#docs-api" class=" hover:text-green-400 text-shadow-fixed">APIs</a>
+                                    <a href="#docs-seeding" class=" hover:text-green-400 text-shadow-fixed">Seeding</a>
+                                    <a href="#docs-depth" class=" hover:text-green-400 text-shadow-fixed">Depth</a>
+                                    <a href="#docs-arrays" class=" hover:text-green-400 text-shadow-fixed">Arrays</a>
+                                    <a href="#docs-strings" class=" hover:text-green-400 text-shadow-fixed">Strings</a>
+                                    <a href="#docs-optionals" class=" hover:text-green-400 text-shadow-fixed">Optionals</a>
+                                    <a href="#docs-defaults" class=" hover:text-green-400 text-shadow-fixed">Defaults</a>
+                                    <a href="#docs-formats" class=" hover:text-green-400 text-shadow-fixed">Formats</a>
+                                    <a href="#docs-refs" class=" hover:text-green-400 text-shadow-fixed">References</a>
+                                    <a href="#docs-extensions" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
+                                    <a href="#docs-datetime" class=" hover:text-green-400 text-shadow-fixed">Date/Time</a>
+                                    <a href="#docs-advanced" class=" hover:text-green-400 text-shadow-fixed">Advanced</a>
                                 </div>
                             </div>
                         </div>
 
                         <div class="md:ml-[200px] md:max-w-5xl max-w-2xl mx-auto">
                             <!-- CLI -->
-                            <div class="mb-12">
+                            <span id="docs-cli"></span>
+                            <section class="mb-12">
                                 <h3 class="section-subtitle fraunces">Command Line Interface</h3>
                                 <p class="text-gray-400 mb-8">Use <code class="code-inline">jsf</code> from the command line to generate JSON data from schema files.</p>
 
@@ -699,9 +704,10 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                         <div><code class="text-green-400">--use-defaults</code> <span class="text-gray-500">Use defaults</span></div>
                                     </div>
                                 </div>
-                            </div>
+                            </section>
 
                             <!-- Importing -->
+                            <span id="docs-api"></span>
                             <div class="mb-12">
                                 <h3 class="section-subtitle fraunces">Programmatic Usage</h3>
                                 <p class="text-gray-400 mb-3">Import what you need using named imports:</p>
@@ -799,10 +805,12 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-blue-300">defaultInvalidTypeProduct</span>?: unknown;   <span class="text-gray-500">// Fallback value</span>
     <span class="text-blue-300">validateSchemaVersion</span>?: boolean;       <span class="text-gray-500">// Check $schema</span>
     <span class="text-blue-300">fixedProbabilities</span>?: boolean;          <span class="text-gray-500">// Deterministic</span>
+    <span class="text-blue-300">propAliases</span>?: Record&lt;string, string&gt;;  <span class="text-gray-500">// Remap schema keys</span>
 }</code></pre></div>
 
                                 <!-- Seeding -->
-                                <section id="seeding" class="mb-12">
+                                <span id="docs-seeding"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Seeding & Randomness</h3>
                                     <p class="text-gray-400 text-sm mb-8">Control randomness for reproducible results.</p>
 
@@ -842,7 +850,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Depth -->
-                                <section id="depth" class="mb-12">
+                                <span id="docs-depth"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Depth Control</h3>
                                     <p class="text-gray-400 mb-8">Limit nested structure generation.</p>
 
@@ -870,7 +879,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Arrays -->
-                                <section id="arrays" class="mb-12">
+                                <span id="docs-arrays"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Array Generation</h3>
                                     <p class="text-gray-400 mb-8">Override array constraints.</p>
 
@@ -933,7 +943,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Strings -->
-                                <section id="strings" class="mb-12">
+                                <span id="docs-strings"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">String Generation</h3>
                                     <p class="text-gray-400 mb-8">Override string length constraints.</p>
 
@@ -977,7 +988,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Optionals -->
-                                <section id="optionals" class="mb-12">
+                                <span id="docs-optionals"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Optional Properties</h3>
                                     <p class="text-gray-400 mb-8">Control generation of optional schema properties.</p>
 
@@ -1038,7 +1050,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Defaults -->
-                                <section id="defaults" class="mb-12">
+                                <span id="docs-defaults"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Defaults &amp; Examples</h3>
                                     <p class="text-gray-400 mb-8">Use schema-defined default values and examples.</p>
 
@@ -1098,7 +1111,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Formats -->
-                                <section id="formats" class="mb-12">
+                                <span id="docs-formats"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Custom Formats</h3>
                                     <p class="text-gray-400 mb-8">Register custom format generators.</p>
 
@@ -1199,7 +1213,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- References -->
-                                <section id="refs" class="mb-12">
+                                <span id="docs-refs"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">References &amp; Resolution</h3>
                                     <p class="text-gray-400 mb-8">Handle <code class="code-inline">$ref</code> and external schema resolution.</p>
 
@@ -1289,7 +1304,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Extensions -->
-                                <section id="extensions" class="mb-12">
+                                <span id="docs-extensions"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">External Extensions</h3>
                                     <p class="text-gray-400 mb-8">Use Faker.js or Chance.js for generation.</p>
 
@@ -1324,7 +1340,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- DateTime -->
-                                <section id="datetime" class="mb-12">
+                                <span id="docs-datetime"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Date &amp; Time</h3>
                                     <p class="text-gray-400 mb-8">Configure <code class="code-inline">date-time</code> format constraints.</p>
 
@@ -1367,7 +1384,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </section>
 
                                 <!-- Advanced -->
-                                <section id="advanced" class="mb-12">
+                                <span id="docs-advanced"></span>
+                                <section class="mb-12">
                                     <h3 class="section-subtitle fraunces">Advanced Options</h3>
                                     <p class="text-gray-400 mb-8">Error handling, pruning, and schema validation.</p>
 
@@ -1449,51 +1467,72 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                                 </div>
                                             </div>
                                         </div>
+                                        <div class="option-card">
+                                            <div class="flex items-start justify-between mb-4">
+                                                <h3 class="text-lg font-semibold text-red-400">propAliases</h3>
+                                                <span class="option-type">Record&lt;string, string&gt;</span>
+                                            </div>
+                                            <p class="text-gray-400 mb-4">Remap schema property names before processing. Useful for non-identifier extension keys (e.g. <code class="code-inline">x-faker</code>) or older Draft 04 <code class="code-inline">definitions</code> compatibility.</p>
+                                            <div class="code-block !p-4 !text-sm">
+                                        <pre><code><span class="text-gray-500">// Map x-faker to faker so non-identifier keys work</span>
+<span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">propAliases</span>: { <span class="text-yellow-300">'x-faker'</span>: <span class="text-yellow-300">'faker'</span> }
+});
+
+<span class="text-gray-500">// Support Draft 04 definitions keyword</span>
+<span class="text-purple-400">const</span> result2 = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">propAliases</span>: { <span class="text-yellow-300">'definitions'</span>: <span class="text-yellow-300">'$defs'</span> }
+});</code></pre>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
 
                             </div>
                         </div>
+                        </div>
                     </section>
 
-                    <section id="examples" class="px-6 py-6">
+                    <section id="examples" class="px-6 py-6 section-content">
+                        <div class="max-w-5xl mx-auto">
                         <!-- Sticky Table of Contents (desktop) -->
-                        <div class="sticky top-4 z-[99] md:float-left">
+                        <div class="sticky top-6 z-[99] md:float-left">
                             <div class="hidden md:block">
-                                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">Examples</h4>
+                                <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-3">On this page</h4>
                                 <nav class="space-y-1 text-sm">
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Primitives</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Strings</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Numbers</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Objects</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Arrays</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Composition</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">References</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Extensions</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Formats</a>
-                                    <a href="#" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Advanced</a>
+                                    <a href="#ex-primitives" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Types</a>
+                                    <a href="#ex-strings" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">String</a>
+                                    <a href="#ex-numbers" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Numbers</a>
+                                    <a href="#ex-objects" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Objects</a>
+                                    <a href="#ex-arrays" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Arrays</a>
+                                    <a href="#ex-composition" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Composition</a>
+                                    <a href="#ex-refs" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">References</a>
+                                    <a href="#ex-extensions" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Extensions</a>
+                                    <a href="#ex-formats" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Custom Formats</a>
+                                    <a href="#ex-advanced" class="block py-1 text-gray-400 hover:text-green-400 transition-colors">Advanced Features</a>
                                 </nav>
                             </div>
                             <!-- Table of Contents (mobile) -->
                             <div class="md:hidden mb-8 p-4 bg-white/20 backdrop-blur-sm rounded-lg">
-                                <h4 class="text-sm font-semibold text-gray-300 mb-3 text-green-400">Examples</h4>
+                                <h4 class="text-sm font-semibold text-gray-300 mb-3 text-green-400">On this page</h4>
                                 <div class="grid grid-cols-3 md:grid-cols-4 gap-2 text-sm">
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Primitives</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Strings</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Numbers</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Objects</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Arrays</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Composition</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">References</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Formats</a>
-                                    <a href="#" class=" hover:text-green-400 text-shadow-fixed">Advanced</a>
+                                    <a href="#ex-primitives" class=" hover:text-green-400 text-shadow-fixed">Types</a>
+                                    <a href="#ex-strings" class=" hover:text-green-400 text-shadow-fixed">String</a>
+                                    <a href="#ex-numbers" class=" hover:text-green-400 text-shadow-fixed">Numbers</a>
+                                    <a href="#ex-objects" class=" hover:text-green-400 text-shadow-fixed">Objects</a>
+                                    <a href="#ex-arrays" class=" hover:text-green-400 text-shadow-fixed">Arrays</a>
+                                    <a href="#ex-composition" class=" hover:text-green-400 text-shadow-fixed">Composition</a>
+                                    <a href="#ex-refs" class=" hover:text-green-400 text-shadow-fixed">References</a>
+                                    <a href="#ex-extensions" class=" hover:text-green-400 text-shadow-fixed">Extensions</a>
+                                    <a href="#ex-formats" class=" hover:text-green-400 text-shadow-fixed">Custom Formats</a>
+                                    <a href="#ex-advanced" class=" hover:text-green-400 text-shadow-fixed">Advanced Features</a>
                                 </div>
                             </div>
                         </div>
 
                         <div class="md:ml-[200px] md:max-w-5xl max-w-2xl mx-auto">
                             <!-- Primitive Types -->
+                            <span id="ex-primitives"></span>
                             <h3 class="section-subtitle fraunces">Primitive Types</h3>
                             <p class="text-gray-400 mb-6">Generate basic JSON primitive values: <code class="code-inline">null</code>, <code class="code-inline">boolean</code>, <code class="code-inline">string</code>, and <code class="code-inline">number</code> types. These form the foundation of all JSON Schema data generation.</p>
                             <div class="example-card">
@@ -1511,6 +1550,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- String -->
+                            <span id="ex-strings"></span>
                             <h3 class="section-subtitle fraunces">String</h3>
                             <p class="text-gray-400 mb-6">Generate string values with various constraints. Control length, match regex patterns, use built-in formats, or create template strings that reference other properties.</p>
                             <div class="example-card">
@@ -1575,6 +1615,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Numbers -->
+                            <span id="ex-numbers"></span>
                             <h3 class="section-subtitle fraunces">Numbers</h3>
                             <p class="text-gray-400 mb-3 text-sm">Generate integer and number (float) values with constraints. Control ranges with <code class="code-inline">minimum</code>/<code class="code-inline">maximum</code>, enforce multiples, or generate negative values.</p>
                             <div class="example-card">
@@ -1596,6 +1637,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Objects -->
+                            <span id="ex-objects"></span>
                             <h3 class="section-subtitle fraunces">Objects</h3>
                             <p class="text-gray-400 mb-6">Generate JSON objects with properties. Define property schemas, mark required fields, and control which properties appear in the output.</p>
                             <div class="example-card">
@@ -1631,6 +1673,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Arrays -->
+                            <span id="ex-arrays"></span>
                             <h3 class="section-subtitle fraunces">Arrays</h3>
                             <p class="text-gray-400 mb-6">Generate arrays of values. Control array length, enforce unique items, or create tuples with specific item types at each position.</p>
                             <div class="example-card">
@@ -1665,8 +1708,9 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Composition -->
+                            <span id="ex-composition"></span>
                             <h3 class="section-subtitle fraunces">Composition</h3>
-                            <p class="text-gray-400 mb-6">Combine schemas using <code class="code-inline">allOf</code>, <code class="code-inline">anyOf</code>, and <code class="code-inline">oneOf</code>. These powerful keywords let you build complex schemas from simpler components.</p>
+                            <p class="text-gray-400 mb-6">Combine schemas using <code class="code-inline">allOf</code>, <code class="code-inline">anyOf</code>, <code class="code-inline">oneOf</code>, and <code class="code-inline">if</code>/<code class="code-inline">then</code>/<code class="code-inline">else</code>. These powerful keywords let you build complex schemas from simpler components.</p>
                             <div class="example-card">
                                 <h4 class="example-title">
                                     allOf, anyOf, oneOf
@@ -1684,7 +1728,31 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </div>
                             </div>
 
+                            <div class="example-card">
+                                <h4 class="example-title">
+                                    if, then, else
+                                </h4>
+                                <p class="text-gray-400 mb-3 text-sm">Conditional schema generation. If the <code class="code-inline">if</code> schema can be satisfied, the <code class="code-inline">then</code> schema is applied. Otherwise, the <code class="code-inline">else</code> schema is used (if defined). Falls back to base schema if both branches fail.</p>
+                                <div class="code-block !p-4">
+                                    <pre><code><span class="text-purple-400">await</span> generate({
+  <span class="text-blue-300">type</span>: <span class="text-yellow-300">"object"</span>,
+  <span class="text-blue-300">properties</span>: {
+    <span class="text-blue-300">status</span>: { <span class="text-blue-300">enum</span>: [<span class="text-yellow-300">"draft"</span>, <span class="text-yellow-300">"published"</span>] },
+    <span class="text-blue-300">publishedAt</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span> }
+  },
+  <span class="text-blue-300">required</span>: [<span class="text-yellow-300">"status"</span>],
+  <span class="text-blue-300">if</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">status</span>: { <span class="text-blue-300">const</span>: <span class="text-yellow-300">"published"</span> } } },
+  <span class="text-blue-300">then</span>: { <span class="text-blue-300">required</span>: [<span class="text-yellow-300">"publishedAt"</span>] },
+  <span class="text-blue-300">else</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">publishedAt</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">"null"</span> } } }
+});
+<span class="text-gray-500">// { status: "published", publishedAt: "2024-01-15T10:30:00Z" }</span>
+<span class="text-gray-500">// OR</span>
+<span class="text-gray-500">// { status: "draft", publishedAt: null }</span></code></pre>
+                                </div>
+                            </div>
+
                             <!-- References -->
+                            <span id="ex-refs"></span>
                             <h3 class="section-subtitle fraunces">References</h3>
                             <p class="text-gray-400 mb-6">Use <code class="code-inline">$ref</code> to reference schemas defined in <code class="code-inline">$defs</code> or <code class="code-inline">definitions</code>. This enables schema reuse, recursion, and modular schema design.</p>
                             <div class="example-card">
@@ -1711,6 +1779,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Extensions -->
+                            <span id="ex-extensions"></span>
                             <h3 class="section-subtitle fraunces">
                                 Extensions (faker/chance)
                             </h3>
@@ -1736,6 +1805,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Custom Formats -->
+                            <span id="ex-formats"></span>
                             <h3 class="section-subtitle fraunces">Custom Formats</h3>
                             <p class="text-gray-400 mb-8">Define your own format generators for domain-specific data like phone numbers, IDs, or codes. Custom formats receive a <code class="code-inline">random</code> instance for generating values.</p>
                             <div class="example-card">
@@ -1757,6 +1827,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
 
                             <!-- Advanced Features -->
+                            <span id="ex-advanced"></span>
                             <h3 class="section-subtitle fraunces">Advanced Features</h3>
                             <p class="text-gray-400 mb-6">Advanced capabilities including <code class="code-inline">default</code> values, <code class="code-inline">examples</code> array, JSONPath cross-references, and more for sophisticated data generation scenarios.</p>
                             <div class="example-card">
@@ -1801,6 +1872,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                 </div>
                             </div>
                         </div>
+                        </div>
                     </section>
 
                     <section id="playground">
@@ -1808,9 +1880,43 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                           <div class="editor-panel">
                             <div class="panel-header">
                               Schema Input
+                              <div class="panel-header-actions flex gap-2">
+                                <div class="gist-toolbar hidden" id="gistToolbar">
+                                  <button class="gist-btn" id="gistSaveBtn" title="Save as Gist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+                                    Save
+                                  </button>
+                                  <button class="gist-btn" id="gistLoadBtn" title="Load Gist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+                                    Load
+                                  </button>
+                                  <button class="gist-btn" id="gistShareBtn" title="Copy share URL">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                  </button>
+                                  <button class="gist-btn gist-btn-danger" id="gistDeleteBtn" title="Delete Gist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                  </button>
+                                </div>
+                                <!-- Load gist dropdown -->
+                                <div class="gist-load-panel hidden" id="gistLoadPanel">
+                                  <div class="gist-load-row">
+                                    <input id="gistIdInput" type="text" placeholder="Gist ID or URL" class="gist-id-input">
+                                    <button id="gistLoadById" class="gist-action-btn">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                                      Reload
+                                    </button>
+                                  </div>
+                                  <div id="gistList" class="gist-list"></div>
+                                </div>
+                              </div>
                             </div>
-                            <div class="tabs">
-                              <div class="tab active" data-tab="schema">schema.json</div>
+                            <div class="tabs" id="tabStrip">
+                              <!-- tabs rendered by JS -->
+                              <button class="tab-add" id="tabAdd" title="Add schema">+</button>
+                              <div class="format-toggle" id="formatToggle">
+                                <button class="format-btn active" id="btnFormatJSON" title="JSON mode">JSON</button>
+                                <button class="format-btn" id="btnFormatYAML" title="YAML mode">YAML</button>
+                              </div>
                             </div>
                             <div class="editor-container" id="inputEditor"></div>
                           </div>
@@ -1821,35 +1927,167 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                             </div>
                             <div class="editor-container" id="outputEditor"></div>
                             <div class="status-bar">
-                              <span id="statusText">Ready</span>
+                              <span class="status-left">
+                                <span id="statusIcon" class="status-icon"></span>
+                                <span id="statusText">Ready</span>
+                              </span>
                               <span id="statusInfo"></span>
                             </div>
-                            <div class="options-panel border-t border-green-500/30" id="optionsPanel">
-                              <div class="options-row">
-                                <div class="option-group">
-                                  <label for="optSeed">Seed:</label>
-                                  <input type="number" id="optSeed" placeholder="random">
+                            <div class="options-panel bg-black/75" id="optionsPanel">
+                              <div class="options-grid">
+
+                                <!-- Randomness -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Randomness</div>
+                                  <div class="option-row">
+                                    <label for="optSeed">Seed</label>
+                                    <input type="number" id="optSeed" placeholder="random">
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optFixedProbabilities">
+                                    <label for="optFixedProbabilities">Fixed probabilities</label>
+                                  </div>
                                 </div>
-                                <div class="option-group">
-                                  <label for="optMaxDepth">Max Depth:</label>
-                                  <input type="number" id="optMaxDepth" value="10">
+
+                                <!-- Depth -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Depth</div>
+                                  <div class="option-row">
+                                    <label for="optMaxDepth">Max depth</label>
+                                    <input type="number" id="optMaxDepth" value="10">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optRefDepthMin">Ref depth min</label>
+                                    <input type="number" id="optRefDepthMin" placeholder="—">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optRefDepthMax">Ref depth max</label>
+                                    <input type="number" id="optRefDepthMax" placeholder="—">
+                                  </div>
                                 </div>
-                                <div class="option-group">
-                                  <label for="optOptionalsProb">Optionals Probability:</label>
-                                  <input type="number" id="optOptionalsProb" min="0" max="1" step="0.1" placeholder="0..1">
+
+                                <!-- Arrays -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Arrays</div>
+                                  <div class="option-row">
+                                    <label for="optMinItems">Min items</label>
+                                    <input type="number" id="optMinItems" placeholder="schema">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxItems">Max items</label>
+                                    <input type="number" id="optMaxItems" placeholder="schema">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxDefaultItems">Default items</label>
+                                    <input type="number" id="optMaxDefaultItems" placeholder="3">
+                                  </div>
                                 </div>
-                                <div class="option-group">
+
+                                <!-- Strings -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Strings</div>
+                                  <div class="option-row">
+                                    <label for="optMinLength">Min length</label>
+                                    <input type="number" id="optMinLength" placeholder="schema">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxLength">Max length</label>
+                                    <input type="number" id="optMaxLength" placeholder="schema">
+                                  </div>
+                                </div>
+
+                                <!-- Properties -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Properties</div>
+                                  <div class="option-row">
+                                    <label for="optOptionalsProb">Optionals prob.</label>
+                                    <input type="number" id="optOptionalsProb" min="0" max="1" step="0.1" placeholder="0.5">
+                                  </div>
+                                  <div class="option-row checkbox">
                                     <input type="checkbox" id="optAlwaysFakeOptionals">
-                                    <label for="optAlwaysFakeOptionals">Always Fake Optionals</label>
+                                    <label for="optAlwaysFakeOptionals">Always fake optionals</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optFillProperties">
+                                    <label for="optFillProperties">Fill properties</label>
+                                  </div>
                                 </div>
-                                <div class="option-group">
+
+                                <!-- Values -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Values</div>
+                                  <div class="option-row checkbox">
                                     <input type="checkbox" id="optUseExamples">
-                                    <label for="optUseExamples">Use Examples</label>
+                                    <label for="optUseExamples">Use examples array</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optUseDefaultValue">
+                                    <label for="optUseDefaultValue">Use default value</label>
+                                  </div>
                                 </div>
+
+                                <!-- Date / Time -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Date / Time</div>
+                                  <div class="option-row">
+                                    <label for="optMinDateTime">Min date-time</label>
+                                    <input type="text" id="optMinDateTime" class="wide" placeholder="2020-01-01T00:00:00Z">
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optMaxDateTime">Max date-time</label>
+                                    <input type="text" id="optMaxDateTime" class="wide" placeholder="2099-12-31T23:59:59Z">
+                                  </div>
+                                </div>
+
+                                <!-- Advanced -->
+                                <div class="options-block">
+                                  <div class="options-block-title">Advanced</div>
+                                  <div class="option-row">
+                                    <label for="optPruneProperties">Prune properties</label>
+                                    <input type="text" id="optPruneProperties" class="wide" placeholder="prop1, prop2">
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optResolveJsonPath">
+                                    <label for="optResolveJsonPath">Resolve JSON path</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optFailOnInvalidTypes">
+                                    <label for="optFailOnInvalidTypes">Fail on invalid types</label>
+                                  </div>
+                                  <div class="option-row checkbox">
+                                    <input type="checkbox" id="optValidateSchemaVersion">
+                                    <label for="optValidateSchemaVersion">Validate schema version</label>
+                                  </div>
+                                  <div class="option-row">
+                                    <label for="optPropAliases">Prop aliases</label>
+                                    <input type="text" id="optPropAliases" class="wide" placeholder='{"x-faker":"faker"}'>
+                                  </div>
+                                </div>
+
+                                <!-- GitHub Gist -->
+                                <div class="options-block">
+                                  <div class="options-block-title">GitHub Gist</div>
+                                  <div class="option-row">
+                                    <label for="gistTokenInput">Token</label>
+                                    <input type="password" id="gistTokenInput" class="wide" placeholder="ghp_…" autocomplete="off">
+                                  </div>
+                                  <div class="option-row">
+                                    <span id="gistUserInfo" class="gist-user-info" style="font-size:11px"></span>
+                                    <span class="flex gap-1">
+                                      <button id="gistTokenSave" class="gist-action-btn" title="Save token">Save</button>
+                                      <button id="gistTokenClear" class="gist-action-btn" title="Clear token">Clear</button>
+                                    </span>
+                                  </div>
+                                  <div style="font-size:10px;opacity:0.5;margin-top:2px">
+                                    <a href="https://github.com/settings/tokens/new?scopes=gist&description=json-schema-faker" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Generate a PAT with gist scope</a>
+                                  </div>
+                                </div>
+
                               </div>
                             </div>
                           </div>
                         </div>
+
                     </section>
                 </div>
 
@@ -1875,9 +2113,17 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
 
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/ace.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/mode-json.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/mode-yaml.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-nord_dark.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.32.6/theme-github_dark.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@faker-js/faker@8.4.1/dist/browserfaker.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/json-schema-faker@0.5.9/dist/bundle.min.js"></script>
+        <script src="jsf.bundle.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
         <script src="main.js"></script>
+        <script>
+          if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('/sw.js');
+          }
+        </script>
     </body>
 </html>
