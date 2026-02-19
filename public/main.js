@@ -9,6 +9,7 @@ function toggleDocsDialog() {
 
   if (!isOpen) {
     history.replaceState(null, document.title, '/');
+    document.getElementById('playground').classList.remove('section-active');
   }
 }
 
@@ -29,6 +30,7 @@ if (hash === 'docs' || hash === 'examples' || hash === 'playground' ||
     hash.startsWith('docs-') || hash.startsWith('ex-')) {
   openDocsDialog();
 }
+// #gist/<id> — handled in initTabs() below after editors init
 
 document.onkeydown = function (evt) {
   evt = evt || window.event;
@@ -141,13 +143,22 @@ document.getElementById('btnFormatYAML').addEventListener('click', () => setInpu
 
 let tabIdCounter = 0;
 
-function makeTab(name, content) {
-  return { id: ++tabIdCounter, name, content };
+function makeTab(name, content, id) {
+  const tab = { id: id ?? ++tabIdCounter, name, content };
+  if (id && id >= tabIdCounter) tabIdCounter = id; // keep counter in sync when restoring
+  return tab;
 }
 
 // tabs initialized after sampleSchemas is defined (see Init section)
 let tabs = [];
 let activeTabId = null;
+
+function persistTabs() {
+  try {
+    localStorage.setItem('jsf_tabs', JSON.stringify(tabs.map(t => ({ id: t.id, name: t.name, content: t.content }))));
+    localStorage.setItem('jsf_activeTab', String(activeTabId));
+  } catch {}
+}
 
 function getActiveTab() {
   return tabs.find(t => t.id === activeTabId);
@@ -156,6 +167,7 @@ function getActiveTab() {
 function saveActiveTab() {
   const tab = getActiveTab();
   if (tab) tab.content = inputEditor.getValue();
+  persistTabs();
 }
 
 function loadTab(id) {
@@ -201,7 +213,7 @@ function deleteTab(id) {
 
 function renameTab(id, newName) {
   const tab = tabs.find(t => t.id === id);
-  if (tab && newName.trim()) tab.name = newName.trim();
+  if (tab && newName.trim()) { tab.name = newName.trim(); persistTabs(); }
 }
 
 function renderTabs() {
@@ -497,6 +509,296 @@ document.addEventListener('keydown', (e) => {
   }
 });
 
+// ─── Gist integration ────────────────────────────────────────────────────────
+
+const GIST_API = 'https://api.github.com';
+const JSF_GIST_DESC = 'JSON Schema Faker';
+
+function gistHeaders(token) {
+  return {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github+json',
+    'Content-Type': 'application/json',
+  };
+}
+
+async function fetchGitHubUser(token) {
+  const res = await fetch(`${GIST_API}/user`, { headers: gistHeaders(token) });
+  if (!res.ok) throw new Error('Invalid token');
+  return res.json();
+}
+
+async function listGists(token) {
+  const res = await fetch(`${GIST_API}/gists?per_page=100`, { headers: gistHeaders(token) });
+  if (!res.ok) throw new Error('Failed to list gists');
+  const all = await res.json();
+  return all.filter(g => g.description === JSF_GIST_DESC);
+}
+
+async function loadGistById(id, token) {
+  const headers = token ? gistHeaders(token) : { 'Accept': 'application/vnd.github+json' };
+  const res = await fetch(`${GIST_API}/gists/${id}`, { headers });
+  if (!res.ok) throw new Error(`Gist not found: ${id}`);
+  return res.json();
+}
+
+async function createGist(token, files) {
+  const res = await fetch(`${GIST_API}/gists`, {
+    method: 'POST',
+    headers: gistHeaders(token),
+    body: JSON.stringify({ description: JSF_GIST_DESC, public: false, files }),
+  });
+  if (!res.ok) throw new Error('Failed to create gist');
+  return res.json();
+}
+
+async function updateGist(token, id, files) {
+  // Fetch current gist to find files that no longer exist in tabs — set them to null to delete
+  const existing = await loadGistById(id, token);
+  const merged = { ...files };
+  for (const name of Object.keys(existing.files)) {
+    if (!(name in merged)) merged[name] = null;
+  }
+  const res = await fetch(`${GIST_API}/gists/${id}`, {
+    method: 'PATCH',
+    headers: gistHeaders(token),
+    body: JSON.stringify({ description: JSF_GIST_DESC, files: merged }),
+  });
+  if (!res.ok) throw new Error('Failed to update gist');
+  return res.json();
+}
+
+async function deleteGistById(token, id) {
+  const res = await fetch(`${GIST_API}/gists/${id}`, {
+    method: 'DELETE',
+    headers: gistHeaders(token),
+  });
+  if (!res.ok) throw new Error('Failed to delete gist');
+}
+
+// ─── Gist state ──────────────────────────────────────────────────────────────
+
+let currentGistId = localStorage.getItem('jsf_gist_id') ?? null;
+
+function getToken() {
+  return localStorage.getItem('jsf_token') ?? '';
+}
+
+function tabsToGistFiles() {
+  saveActiveTab();
+  const files = {};
+  tabs.forEach(t => { files[t.name] = { content: t.content }; });
+  return files;
+}
+
+function applyGistToTabs(gist) {
+  const files = Object.values(gist.files);
+  if (!files.length) return;
+  tabs = files.map(f => makeTab(f.filename, f.content ?? ''));
+  activeTabId = tabs[0].id;
+  inputEditor.setValue(tabs[0].content, -1);
+  persistTabs();
+  renderTabs();
+  generateOutput();
+}
+
+function setCurrentGist(id) {
+  currentGistId = id;
+  if (id) {
+    localStorage.setItem('jsf_gist_id', id);
+    history.replaceState(null, document.title, `#gist/${id}`);
+  } else {
+    localStorage.removeItem('jsf_gist_id');
+    history.replaceState(null, document.title, '/');
+  }
+  updateGistButtons();
+}
+
+function updateGistButtons() {
+  const shareBtn = document.getElementById('gistShareBtn');
+  const deleteBtn = document.getElementById('gistDeleteBtn');
+  if (currentGistId) {
+    shareBtn.classList.remove('hidden');
+    deleteBtn.classList.remove('hidden');
+  } else {
+    shareBtn.classList.add('hidden');
+    deleteBtn.classList.add('hidden');
+  }
+}
+
+// ─── Token UI ────────────────────────────────────────────────────────────────
+
+async function applyToken(token) {
+  const toolbar = document.getElementById('gistToolbar');
+  const userInfo = document.getElementById('gistUserInfo');
+  if (!token) {
+    toolbar.classList.add('hidden');
+    userInfo.textContent = '';
+    return;
+  }
+  try {
+    const user = await fetchGitHubUser(token);
+    userInfo.textContent = `@${user.login}`;
+    toolbar.classList.remove('hidden');
+  } catch {
+    userInfo.textContent = 'Invalid token';
+    toolbar.classList.add('hidden');
+  }
+}
+
+document.getElementById('gistTokenSave').addEventListener('click', async () => {
+  const input = document.getElementById('gistTokenInput');
+  const token = input.value.trim();
+  if (!token) return;
+  localStorage.setItem('jsf_token', token);
+  input.value = '';
+  await applyToken(token);
+});
+
+document.getElementById('gistTokenClear').addEventListener('click', () => {
+  localStorage.removeItem('jsf_token');
+  document.getElementById('gistTokenInput').value = '';
+  document.getElementById('gistUserInfo').textContent = '';
+  document.getElementById('gistToolbar').classList.add('hidden');
+  setCurrentGist(null);
+});
+
+// ─── Save Gist ────────────────────────────────────────────────────────────────
+
+document.getElementById('gistSaveBtn').addEventListener('click', async () => {
+  const token = getToken();
+  if (!token) return;
+  const btn = document.getElementById('gistSaveBtn');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+  try {
+    const files = tabsToGistFiles();
+    let gist;
+    if (currentGistId) {
+      gist = await updateGist(token, currentGistId, files);
+    } else {
+      gist = await createGist(token, files);
+    }
+    setCurrentGist(gist.id);
+    setStatus(`Gist saved: ${gist.id}`, 'success');
+  } catch (e) {
+    setStatus(e.message, 'error');
+  } finally {
+    btn.textContent = '💾 Save';
+    btn.disabled = false;
+  }
+});
+
+// ─── Share Gist ───────────────────────────────────────────────────────────────
+
+document.getElementById('gistShareBtn').addEventListener('click', () => {
+  if (!currentGistId) return;
+  const url = `${location.origin}${location.pathname}#gist/${currentGistId}`;
+  navigator.clipboard?.writeText(url).then(() => setStatus('URL copied!', 'success'))
+    .catch(() => setStatus(url, 'info'));
+});
+
+// ─── Load Gist panel ─────────────────────────────────────────────────────────
+
+async function populateGistList() {
+  const token = getToken();
+  if (!token) return;
+  const listEl = document.getElementById('gistList');
+  listEl.textContent = 'Loading…';
+  try {
+    const gists = await listGists(token);
+    listEl.innerHTML = '';
+    if (!gists.length) {
+      listEl.textContent = 'No saved gists.';
+    } else {
+      const panel = document.getElementById('gistLoadPanel');
+      gists.forEach(g => {
+        const fileNames = Object.keys(g.files).join(', ');
+        const item = document.createElement('div');
+        item.className = 'gist-list-item';
+        item.innerHTML = `
+          <div class="gist-list-item-body">
+            <div>${fileNames}</div>
+            <div class="gist-item-id">${g.id}</div>
+          </div>
+          <button class="gist-list-delete" title="Delete gist"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg></button>`;
+        item.querySelector('.gist-list-item-body').addEventListener('click', async () => {
+          try {
+            const full = await loadGistById(g.id, token);
+            applyGistToTabs(full);
+            setCurrentGist(g.id);
+            panel.classList.add('hidden');
+          } catch (e) { setStatus(e.message, 'error'); }
+        });
+        item.querySelector('.gist-list-delete').addEventListener('click', async (e) => {
+          e.stopPropagation();
+          if (!confirm(`Delete gist ${g.id}?`)) return;
+          try {
+            await deleteGistById(token, g.id);
+            if (currentGistId === g.id) setCurrentGist(null);
+            item.remove();
+            if (!listEl.children.length) listEl.textContent = 'No saved gists.';
+          } catch (e) { setStatus(e.message, 'error'); }
+        });
+        listEl.appendChild(item);
+      });
+    }
+  } catch (e) {
+    listEl.textContent = e.message;
+  }
+}
+
+document.getElementById('gistLoadBtn').addEventListener('click', async () => {
+  const panel = document.getElementById('gistLoadPanel');
+  const isOpen = !panel.classList.contains('hidden');
+  panel.classList.toggle('hidden', isOpen);
+  if (!isOpen) populateGistList();
+});
+
+// Update button label based on whether input has content
+const gistIdInput = document.getElementById('gistIdInput');
+const gistLoadByIdBtn = document.getElementById('gistLoadById');
+const SVG_RELOAD = `<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>`;
+gistIdInput.addEventListener('input', () => {
+  gistLoadByIdBtn.innerHTML = gistIdInput.value.trim() ? 'Load' : `${SVG_RELOAD} Reload`;
+});
+
+document.getElementById('gistLoadById').addEventListener('click', async () => {
+  const raw = gistIdInput.value.trim();
+  if (!raw) {
+    // Empty input — reload the list
+    populateGistList();
+    return;
+  }
+  // Accept full URL or bare ID
+  const idMatch = raw.match(/([a-f0-9]{20,})/i);
+  if (!idMatch) { setStatus('Invalid gist ID', 'error'); return; }
+  const id = idMatch[1];
+  try {
+    const gist = await loadGistById(id, getToken());
+    applyGistToTabs(gist);
+    setCurrentGist(id);
+    document.getElementById('gistLoadPanel').classList.add('hidden');
+  } catch (e) {
+    setStatus(e.message, 'error');
+  }
+});
+
+// ─── Delete Gist ──────────────────────────────────────────────────────────────
+
+document.getElementById('gistDeleteBtn').addEventListener('click', async () => {
+  if (!currentGistId) return;
+  if (!confirm(`Delete gist ${currentGistId}?`)) return;
+  const token = getToken();
+  try {
+    await deleteGistById(token, currentGistId);
+    setCurrentGist(null);
+    setStatus('Gist deleted', 'success');
+  } catch (e) {
+    setStatus(e.message, 'error');
+  }
+});
+
 // ─── Init ─────────────────────────────────────────────────────────────────────
 
 const defaultSchema = {
@@ -514,12 +816,52 @@ const defaultSchema = {
   "required": ["id", "name", "email", "role"]
 };
 
-tabs = [makeTab('schema.json', JSON.stringify(defaultSchema, null, 2))];
-activeTabId = tabs[0].id;
-inputEditor.setValue(tabs[0].content, -1);
+// Restore tabs from localStorage, or use default schema; handle #gist/<id>
+(async function initTabs() {
+  // Restore token state
+  const storedToken = getToken();
+  if (storedToken) applyToken(storedToken);
+  updateGistButtons();
 
-renderTabs();
-generateOutput();
+  // Check for #gist/<id> in URL
+  const gistHashMatch = window.location.hash.match(/^#gist\/([a-f0-9]+)$/i);
+  if (gistHashMatch) {
+    const id = gistHashMatch[1];
+    document.getElementById('playground').classList.add('section-active');
+    openDocsDialog();
+    try {
+      const gist = await loadGistById(id, storedToken);
+      applyGistToTabs(gist);
+      setCurrentGist(id);
+      return;
+    } catch (e) {
+      setStatus(`Failed to load gist: ${e.message}`, 'error');
+    }
+  }
+
+  // Restore from localStorage
+  try {
+    const saved = localStorage.getItem('jsf_tabs');
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        tabs = parsed.map(t => makeTab(t.name, t.content, t.id));
+        const savedActive = parseInt(localStorage.getItem('jsf_activeTab'));
+        activeTabId = tabs.find(t => t.id === savedActive) ? savedActive : tabs[tabs.length - 1].id;
+        inputEditor.setValue(getActiveTab().content, -1);
+        renderTabs();
+        generateOutput();
+        return;
+      }
+    }
+  } catch {}
+
+  tabs = [makeTab('schema.json', JSON.stringify(defaultSchema, null, 2))];
+  activeTabId = tabs[0].id;
+  inputEditor.setValue(tabs[0].content, -1);
+  renderTabs();
+  generateOutput();
+})();
 
 // Highlight TOC links when their section anchors enter the viewport
 (function setupTocObserver() {

@@ -1880,6 +1880,35 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                           <div class="editor-panel">
                             <div class="panel-header">
                               Schema Input
+                              <div class="panel-header-actions flex gap-2">
+                                <div class="gist-toolbar hidden" id="gistToolbar">
+                                  <button class="gist-btn" id="gistSaveBtn" title="Save as Gist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15.2 3a2 2 0 0 1 1.4.6l3.8 3.8a2 2 0 0 1 .6 1.4V19a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/><path d="M17 21v-7a1 1 0 0 0-1-1H8a1 1 0 0 0-1 1v7"/><path d="M7 3v4a1 1 0 0 0 1 1h7"/></svg>
+                                    Save
+                                  </button>
+                                  <button class="gist-btn" id="gistLoadBtn" title="Load Gist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 14 1.5-2.9A2 2 0 0 1 9.24 10H20a2 2 0 0 1 1.94 2.5l-1.54 6a2 2 0 0 1-1.95 1.5H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h3.9a2 2 0 0 1 1.69.9l.81 1.2a2 2 0 0 0 1.67.9H18a2 2 0 0 1 2 2v2"/></svg>
+                                    Load
+                                  </button>
+                                  <button class="gist-btn" id="gistShareBtn" title="Copy share URL">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                                  </button>
+                                  <button class="gist-btn gist-btn-danger" id="gistDeleteBtn" title="Delete Gist">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                                  </button>
+                                </div>
+                                <!-- Load gist dropdown -->
+                                <div class="gist-load-panel hidden" id="gistLoadPanel">
+                                  <div class="gist-load-row">
+                                    <input id="gistIdInput" type="text" placeholder="Gist ID or URL" class="gist-id-input">
+                                    <button id="gistLoadById" class="gist-action-btn">
+                                      <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
+                                      Reload
+                                    </button>
+                                  </div>
+                                  <div id="gistList" class="gist-list"></div>
+                                </div>
+                              </div>
                             </div>
                             <div class="tabs" id="tabStrip">
                               <!-- tabs rendered by JS -->
@@ -2032,6 +2061,25 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                   <div class="option-row">
                                     <label for="optPropAliases">Prop aliases</label>
                                     <input type="text" id="optPropAliases" class="wide" placeholder='{"x-faker":"faker"}'>
+                                  </div>
+                                </div>
+
+                                <!-- GitHub Gist -->
+                                <div class="options-block">
+                                  <div class="options-block-title">GitHub Gist</div>
+                                  <div class="option-row">
+                                    <label for="gistTokenInput">Token</label>
+                                    <input type="password" id="gistTokenInput" class="wide" placeholder="ghp_…" autocomplete="off">
+                                  </div>
+                                  <div class="option-row">
+                                    <span id="gistUserInfo" class="gist-user-info" style="font-size:11px"></span>
+                                    <span class="flex gap-1">
+                                      <button id="gistTokenSave" class="gist-action-btn" title="Save token">Save</button>
+                                      <button id="gistTokenClear" class="gist-action-btn" title="Clear token">Clear</button>
+                                    </span>
+                                  </div>
+                                  <div style="font-size:10px;opacity:0.5;margin-top:2px">
+                                    <a href="https://github.com/settings/tokens/new?scopes=gist&description=json-schema-faker" target="_blank" rel="noopener" style="color:inherit;text-decoration:underline">Generate a PAT with gist scope</a>
                                   </div>
                                 </div>
 

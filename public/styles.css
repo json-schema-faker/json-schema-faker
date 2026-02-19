@@ -59,12 +59,18 @@ span[id]:empty:first-child {
     a[href="#examples"],
 .modal-active
     #dialog-modal:has(section:target[id="playground"])
+    a[href="#playground"],
+.modal-active
+    #dialog-modal:has(#playground.section-active)
     a[href="#playground"] {
     font-weight: bold;
     color: white;
 }
 .modal-active
     #dialog-modal:has(section:target[id="playground"])
+    #playground-actions,
+.modal-active
+    #dialog-modal:has(#playground.section-active)
     #playground-actions {
     display: block;
 }
@@ -72,7 +78,8 @@ span[id]:empty:first-child {
 .dialog-body > section {
     display: none;
 }
-.dialog-body > section:target {
+.dialog-body > section:target,
+.dialog-body > section.section-active {
     display: block;
 }
 .dialog-body:has([id^="docs-"]:target) > #docs {
@@ -417,9 +424,9 @@ body {
 }
 
 .panel-header {
+    gap: 1rem;
     display: flex;
     align-items: center;
-    justify-content: space-between;
     padding: 10px 16px;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
@@ -428,6 +435,13 @@ body {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     color: var(--text-secondary);
+    position: relative;
+}
+
+.panel-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .editor-container {
@@ -444,6 +458,7 @@ body {
     display: flex;
     background: var(--bg-secondary);
     border-bottom: 1px solid var(--border-color);
+    position: relative;
 }
 
 .tab {
@@ -524,6 +539,165 @@ body {
 .toc-active {
     color: var(--accent) !important;
     font-weight: 600;
+}
+
+/* ─── Gist UI ─────────────────────────────────────────────────────────────── */
+
+.gist-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+}
+
+.gist-toolbar.hidden,
+.gist-load-panel.hidden {
+    display: none;
+}
+
+.gist-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 7px;
+    font-size: 11px;
+    font-family: inherit;
+    background: none;
+    border: 1px solid var(--light);
+    color: var(--text-dim);
+    cursor: pointer;
+    border-radius: 3px;
+    line-height: 1.4;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.gist-btn:hover {
+    color: var(--text);
+    border-color: var(--text-dim);
+}
+
+.gist-btn-danger:hover {
+    color: #f85149;
+    border-color: #f85149;
+}
+
+.gist-load-panel {
+    position: absolute;
+    top: calc(100% + 2px);
+    z-index: 50;
+    background: var(--mid);
+    border: 1px solid var(--light);
+    border-radius: 6px;
+    padding: 8px;
+    min-width: 280px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.gist-load-row {
+    display: flex;
+    gap: 4px;
+}
+
+.gist-id-input {
+    flex: 1;
+    padding: 4px 8px;
+    background: var(--dark);
+    border: 1px solid var(--light);
+    border-radius: 4px;
+    color: var(--text);
+    font-size: 12px;
+    font-family: inherit;
+    outline: none;
+}
+
+.gist-id-input:focus {
+    border-color: var(--accent);
+}
+
+.gist-action-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-family: inherit;
+    background: var(--light);
+    border: 1px solid var(--light);
+    color: var(--text);
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.gist-action-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+}
+
+.gist-list {
+    max-height: 180px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.gist-list-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 8px;
+    background: var(--dark);
+    border: 1px solid var(--light);
+    border-radius: 4px;
+    font-size: 11px;
+    color: var(--text-dim);
+    transition: all 0.15s;
+}
+
+.gist-list-item:hover {
+    color: var(--text);
+    border-color: var(--accent);
+}
+
+.gist-list-item-body {
+    flex: 1;
+    cursor: pointer;
+    min-width: 0;
+}
+
+.gist-list-item .gist-item-id {
+    font-size: 10px;
+    color: var(--text-dim);
+    opacity: 0.6;
+    margin-top: 2px;
+}
+
+.gist-list-delete {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0.4;
+    padding: 2px 4px;
+    color: inherit;
+    transition: opacity 0.15s;
+}
+
+.gist-list-delete:hover {
+    opacity: 1;
+    color: #f87171;
+}
+
+.gist-user-info {
+    font-size: 11px;
+    color: var(--accent);
+    white-space: nowrap;
 }
 
 .format-toggle {
@@ -656,7 +830,8 @@ body {
 }
 
 .option-row input[type="number"],
-.option-row input[type="text"] {
+.option-row input[type="text"],
+.option-row input[type="password"] {
     width: 72px;
     padding: 3px 6px;
     border-radius: 4px;
@@ -670,7 +845,8 @@ body {
 }
 
 .option-row input[type="number"]:focus,
-.option-row input[type="text"]:focus {
+.option-row input[type="text"]:focus,
+.option-row input[type="password"]:focus {
     outline: none;
     border-color: var(--accent);
 }
@@ -712,6 +888,9 @@ body {
 
     .modal-active
         #dialog-modal:has(section:target[id="playground"])
+        #close-dialog,
+    .modal-active
+        #dialog-modal:has(#playground.section-active)
         #close-dialog {
         display: none;
     }
