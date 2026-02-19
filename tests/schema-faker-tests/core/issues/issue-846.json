@@ -3,6 +3,31 @@
     "description": "Issue #846 - Meta data (description) leaked as property from merged $ref",
     "tests": [
       {
+        "description": "simple case: $ref with sibling description should not add description as a property",
+        "schema": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "$ref": "#/$defs/Name",
+              "description": "The user's name"
+            }
+          },
+          "required": ["name"],
+          "additionalProperties": false,
+          "$defs": {
+            "Name": {
+              "type": "object",
+              "properties": {
+                "first": { "type": "string" },
+                "last": { "type": "string" }
+              },
+              "additionalProperties": false
+            }
+          }
+        },
+        "valid": true
+      },
+      {
         "description": "should not leak description as a property when $ref has sibling description",
         "schema": {
           "description": "test",
