@@ -454,6 +454,8 @@ async function generateOutput() {
   await new Promise(r => setTimeout(r, 150));
 
   try {
+    applyFormat(tabs[0].name.includes('.json') ? 'json' : 'yaml');
+
     // Parse all tabs as schemas (always honor format)
     const parsedSchemas = [];
     for (const tab of tabs) {

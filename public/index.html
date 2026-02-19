@@ -1441,10 +1441,10 @@ reset();</code></pre>
                                             <pre><code><span class="text-purple-400">const</span> schema = {
     <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
     <span class="text-blue-300">properties</span>: {
-        <span class="text-blue-300">id</span>: { 
-            <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span>, 
+        <span class="text-blue-300">id</span>: {
+            <span class="text-blue-300">type</span>: <span class="text-yellow-300">'integer'</span>,
             <span class="text-blue-300">autoIncrement</span>: <span class="text-yellow-300">true</span>,
-            <span class="text-blue-300">initialOffset</span>: <span class="text-yellow-300">1000</span> 
+            <span class="text-blue-300">initialOffset</span>: <span class="text-yellow-300">1000</span>
         }
     }
 };
@@ -1468,7 +1468,7 @@ reset();</code></pre>
     <span class="text-blue-300">properties</span>: {
         <span class="text-blue-300">firstName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
         <span class="text-blue-300">lastName</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
-        <span class="text-blue-300">fullName</span>: { 
+        <span class="text-blue-300">fullName</span>: {
             <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
             <span class="text-blue-300">template</span>: <span class="text-yellow-300">"#{firstName} #{lastName}"</span>
         }
@@ -2055,7 +2055,7 @@ reset();</code></pre>
                               <!-- tabs rendered by JS -->
                               <button class="tab-add" id="tabAdd" title="Add schema">+</button>
                               <div class="format-toggle" id="formatToggle">
-                                <button class="format-btn active" id="btnFormatJSON" title="JSON with Comments mode">JSON</button>
+                                <button class="format-btn" id="btnFormatJSON" title="JSON with Comments mode">JSON</button>
                                 <button class="format-btn" id="btnFormatYAML" title="YAML mode">YAML</button>
                               </div>
                             </div>
