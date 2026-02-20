@@ -130,11 +130,11 @@
                             class="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16 p-8 rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm fade-in-up delay-5"
                         >
                             <div class="stat-item">
-                                <div class="stat-number">10K+</div>
+                                <div class="stat-number" id="githubStarsStat">--</div>
                                 <div class="stat-label">GitHub Stars</div>
                             </div>
                             <div class="stat-item">
-                                <div class="stat-number">1M+</div>
+                                <div class="stat-number" id="npmDownloadsStat">--</div>
                                 <div class="stat-label">Monthly Downloads</div>
                             </div>
                             <div class="stat-item">
@@ -2285,6 +2285,42 @@ reset();</code></pre>
           if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('/sw.js');
           }
+
+          const formatCompact = (value) =>
+            new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value);
+
+          async function hydrateProjectStats() {
+            const starsEl = document.getElementById("githubStarsStat");
+            const downloadsEl = document.getElementById("npmDownloadsStat");
+            if (!starsEl || !downloadsEl) return;
+
+            try {
+              const [githubRes, npmRes] = await Promise.all([
+                fetch("https://api.github.com/repos/json-schema-faker/json-schema-faker"),
+                fetch("https://api.npmjs.org/downloads/point/last-month/json-schema-faker"),
+              ]);
+
+              if (githubRes.ok) {
+                const github = await githubRes.json();
+                const stars = Number(github?.stargazers_count ?? 0);
+                if (Number.isFinite(stars) && stars >= 0) {
+                  starsEl.textContent = formatCompact(stars);
+                }
+              }
+
+              if (npmRes.ok) {
+                const npm = await npmRes.json();
+                const downloads = Number(npm?.downloads ?? 0);
+                if (Number.isFinite(downloads) && downloads >= 0) {
+                  downloadsEl.textContent = formatCompact(downloads);
+                }
+              }
+            } catch {
+              // Leave placeholders when network requests fail.
+            }
+          }
+
+          hydrateProjectStats();
         </script>
     </body>
 </html>
