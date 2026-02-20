@@ -53,6 +53,8 @@
     "prepublishOnly": "bun run build:clean && bun run build:cli && bun test",
     "test": "bun test",
     "test:all": "NO_SKIP=1 bun test",
+    "test:coverage": "mkdir -p coverage && bun test --coverage --coverage-reporter=text --coverage-reporter=lcov",
+    "test:coverage:all": "mkdir -p coverage && NO_SKIP=1 bun test --coverage --coverage-reporter=text --coverage-reporter=lcov",
     "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
