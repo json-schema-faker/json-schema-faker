@@ -14,12 +14,6 @@ test:
 test_all:
 	NO_SKIP=1 bun test
 
-coverage:
-	bun run test:coverage
-
-coverage_all:
-	bun run test:coverage:all
-
 typecheck:
 	tsc --noEmit
 
