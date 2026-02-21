@@ -127,17 +127,17 @@
                             </a>
                         </div>
                         <div
-                            class="grid grid-cols-3 gap-8 max-w-3xl mx-auto mt-16 p-8 rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm fade-in-up delay-5"
+                            class="divide-y md:divide-y-0 md:divide-x divide-[var(--light)] grid md:grid-cols-3 gap-8 max-w-3xl mx-auto mt-16 p-8 rounded-2xl border border-gray-800 bg-gray-900/50 backdrop-blur-sm fade-in-up delay-5"
                         >
-                            <div class="stat-item">
-                                <div class="stat-number" id="githubStarsStat">--</div>
+                            <div class="stat-item gap-6 items-center justify-center flex flex-row md:flex-col">
+                                <div class="stat-number" data-stat="githubStarsStat">--</div>
                                 <div class="stat-label">GitHub Stars</div>
                             </div>
-                            <div class="stat-item">
-                                <div class="stat-number" id="npmDownloadsStat">--</div>
+                            <div class="stat-item gap-6 items-center justify-center flex flex-row md:flex-col">
+                                <div class="stat-number" data-stat="npmDownloadsStat">--</div>
                                 <div class="stat-label">Monthly Downloads</div>
                             </div>
-                            <div class="stat-item">
+                            <div class="stat-item gap-6 items-center justify-center flex flex-row md:flex-col">
                                 <div class="stat-number">0</div>
                                 <div class="stat-label">Runtime Deps</div>
                             </div>
@@ -438,7 +438,7 @@
                             class="absolute inset-0 bg-gradient-to-r from-green-500/10 to-purple-500/10"
                         ></div>
                         <div
-                            class="relative z-10 p-12 md:p-16 text-center space-y-6"
+                            class="relative z-10 p-6 md:p-16 text-center space-y-6"
                         >
                             <h2
                                 id="install"
@@ -457,7 +457,7 @@
 <span class="text-green-300">npm install json-schema-faker</span>
 
 <span class="text-gray-500"># bun</span>
-<span class="text-green-300">bun install json-schema-faker</span></code></pre>
+<span class="text-green-300">bun add json-schema-faker</span></code></pre>
                             </div>
                             <div
                                 class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
@@ -514,7 +514,7 @@
                                         d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"
                                     />
                                 </svg>
-                                10k+ Stars
+                                <span data-stat="githubStarsStat">--</span> Stars
                             </span>
                         </div>
                     </div>
@@ -2290,9 +2290,9 @@ reset();</code></pre>
             new Intl.NumberFormat("en-US", { notation: "compact", maximumFractionDigits: 1 }).format(value);
 
           async function hydrateProjectStats() {
-            const starsEl = document.getElementById("githubStarsStat");
-            const downloadsEl = document.getElementById("npmDownloadsStat");
-            if (!starsEl || !downloadsEl) return;
+            const starsEls = document.querySelectorAll("[data-stat='githubStarsStat']");
+            const downloadsEls = document.querySelectorAll("[data-stat='npmDownloadsStat']");
+            if (!starsEls.length || !downloadsEls.length) return;
 
             try {
               const [githubRes, npmRes] = await Promise.all([
@@ -2304,7 +2304,7 @@ reset();</code></pre>
                 const github = await githubRes.json();
                 const stars = Number(github?.stargazers_count ?? 0);
                 if (Number.isFinite(stars) && stars >= 0) {
-                  starsEl.textContent = formatCompact(stars);
+                  starsEls.forEach(el => { el.textContent = formatCompact(stars); });
                 }
               }
 
@@ -2312,7 +2312,7 @@ reset();</code></pre>
                 const npm = await npmRes.json();
                 const downloads = Number(npm?.downloads ?? 0);
                 if (Number.isFinite(downloads) && downloads >= 0) {
-                  downloadsEl.textContent = formatCompact(downloads);
+                  downloadsEls.forEach(el => { el.textContent = formatCompact(downloads); });
                 }
               }
             } catch {

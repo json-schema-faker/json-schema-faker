@@ -316,11 +316,6 @@ body {
 .stat-item {
     text-align: center;
     padding: 1.5rem;
-    border-right: 1px solid var(--light);
-}
-
-.stat-item:last-child {
-    border-right: none;
 }
 
 .stat-number {
