@@ -44,6 +44,15 @@ deploy:
 
 check: typecheck test
 
+release: deps
+ifneq ($(CI),)
+	@echo '//registry.npmjs.org/:_authToken=$(NODE_AUTH_TOKEN)' > .npmrc
+	@npm publish
+endif
+
+deps: package*.json
+	@(((ls node_modules | grep .) > /dev/null 2>&1) || bun install --frozen-lockfile) || true
+
 ci: typecheck test_all build
 
 help:
@@ -60,4 +69,6 @@ help:
 	@echo "  make debug        - Run tests with debugger"
 	@echo "  make lint         - Run linter"
 	@echo "  make check        - Run typecheck + test"
+	@echo "  make release      - Publish to NPM registry"
+	@echo "  make deps         - Ensure node_modules is not empty"
 	@echo "  make ci           - Full CI check (typecheck + test_all + build)"
