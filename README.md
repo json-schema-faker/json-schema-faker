@@ -2,6 +2,14 @@
 
 Generate valid JSON data from JSON Schema definitions. Zero production dependencies.
 
+---
+
+If this project saves you time, consider **[sponsoring its development](https://github.com/sponsors/pateketrueke)**. Your support keeps it maintained and growing.
+
+[![GitHub Sponsors](https://img.shields.io/github/sponsors/pateketrueke?label=Sponsors&logo=github&style=flat-square)](https://github.com/sponsors/pateketrueke)
+
+---
+
 ```typescript
 import { generate } from "json-schema-faker";
 
