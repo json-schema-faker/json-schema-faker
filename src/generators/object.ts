@@ -102,13 +102,39 @@ export async function generateObject(
   schema: JsonSchemaObject,
   ctx: GenerateContext
 ): Promise<Record<string, unknown>> {
-  if (ctx.depth >= ctx.maxDepth) {
-    return {};
-  }
-
   // Get inferred properties if no explicit properties
   const inferredProperties = getInferredProperties(schema);
   const inferredRequired = getInferredRequired(schema, inferredProperties);
+
+  // When maxDepth is reached, still generate required properties with primitive defaults
+  // to avoid producing invalid output that violates schema constraints
+  if (ctx.depth >= ctx.maxDepth) {
+    if (inferredRequired.length === 0) {
+      return {};
+    }
+    // Generate stub values for required properties
+    const result: Record<string, unknown> = {};
+    for (const key of inferredRequired) {
+      const propSchema = inferredProperties[key];
+      if (propSchema && typeof propSchema === "object" && propSchema !== null) {
+        const schemaObj = propSchema as JsonSchemaObject;
+        // Use const/default/enum if available
+        if (schemaObj.const !== undefined) {
+          result[key] = schemaObj.const;
+        } else if (schemaObj.default !== undefined) {
+          result[key] = schemaObj.default;
+        } else if (schemaObj.enum !== undefined && schemaObj.enum.length > 0) {
+          result[key] = schemaObj.enum[0];
+        } else {
+          // Generate type-appropriate stub value
+          result[key] = generateStubValue(schemaObj.type);
+        }
+      } else {
+        result[key] = null;
+      }
+    }
+    return result;
+  }
 
   // Check for contradictory schema: additionalProperties:false but minProperties > available keys
   if (schema.additionalProperties === false) {
@@ -530,5 +556,31 @@ function pruneObjectProperties(obj: unknown, propertiesToPrune: string[]): void 
     } else {
       pruneObjectProperties(record[key], propertiesToPrune);
     }
+  }
+}
+
+/**
+ * Generate a stub value for a given JSON Schema type when maxDepth is reached.
+ * This ensures required properties still get valid (if minimal) values.
+ */
+function generateStubValue(type: string | string[] | undefined): unknown {
+  const resolvedType = Array.isArray(type) ? type[0] : type;
+  switch (resolvedType) {
+    case "string":
+      return "";
+    case "number":
+    case "integer":
+      return 0;
+    case "boolean":
+      return false;
+    case "null":
+      return null;
+    case "array":
+      return [];
+    case "object":
+      return {};
+    default:
+      // If no type specified, default to null
+      return null;
   }
 }
