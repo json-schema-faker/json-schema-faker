@@ -62,4 +62,91 @@ describe("array generator", () => {
       generate
     );
   });
+
+  test("items with oneOf produces a mix of schemas", async () => {
+    const schema = {
+      type: "array" as const,
+      items: {
+        oneOf: [
+          { type: "string" as const },
+          { type: "number" as const },
+          { type: "boolean" as const },
+        ],
+      },
+      minItems: 10,
+      maxItems: 10,
+    };
+
+    // Over multiple seeds, the array must not be all-string, all-number, or all-boolean
+    const seenTypes = new Set<string>();
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as unknown[];
+      expect(val.length).toBe(10);
+      for (const item of val) {
+        seenTypes.add(typeof item);
+      }
+    }
+    // With 20 seeds × 10 items each, all three types must appear at least once
+    expect(seenTypes.has("string")).toBe(true);
+    expect(seenTypes.has("number")).toBe(true);
+    expect(seenTypes.has("boolean")).toBe(true);
+  });
+
+  test("items with anyOf produces a mix of schemas", async () => {
+    const schema = {
+      type: "array" as const,
+      items: {
+        anyOf: [
+          { type: "string" as const },
+          { type: "number" as const },
+          { type: "boolean" as const },
+        ],
+      },
+      minItems: 10,
+      maxItems: 10,
+    };
+
+    const seenTypes = new Set<string>();
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as unknown[];
+      expect(val.length).toBe(10);
+      for (const item of val) {
+        seenTypes.add(typeof item);
+      }
+    }
+    expect(seenTypes.has("string")).toBe(true);
+    expect(seenTypes.has("number")).toBe(true);
+    expect(seenTypes.has("boolean")).toBe(true);
+  });
+
+  test("items with oneOf mixing object, number and string", async () => {
+    const schema = {
+      type: "array" as const,
+      items: {
+        oneOf: [
+          { type: "string" as const, format: "uuid" as const },
+          { type: "number" as const },
+          {
+            type: "object" as const,
+            required: ["d"],
+            properties: { d: { type: "string" as const, enum: ["foo"] } },
+          },
+        ],
+      },
+      minItems: 6,
+      maxItems: 6,
+    };
+
+    const seenTypes = new Set<string>();
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as unknown[];
+      expect(val.length).toBe(6);
+      for (const item of val) {
+        seenTypes.add(typeof item);
+      }
+    }
+    expect(seenTypes.has("string")).toBe(true);
+    expect(seenTypes.has("number")).toBe(true);
+    expect(seenTypes.has("object")).toBe(true);
+  });
 });

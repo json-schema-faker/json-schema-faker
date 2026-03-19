@@ -36,8 +36,7 @@ export async function generateComposition(
   }
 
   if (oneOf) {
-    const branches = [...oneOf];
-    ctx.random.shuffle(branches);
+    const branches = ctx.random.shuffle([...oneOf]);
     
     // Get required from base schema (from allOf merging)
     const baseRequired = base.required ?? [];
@@ -104,8 +103,7 @@ export async function generateComposition(
 
   if (anyOf) {
     // Try each branch until one works
-    const branches = [...anyOf];
-    ctx.random.shuffle(branches);
+    const branches = ctx.random.shuffle([...anyOf]);
     
     for (const branch of branches) {
       const merged = mergeSchemas([base, branch]);
