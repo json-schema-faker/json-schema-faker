@@ -1,0 +1,31 @@
+{
+  "description": "useDefaultValue precedence over enum",
+  "tests": [
+    {
+      "description": "should return default when enum is present and useDefaultValue is true",
+      "schema": {
+        "type": "string",
+        "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
+        "default": "h2"
+      },
+      "set": {
+        "useDefaultValue": true
+      },
+      "equal": "h2",
+      "valid": true
+    },
+    {
+      "description": "should still generate from enum when useDefaultValue is false",
+      "schema": {
+        "type": "string",
+        "enum": ["h1", "h2", "h3", "h4", "h5", "h6"],
+        "default": "h2"
+      },
+      "set": {
+        "useDefaultValue": false
+      },
+      "type": "string",
+      "valid": true
+    }
+  ]
+}
