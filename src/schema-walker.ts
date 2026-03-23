@@ -273,14 +273,19 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     return generateComposition(schema, ctx);
   }
 
-  // const / enum
-  if (schema.const !== undefined || schema.enum !== undefined) {
+  // const
+  if (schema.const !== undefined) {
     return applyOutputTransform(generateEnumConst(schema, ctx), schema, ctx);
   }
 
   // default value (when useDefaultValue option is enabled)
   if (ctx.useDefaultValue && schema.default !== undefined) {
     return applyOutputTransform(schema.default, schema, ctx);
+  }
+
+  // enum
+  if (schema.enum !== undefined) {
+    return applyOutputTransform(generateEnumConst(schema, ctx), schema, ctx);
   }
 
   // examples value (when useExamplesValue option is enabled)
