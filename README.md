@@ -282,6 +282,8 @@ MIT
 >
 > It emphasizes a clear, typed API (generate, createGenerator, registerFormat, createRemoteResolver) and a focused runtime suitable for Node-like or Bun environments.
 >
+> Migration notes for older integrations are available in [MIGRATION.md](./MIGRATION.md).
+>
 > If you rely on the original behavior or want historical reference, you can review the previous work at: [https://github.com/json-schema-faker/json-schema-faker/tree/0.5.x][jsf]
 
 [jsf]: https://github.com/json-schema-faker/json-schema-faker/tree/0.5.x
