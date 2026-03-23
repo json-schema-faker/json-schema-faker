@@ -192,6 +192,13 @@ function childContext(ctx: GenerateContext, segment: string): GenerateContext {
   };
 }
 
+async function applyOutputTransform(value: unknown, schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
+  if (!ctx.outputTransform) {
+    return value;
+  }
+  return ctx.outputTransform(value, schema, ctx.outputPath);
+}
+
 export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
   // Boolean schemas
   if (schema === true) {
@@ -234,25 +241,25 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     if (extResult !== undefined) {
       // Apply string truncation if result is a string and maxLength is set
       if (typeof extResult === "string" && extCtx.maxLength !== undefined && extResult.length > extCtx.maxLength) {
-        return extResult.slice(0, extCtx.maxLength);
+        return applyOutputTransform(extResult.slice(0, extCtx.maxLength), schema, extCtx);
       }
-      return extResult;
+      return applyOutputTransform(extResult, schema, extCtx);
     }
   } else {
     const extResult = generateFromExtension(schema, ctx, resolvedType);
     if (extResult !== undefined) {
       // Apply string truncation if result is a string and maxLength is set
       if (typeof extResult === "string" && ctx.maxLength !== undefined && extResult.length > ctx.maxLength) {
-        return extResult.slice(0, ctx.maxLength);
+        return applyOutputTransform(extResult.slice(0, ctx.maxLength), schema, ctx);
       }
-      return extResult;
+      return applyOutputTransform(extResult, schema, ctx);
     }
   }
 
   // Custom keyword extensions (jsf.define)
   const customExtResult = generateFromExtensions(schema, ctx);
   if (customExtResult !== undefined) {
-    return customExtResult;
+    return applyOutputTransform(customExtResult, schema, ctx);
   }
 
   // $ref resolution
@@ -266,23 +273,23 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     return generateComposition(schema, ctx);
   }
 
-  // default value (when useDefaultValue option is enabled)
-  if (ctx.useDefaultValue && schema.default !== undefined) {
-    return schema.default;
-  }
-
   // const / enum
   if (schema.const !== undefined || schema.enum !== undefined) {
-    return generateEnumConst(schema, ctx);
+    return applyOutputTransform(generateEnumConst(schema, ctx), schema, ctx);
+  }
+
+  // default value (when useDefaultValue option is enabled)
+  if (ctx.useDefaultValue && schema.default !== undefined) {
+    return applyOutputTransform(schema.default, schema, ctx);
   }
 
   // examples value (when useExamplesValue option is enabled)
   if (ctx.useExamplesValue) {
     if (Array.isArray(schema.examples) && schema.examples.length > 0) {
-      return ctx.random.pick(schema.examples);
+      return applyOutputTransform(ctx.random.pick(schema.examples), schema, ctx);
     }
     if (schema.example !== undefined) {
-      return schema.example;
+      return applyOutputTransform(schema.example, schema, ctx);
     }
   }
 
@@ -307,19 +314,19 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
 
   switch (type) {
     case "null":
-      return generateNull(ctx);
+      return applyOutputTransform(generateNull(ctx), schema, ctx);
     case "boolean":
-      return generateBoolean(ctx);
+      return applyOutputTransform(generateBoolean(ctx), schema, ctx);
     case "number":
-      return generateNumber(schema, ctx);
+      return applyOutputTransform(generateNumber(schema, ctx), schema, ctx);
     case "integer":
-      return generateInteger(schema, ctx);
+      return applyOutputTransform(generateInteger(schema, ctx), schema, ctx);
     case "string":
-      return generateString(schema, ctx);
+      return applyOutputTransform(generateString(schema, ctx), schema, ctx);
     case "object":
-      return generateObject(schema, ctx);
+      return applyOutputTransform(await generateObject(schema, ctx), schema, ctx);
     case "array":
-      return generateArray(schema, ctx);
+      return applyOutputTransform(await generateArray(schema, ctx), schema, ctx);
     default:
       throw new Error(`Unknown type: ${type} at ${ctx.path}`);
   }

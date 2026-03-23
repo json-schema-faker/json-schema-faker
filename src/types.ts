@@ -137,6 +137,8 @@ export interface GenerateOptions {
   validateSchemaVersion?: boolean;
   /** Remap schema property names before processing. E.g. { "x-faker": "faker", "definitions": "$defs" } */
   propAliases?: Record<string, string>;
+  /** Transform generated output values using the final output-tree JSON pointer path */
+  outputTransform?: (value: unknown, schema: JsonSchema, path: string) => unknown | Promise<unknown>;
   /** Options to pass to JSON.stringify for generateJSON */
   jsonStringifyOptions?: {
     /** JSON.stringify space parameter */
@@ -168,6 +170,8 @@ export interface GenerateContext {
   useDefaultValue?: boolean;
   /** Current path in the schema (JSON pointer) */
   path: string;
+  /** Current path in the generated output (JSON pointer) */
+  outputPath: string;
   /** Always generate optional properties */
   alwaysFakeOptionals?: boolean;
   /** Use fixed/deterministic probabilities for testing */
@@ -207,6 +211,8 @@ export interface GenerateContext {
   resolvedType?: string;
   /** Remap schema property names before processing. E.g. { "x-faker": "faker" } */
   propAliases?: Record<string, string>;
+  /** Transform generated output values using the final output-tree JSON pointer path */
+  outputTransform?: (value: unknown, schema: JsonSchema, path: string) => unknown | Promise<unknown>;
 }
 
 export interface Random {
