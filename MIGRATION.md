@@ -10,6 +10,7 @@ This guide covers the main API changes for users moving from the historical `0.5
 | `requiredOnly` | Still accepted as a compatibility option |
 | `ignoreProperties` | Still accepted as a compatibility option |
 | ad-hoc output filtering | `outputTransform(value, schema, path)` |
+| custom keyword callbacks with no runtime context | `define(name, (value, schema, ctx) => ...)` |
 
 ## `random` -> `seed`
 
@@ -99,6 +100,44 @@ Properties:
 - `path` is an output JSON pointer such as `/user/name`, not a schema traversal path like `/properties/user/properties/name`.
 - Returning `undefined` omits the property or item from the final output.
 
+## Custom keyword callbacks now receive `GenerateContext`
+
+Current `define()` callbacks receive the active `GenerateContext` as a third argument:
+
+```ts
+define("custom", function(value, schema, ctx) {
+  if (ctx.outputPath === "/user/name") {
+    return "legacy-name";
+  }
+
+  return value;
+});
+```
+
+Notes:
+- `this` still refers to the extension-local persistent state object.
+- `ctx.path` is the schema traversal path.
+- `ctx.outputPath` is the generated output JSON pointer.
+
+This is useful when old extension code relied on implicit global state or needed to inspect where generation is currently happening.
+
+## Nested `allOf` behavior
+
+Current versions preserve nested `allOf` constraints from multiple merged branches.
+
+If you previously observed output where only the last nested `allOf` branch seemed to apply, that merge bug is now fixed. For schemas like:
+
+```ts
+{
+  allOf: [
+    { allOf: [{ properties: { a: { const: "a" } }, required: ["a"] }] },
+    { allOf: [{ properties: { b: { const: "b" } }, required: ["b"] }] }
+  ]
+}
+```
+
+both nested branches are retained during composition merging.
+
 ## Browser Bundle Notes
 
 The browser bundle keeps the familiar global shape:
@@ -115,4 +154,5 @@ If you previously used `random` there, switch to `seed`.
 1. Replace `random` with `seed`.
 2. Keep `requiredOnly` and `ignoreProperties` temporarily if needed.
 3. Move custom filtering logic to `outputTransform`.
-4. Remove compatibility casts once your application code is using the typed current API directly.
+4. Update custom keyword extensions to use the third `ctx` argument when they need generation-time context.
+5. Remove compatibility casts once your application code is using the typed current API directly.
