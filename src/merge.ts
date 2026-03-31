@@ -159,7 +159,9 @@ function mergePairInto(target: JsonSchemaObject, source: JsonSchemaObject): void
   if (source.$defs) target.$defs = { ...(target.$defs ?? {}), ...source.$defs };
 
   // Composition keywords - keep them for later processing
-  if (source.allOf) target.allOf = source.allOf;
+  if (source.allOf) {
+    target.allOf = [...(target.allOf ?? []), ...source.allOf];
+  }
   if (source.anyOf) target.anyOf = source.anyOf;
   if (source.oneOf) target.oneOf = source.oneOf;
 }

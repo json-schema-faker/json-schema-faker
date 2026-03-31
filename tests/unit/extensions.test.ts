@@ -1,7 +1,7 @@
 import { describe, test, expect, beforeEach } from "bun:test";
 import { generate, define, reset } from "../../src/index.js";
 import type { ExtensionCallback } from "../../src/extensions.js";
-import type { JsonSchemaObject } from "../../src/types.js";
+import type { GenerateContext, JsonSchemaObject } from "../../src/types.js";
 
 describe("extensions API", () => {
   beforeEach(() => {
@@ -45,10 +45,12 @@ describe("extensions API", () => {
     test("receives the keyword value and schema", async () => {
       let receivedValue: unknown;
       let receivedSchema: JsonSchemaObject | undefined;
+      let receivedCtx: GenerateContext | undefined;
 
-      const callback: ExtensionCallback = function (value, schema) {
+      const callback: ExtensionCallback = function (value, schema, ctx) {
         receivedValue = value;
         receivedSchema = schema;
+        receivedCtx = ctx;
         return "test";
       };
       define("testKeyword", callback);
@@ -65,6 +67,8 @@ describe("extensions API", () => {
 
       expect(receivedValue).toEqual({ customOption: true });
       expect(receivedSchema).toHaveProperty("type", "object");
+      expect(receivedCtx?.path).toBe("/");
+      expect(receivedCtx?.outputPath).toBe("/");
     });
 
     test("context persists across calls", async () => {
@@ -195,6 +199,41 @@ describe("extensions API", () => {
 
       const result = await generate(schema);
       expect(result).toEqual([1, 2, 3]);
+    });
+
+    test("passes the current GenerateContext to nested custom keywords", async () => {
+      let receivedPath: string | undefined;
+      let receivedOutputPath: string | undefined;
+
+      const callback: ExtensionCallback = function (_value, _schema, ctx) {
+        receivedPath = ctx.path;
+        receivedOutputPath = ctx.outputPath;
+        return "computed-name";
+      };
+      define("withContext", callback);
+
+      const schema: JsonSchemaObject = {
+        type: "object",
+        properties: {
+          user: {
+            type: "object",
+            properties: {
+              name: {
+                type: "string",
+                withContext: true,
+              },
+            },
+            required: ["name"],
+          },
+        },
+        required: ["user"],
+      };
+
+      const result = await generate(schema) as { user: { name: string } };
+
+      expect(result.user.name).toBe("computed-name");
+      expect(receivedPath).toBe("/properties/user/properties/name");
+      expect(receivedOutputPath).toBe("/user/name");
     });
   });
 });

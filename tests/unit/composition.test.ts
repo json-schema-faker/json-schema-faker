@@ -1,6 +1,7 @@
 import { describe, test, expect } from "bun:test";
 import { generate } from "../../src/index.js";
 import { assertValid, assertValidMultipleSeeds } from "../helpers/validate.js";
+import type { JsonSchema } from "../../src/types.js";
 
 describe("allOf", () => {
   test("merges numeric bounds", async () => {
@@ -48,6 +49,72 @@ describe("allOf", () => {
       100,
       generate
     );
+  });
+
+  test("preserves nested allOf constraints from multiple branches", async () => {
+    const schema: JsonSchema = {
+      type: "object" as const,
+      properties: {
+        root: {
+          allOf: [
+            {
+              allOf: [
+                {
+                  type: "object" as const,
+                  properties: {
+                    a_val: { const: "a" },
+                  },
+                  required: ["a_val"],
+                },
+                {
+                  type: "object" as const,
+                  properties: {
+                    b_val: { const: "b" },
+                  },
+                  required: ["b_val"],
+                },
+              ],
+            },
+            {
+              allOf: [
+                {
+                  type: "object" as const,
+                  properties: {
+                    c_val: { const: "c" },
+                  },
+                  required: ["c_val"],
+                },
+                {
+                  type: "object" as const,
+                  properties: {
+                    d_val: { const: "d" },
+                  },
+                  required: ["d_val"],
+                },
+              ],
+            },
+          ],
+        },
+      },
+      required: ["root"],
+    };
+
+    const val = await generate(schema) as {
+      root: {
+        a_val: string;
+        b_val: string;
+        c_val: string;
+        d_val: string;
+      };
+    };
+
+    expect(val.root).toEqual({
+      a_val: "a",
+      b_val: "b",
+      c_val: "c",
+      d_val: "d",
+    });
+    assertValid(schema as any, val);
   });
 });
 
