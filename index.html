@@ -829,6 +829,8 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-blue-300">optionalsProbability</span>?: number;         <span class="text-gray-500">// Default: 0.5</span>
     <span class="text-blue-300">alwaysFakeOptionals</span>?: boolean;         <span class="text-gray-500">// Always include optionals</span>
     <span class="text-blue-300">fillProperties</span>?: boolean;              <span class="text-gray-500">// Fill all properties</span>
+    <span class="text-blue-300">requiredOnly</span>?: boolean;                <span class="text-gray-500">// Compatibility: only required props</span>
+    <span class="text-blue-300">ignoreProperties</span>?: Array&lt;string | RegExp | Function&gt;; <span class="text-gray-500">// Compatibility filter</span>
     <span class="text-blue-300">minItems</span>?: number;                     <span class="text-gray-500">// Override minItems</span>
     <span class="text-blue-300">maxItems</span>?: number;                     <span class="text-gray-500">// Override maxItems</span>
     <span class="text-blue-300">minLength</span>?: number;                    <span class="text-gray-500">// Override minLength</span>
@@ -850,6 +852,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-blue-300">validateSchemaVersion</span>?: boolean;       <span class="text-gray-500">// Check $schema</span>
     <span class="text-blue-300">fixedProbabilities</span>?: boolean;          <span class="text-gray-500">// Deterministic</span>
     <span class="text-blue-300">propAliases</span>?: Record&lt;string, string&gt;;  <span class="text-gray-500">// Remap schema keys</span>
+    <span class="text-blue-300">outputTransform</span>?: (value, schema, path) =&gt; unknown; <span class="text-gray-500">// Transform output</span>
 }</code></pre></div>
 
                                 <!-- Seeding -->
@@ -1396,7 +1399,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                                     <h3 class="text-lg font-semibold text-green-400">define(name, callback)</h3>
                                                     <span class="option-type">function</span>
                                                 </div>
-                                                <p class="text-gray-400 mb-4">Register a custom keyword generator. The callback receives <code class="code-inline">value</code> (keyword value from schema) and <code class="code-inline">schema</code> (full schema object). Use <code class="code-inline">this</code> to persist state across calls.</p>
+                                                <p class="text-gray-400 mb-4">Register a custom keyword generator. The callback receives <code class="code-inline">value</code> (keyword value), <code class="code-inline">schema</code> (full schema object), and <code class="code-inline">ctx</code> (current generation context). Use <code class="code-inline">this</code> to persist extension-local state across calls, and use <code class="code-inline">ctx.path</code> or <code class="code-inline">ctx.outputPath</code> for per-call location data.</p>
                                                 <div class="code-block !p-4 !text-sm">
                                             <pre><code><span class="text-purple-400">import</span> { generate, define, reset } <span class="text-purple-400">from</span> <span class="text-yellow-300">'json-schema-faker'</span>;
 
@@ -1405,9 +1408,13 @@ define(<span class="text-yellow-300">'counter'</span>, <span class="text-purple-
     <span class="text-purple-400">return</span> ++<span class="text-purple-400">this</span>.count;
 });
 
-<span class="text-gray-500">// Custom generator</span>
-define(<span class="text-yellow-300">'uuid'</span>, <span class="text-purple-400">function</span>() {
-    <span class="text-purple-400">return</span> crypto.randomUUID();
+<span class="text-gray-500">// Custom generator with runtime context</span>
+define(<span class="text-yellow-300">'uuid'</span>, <span class="text-purple-400">function</span>(_value, _schema, ctx) {
+    <span class="text-purple-400">if</span> (ctx.outputPath === <span class="text-yellow-300">'/uuid'</span>) {
+        <span class="text-purple-400">return</span> crypto.randomUUID();
+    }
+
+    <span class="text-purple-400">return</span> <span class="text-yellow-300">'fallback-id'</span>;
 });
 
 <span class="text-purple-400">const</span> schema = {
@@ -1421,6 +1428,7 @@ define(<span class="text-yellow-300">'uuid'</span>, <span class="text-purple-400
 <span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema);
 <span class="text-gray-500">// { id: 1, uuid: "550e8400-e29b-41d4-a716-446655440000" }</span></code></pre>
                                                 </div>
+                                                <p class="text-gray-400 mt-4 text-sm"><code class="code-inline">ctx.path</code> is the schema traversal path. <code class="code-inline">ctx.outputPath</code> is the generated output JSON pointer.</p>
                                             </div>
                                         </div>
 
@@ -1570,6 +1578,59 @@ reset();</code></pre>
 
 <span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
     <span class="text-blue-300">pruneProperties</span>: [<span class="text-yellow-300">'password'</span>, <span class="text-yellow-300">'internalNote'</span>]
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">requiredOnly</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Compatibility option for older integrations. When enabled, optional properties are skipped unless another option explicitly includes them.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">requiredOnly</span>: <span class="text-yellow-300">true</span>
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">ignoreProperties</h3>
+                                                    <span class="option-type">array</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Compatibility filter for older integrations. Match properties by name, regular expression, or schema predicate. Prefer <code class="code-inline">outputTransform</code> for new filtering logic.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">ignoreProperties</span>: [
+        <span class="text-yellow-300">'password'</span>,
+        <span class="text-purple-400">/^internal/</span>,
+        (schema) => schema.writeOnly === <span class="text-yellow-300">true</span>
+    ]
+});</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card lg:col-span-2">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-red-400">outputTransform</h3>
+                                                    <span class="option-type">function</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Transform generated values using the final output-tree JSON pointer. Return <code class="code-inline">undefined</code> to omit an object property or array item.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">outputTransform</span>(value, schema, path) {
+        <span class="text-purple-400">if</span> (path === <span class="text-yellow-300">'/user/name'</span>) <span class="text-purple-400">return</span> <span class="text-yellow-300">'legacy-name'</span>;
+        <span class="text-purple-400">if</span> (path === <span class="text-yellow-300">'/password'</span>) <span class="text-purple-400">return</span> undefined;
+        <span class="text-purple-400">return</span> value;
+    }
 });</code></pre>
                                                 </div>
                                             </div>
@@ -1876,7 +1937,7 @@ reset();</code></pre>
                                 <h4 class="example-title">
                                     allOf, anyOf, oneOf
                                 </h4>
-                                <p class="text-gray-400 mb-3 text-sm"><code class="code-inline">allOf</code> merges all subschemas into one object. <code class="code-inline">anyOf</code> picks one subschema randomly. <code class="code-inline">oneOf</code> validates against exactly one subschema. Use these for flexible schema composition. Add <code class="code-inline">alwaysFakeOptionals</code> to include all merged properties.</p>
+                                <p class="text-gray-400 mb-3 text-sm"><code class="code-inline">allOf</code> merges all subschemas into one object. Nested <code class="code-inline">allOf</code> constraints from multiple branches are preserved during merging. <code class="code-inline">anyOf</code> picks one subschema randomly. <code class="code-inline">oneOf</code> validates against exactly one subschema. Add <code class="code-inline">alwaysFakeOptionals</code> to include all merged properties.</p>
                                 <div class="code-block !p-4">
                                     <pre><code><span class="text-gray-500">// allOf - merge all properties into single object</span>
 <span class="text-purple-400">await</span> generate({
