@@ -5,7 +5,7 @@
 import { generate, registerFormat } from "./index.js";
 import type { GenerateOptions } from "./types.js";
 
-const VERSION = "0.6.0";
+const VERSION = "0.6.1";
 
 let _options: GenerateOptions = {};
 const _extensions: Record<string, unknown> = {};
