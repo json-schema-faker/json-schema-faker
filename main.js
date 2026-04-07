@@ -59,7 +59,7 @@ if (window.faker) {
 
 // Inject dynamic version into badge
 {
-  const ver = window.JSONSchemaFaker?.version ?? '0.6.0';
+  const ver = window.JSONSchemaFaker?.version ?? '0.6.1';
   const badge = document.querySelector('.badge');
   if (badge) badge.textContent = `v${ver}`;
 }
