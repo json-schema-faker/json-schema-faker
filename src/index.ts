@@ -32,17 +32,18 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     }
   }
 
+  const normalizedOptions = normalizeGenerateOptions(options);
   const random = createRandom(options?.seed ?? 1);
-  const schema_ = options?.propAliases ? applyPropAliasesToSchema(schema, options.propAliases) : schema;
+  const schema_ = normalizedOptions.propAliases ? applyPropAliasesToSchema(schema, normalizedOptions.propAliases) : schema;
   const refRegistry = buildRefRegistry(schema_);
   registerRootSchema(schema_, refRegistry);
 
-  const formatRegistry = options?.formats
-    ? createFormatRegistry(options.formats)
+  const formatRegistry = normalizedOptions.formats
+    ? createFormatRegistry(normalizedOptions.formats)
     : new Map(globalFormatRegistry);
 
-  const refDepthMin = options?.refDepthMin ?? options?.refDepth;
-  const refDepthMax = options?.refDepthMax ?? options?.refDepth;
+  const refDepthMin = normalizedOptions.refDepthMin ?? normalizedOptions.refDepth;
+  const refDepthMax = normalizedOptions.refDepthMax ?? normalizedOptions.refDepth;
 
   if (refDepthMin !== undefined && refDepthMax !== undefined && refDepthMin > refDepthMax) {
     throw new Error(`refDepthMin (${refDepthMin}) cannot be greater than refDepthMax (${refDepthMax})`);
@@ -50,42 +51,44 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
 
   const ctx: GenerateContext = {
     random,
-    maxDepth: options?.maxDepth ?? (refDepthMax ? refDepthMax + 20 : 5),
-    maxDefaultItems: options?.maxDefaultItems ?? 3,
-    optionalsProbability: options?.optionalsProbability ?? 0.5,
+    maxDepth: normalizedOptions.maxDepth ?? (refDepthMax ? refDepthMax + 20 : 5),
+    maxDefaultItems: normalizedOptions.maxDefaultItems ?? 3,
+    optionalsProbability: normalizedOptions.optionalsProbability ?? 0.5,
     depth: 0,
     refRegistry,
     refStack: new Set(),
     formatRegistry,
-    refResolver: options?.refResolver,
-    minItems: options?.minItems,
-    maxItems: options?.maxItems,
-    minLength: options?.minLength,
-    maxLength: options?.maxLength,
-    useDefaultValue: options?.useDefaultValue,
+    refResolver: normalizedOptions.refResolver,
+    minItems: normalizedOptions.minItems,
+    maxItems: normalizedOptions.maxItems,
+    minLength: normalizedOptions.minLength,
+    maxLength: normalizedOptions.maxLength,
+    useDefaultValue: normalizedOptions.useDefaultValue,
     path: "/",
-    alwaysFakeOptionals: options?.alwaysFakeOptionals,
-    fixedProbabilities: options?.fixedProbabilities,
-    fillProperties: options?.fillProperties,
-    extensions: options?.extensions,
-    resolveJsonPath: options?.resolveJsonPath,
+    outputPath: "/",
+    alwaysFakeOptionals: normalizedOptions.alwaysFakeOptionals,
+    fixedProbabilities: normalizedOptions.fixedProbabilities,
+    fillProperties: normalizedOptions.fillProperties,
+    extensions: normalizedOptions.extensions,
+    resolveJsonPath: normalizedOptions.resolveJsonPath,
     autoIncrementCounters: new Map(),
     refDepth: 0,
     refDepthMin,
     refDepthMax,
-    useExamplesValue: options?.useExamplesValue,
-    pruneProperties: options?.pruneProperties,
-    failOnInvalidTypes: options?.failOnInvalidTypes,
-    defaultInvalidTypeProduct: options?.defaultInvalidTypeProduct,
-    minDateTime: options?.minDateTime,
-    maxDateTime: options?.maxDateTime,
-    propAliases: options?.propAliases,
+    useExamplesValue: normalizedOptions.useExamplesValue,
+    pruneProperties: normalizedOptions.pruneProperties,
+    failOnInvalidTypes: normalizedOptions.failOnInvalidTypes,
+    defaultInvalidTypeProduct: normalizedOptions.defaultInvalidTypeProduct,
+    minDateTime: normalizedOptions.minDateTime,
+    maxDateTime: normalizedOptions.maxDateTime,
+    propAliases: normalizedOptions.propAliases,
+    outputTransform: normalizedOptions.outputTransform,
   };
 
   const result = await walk(schema_, ctx);
 
   // Post-process to resolve jsonPath references if enabled
-  if (options?.resolveJsonPath) {
+  if (normalizedOptions.resolveJsonPath) {
     return resolveJsonPathsInValue(result, schema, ctx, result);
   }
 
@@ -185,4 +188,82 @@ function applyPropAliasesToSchema(schema: JsonSchema, aliases: Record<string, st
     }
   }
   return patched ?? schema;
+}
+
+interface LegacyGenerateOptions extends GenerateOptions {
+  requiredOnly?: boolean;
+  ignoreProperties?: Array<string | RegExp | ((schema: JsonSchema) => boolean)>;
+}
+
+function normalizeGenerateOptions(options?: GenerateOptions): GenerateOptions {
+  if (!options) {
+    return {};
+  }
+
+  const legacyOptions = options as LegacyGenerateOptions;
+  let normalized: GenerateOptions = { ...options };
+
+  if (legacyOptions.requiredOnly === true && normalized.optionalsProbability === undefined) {
+    normalized = {
+      ...normalized,
+      optionalsProbability: 0,
+      alwaysFakeOptionals: false,
+    };
+  }
+
+  if (legacyOptions.ignoreProperties && legacyOptions.ignoreProperties.length > 0) {
+    normalized = {
+      ...normalized,
+      outputTransform: composeOutputTransforms(
+        normalized.outputTransform,
+        createIgnorePropertiesTransform(legacyOptions.ignoreProperties)
+      ),
+    };
+  }
+
+  return normalized;
+}
+
+function composeOutputTransforms(
+  base: GenerateOptions["outputTransform"],
+  next: GenerateOptions["outputTransform"]
+): GenerateOptions["outputTransform"] {
+  if (!base) {
+    return next;
+  }
+  if (!next) {
+    return base;
+  }
+
+  return async (value, schema, path) => {
+    const transformed = await base(value, schema, path);
+    return next(transformed, schema, path);
+  };
+}
+
+function createIgnorePropertiesTransform(
+  ignoreProperties: Array<string | RegExp | ((schema: JsonSchema) => boolean)>
+): GenerateOptions["outputTransform"] {
+  return (value, schema, path) => {
+    if (path === "/") {
+      return value;
+    }
+
+    const propName = decodeJsonPointerSegment(path.slice(path.lastIndexOf("/") + 1));
+    const shouldIgnore = ignoreProperties.some((matcher) => {
+      if (typeof matcher === "string") {
+        return matcher === propName;
+      }
+      if (matcher instanceof RegExp) {
+        return matcher.test(propName);
+      }
+      return matcher(schema);
+    });
+
+    return shouldIgnore ? undefined : value;
+  };
+}
+
+function decodeJsonPointerSegment(segment: string): string {
+  return segment.replace(/~1/g, "/").replace(/~0/g, "~");
 }

@@ -197,7 +197,7 @@ export async function generateObject(
       }
       
       definedKeys.add(key);
-      const propCtx = { ...childCtx, path: `${childCtx.path}/${key}` };
+      const propCtx = createPropertyContext(childCtx, key);
       
       const isRequired = required.has(key);
       const isObjectType = typeof propSchema === "object" && propSchema !== null && propSchema.type === "object";
@@ -221,9 +221,15 @@ export async function generateObject(
       }
       
       if (isRequired) {
-        result[key] = await walk(mergedPropSchema, propCtx);
+        const value = await walk(mergedPropSchema, propCtx);
+        if (value !== undefined) {
+          result[key] = value;
+        }
       } else if (shouldGenerateOptional(key)) {
-        result[key] = await walk(mergedPropSchema, propCtx);
+        const value = await walk(mergedPropSchema, propCtx);
+        if (value !== undefined) {
+          result[key] = value;
+        }
       } else if (isObjectType && !fillProperties) {
         // fillProperties: false - propagate required nested properties
         const nestedRequired = propSchema.required ?? [];
@@ -231,7 +237,11 @@ export async function generateObject(
           const nestedResult: Record<string, unknown> = {};
           for (const nestedKey of nestedRequired) {
             const nestedSchema = (propSchema.properties ?? {})[nestedKey] ?? {};
-            nestedResult[nestedKey] = await walk(nestedSchema, { ...propCtx, path: `${propCtx.path}/${nestedKey}` });
+            const nestedCtx = createPropertyContext(propCtx, nestedKey);
+            const nestedValue = await walk(nestedSchema, nestedCtx);
+            if (nestedValue !== undefined) {
+              nestedResult[nestedKey] = nestedValue;
+            }
           }
           result[key] = nestedResult;
         }
@@ -256,14 +266,22 @@ export async function generateObject(
         const mergedSchema = matchingSchemas.length === 1 
           ? matchingSchemas[0] 
           : mergeSchemas(matchingSchemas);
-        result[key] = await walk(mergedSchema, childCtx);
+        const propCtx = createPropertyContext(childCtx, key);
+        const value = await walk(mergedSchema, propCtx);
+        if (value !== undefined) {
+          result[key] = value;
+        }
         definedKeys.add(key);
       }
     }
     if (!definedKeys.has(key)) {
       const addlSchema = schema.additionalProperties ?? true;
       if (addlSchema !== false) {
-        result[key] = await walk(addlSchema === true ? {} : addlSchema, childCtx);
+        const propCtx = createPropertyContext(childCtx, key);
+        const value = await walk(addlSchema === true ? {} : addlSchema, propCtx);
+        if (value !== undefined) {
+          result[key] = value;
+        }
         definedKeys.add(key);
       }
     }
@@ -345,8 +363,11 @@ export async function generateObject(
             if (result[reqProp] !== undefined) continue;
             
             const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? { type: "object" };
-            const reqPropCtx = { ...childCtx, path: `${childCtx.path}/${reqProp}` };
-            result[reqProp] = await walk(reqPropSchema, reqPropCtx);
+            const reqPropCtx = createPropertyContext(childCtx, reqProp);
+            const value = await walk(reqPropSchema, reqPropCtx);
+            if (value !== undefined) {
+              result[reqProp] = value;
+            }
           }
         }
         
@@ -357,8 +378,11 @@ export async function generateObject(
             // Skip the dependency property itself (foo)
             if (depPropName === propName) continue;
             
-            const depPropCtx = { ...childCtx, path: `${childCtx.path}/${depPropName}` };
-            result[depPropName] = await walk(depPropSchema as JsonSchema, depPropCtx);
+            const depPropCtx = createPropertyContext(childCtx, depPropName);
+            const value = await walk(depPropSchema as JsonSchema, depPropCtx);
+            if (value !== undefined) {
+              result[depPropName] = value;
+            }
           }
         }
       }
@@ -386,7 +410,11 @@ export async function generateObject(
         const key = generateKeyMatchingPattern(pattern, ctx);
         
         if (key && !result[key]) {
-          result[key] = await walk(patSchema, childCtx);
+          const propCtx = createPropertyContext(childCtx, key);
+          const value = await walk(patSchema, propCtx);
+          if (value !== undefined) {
+            result[key] = value;
+          }
           definedKeys.add(key);
         }
       }
@@ -404,7 +432,11 @@ export async function generateObject(
           attempts++;
           const key = `prop${ctx.random.int(0, 99999)}`;
           if (!result[key]) {
-            result[key] = await walk(genSchema, childCtx);
+            const propCtx = createPropertyContext(childCtx, key);
+            const value = await walk(genSchema, propCtx);
+            if (value !== undefined) {
+              result[key] = value;
+            }
             definedKeys.add(key);
           }
         }
@@ -440,6 +472,21 @@ export async function generateObject(
   resolveTemplates(result, inferredProperties);
 
   return result;
+}
+
+function createPropertyContext(ctx: GenerateContext, key: string): GenerateContext {
+  const encodedKey = encodeJsonPointerSegment(key);
+  const outputPath = ctx.outputPath === "/" ? `/${encodedKey}` : `${ctx.outputPath}/${encodedKey}`;
+
+  return {
+    ...ctx,
+    path: `${ctx.path}/${key}`,
+    outputPath,
+  };
+}
+
+function encodeJsonPointerSegment(segment: string): string {
+  return segment.replace(/~/g, "~0").replace(/\//g, "~1");
 }
 
 /**

@@ -115,6 +115,8 @@ export interface SchemaFakerTestCase {
   require?: string;
   /** Expected count of properties (for objects) or items (for arrays) */
   count?: number;
+  /** Expected object property names after compatibility filtering */
+  onlyProps?: string[];
 }
 
 export interface SchemaFakerTestSuite {
@@ -319,6 +321,23 @@ export async function runSchemaFakerTest(
     if (actualCount !== testCase.count) {
       throw new Error(
         `Expected count ${testCase.count} but got ${actualCount} for value: ${JSON.stringify(value)}`
+      );
+    }
+  }
+
+  // Check "onlyProps" expectation (object should contain exactly these keys)
+  if (testCase.onlyProps !== undefined) {
+    if (typeof value !== "object" || value === null || Array.isArray(value)) {
+      throw new Error(
+        `Expected object with only props ${JSON.stringify(testCase.onlyProps)} but got ${JSON.stringify(value)}`
+      );
+    }
+
+    const actualProps = Object.keys(value).sort();
+    const expectedProps = [...testCase.onlyProps].sort();
+    if (JSON.stringify(actualProps) !== JSON.stringify(expectedProps)) {
+      throw new Error(
+        `Expected props ${JSON.stringify(expectedProps)} but got ${JSON.stringify(actualProps)}`
       );
     }
   }

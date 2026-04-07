@@ -1,6 +1,11 @@
 import type { JsonSchemaObject, GenerateContext } from "./types.js";
 
-export type ExtensionCallback = (this: ExtensionContext, value: unknown, schema: JsonSchemaObject) => unknown;
+export type ExtensionCallback = (
+  this: ExtensionContext,
+  value: unknown,
+  schema: JsonSchemaObject,
+  ctx: GenerateContext
+) => unknown;
 
 export interface ExtensionContext {
   [key: string]: unknown;
@@ -54,7 +59,7 @@ class ExtensionRegistry {
 
       if (entry) {
         const value = schema[key];
-        const result = entry.callback.call(entry.context, value, schema);
+        const result = entry.callback.call(entry.context, value, schema, ctx);
 
         if (result !== undefined) {
           return result;

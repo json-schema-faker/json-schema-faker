@@ -70,6 +70,31 @@ describe("integer generator", () => {
     expect(Number.isInteger(val)).toBe(true);
   });
 
+  test("preserves autoIncrement sequences across array items", async () => {
+    const val = await generate({
+      type: "array",
+      minItems: 3,
+      maxItems: 3,
+      items: {
+        type: "object",
+        properties: {
+          id: {
+            type: "integer",
+            autoIncrement: true,
+            initialOffset: 100001,
+          },
+        },
+        required: ["id"],
+      },
+    }) as Array<{ id: number }>;
+
+    expect(val).toEqual([
+      { id: 100001 },
+      { id: 100002 },
+      { id: 100003 },
+    ]);
+  });
+
   test("respects bounds", async () => {
     const schema = { type: "integer" as const, minimum: 1, maximum: 10 };
     for (let seed = 1; seed <= 50; seed++) {
@@ -116,6 +141,18 @@ describe("string generator", () => {
 describe("enum/const generator", () => {
   test("generates const value", async () => {
     expect(await generate({ const: 42 })).toBe(42);
+  });
+
+  test("prefers default over enum when useDefaultValue is enabled", async () => {
+    const val = await generate({
+      type: "string",
+      enum: ["h1", "h2", "h3"],
+      default: "h2",
+    }, {
+      useDefaultValue: true,
+    });
+
+    expect(val).toBe("h2");
   });
 
   test("picks from enum", async () => {

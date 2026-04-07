@@ -38,7 +38,7 @@ const data = await generate({
 - Built-in keywords: `autoIncrement`, `template` (string interpolation)
 - Extension support for [faker](https://fakerjs.dev/) and [chance](https://chancejs.com/)
 - Custom format registration via `registerFormat()`
-- Custom keyword extensions via `define()`
+- Custom keyword extensions via `define()` with per-call `GenerateContext`
 
 ## Install
 
@@ -96,17 +96,49 @@ await generate(schema, { refResolver: resolver });
 
 ### `define(name, callback)`
 
-Register a custom keyword generator. The callback receives `value` (keyword value from schema) and `schema` (full schema). Use `this` to persist state across calls.
+Register a custom keyword generator. The callback receives:
+- `value`: the keyword value from the schema
+- `schema`: the full schema node
+- `ctx`: the current `GenerateContext`
+
+Use `this` to persist extension-local state across calls. Use `ctx` when you need generation-time details such as the current schema path or output path.
 
 ```typescript
 define("counter", function() {
   return ++this.count;
 });
 
-define("uuid", function() {
-  return crypto.randomUUID();
+define("uuid", function(_value, _schema, ctx) {
+  if (ctx.outputPath === "/user/id") {
+    return crypto.randomUUID();
+  }
+
+  return "fallback-id";
 });
 ```
+
+For nested properties, `ctx.path` is the schema traversal path and `ctx.outputPath` is the final generated-output JSON pointer.
+
+### Composition behavior
+
+Nested `allOf` constraints from multiple branches are preserved during merging. For example, schemas such as:
+
+```typescript
+const schema = {
+  type: "object",
+  properties: {
+    root: {
+      allOf: [
+        { allOf: [{ properties: { a: { const: "a" } }, required: ["a"] }] },
+        { allOf: [{ properties: { b: { const: "b" } }, required: ["b"] }] },
+      ],
+    },
+  },
+  required: ["root"],
+};
+```
+
+now retain both nested branches instead of discarding the earlier one during merge.
 
 ### `reset(name?)`
 
@@ -281,6 +313,8 @@ MIT
 > The new implementation reuses the `v0.5.x` ideas but is rewritten in TypeScript for Bun with zero production dependencies.
 >
 > It emphasizes a clear, typed API (generate, createGenerator, registerFormat, createRemoteResolver) and a focused runtime suitable for Node-like or Bun environments.
+>
+> Migration notes for older integrations are available in [MIGRATION.md](./MIGRATION.md).
 >
 > If you rely on the original behavior or want historical reference, you can review the previous work at: [https://github.com/json-schema-faker/json-schema-faker/tree/0.5.x][jsf]
 

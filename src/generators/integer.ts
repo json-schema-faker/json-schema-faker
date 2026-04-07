@@ -7,7 +7,7 @@ export function generateInteger(
 ): number {
   if (schema.autoIncrement) {
     const initialOffset = schema.initialOffset ?? 1;
-    const counterKey = ctx.path;
+    const counterKey = getAutoIncrementCounterKey(ctx.path);
     const counters = ctx.autoIncrementCounters ?? new Map();
     
     const currentCount = counters.get(counterKey) ?? (initialOffset - 1);
@@ -22,4 +22,11 @@ export function generateInteger(
   }
   
   return generateNumber(schema, ctx, true);
+}
+
+function getAutoIncrementCounterKey(path: string): string {
+  return path
+    .split("/")
+    .filter((segment) => segment !== "" && !/^\d+$/.test(segment))
+    .join("/");
 }

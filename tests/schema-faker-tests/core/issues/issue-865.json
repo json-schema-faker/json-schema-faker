@@ -1,0 +1,63 @@
+{
+  "description": "Nested allOf constraints fail to apply",
+  "tests": [
+    {
+      "description": "should preserve nested allOf constraints from all branches",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "root": {
+            "allOf": [
+              {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "a_val": { "const": "a" }
+                    },
+                    "required": ["a_val"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "b_val": { "const": "b" }
+                    },
+                    "required": ["b_val"]
+                  }
+                ]
+              },
+              {
+                "allOf": [
+                  {
+                    "type": "object",
+                    "properties": {
+                      "c_val": { "const": "c" }
+                    },
+                    "required": ["c_val"]
+                  },
+                  {
+                    "type": "object",
+                    "properties": {
+                      "d_val": { "const": "d" }
+                    },
+                    "required": ["d_val"]
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "required": ["root"]
+      },
+      "equal": {
+        "root": {
+          "a_val": "a",
+          "b_val": "b",
+          "c_val": "c",
+          "d_val": "d"
+        }
+      },
+      "valid": true
+    }
+  ]
+}
