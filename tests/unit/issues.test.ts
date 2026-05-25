@@ -217,4 +217,15 @@ describe("Issue #866 - Unresolved $ref with arbitrary JSON pointer paths", () =>
     expect(typeof result.value).toBe("string");
     expect(result.value.length).toBeGreaterThanOrEqual(3);
   });
+
+  test('bare "#/" ref throws rather than silently self-referencing', async () => {
+    const schema = {
+      type: "object",
+      required: ["value"],
+      properties: {
+        value: { $ref: "#/" },
+      },
+    };
+    await expect(generate(schema as any, { seed: 1 })).rejects.toThrow("Unresolved $ref: #/");
+  });
 });
