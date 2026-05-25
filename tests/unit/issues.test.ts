@@ -165,3 +165,56 @@ describe("Issue #853 - Deeply nested required properties ignored", () => {
     expect(level3.enumProp).toBe("enum-val-1"); // First enum value used as stub
   });
 });
+
+describe("Issue #866 - Unresolved $ref with arbitrary JSON pointer paths", () => {
+  test("resolves $ref pointing to #/definitions/… (draft-07 style)", async () => {
+    const schema = {
+      $schema: "http://json-schema.org/draft-07/schema#",
+      definitions: {
+        Settings: {
+          type: "object",
+          required: ["currency"],
+          properties: {
+            currency: {
+              type: "object",
+              required: ["currency_code"],
+              properties: {
+                currency_code: { type: "string", default: "USD" },
+                formatted: { type: "string", pattern: "^\\$?[0-9,]+(\\.[0-9]{2})?$" },
+              },
+            },
+          },
+        },
+      },
+      type: "object",
+      required: ["settings"],
+      properties: {
+        id: { type: "string" },
+        settings: { $ref: "#/definitions/Settings" },
+        title: { type: "string" },
+      },
+    };
+
+    const result = await generate(schema as any, { seed: 1 }) as any;
+    expect(result.settings).toBeDefined();
+    expect(result.settings.currency).toBeDefined();
+    expect(typeof result.settings.currency.currency_code).toBe("string");
+  });
+
+  test("resolves $ref with any arbitrary JSON pointer path against the root schema", async () => {
+    const schema = {
+      "x-custom-types": {
+        MyString: { type: "string", minLength: 3 },
+      },
+      type: "object",
+      required: ["value"],
+      properties: {
+        value: { $ref: "#/x-custom-types/MyString" },
+      },
+    };
+
+    const result = await generate(schema as any, { seed: 1 }) as any;
+    expect(typeof result.value).toBe("string");
+    expect(result.value.length).toBeGreaterThanOrEqual(3);
+  });
+});

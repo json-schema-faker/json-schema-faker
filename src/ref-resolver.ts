@@ -62,7 +62,16 @@ export async function resolveRef(
 
   if (ref.startsWith("#/")) {
     resolved = ctx.refRegistry.get(ref);
-    // If not found in registry, try refResolver (e.g. for OpenAPI-style #/components/schemas/... refs)
+    // Fallback: JSON pointer walk against the root schema.
+    // Handles any arbitrary path (#/definitions/…, #/components/schemas/…, etc.)
+    // without enumerating every possible keyword upfront.
+    if (resolved === undefined) {
+      const root = ctx.refRegistry.get("#");
+      if (root !== undefined && typeof root === "object") {
+        try { resolved = resolveFragment(root, ref.slice(1)); } catch { /* unresolvable */ }
+      }
+    }
+    // If still not found, try refResolver (e.g. for OpenAPI-style #/components/schemas/... refs)
     if (resolved === undefined && ctx.refResolver) {
       resolved = await ctx.refResolver(ref);
       if (resolved !== undefined) {
