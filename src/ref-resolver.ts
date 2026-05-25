@@ -65,7 +65,9 @@ export async function resolveRef(
     // Fallback: JSON pointer walk against the root schema.
     // Handles any arbitrary path (#/definitions/…, #/components/schemas/…, etc.)
     // without enumerating every possible keyword upfront.
-    if (resolved === undefined) {
+    // Guard: skip bare "#/" — resolveJsonPointer treats "/" as root, which would
+    // silently self-reference instead of throwing "Unresolved $ref".
+    if (resolved === undefined && ref.length > 2) {
       const root = ctx.refRegistry.get("#");
       if (root !== undefined && typeof root === "object") {
         try { resolved = resolveFragment(root, ref.slice(1)); } catch { /* unresolvable */ }
