@@ -1,6 +1,6 @@
 {
   "name": "json-schema-faker",
-  "version": "0.6.1",
+  "version": "0.6.2",
   "description": "Generate valid JSON data from JSON Schema definitions",
   "keywords": [
     "json",
