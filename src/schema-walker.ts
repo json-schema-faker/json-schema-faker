@@ -208,6 +208,15 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
   }
 
+  if (typeof schema === "object" && schema !== null && schema.$defs) {
+    for (const [name, def] of Object.entries(schema.$defs)) {
+      const key = `#/$defs/${name}`;
+      if (!ctx.refRegistry.has(key)) {
+        ctx.refRegistry.set(key, def);
+      }
+    }
+  }
+
   // Apply propAliases: remap custom schema keys to known ones before processing
   if (ctx.propAliases && typeof schema === 'object' && schema !== null) {
     const schemaObj = schema as JsonSchemaObject;
@@ -257,9 +266,13 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
 
   // Custom keyword extensions (jsf.define)
-  const customExtResult = generateFromExtensions(schema, ctx);
+  const extCtx: GenerateContext = {
+    ...ctx,
+    proceed: (subSchema, overrides) => walk(subSchema, { ...ctx, ...overrides }),
+  };
+  const customExtResult = await generateFromExtensions(schema, extCtx);
   if (customExtResult !== undefined) {
-    return applyOutputTransform(customExtResult, schema, ctx);
+    return applyOutputTransform(customExtResult, schema, extCtx);
   }
 
   // $ref resolution

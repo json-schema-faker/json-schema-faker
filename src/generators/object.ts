@@ -477,10 +477,11 @@ export async function generateObject(
 function createPropertyContext(ctx: GenerateContext, key: string): GenerateContext {
   const encodedKey = encodeJsonPointerSegment(key);
   const outputPath = ctx.outputPath === "/" ? `/${encodedKey}` : `${ctx.outputPath}/${encodedKey}`;
+  const path = ctx.path === "/" ? `/${encodedKey}` : `${ctx.path}/${encodedKey}`;
 
   return {
     ...ctx,
-    path: `${ctx.path}/${key}`,
+    path,
     outputPath,
   };
 }

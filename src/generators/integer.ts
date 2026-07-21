@@ -25,8 +25,13 @@ export function generateInteger(
 }
 
 function getAutoIncrementCounterKey(path: string): string {
-  return path
-    .split("/")
-    .filter((segment) => segment !== "" && !/^\d+$/.test(segment))
+  const arrayItemParents = new Set(["items", "prefixItems", "contains", "additionalItems"]);
+  const segments = path.split("/").filter((segment) => segment !== "");
+
+  return segments
+    .filter((segment, index) => {
+      const previous = segments[index - 1];
+      return !(/^\d+$/.test(segment) && previous !== undefined && arrayItemParents.has(previous));
+    })
     .join("/");
 }

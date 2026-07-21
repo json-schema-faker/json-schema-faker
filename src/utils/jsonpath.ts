@@ -3,6 +3,7 @@
  * 
  * Supports:
  * - $.foo.bar - dot notation for property access
+ * - $["foo"] / $['foo'] - bracket-quoted property access
  * - $..foo - recursive descent
  * - [*] - array wildcard
  * - [n] - array index
@@ -12,14 +13,11 @@ export function evaluateJsonPath(path: string, data: unknown): unknown[] {
     throw new Error(`Invalid JSONPath: ${path} (must start with $)`);
   }
 
-  // Remove the leading $
-  const segments = path.slice(1).split(/\.|\[(\d+|\*)\]/).filter(Boolean);
+  const segments = parseJsonPath(path);
   
   let results: unknown[] = [data];
   
   for (const segment of segments) {
-    if (segment === "") continue;
-    
     const newResults: unknown[] = [];
     
     for (const item of results) {
@@ -38,7 +36,6 @@ export function evaluateJsonPath(path: string, data: unknown): unknown[] {
         }
       } else if (segment === "") {
         // Recursive descent operator (..)
-        // This is handled specially - we need to collect all nested values
         collectDescendants(item, newResults);
       } else {
         // Property access
@@ -75,7 +72,7 @@ function collectDescendants(item: unknown, results: unknown[]): void {
 
 /**
  * Parse a JSONPath expression into segments
- * Handles: $.foo.bar, $..foo, $[*], $.foo[*].bar
+ * Handles: $.foo.bar, $..foo, $[*], $.foo[*].bar, $["foo"], $['foo']
  */
 export function parseJsonPath(path: string): string[] {
   if (!path.startsWith("$")) {
@@ -108,7 +105,7 @@ export function parseJsonPath(path: string): string[] {
       if (end === -1) break;
       
       const content = current.slice(1, end);
-      segments.push(content);
+      segments.push(unquoteBracketSegment(content));
       current = current.slice(end + 1);
     } else {
       break;
@@ -116,4 +113,13 @@ export function parseJsonPath(path: string): string[] {
   }
   
   return segments;
+}
+
+function unquoteBracketSegment(segment: string): string {
+  const quote = segment[0];
+  if ((quote === "\"" || quote === "'") && segment[segment.length - 1] === quote) {
+    return segment.slice(1, -1).replace(/\\(["'\\])/g, "$1");
+  }
+
+  return segment;
 }

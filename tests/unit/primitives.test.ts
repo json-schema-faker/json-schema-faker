@@ -95,6 +95,50 @@ describe("integer generator", () => {
     ]);
   });
 
+  test("keeps autoIncrement counters independent for digit-only property names", async () => {
+    const val = await generate({
+      type: "array",
+      minItems: 3,
+      maxItems: 3,
+      items: {
+        type: "object",
+        properties: {
+          "0": { type: "integer", autoIncrement: true },
+          "1": { type: "integer", autoIncrement: true },
+        },
+        required: ["0", "1"],
+      },
+    }) as Array<{ "0": number; "1": number }>;
+
+    expect(val).toEqual([
+      { "0": 1, "1": 1 },
+      { "0": 2, "1": 2 },
+      { "0": 3, "1": 3 },
+    ]);
+  });
+
+  test("keeps autoIncrement counters independent for slash-containing property names", async () => {
+    const val = await generate({
+      type: "array",
+      minItems: 3,
+      maxItems: 3,
+      items: {
+        type: "object",
+        properties: {
+          a: { type: "integer", autoIncrement: true },
+          "a/": { type: "integer", autoIncrement: true },
+        },
+        required: ["a", "a/"],
+      },
+    }) as Array<{ a: number; "a/": number }>;
+
+    expect(val).toEqual([
+      { a: 1, "a/": 1 },
+      { a: 2, "a/": 2 },
+      { a: 3, "a/": 3 },
+    ]);
+  });
+
   test("respects bounds", async () => {
     const schema = { type: "integer" as const, minimum: 1, maximum: 10 };
     for (let seed = 1; seed <= 50; seed++) {
