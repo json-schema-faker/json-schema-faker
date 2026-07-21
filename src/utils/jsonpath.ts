@@ -19,11 +19,31 @@ export function evaluateJsonPath(path: string, data: unknown): unknown[] {
   
   for (const segment of segments) {
     const newResults: unknown[] = [];
+
+    // Recursive descent (..) — represented as empty segment.
+    // Collect all descendants of every current result, then include the
+    // current results themselves so the *next* segment also matches
+    // direct properties (e.g. $..name matches { name: "root", child: { name: "nested" } }).
+    if (segment === "") {
+      for (const item of results) {
+        collectDescendants(item, newResults);
+      }
+      newResults.push(...results);
+      results = newResults;
+      continue;
+    }
     
     for (const item of results) {
       if (item === null || item === undefined) continue;
       
-      if (segment === "*") {
+      // Quoted segments (prefixed "q:") are always property access,
+      // even when the unquoted value looks numeric (e.g. $["0"]).
+      if (segment.startsWith("q:")) {
+        const key = segment.slice(2);
+        if (typeof item === "object" && item !== null && key in item) {
+          newResults.push((item as Record<string, unknown>)[key]);
+        }
+      } else if (segment === "*") {
         // Array wildcard
         if (Array.isArray(item)) {
           newResults.push(...item);
@@ -34,9 +54,6 @@ export function evaluateJsonPath(path: string, data: unknown): unknown[] {
         if (Array.isArray(item) && index < item.length) {
           newResults.push(item[index]);
         }
-      } else if (segment === "") {
-        // Recursive descent operator (..)
-        collectDescendants(item, newResults);
       } else {
         // Property access
         if (typeof item === "object" && item !== null && segment in item) {
@@ -105,7 +122,11 @@ export function parseJsonPath(path: string): string[] {
       if (end === -1) break;
       
       const content = current.slice(1, end);
-      segments.push(unquoteBracketSegment(content));
+      const unquoted = unquoteBracketSegment(content);
+      // Prefix quoted segments so evaluateJsonPath can distinguish
+      // a quoted numeric key like "0" from an array index 0.
+      const wasQuoted = (content[0] === '"' || content[0] === "'");
+      segments.push(wasQuoted ? `q:${unquoted}` : unquoted);
       current = current.slice(end + 1);
     } else {
       break;
