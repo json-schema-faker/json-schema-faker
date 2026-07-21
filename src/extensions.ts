@@ -5,7 +5,7 @@ export type ExtensionCallback = (
   value: unknown,
   schema: JsonSchemaObject,
   ctx: GenerateContext
-) => unknown;
+) => unknown | Promise<unknown>;
 
 export interface ExtensionContext {
   [key: string]: unknown;
@@ -46,10 +46,10 @@ class ExtensionRegistry {
     return this.extensions.keys();
   }
 
-  generate(
+  async generate(
     schema: JsonSchemaObject,
     ctx: GenerateContext
-  ): unknown {
+  ): Promise<unknown> {
     const keys = Object.keys(schema);
 
     for (let i = keys.length - 1; i >= 0; i--) {
@@ -59,7 +59,7 @@ class ExtensionRegistry {
 
       if (entry) {
         const value = schema[key];
-        const result = entry.callback.call(entry.context, value, schema, ctx);
+        const result = await entry.callback.call(entry.context, value, schema, ctx);
 
         if (result !== undefined) {
           return result;
@@ -95,7 +95,7 @@ export function resetExtension(name?: string): void {
 export function generateFromExtensions(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): unknown {
+): Promise<unknown> {
   return globalExtensions.generate(schema, ctx);
 }
 

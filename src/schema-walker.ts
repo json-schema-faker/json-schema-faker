@@ -257,9 +257,13 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
 
   // Custom keyword extensions (jsf.define)
-  const customExtResult = generateFromExtensions(schema, ctx);
+  const extCtx: GenerateContext = {
+    ...ctx,
+    proceed: (subSchema, overrides) => walk(subSchema, { ...ctx, ...overrides }),
+  };
+  const customExtResult = await generateFromExtensions(schema, extCtx);
   if (customExtResult !== undefined) {
-    return applyOutputTransform(customExtResult, schema, ctx);
+    return applyOutputTransform(customExtResult, schema, extCtx);
   }
 
   // $ref resolution
