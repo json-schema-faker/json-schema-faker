@@ -115,9 +115,16 @@ define("uuid", function(_value, _schema, ctx) {
 
   return "fallback-id";
 });
+
+define("wrapped", async function(value, _schema, ctx) {
+  return {
+    value: await ctx.proceed(value),
+  };
+});
 ```
 
 For nested properties, `ctx.path` is the schema traversal path and `ctx.outputPath` is the final generated-output JSON pointer.
+Use `ctx.proceed(subschema, overrides?)` when an extension needs to recurse through the normal generator for a nested schema.
 
 ### Composition behavior
 

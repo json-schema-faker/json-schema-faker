@@ -402,6 +402,21 @@ export async function generateObject(
   return result;
 }
 
+function createPropertyContext(ctx: GenerateContext, key: string): GenerateContext {
+  const encodedKey = encodeJsonPointerSegment(key);
+  const outputPath = ctx.outputPath === "/" ? `/${encodedKey}` : `${ctx.outputPath}/${encodedKey}`;
+  const path = ctx.path === "/" ? `/${encodedKey}` : `${ctx.path}/${encodedKey}`;
+
+  return {
+    ...ctx,
+    path,
+    outputPath,
+  };
+}
+
+function encodeJsonPointerSegment(segment: string): string {
+  return segment.replace(/~/g, "~0").replace(/\//g, "~1");
+}
 
 /**
  * Resolve template properties in the generated object.

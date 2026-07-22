@@ -3,6 +3,7 @@
  * 
  * Supports:
  * - $.foo.bar - dot notation for property access
+ * - $["foo"] / $['foo'] - bracket-quoted property access
  * - $..foo - recursive descent
  * - [*] - array wildcard
  * - [n] - array index
@@ -12,20 +13,37 @@ export function evaluateJsonPath(path: string, data: unknown): unknown[] {
     throw new Error(`Invalid JSONPath: ${path} (must start with $)`);
   }
 
-  // Remove the leading $
-  const segments = path.slice(1).split(/\.|\[(\d+|\*)\]/).filter(Boolean);
+  const segments = parseJsonPath(path);
   
   let results: unknown[] = [data];
   
   for (const segment of segments) {
-    if (segment === "") continue;
-    
     const newResults: unknown[] = [];
+
+    // Recursive descent (..) — represented as empty segment.
+    // Collect all descendants of every current result, then include the
+    // current results themselves so the *next* segment also matches
+    // direct properties (e.g. $..name matches { name: "root", child: { name: "nested" } }).
+    if (segment === "") {
+      for (const item of results) {
+        collectDescendants(item, newResults);
+      }
+      newResults.push(...results);
+      results = newResults;
+      continue;
+    }
     
     for (const item of results) {
       if (item === null || item === undefined) continue;
       
-      if (segment === "*") {
+      // Quoted segments (prefixed "q:") are always property access,
+      // even when the unquoted value looks numeric (e.g. $["0"]).
+      if (segment.startsWith("q:")) {
+        const key = segment.slice(2);
+        if (typeof item === "object" && item !== null && key in item) {
+          newResults.push((item as Record<string, unknown>)[key]);
+        }
+      } else if (segment === "*") {
         // Array wildcard
         if (Array.isArray(item)) {
           newResults.push(...item);
@@ -36,10 +54,6 @@ export function evaluateJsonPath(path: string, data: unknown): unknown[] {
         if (Array.isArray(item) && index < item.length) {
           newResults.push(item[index]);
         }
-      } else if (segment === "") {
-        // Recursive descent operator (..)
-        // This is handled specially - we need to collect all nested values
-        collectDescendants(item, newResults);
       } else {
         // Property access
         if (typeof item === "object" && item !== null && segment in item) {
@@ -75,7 +89,7 @@ function collectDescendants(item: unknown, results: unknown[]): void {
 
 /**
  * Parse a JSONPath expression into segments
- * Handles: $.foo.bar, $..foo, $[*], $.foo[*].bar
+ * Handles: $.foo.bar, $..foo, $[*], $.foo[*].bar, $["foo"], $['foo']
  */
 export function parseJsonPath(path: string): string[] {
   if (!path.startsWith("$")) {
@@ -108,7 +122,11 @@ export function parseJsonPath(path: string): string[] {
       if (end === -1) break;
       
       const content = current.slice(1, end);
-      segments.push(content);
+      const unquoted = unquoteBracketSegment(content);
+      // Prefix quoted segments so evaluateJsonPath can distinguish
+      // a quoted numeric key like "0" from an array index 0.
+      const wasQuoted = (content[0] === '"' || content[0] === "'");
+      segments.push(wasQuoted ? `q:${unquoted}` : unquoted);
       current = current.slice(end + 1);
     } else {
       break;
@@ -116,4 +134,13 @@ export function parseJsonPath(path: string): string[] {
   }
   
   return segments;
+}
+
+function unquoteBracketSegment(segment: string): string {
+  const quote = segment[0];
+  if ((quote === "\"" || quote === "'") && segment[segment.length - 1] === quote) {
+    return segment.slice(1, -1).replace(/\\(["'\\])/g, "$1");
+  }
+
+  return segment;
 }

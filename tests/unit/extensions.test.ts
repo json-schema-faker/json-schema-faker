@@ -235,5 +235,46 @@ describe("extensions API", () => {
       expect(receivedPath).toBe("/properties/user/properties/name");
       expect(receivedOutputPath).toBe("/user/name");
     });
+
+    test("allows custom keywords to generate from a subschema through ctx.proceed", async () => {
+      const callback: ExtensionCallback = async function (value, _schema, ctx) {
+        return {
+          wrapped: await ctx.proceed!(value as JsonSchemaObject),
+        };
+      };
+      define("wrapGenerated", callback);
+
+      const result = await generate({
+        type: "object",
+        properties: {
+          payload: {
+            wrapGenerated: {
+              type: "object",
+              properties: {
+                name: { const: "generated-name" },
+              },
+              required: ["name"],
+            },
+          },
+        },
+        required: ["payload"],
+      }) as { payload: { wrapped: { name: string } } };
+
+      expect(result.payload.wrapped).toEqual({ name: "generated-name" });
+    });
+
+    test("awaits async custom keyword callbacks", async () => {
+      define("asyncValue", async function () {
+        await Promise.resolve();
+        return "async-result";
+      });
+
+      const result = await generate({
+        type: "string",
+        asyncValue: true,
+      });
+
+      expect(result).toBe("async-result");
+    });
   });
 });

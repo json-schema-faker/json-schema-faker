@@ -217,6 +217,8 @@ export interface GenerateContext {
   propAliases?: Record<string, string>;
   /** Transform generated output values using the final output-tree JSON pointer path */
   outputTransform?: (value: unknown, schema: JsonSchema, path: string) => unknown | Promise<unknown>;
+  /** Generate a value from a subschema using the current generation context */
+  proceed?: (schema: JsonSchema, overrides?: Partial<GenerateContext>) => Promise<unknown>;
 }
 
 export interface Random {

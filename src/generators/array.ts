@@ -140,7 +140,6 @@ export async function generateArray(
   // 1. items is explicitly defined (not undefined), OR
   // 2. prefixItems is NOT present (use items as fallback for non-tuple arrays)
   // 3. additionalItems is defined (not false) when prefixItems is present
-  const hasExplicitItems = schema.items !== undefined;
   const hasPrefixItems = schema.prefixItems !== undefined;
   const hasAdditionalItems = schema.additionalItems !== undefined;
   

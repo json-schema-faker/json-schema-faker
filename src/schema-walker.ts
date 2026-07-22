@@ -209,13 +209,45 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
     throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
   }
 
+  // Register this schema's own $defs into the shared ref registry,
+  // saving previous entries so we can restore them after walking.
+  // This gives each schema document local scoping: when two reused
+  // nested schemas define the same $defs name, each resolves its own
+  // $ref during its walk instead of colliding via first-wins.
+  let prevDefs: Array<[string, JsonSchema | undefined]> | null = null;
+  if (typeof schema === "object" && schema !== null && schema.$defs) {
+    prevDefs = [];
+    for (const [name, def] of Object.entries(schema.$defs)) {
+      const key = `#/$defs/${name}`;
+      prevDefs.push([key, ctx.refRegistry.has(key) ? ctx.refRegistry.get(key) : undefined]);
+      ctx.refRegistry.set(key, def);
+    }
+  }
+
+  try {
+    return await walkSchemaBody(schema as JsonSchemaObject, ctx);
+  } finally {
+    // Restore previous $defs entries so each schema document gets
+    // local scoping — root-registered $defs still take precedence.
+    if (prevDefs) {
+      for (const [key, prev] of prevDefs) {
+        if (prev === undefined) {
+          ctx.refRegistry.delete(key);
+        } else {
+          ctx.refRegistry.set(key, prev);
+        }
+      }
+    }
+  }
+}
+
+async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): Promise<unknown> {
   // Apply propAliases: remap custom schema keys to known ones before processing
-  if (ctx.propAliases && typeof schema === 'object' && schema !== null) {
-    const schemaObj = schema as JsonSchemaObject;
+  if (ctx.propAliases) {
     let patched: JsonSchemaObject | null = null;
     for (const [from, to] of Object.entries(ctx.propAliases)) {
-      if (from in schemaObj && !(to in schemaObj)) {
-        if (!patched) patched = { ...schemaObj };
+      if (from in schema && !(to in schema)) {
+        if (!patched) patched = { ...schema };
         patched[to] = patched[from];
         delete patched[from];
       }
@@ -258,9 +290,13 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
 
   // Custom keyword extensions (jsf.define)
-  const customExtResult = generateFromExtensions(schema, ctx);
+  const extCtx: GenerateContext = {
+    ...ctx,
+    proceed: (subSchema, overrides) => walk(subSchema, { ...ctx, ...overrides }),
+  };
+  const customExtResult = await generateFromExtensions(schema, extCtx);
   if (customExtResult !== undefined) {
-    return applyOutputTransform(customExtResult, schema, ctx);
+    return applyOutputTransform(customExtResult, schema, extCtx);
   }
 
   // $ref resolution
