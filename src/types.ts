@@ -123,6 +123,8 @@ export interface GenerateOptions {
   refDepth?: number;
   /** Use examples array values when generating */
   useExamplesValue?: boolean;
+  /** Apply optional-property filtering (optionalsProbability/alwaysFakeOptionals) to example/default values. Default: false */
+  filterExampleDefaults?: boolean;
   /** Remove specified properties from generated objects */
   pruneProperties?: string[];
   /** Handle invalid types by returning a default product instead of throwing */
@@ -197,6 +199,8 @@ export interface GenerateContext {
   refDepthMax?: number;
   /** Use examples array values when generating */
   useExamplesValue?: boolean;
+  /** Apply optional-property filtering (optionalsProbability/alwaysFakeOptionals) to example/default values. Default: false */
+  filterExampleDefaults?: boolean;
   /** Remove specified properties from generated objects */
   pruneProperties?: string[];
   /** Handle invalid types by returning a default product instead of throwing */

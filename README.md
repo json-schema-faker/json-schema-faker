@@ -174,6 +174,7 @@ await generate(schema, {
   // Value sources
   useDefaultValue: true,             // Use schema `default` values
   useExamplesValue: true,            // Use schema `examples` values
+  filterExampleDefaults: false,      // Apply optionalsProbability/alwaysFakeOptionals filtering to default/example values (default: false)
 
   // $ref recursion
   refDepthMin: 1,                    // Minimum $ref recursion depth

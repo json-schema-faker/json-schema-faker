@@ -159,11 +159,13 @@ export function filterExampleObject(
   const inferredRequired = getFilterableRequired(schema, inferredProperties);
   const required = new Set(inferredRequired);
 
-  // Include extra keys present in the example value (e.g. additionalProperties keys) so
-  // they are subject to the same optional filter rather than being silently dropped.
-  const allKnownKeys = new Set([...Object.keys(inferredProperties), ...Object.keys(value)]);
-  const optionalKeys = [...allKnownKeys].filter((key) => !required.has(key));
+  const declaredKeys = new Set(Object.keys(inferredProperties));
+  const optionalKeys = [...declaredKeys].filter((key) => !required.has(key));
   const shouldIncludeOptional = createOptionalPropertySelector(ctx, optionalKeys);
+
+  // Keys present in the value but not declared in the schema (e.g. additionalProperties
+  // passthrough data) are always kept — they aren't "optional properties" to filter.
+  const allKnownKeys = new Set([...declaredKeys, ...Object.keys(value)]);
 
   const childCtxPath = ctx.path === "/" ? "/properties" : `${ctx.path}/properties`;
   const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: childCtxPath };
@@ -177,10 +179,9 @@ export function filterExampleObject(
 
     const propCtx = createPropertyContext(childCtx, key);
     const propSchema = inferredProperties[key] ?? true;
+    const isDeclaredOptional = declaredKeys.has(key) && !required.has(key);
 
-    if (required.has(key)) {
-      result[key] = filterNestedValue(value[key], propSchema, propCtx);
-    } else if (shouldIncludeOptional(key)) {
+    if (!isDeclaredOptional || shouldIncludeOptional(key)) {
       result[key] = filterNestedValue(value[key], propSchema, propCtx);
     }
   }
@@ -193,7 +194,7 @@ export function filterExampleDefaultValue(
   schema: JsonSchemaObject,
   ctx: GenerateContext
 ): unknown {
-  if (!isPlainObject(value)) {
+  if (!ctx.filterExampleDefaults || !isPlainObject(value)) {
     return value;
   }
   return filterExampleObject(value, schema, ctx);
