@@ -354,6 +354,7 @@ export async function generateObject(
         }
         
         // Handle required properties from the matching branch (even without properties)
+        const generatedByRequired = new Set<string>();
         if (matchingBranch?.required) {
           for (const reqProp of matchingBranch.required) {
             // Skip the dependency property itself
@@ -362,6 +363,7 @@ export async function generateObject(
             // Skip if already generated
             if (result[reqProp] !== undefined) continue;
             
+            generatedByRequired.add(reqProp);
             const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? { type: "object" };
             const reqPropCtx = createPropertyContext(childCtx, reqProp);
             const value = await walk(reqPropSchema, reqPropCtx);
@@ -373,10 +375,11 @@ export async function generateObject(
         
         if (matchingBranch && matchingBranch.properties) {
           // Generate dependent properties from the matching branch
-          // Always regenerate (overwrite) because additionalProperties may have generated wrong values
           for (const [depPropName, depPropSchema] of Object.entries(matchingBranch.properties)) {
             // Skip the dependency property itself (foo)
             if (depPropName === propName) continue;
+            // Skip properties already generated from the required pass
+            if (generatedByRequired.has(depPropName)) continue;
             
             const depPropCtx = createPropertyContext(childCtx, depPropName);
             const value = await walk(depPropSchema as JsonSchema, depPropCtx);
