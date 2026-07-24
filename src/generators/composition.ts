@@ -1,6 +1,5 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
-import { walkGen } from "../schema-walker.js";
-import { type Gen } from "../coroutine.js";
+import { type Gen, walkCall } from "../coroutine.js";
 import { mergeSchemas } from "../merge.js";
 import { resolveRefGen } from "../ref-resolver.js";
 
@@ -33,7 +32,7 @@ export function* generateCompositionGen(
   if (allOf) {
     const resolvedRefs = yield* resolveAllOfRefsGen(allOf, ctx);
     const merged = mergeSchemas([base, ...resolvedRefs]);
-    return yield* walkGen(merged, ctx);
+    return yield walkCall(merged, ctx);
   }
 
   if (oneOf) {
@@ -72,7 +71,7 @@ export function* generateCompositionGen(
       };
 
       try {
-        return yield* walkGen(merged, oneOfCtx);
+        return yield walkCall(merged, oneOfCtx);
       } catch {
         // Try next branch
       }
@@ -99,7 +98,7 @@ export function* generateCompositionGen(
       optionalsProbability: 0,
       alwaysFakeOptionals: false,
     };
-    return yield* walkGen(merged, oneOfCtx);
+    return yield walkCall(merged, oneOfCtx);
   }
 
   if (anyOf) {
@@ -109,7 +108,7 @@ export function* generateCompositionGen(
     for (const branch of branches) {
       const merged = mergeSchemas([base, branch]);
       try {
-        return yield* walkGen(merged, ctx);
+        return yield walkCall(merged, ctx);
       } catch {
         // Try next branch
       }
@@ -117,7 +116,7 @@ export function* generateCompositionGen(
     // If all fail, try the first one anyway
     const picked = anyOf[0];
     const merged = mergeSchemas([base, picked]);
-    return yield* walkGen(merged, ctx);
+    return yield walkCall(merged, ctx);
   }
 
   if (ifSchema !== undefined) {
@@ -128,7 +127,7 @@ export function* generateCompositionGen(
     return yield* generateNotGen(base, not, ctx);
   }
 
-  return yield* walkGen(base, ctx);
+  return yield walkCall(base, ctx);
 }
 
 function* generateConditionalGen(
@@ -142,7 +141,7 @@ function* generateConditionalGen(
   if (thenSchema !== undefined) {
     const mergedIfThen = mergeSchemas([base, ifSchema, thenSchema]);
     try {
-      return yield* walkGen(mergedIfThen, ctx);
+      return yield walkCall(mergedIfThen, ctx);
     } catch {
       // If then branch fails, fall through to try else
     }
@@ -152,14 +151,14 @@ function* generateConditionalGen(
   if (elseSchema !== undefined) {
     const mergedElse = mergeSchemas([base, elseSchema]);
     try {
-      return yield* walkGen(mergedElse, ctx);
+      return yield walkCall(mergedElse, ctx);
     } catch {
       // If else also fails, fall through
     }
   }
 
   // Fallback: just try base schema
-  return yield* walkGen(base, ctx);
+  return yield walkCall(base, ctx);
 }
 
 function* generateNotGen(
@@ -173,7 +172,7 @@ function* generateNotGen(
       throw new Error(`Cannot generate value for 'not: true' at ${ctx.path}`);
     }
     // not false = everything is valid
-    return yield* walkGen(base, ctx);
+    return yield walkCall(base, ctx);
   }
 
   // Simple type avoidance
@@ -185,7 +184,7 @@ function* generateNotGen(
     if (allowed.length > 0) {
       const type = ctx.random.pick(allowed);
       const merged = mergeSchemas([base, { type }]);
-      return yield* walkGen(merged, ctx);
+      return yield walkCall(merged, ctx);
     }
   }
 
@@ -195,7 +194,7 @@ function* generateNotGen(
     const excluded = not.enum ?? [not.const];
     const excludedSet = new Set(excluded.map((v) => JSON.stringify(v)));
     for (let i = 0; i < 20; i++) {
-      const value = yield* walkGen(base, ctx);
+      const value = yield walkCall(base, ctx);
       if (!excludedSet.has(JSON.stringify(value))) {
         return value;
       }
@@ -203,5 +202,5 @@ function* generateNotGen(
   }
 
   // Fallback: generate from base
-  return yield* walkGen(base, ctx);
+  return yield walkCall(base, ctx);
 }

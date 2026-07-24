@@ -13,7 +13,7 @@ import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
 import { pad2 } from "./utils/helpers.js";
 import { filterExampleDefaultValue } from "./utils/optional-properties.js";
 import { generateFromExtensionsGen } from "./extensions.js";
-import { type Gen, isPromiseLike, runAsync, runSync } from "./coroutine.js";
+import { type Gen, isPromiseLike, runAsync, runSync, walkCall } from "./coroutine.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
@@ -310,7 +310,7 @@ function* walkSchemaBodyGen(schema: JsonSchemaObject, ctx: GenerateContext): Gen
   // $ref resolution
   if (schema.$ref) {
     const resolved = yield* resolveRefGen(schema, ctx);
-    return yield* walkGen(resolved.schema, childContext(resolved.ctx, "$ref"));
+    return yield walkCall(resolved.schema, childContext(resolved.ctx, "$ref"));
   }
 
   // Composition keywords
@@ -469,9 +469,9 @@ function handleDefaultInvalidTypeProduct(typeName: string): unknown {
 }
 
 export function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
-  return runAsync(walkGen(schema, ctx));
+  return runAsync(walkGen(schema, ctx), walkGen);
 }
 
 export function walkSync(schema: JsonSchema, ctx: GenerateContext): unknown {
-  return runSync(walkGen(schema, ctx));
+  return runSync(walkGen(schema, ctx), walkGen);
 }

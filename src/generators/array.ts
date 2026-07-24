@@ -1,6 +1,5 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
-import { walkGen } from "../schema-walker.js";
-import { type Gen } from "../coroutine.js";
+import { type Gen, walkCall } from "../coroutine.js";
 
 export function* generateArrayGen(
   schema: JsonSchemaObject,
@@ -71,7 +70,7 @@ export function* generateArrayGen(
 
   // Helper to add item with uniqueness check
   function* addItemGen(itemSchema: JsonSchema, itemCtx: GenerateContext): Gen<"added" | "omitted" | "failed"> {
-    let item = yield* walkGen(itemSchema, itemCtx);
+    let item = yield walkCall(itemSchema, itemCtx);
     if (item === undefined) {
       return "omitted";
     }
@@ -81,7 +80,7 @@ export function* generateArrayGen(
       if (seen.has(key)) {
         // Try to generate a unique item (limited attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
-          item = yield* walkGen(itemSchema, createItemContext(childCtx, result.length));
+          item = yield walkCall(itemSchema, createItemContext(childCtx, result.length));
           if (item === undefined) {
             continue;
           }
@@ -182,7 +181,7 @@ export function* generateArrayGen(
     const containsCount = ctx.random.int(minContains, maxContains);
 
     for (let i = 0; i < containsCount; i++) {
-      let item = yield* walkGen(schema.contains, createItemContext(childCtx, result.length));
+      let item = yield walkCall(schema.contains, createItemContext(childCtx, result.length));
       if (item === undefined) {
         continue;
       }
@@ -194,7 +193,7 @@ export function* generateArrayGen(
           // Try to generate unique item
           let uniqueFound = false;
           for (let attempts = 0; attempts < 50; attempts++) {
-            item = yield* walkGen(schema.contains, createItemContext(childCtx, result.length));
+            item = yield walkCall(schema.contains, createItemContext(childCtx, result.length));
             if (item === undefined) {
               continue;
             }
@@ -232,7 +231,7 @@ export function* generateArrayGen(
     const claimedPositions = new Set<number>();
 
     for (const containsSchema of schema.containsAll) {
-      let item = yield* walkGen(containsSchema, createItemContext(childCtx, result.length));
+      let item = yield walkCall(containsSchema, createItemContext(childCtx, result.length));
       if (item === undefined) {
         continue;
       }
@@ -242,7 +241,7 @@ export function* generateArrayGen(
         if (seen.has(key)) {
           let uniqueFound = false;
           for (let attempts = 0; attempts < 50; attempts++) {
-            item = yield* walkGen(containsSchema, createItemContext(childCtx, result.length));
+            item = yield walkCall(containsSchema, createItemContext(childCtx, result.length));
             if (item === undefined) {
               continue;
             }
@@ -317,7 +316,7 @@ function* fillUniqueItemsGen(
 
   while (arr.length < minItems && attempts < maxAttempts) {
     attempts++;
-    const item = yield* walkGen(itemSchema, createItemContext(ctx, arr.length));
+    const item = yield walkCall(itemSchema, createItemContext(ctx, arr.length));
     if (item === undefined) {
       continue;
     }
