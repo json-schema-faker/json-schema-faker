@@ -1,6 +1,14 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "./types.js";
 import { resolveFragment } from "./remote-resolver.js";
-import { type Gen } from "./coroutine.js";
+import { type Gen, isPromiseLike } from "./coroutine.js";
+
+function* callRefResolverGen(ref: string, ctx: GenerateContext): Gen<JsonSchema> {
+  const raw = ctx.refResolver!(ref);
+  if (ctx.__sync && isPromiseLike(raw)) {
+    throw new Error(`Cannot use async refResolver in generateSync(): resolving '${ref}' returned a Promise`);
+  }
+  return (yield raw) as JsonSchema;
+}
 
 export function buildRefRegistry(schema: JsonSchema): Map<string, JsonSchema> {
   const registry = new Map<string, JsonSchema>();
@@ -76,7 +84,7 @@ export function* resolveRefGen(
     }
     // If still not found, try refResolver (e.g. for OpenAPI-style #/components/schemas/... refs)
     if (resolved === undefined && ctx.refResolver) {
-      resolved = (yield ctx.refResolver(ref)) as JsonSchema;
+      resolved = yield* callRefResolverGen(ref, ctx);
       if (resolved !== undefined) {
         ctx.refRegistry.set(ref, resolved);
       }
@@ -89,7 +97,7 @@ export function* resolveRefGen(
 
     // If not in registry and we have a refResolver, try that
     if (resolved === undefined && ctx.refResolver) {
-      baseSchema = (yield ctx.refResolver(ref)) as JsonSchema;
+      baseSchema = yield* callRefResolverGen(ref, ctx);
 
       // Extract the fragment from the full schema if the ref has a fragment
       const hashIndex = ref.indexOf("#");

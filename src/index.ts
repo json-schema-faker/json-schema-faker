@@ -126,12 +126,9 @@ export function createGenerator(options?: GenerateOptions) {
 }
 
 export function generateSync(schema: JsonSchema, options?: GenerateSyncOptions): unknown {
-  if ((options as GenerateOptions | undefined)?.refResolver) {
-    throw new Error("generateSync() cannot use refResolver; pre-resolve remote refs before calling generateSync()");
-  }
-
   const { schema_, normalizedOptions, ctx } = buildContext(schema, options);
   ctx.__sync = true;
+  ctx.refResolver = normalizedOptions.refResolver;
 
   const result = walkSync(schema_, ctx);
 

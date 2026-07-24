@@ -150,9 +150,7 @@ export interface GenerateOptions {
   };
 }
 
-export interface GenerateSyncOptions extends Omit<GenerateOptions, "refResolver"> {
-  refResolver?: never;
-}
+export type GenerateSyncOptions = GenerateOptions;
 
 export interface GenerateContext {
   random: Random;

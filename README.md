@@ -78,8 +78,8 @@ const value = generateSync({ type: "string", format: "email" });
 
 Sync mode only supports schemas that are fully resolvable without I/O:
 
-- No `refResolver` option — pre-resolve any remote `$ref`s before calling `generateSync()`. A remote `$ref` that isn't already registered throws.
-- Custom extensions (`define()`) and `outputTransform` must be synchronous — an async callback throws `Cannot use async extension '<name>' in generateSync()` / `Cannot use async outputTransform in generateSync()` instead of silently returning a `Promise`.
+- A remote `$ref` that isn't already registered and has no `refResolver` throws.
+- `refResolver`, custom extensions (`define()`), and `outputTransform` must be synchronous — if one returns a `Promise`, `generateSync()` throws immediately (`Cannot use async refResolver in generateSync()` / `Cannot use async extension '<name>' in generateSync()` / `Cannot use async outputTransform in generateSync()`) instead of silently returning a `Promise`. A `refResolver` that returns plain values (e.g. reading from an in-memory map) works fine in sync mode.
 
 All other options behave the same as `generate()`.
 

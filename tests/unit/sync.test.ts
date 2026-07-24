@@ -47,11 +47,20 @@ describe("generateSync", () => {
     );
   });
 
-  test("throws when refResolver is provided", () => {
+  test("resolves refs synchronously via a sync refResolver", () => {
+    const result = generateSync(
+      { $ref: "external" },
+      { refResolver: () => ({ type: "string", const: "resolved" }) }
+    );
+
+    expect(result).toBe("resolved");
+  });
+
+  test("throws when refResolver returns a Promise", () => {
     expect(() => generateSync(
       { $ref: "external" },
-      { refResolver: () => ({ type: "string" }) } as never
-    )).toThrow("generateSync() cannot use refResolver");
+      { refResolver: () => Promise.resolve({ type: "string" }) }
+    )).toThrow("Cannot use async refResolver in generateSync()");
   });
 
   test("throws for async extensions", () => {
