@@ -1,13 +1,13 @@
-import type { JsonSchema, JsonSchemaObject, GenerateOptions, GenerateContext, Random, RefResolver } from "./types.js";
+import type { JsonSchema, JsonSchemaObject, GenerateOptions, GenerateSyncOptions, GenerateContext, Random, RefResolver } from "./types.js";
 import { createRandom } from "./random.js";
-import { walk } from "./schema-walker.js";
+import { walk, walkSync } from "./schema-walker.js";
 import { buildRefRegistry, registerRootSchema } from "./ref-resolver.js";
 import { createFormatRegistry, registerFormatGlobal } from "./formats/index.js";
 import { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
 import { resolveJsonPathsInValue } from "./generators/jsonpath-resolver.js";
 import { registerExtension, resetExtension, type ExtensionCallback } from "./extensions.js";
 
-export type { JsonSchema, GenerateOptions, Random, RefResolver } from "./types.js";
+export type { JsonSchema, GenerateOptions, GenerateSyncOptions, Random, RefResolver } from "./types.js";
 export { createRemoteResolver, type RemoteResolverOptions } from "./remote-resolver.js";
 export type { ExtensionCallback } from "./extensions.js";
 
@@ -20,7 +20,18 @@ const SUPPORTED_SCHEMA_VERSIONS = new Set([
   "https://json-schema.org/draft/2019-09/schema"
 ]);
 
-export async function generate(schema: JsonSchema, options?: GenerateOptions): Promise<unknown> {
+interface BuiltContext {
+  schema_: JsonSchema;
+  normalizedOptions: GenerateOptions;
+  ctx: GenerateContext;
+}
+
+/**
+ * Validate options and construct the schema-to-generate plus the GenerateContext.
+ * Shared by generate() and generateSync() — each sets its own delta fields afterward
+ * (refResolver for the async path, __sync for the sync path).
+ */
+function buildContext(schema: JsonSchema, options?: GenerateOptions): BuiltContext {
   // Validate $schema if present (opt-in via validateSchemaVersion option, defaults to false)
   // Skip when propAliases is set — the user is explicitly opting into compat mode for older drafts
   if (options?.validateSchemaVersion === true && !options?.propAliases) {
@@ -58,7 +69,6 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     refRegistry,
     refStack: new Set(),
     formatRegistry,
-    refResolver: normalizedOptions.refResolver,
     minItems: normalizedOptions.minItems,
     maxItems: normalizedOptions.maxItems,
     minLength: normalizedOptions.minLength,
@@ -86,6 +96,13 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     outputTransform: normalizedOptions.outputTransform,
   };
 
+  return { schema_, normalizedOptions, ctx };
+}
+
+export async function generate(schema: JsonSchema, options?: GenerateOptions): Promise<unknown> {
+  const { schema_, normalizedOptions, ctx } = buildContext(schema, options);
+  ctx.refResolver = normalizedOptions.refResolver;
+
   const result = await walk(schema_, ctx);
 
   // Post-process to resolve jsonPath references if enabled
@@ -104,6 +121,35 @@ export function createGenerator(options?: GenerateOptions) {
     generate(schema: JsonSchema): Promise<unknown> {
       const seed = (baseOptions.seed ?? 1) + callCount++;
       return generate(schema, { ...baseOptions, seed });
+    },
+  };
+}
+
+export function generateSync(schema: JsonSchema, options?: GenerateSyncOptions): unknown {
+  if ((options as GenerateOptions | undefined)?.refResolver) {
+    throw new Error("generateSync() cannot use refResolver; pre-resolve remote refs before calling generateSync()");
+  }
+
+  const { schema_, normalizedOptions, ctx } = buildContext(schema, options);
+  ctx.__sync = true;
+
+  const result = walkSync(schema_, ctx);
+
+  if (normalizedOptions.resolveJsonPath) {
+    return resolveJsonPathsInValue(result, schema, ctx, result);
+  }
+
+  return result;
+}
+
+export function createGeneratorSync(options?: GenerateSyncOptions) {
+  const baseOptions = { ...options };
+  let callCount = 0;
+
+  return {
+    generate(schema: JsonSchema): unknown {
+      const seed = (baseOptions.seed ?? 1) + callCount++;
+      return generateSync(schema, { ...baseOptions, seed });
     },
   };
 }
@@ -236,8 +282,11 @@ function composeOutputTransforms(
     return base;
   }
 
-  return async (value, schema, path) => {
-    const transformed = await base(value, schema, path);
+  return (value, schema, path) => {
+    const transformed = base(value, schema, path);
+    if (transformed && typeof transformed === "object" && "then" in transformed && typeof transformed.then === "function") {
+      return transformed.then((resolved: unknown) => next(resolved, schema, path));
+    }
     return next(transformed, schema, path);
   };
 }

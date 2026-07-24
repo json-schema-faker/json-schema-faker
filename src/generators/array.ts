@@ -1,10 +1,11 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
-import { walk } from "../schema-walker.js";
+import { walkGen } from "../schema-walker.js";
+import { type Gen } from "../coroutine.js";
 
-export async function generateArray(
+export function* generateArrayGen(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): Promise<unknown[]> {
+): Gen<unknown[]> {
   if (ctx.depth >= ctx.maxDepth) {
     const needed = schema.minItems ?? 0;
     return needed > 0 ? Array.from({ length: needed }, () => null) : [];
@@ -69,8 +70,8 @@ export async function generateArray(
   const seen = schema.uniqueItems ? new Set<string>() : null;
 
   // Helper to add item with uniqueness check
-  const addItem = async (itemSchema: JsonSchema, itemCtx: GenerateContext): Promise<"added" | "omitted" | "failed"> => {
-    let item = await walk(itemSchema, itemCtx);
+  function* addItemGen(itemSchema: JsonSchema, itemCtx: GenerateContext): Gen<"added" | "omitted" | "failed"> {
+    let item = yield* walkGen(itemSchema, itemCtx);
     if (item === undefined) {
       return "omitted";
     }
@@ -80,7 +81,7 @@ export async function generateArray(
       if (seen.has(key)) {
         // Try to generate a unique item (limited attempts)
         for (let attempts = 0; attempts < 50; attempts++) {
-          item = await walk(itemSchema, createItemContext(childCtx, result.length));
+          item = yield* walkGen(itemSchema, createItemContext(childCtx, result.length));
           if (item === undefined) {
             continue;
           }
@@ -98,13 +99,13 @@ export async function generateArray(
 
     result.push(item);
     return "added";
-  };
+  }
 
   // Handle prefixItems (Draft 2020-12 tuple syntax)
   if (schema.prefixItems) {
     for (let i = 0; i < schema.prefixItems.length && result.length < maxItems; i++) {
       const itemCtx = createItemContext(childCtx, i);
-      const status = await addItem(schema.prefixItems[i], itemCtx);
+      const status = yield* addItemGen(schema.prefixItems[i], itemCtx);
       if (status === "failed") break;
     }
   }
@@ -164,7 +165,7 @@ export async function generateArray(
     let attempts = 0;
     const maxAttempts = Math.max(targetLen * 20, 50);
     while (result.length < targetLen) {
-      const status = await addItem(itemSchema, createItemContext(childCtx, result.length));
+      const status = yield* addItemGen(itemSchema, createItemContext(childCtx, result.length));
       if (status === "added") {
         attempts = 0;
         continue;
@@ -181,7 +182,7 @@ export async function generateArray(
     const containsCount = ctx.random.int(minContains, maxContains);
 
     for (let i = 0; i < containsCount; i++) {
-      let item = await walk(schema.contains, createItemContext(childCtx, result.length));
+      let item = yield* walkGen(schema.contains, createItemContext(childCtx, result.length));
       if (item === undefined) {
         continue;
       }
@@ -193,7 +194,7 @@ export async function generateArray(
           // Try to generate unique item
           let uniqueFound = false;
           for (let attempts = 0; attempts < 50; attempts++) {
-            item = await walk(schema.contains, createItemContext(childCtx, result.length));
+            item = yield* walkGen(schema.contains, createItemContext(childCtx, result.length));
             if (item === undefined) {
               continue;
             }
@@ -231,7 +232,7 @@ export async function generateArray(
     const claimedPositions = new Set<number>();
 
     for (const containsSchema of schema.containsAll) {
-      let item = await walk(containsSchema, createItemContext(childCtx, result.length));
+      let item = yield* walkGen(containsSchema, createItemContext(childCtx, result.length));
       if (item === undefined) {
         continue;
       }
@@ -241,7 +242,7 @@ export async function generateArray(
         if (seen.has(key)) {
           let uniqueFound = false;
           for (let attempts = 0; attempts < 50; attempts++) {
-            item = await walk(containsSchema, createItemContext(childCtx, result.length));
+            item = yield* walkGen(containsSchema, createItemContext(childCtx, result.length));
             if (item === undefined) {
               continue;
             }
@@ -294,20 +295,20 @@ export async function generateArray(
 
   // Handle uniqueItems - fill up to minItems if needed
   if (schema.uniqueItems && result.length > 0) {
-    return fillUniqueItems(result, schema, childCtx, minItems, maxItems, seen!);
+    return yield* fillUniqueItemsGen(result, schema, childCtx, minItems, maxItems, seen!);
   }
 
   return result;
 }
 
-async function fillUniqueItems(
+function* fillUniqueItemsGen(
   arr: unknown[],
   schema: JsonSchemaObject,
   ctx: GenerateContext,
   minItems: number,
   maxItems: number,
   seen: Set<string>
-): Promise<unknown[]> {
+): Gen<unknown[]> {
   const itemSchema: JsonSchema = schema.items ?? {};
 
   // Try to fill up to minItems with unique values
@@ -316,7 +317,7 @@ async function fillUniqueItems(
 
   while (arr.length < minItems && attempts < maxAttempts) {
     attempts++;
-    const item = await walk(itemSchema, createItemContext(ctx, arr.length));
+    const item = yield* walkGen(itemSchema, createItemContext(ctx, arr.length));
     if (item === undefined) {
       continue;
     }

@@ -52,12 +52,12 @@ function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSch
  * @param ctx - The generation context
  * @param rootValue - The root generated object (used for jsonPath resolution)
  */
-export async function resolveJsonPathsInValue(
+export function resolveJsonPathsInValue(
   value: unknown,
   schema: JsonSchema,
   ctx: GenerateContext,
   rootValue?: unknown
-): Promise<unknown> {
+): unknown {
   // If jsonPath resolution is not enabled, return as-is
   if (!ctx.resolveJsonPath) {
     return value;
@@ -113,13 +113,7 @@ export async function resolveJsonPathsInValue(
           }
         } else {
           // Recursively process nested objects, passing the root
-          const resolved = await resolveJsonPathsInValue(
-            propValue,
-            propSchema,
-            ctx,
-            root
-          );
-          result[key] = resolved;
+          result[key] = resolveJsonPathsInValue(propValue, propSchema, ctx, root);
         }
       }
     }
@@ -129,12 +123,7 @@ export async function resolveJsonPathsInValue(
 
   // Handle arrays
   if (Array.isArray(value) && objSchema.items) {
-    const results: unknown[] = [];
-    for (const item of value) {
-      const resolved = await resolveJsonPathsInValue(item, objSchema.items, ctx, root);
-      results.push(resolved);
-    }
-    return results;
+    return value.map((item) => resolveJsonPathsInValue(item, objSchema.items!, ctx, root));
   }
 
   return value;

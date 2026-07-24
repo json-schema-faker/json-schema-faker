@@ -1,5 +1,6 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "./types.js";
 import { resolveFragment } from "./remote-resolver.js";
+import { type Gen } from "./coroutine.js";
 
 export function buildRefRegistry(schema: JsonSchema): Map<string, JsonSchema> {
   const registry = new Map<string, JsonSchema>();
@@ -29,10 +30,10 @@ export interface ResolvedRef {
   ctx: GenerateContext;
 }
 
-export async function resolveRef(
+export function* resolveRefGen(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): Promise<ResolvedRef> {
+): Gen<ResolvedRef> {
   const ref = schema.$ref;
   if (!ref) return { schema, ctx };
 
@@ -75,7 +76,7 @@ export async function resolveRef(
     }
     // If still not found, try refResolver (e.g. for OpenAPI-style #/components/schemas/... refs)
     if (resolved === undefined && ctx.refResolver) {
-      resolved = await ctx.refResolver(ref);
+      resolved = (yield ctx.refResolver(ref)) as JsonSchema;
       if (resolved !== undefined) {
         ctx.refRegistry.set(ref, resolved);
       }
@@ -88,7 +89,7 @@ export async function resolveRef(
 
     // If not in registry and we have a refResolver, try that
     if (resolved === undefined && ctx.refResolver) {
-      baseSchema = await ctx.refResolver(ref);
+      baseSchema = (yield ctx.refResolver(ref)) as JsonSchema;
 
       // Extract the fragment from the full schema if the ref has a fragment
       const hashIndex = ref.indexOf("#");
@@ -112,6 +113,10 @@ export async function resolveRef(
           }
         }
       }
+    } else if (resolved === undefined && ctx.__sync) {
+      // Sync mode can't fetch remote refs — give a precise, actionable error
+      // instead of falling through to the generic "Unresolved $ref" below.
+      throw new Error(`Remote $ref '${ref}' cannot be resolved in generateSync(); pre-resolve refs or use generate()`);
     }
   }
 
