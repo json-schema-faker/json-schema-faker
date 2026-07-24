@@ -200,6 +200,9 @@ function* applyOutputTransformGen(value: unknown, schema: JsonSchema, ctx: Gener
   }
   const raw = ctx.outputTransform(value, schema, ctx.outputPath);
   if (ctx.__sync && isPromiseLike(raw)) {
+    // Swallow the rejection so it doesn't surface as an unhandled promise
+    // rejection after we throw synchronously below.
+    Promise.resolve(raw).catch(() => {});
     throw new Error("Cannot use async outputTransform in generateSync()");
   }
   return yield raw;

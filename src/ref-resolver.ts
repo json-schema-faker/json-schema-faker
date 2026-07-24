@@ -5,6 +5,9 @@ import { type Gen, isPromiseLike } from "./coroutine.js";
 function* callRefResolverGen(ref: string, ctx: GenerateContext): Gen<JsonSchema> {
   const raw = ctx.refResolver!(ref);
   if (ctx.__sync && isPromiseLike(raw)) {
+    // Swallow the rejection so it doesn't surface as an unhandled promise
+    // rejection after we throw synchronously below.
+    Promise.resolve(raw).catch(() => {});
     throw new Error(`Cannot use async refResolver in generateSync(): resolving '${ref}' returned a Promise`);
   }
   return (yield raw) as JsonSchema;

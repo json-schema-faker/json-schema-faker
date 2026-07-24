@@ -63,6 +63,9 @@ class ExtensionRegistry {
         const raw = entry.callback.call(entry.context, value, schema, ctx);
 
         if (ctx.__sync && isPromiseLike(raw)) {
+          // Swallow the rejection so it doesn't surface as an unhandled promise
+          // rejection after we throw synchronously below.
+          Promise.resolve(raw).catch(() => {});
           throw new Error(`Cannot use async extension '${extName}' in generateSync()`);
         }
 
