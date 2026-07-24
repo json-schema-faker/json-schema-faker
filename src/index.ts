@@ -76,6 +76,7 @@ export async function generate(schema: JsonSchema, options?: GenerateOptions): P
     refDepthMin,
     refDepthMax,
     useExamplesValue: normalizedOptions.useExamplesValue,
+    filterExampleDefaults: normalizedOptions.filterExampleDefaults ?? false,
     pruneProperties: normalizedOptions.pruneProperties,
     failOnInvalidTypes: normalizedOptions.failOnInvalidTypes,
     defaultInvalidTypeProduct: normalizedOptions.defaultInvalidTypeProduct,

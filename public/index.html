@@ -1154,6 +1154,24 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
                                                 </div>
                                             </div>
                                         </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-teal-400">filterExampleDefaults</h3>
+                                                    <span class="option-type">boolean</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Apply <code class="code-inline">optionalsProbability</code>/<code class="code-inline">alwaysFakeOptionals</code> filtering to <code class="code-inline">default</code>/<code class="code-inline">examples</code> values too, instead of always including them. <code class="code-inline">Default: false</code></p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> result = <span class="text-purple-400">await</span> generate(schema, {
+    <span class="text-blue-300">useDefaultValue</span>: <span class="text-yellow-300">true</span>,
+    <span class="text-blue-300">filterExampleDefaults</span>: <span class="text-yellow-300">true</span>,
+    <span class="text-blue-300">optionalsProbability</span>: <span class="text-yellow-300">0</span>
+});
+<span class="text-gray-500">// optional properties with defaults are now omitted too</span></code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </section>
 

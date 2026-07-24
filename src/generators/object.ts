@@ -1,7 +1,12 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
 import { walk } from "../schema-walker.js";
 import { mergeSchemas } from "../merge.js";
-import { SCHEMA_KEYWORDS, isJsonSchema } from "../utils/schema-keywords.js";
+import {
+  createOptionalPropertySelector,
+  createPropertyContext,
+  getInferredProperties,
+  getInferredRequired,
+} from "../utils/optional-properties.js";
 
 /**
  * Check if a generated value matches a constraint schema (enum, const)
@@ -38,64 +43,6 @@ function isImpossibleSchema(schema: JsonSchema): boolean {
     return true;
   }
   return false;
-}
-
-/**
- * Get inferred properties from a schema object.
- * If the schema has explicit 'properties', use those.
- * Otherwise, treat non-keyword child objects as properties.
- */
-function getInferredProperties(schema: JsonSchemaObject): Record<string, JsonSchema> {
-  // If schema has explicit properties, use those
-  if (schema.properties) {
-    return schema.properties;
-  }
-  
-  // If schema has type:object but no properties, check for inferred properties
-  if (schema.type === 'object' || schema.type === undefined) {
-    const inferred: Record<string, JsonSchema> = {};
-    let hasInferredProperties = false;
-    
-    for (const [key, value] of Object.entries(schema)) {
-      // Skip schema keywords
-      if (SCHEMA_KEYWORDS.has(key)) {
-        continue;
-      }
-      
-      // If it looks like a schema, use it as-is
-      if (isJsonSchema(value)) {
-        inferred[key] = value as JsonSchema;
-        hasInferredProperties = true;
-      } else {
-        // Treat as a const/literal value - wrap in a const schema
-        inferred[key] = { const: value };
-        hasInferredProperties = true;
-      }
-    }
-    
-    if (hasInferredProperties) {
-      return inferred;
-    }
-  }
-  
-  return {};
-}
-
-/**
- * Get required properties from a schema object.
- * If no explicit 'required' and we have inferred properties, all are required.
- */
-function getInferredRequired(schema: JsonSchemaObject, inferredProperties: Record<string, JsonSchema>): string[] {
-  if (schema.required) {
-    return schema.required;
-  }
-  
-  // If we have inferred properties and no explicit type/properties, require all
-  if (schema.properties === undefined && Object.keys(inferredProperties).length > 0) {
-    return Object.keys(inferredProperties);
-  }
-  
-  return [];
 }
 
 export async function generateObject(
@@ -165,28 +112,9 @@ export async function generateObject(
   const definedKeys = new Set<string>();
 
   const required = new Set(inferredRequired);
-  const alwaysFakeOptionals = ctx.alwaysFakeOptionals ?? false;
   const fillProperties = ctx.fillProperties ?? true;
-  const useFixedProbabilities = ctx.fixedProbabilities ?? false;
-  const optionalsProbability = ctx.optionalsProbability ?? 0.5;
-
-  // Get optional property keys
-  const optionalKeys = Object.keys(inferredProperties).filter(key => !required.has(key));
-  
-  // When using fixed probabilities, deterministically calculate how many properties to include
-  let propertiesToInclude: Set<string> | undefined;
-  if (useFixedProbabilities && !alwaysFakeOptionals && optionalKeys.length > 0) {
-    const targetCount = Math.round(optionalKeys.length * optionalsProbability);
-    // Deterministically select the first N properties based on the sorted keys
-    propertiesToInclude = new Set(optionalKeys.slice(0, targetCount));
-  }
-
-  // Determine if we should generate optional properties
-  const shouldGenerateOptional = (key: string) => {
-    if (alwaysFakeOptionals) return true;
-    if (propertiesToInclude) return propertiesToInclude.has(key);
-    return ctx.random.bool(optionalsProbability);
-  };
+  const optionalKeys = Object.keys(inferredProperties).filter((key) => !required.has(key));
+  const shouldGenerateOptional = createOptionalPropertySelector(ctx, optionalKeys);
 
   // Generate required properties first
   if (Object.keys(inferredProperties).length > 0) {
@@ -475,22 +403,6 @@ export async function generateObject(
   resolveTemplates(result, inferredProperties);
 
   return result;
-}
-
-function createPropertyContext(ctx: GenerateContext, key: string): GenerateContext {
-  const encodedKey = encodeJsonPointerSegment(key);
-  const outputPath = ctx.outputPath === "/" ? `/${encodedKey}` : `${ctx.outputPath}/${encodedKey}`;
-  const path = ctx.path === "/" ? `/${encodedKey}` : `${ctx.path}/${encodedKey}`;
-
-  return {
-    ...ctx,
-    path,
-    outputPath,
-  };
-}
-
-function encodeJsonPointerSegment(segment: string): string {
-  return segment.replace(/~/g, "~0").replace(/\//g, "~1");
 }
 
 /**

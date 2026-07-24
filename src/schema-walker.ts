@@ -11,6 +11,7 @@ import { generateComposition } from "./generators/composition.js";
 import { resolveRef } from "./ref-resolver.js";
 import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
 import { pad2 } from "./utils/helpers.js";
+import { filterExampleDefaultValue } from "./utils/optional-properties.js";
 import { generateFromExtensions } from "./extensions.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
@@ -316,7 +317,7 @@ async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): P
 
   // default value (when useDefaultValue option is enabled)
   if (ctx.useDefaultValue && schema.default !== undefined) {
-    return applyOutputTransform(schema.default, schema, ctx);
+    return applyOutputTransform(filterExampleDefaultValue(schema.default, schema, ctx), schema, ctx);
   }
 
   // enum
@@ -327,10 +328,11 @@ async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): P
   // examples value (when useExamplesValue option is enabled)
   if (ctx.useExamplesValue) {
     if (Array.isArray(schema.examples) && schema.examples.length > 0) {
-      return applyOutputTransform(ctx.random.pick(schema.examples), schema, ctx);
+      const picked = ctx.random.pick(schema.examples);
+      return applyOutputTransform(filterExampleDefaultValue(picked, schema, ctx), schema, ctx);
     }
     if (schema.example !== undefined) {
-      return applyOutputTransform(schema.example, schema, ctx);
+      return applyOutputTransform(filterExampleDefaultValue(schema.example, schema, ctx), schema, ctx);
     }
   }
 
