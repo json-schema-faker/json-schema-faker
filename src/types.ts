@@ -150,6 +150,8 @@ export interface GenerateOptions {
   };
 }
 
+export type GenerateSyncOptions = GenerateOptions;
+
 export interface GenerateContext {
   random: Random;
   maxDepth: number;
@@ -218,7 +220,9 @@ export interface GenerateContext {
   /** Transform generated output values using the final output-tree JSON pointer path */
   outputTransform?: (value: unknown, schema: JsonSchema, path: string) => unknown | Promise<unknown>;
   /** Generate a value from a subschema using the current generation context */
-  proceed?: (schema: JsonSchema, overrides?: Partial<GenerateContext>) => Promise<unknown>;
+  proceed?: (schema: JsonSchema, overrides?: Partial<GenerateContext>) => unknown | Promise<unknown>;
+  /** @internal set by generateSync()'s driver only; used to produce precise sync-only error messages */
+  __sync?: boolean;
 }
 
 export interface Random {

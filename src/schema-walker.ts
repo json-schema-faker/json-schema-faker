@@ -5,14 +5,15 @@ import { generateNumber } from "./generators/number.js";
 import { generateInteger } from "./generators/integer.js";
 import { generateString } from "./generators/string.js";
 import { generateEnumConst } from "./generators/enum-const.js";
-import { generateObject } from "./generators/object.js";
-import { generateArray } from "./generators/array.js";
-import { generateComposition } from "./generators/composition.js";
-import { resolveRef } from "./ref-resolver.js";
+import { generateObjectGen } from "./generators/object.js";
+import { generateArrayGen } from "./generators/array.js";
+import { generateCompositionGen } from "./generators/composition.js";
+import { resolveRefGen } from "./ref-resolver.js";
 import { SCHEMA_KEYWORDS } from "./utils/schema-keywords.js";
 import { pad2 } from "./utils/helpers.js";
 import { filterExampleDefaultValue } from "./utils/optional-properties.js";
-import { generateFromExtensions } from "./extensions.js";
+import { generateFromExtensionsGen } from "./extensions.js";
+import { type Gen, isPromiseLike, runAsync, runSync, walkCall } from "./coroutine.js";
 
 const ALL_TYPES = ["string", "number", "integer", "boolean", "null", "object", "array"] as const;
 
@@ -193,17 +194,24 @@ function childContext(ctx: GenerateContext, segment: string): GenerateContext {
   };
 }
 
-async function applyOutputTransform(value: unknown, schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
+function* applyOutputTransformGen(value: unknown, schema: JsonSchema, ctx: GenerateContext): Gen<unknown> {
   if (!ctx.outputTransform) {
     return value;
   }
-  return ctx.outputTransform(value, schema, ctx.outputPath);
+  const raw = ctx.outputTransform(value, schema, ctx.outputPath);
+  if (ctx.__sync && isPromiseLike(raw)) {
+    // Swallow the rejection so it doesn't surface as an unhandled promise
+    // rejection after we throw synchronously below.
+    Promise.resolve(raw).catch(() => {});
+    throw new Error("Cannot use async outputTransform in generateSync()");
+  }
+  return yield raw;
 }
 
-export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
+export function* walkGen(schema: JsonSchema, ctx: GenerateContext): Gen<unknown> {
   // Boolean schemas
   if (schema === true) {
-    return walk({}, ctx);
+    return yield* walkGen({}, ctx);
   }
   if (schema === false) {
     throw new Error(`Cannot generate value for 'false' schema at ${ctx.path}`);
@@ -225,7 +233,7 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
 
   try {
-    return await walkSchemaBody(schema as JsonSchemaObject, ctx);
+    return yield* walkSchemaBodyGen(schema as JsonSchemaObject, ctx);
   } finally {
     // Restore previous $defs entries so each schema document gets
     // local scoping — root-registered $defs still take precedence.
@@ -241,7 +249,7 @@ export async function walk(schema: JsonSchema, ctx: GenerateContext): Promise<un
   }
 }
 
-async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): Promise<unknown> {
+function* walkSchemaBodyGen(schema: JsonSchemaObject, ctx: GenerateContext): Gen<unknown> {
   // Apply propAliases: remap custom schema keys to known ones before processing
   if (ctx.propAliases) {
     let patched: JsonSchemaObject | null = null;
@@ -274,65 +282,65 @@ async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): P
     if (extResult !== undefined) {
       // Apply string truncation if result is a string and maxLength is set
       if (typeof extResult === "string" && extCtx.maxLength !== undefined && extResult.length > extCtx.maxLength) {
-        return applyOutputTransform(extResult.slice(0, extCtx.maxLength), schema, extCtx);
+        return yield* applyOutputTransformGen(extResult.slice(0, extCtx.maxLength), schema, extCtx);
       }
-      return applyOutputTransform(extResult, schema, extCtx);
+      return yield* applyOutputTransformGen(extResult, schema, extCtx);
     }
   } else {
     const extResult = generateFromExtension(schema, ctx, resolvedType);
     if (extResult !== undefined) {
       // Apply string truncation if result is a string and maxLength is set
       if (typeof extResult === "string" && ctx.maxLength !== undefined && extResult.length > ctx.maxLength) {
-        return applyOutputTransform(extResult.slice(0, ctx.maxLength), schema, ctx);
+        return yield* applyOutputTransformGen(extResult.slice(0, ctx.maxLength), schema, ctx);
       }
-      return applyOutputTransform(extResult, schema, ctx);
+      return yield* applyOutputTransformGen(extResult, schema, ctx);
     }
   }
 
   // Custom keyword extensions (jsf.define)
   const extCtx: GenerateContext = {
     ...ctx,
-    proceed: (subSchema, overrides) => walk(subSchema, { ...ctx, ...overrides }),
+    proceed: (subSchema, overrides) => (ctx.__sync ? walkSync : walk)(subSchema, { ...ctx, ...overrides }),
   };
-  const customExtResult = await generateFromExtensions(schema, extCtx);
+  const customExtResult = yield* generateFromExtensionsGen(schema, extCtx);
   if (customExtResult !== undefined) {
-    return applyOutputTransform(customExtResult, schema, extCtx);
+    return yield* applyOutputTransformGen(customExtResult, schema, extCtx);
   }
 
   // $ref resolution
   if (schema.$ref) {
-    const resolved = await resolveRef(schema, ctx);
-    return walk(resolved.schema, childContext(resolved.ctx, "$ref"));
+    const resolved = yield* resolveRefGen(schema, ctx);
+    return yield walkCall(resolved.schema, childContext(resolved.ctx, "$ref"));
   }
 
   // Composition keywords
   if (schema.allOf || schema.anyOf || schema.oneOf || schema.not || schema.if) {
-    return generateComposition(schema, ctx);
+    return yield* generateCompositionGen(schema, ctx);
   }
 
   // const
   if (schema.const !== undefined) {
-    return applyOutputTransform(generateEnumConst(schema, ctx), schema, ctx);
+    return yield* applyOutputTransformGen(generateEnumConst(schema, ctx), schema, ctx);
   }
 
   // default value (when useDefaultValue option is enabled)
   if (ctx.useDefaultValue && schema.default !== undefined) {
-    return applyOutputTransform(filterExampleDefaultValue(schema.default, schema, ctx), schema, ctx);
+    return yield* applyOutputTransformGen(filterExampleDefaultValue(schema.default, schema, ctx), schema, ctx);
   }
 
   // enum
   if (schema.enum !== undefined) {
-    return applyOutputTransform(generateEnumConst(schema, ctx), schema, ctx);
+    return yield* applyOutputTransformGen(generateEnumConst(schema, ctx), schema, ctx);
   }
 
   // examples value (when useExamplesValue option is enabled)
   if (ctx.useExamplesValue) {
     if (Array.isArray(schema.examples) && schema.examples.length > 0) {
       const picked = ctx.random.pick(schema.examples);
-      return applyOutputTransform(filterExampleDefaultValue(picked, schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(filterExampleDefaultValue(picked, schema, ctx), schema, ctx);
     }
     if (schema.example !== undefined) {
-      return applyOutputTransform(filterExampleDefaultValue(schema.example, schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(filterExampleDefaultValue(schema.example, schema, ctx), schema, ctx);
     }
   }
 
@@ -345,7 +353,7 @@ async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): P
       if (ctx.defaultInvalidTypeProduct !== undefined) {
         const defaultProduct = ctx.defaultInvalidTypeProduct;
         if (typeof defaultProduct === "string") {
-          return handleDefaultInvalidTypeProduct(defaultProduct, ctx);
+          return handleDefaultInvalidTypeProduct(defaultProduct);
         }
         return defaultProduct;
       }
@@ -357,19 +365,19 @@ async function walkSchemaBody(schema: JsonSchemaObject, ctx: GenerateContext): P
 
   switch (type) {
     case "null":
-      return applyOutputTransform(generateNull(ctx), schema, ctx);
+      return yield* applyOutputTransformGen(generateNull(ctx), schema, ctx);
     case "boolean":
-      return applyOutputTransform(generateBoolean(ctx), schema, ctx);
+      return yield* applyOutputTransformGen(generateBoolean(ctx), schema, ctx);
     case "number":
-      return applyOutputTransform(generateNumber(schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(generateNumber(schema, ctx), schema, ctx);
     case "integer":
-      return applyOutputTransform(generateInteger(schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(generateInteger(schema, ctx), schema, ctx);
     case "string":
-      return applyOutputTransform(generateString(schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(generateString(schema, ctx), schema, ctx);
     case "object":
-      return applyOutputTransform(await generateObject(schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(yield* generateObjectGen(schema, ctx), schema, ctx);
     case "array":
-      return applyOutputTransform(await generateArray(schema, ctx), schema, ctx);
+      return yield* applyOutputTransformGen(yield* generateArrayGen(schema, ctx), schema, ctx);
     default:
       throw new Error(`Unknown type: ${type} at ${ctx.path}`);
   }
@@ -440,7 +448,7 @@ function hasInferredProperties(schema: JsonSchemaObject): boolean {
   return false;
 }
 
-function handleDefaultInvalidTypeProduct(typeName: string, ctx: GenerateContext): unknown {
+function handleDefaultInvalidTypeProduct(typeName: string): unknown {
   switch (typeName) {
     case "string":
       return "";
@@ -458,4 +466,12 @@ function handleDefaultInvalidTypeProduct(typeName: string, ctx: GenerateContext)
     default:
       return null;
   }
+}
+
+export function walk(schema: JsonSchema, ctx: GenerateContext): Promise<unknown> {
+  return runAsync(walkGen(schema, ctx), walkGen);
+}
+
+export function walkSync(schema: JsonSchema, ctx: GenerateContext): unknown {
+  return runSync(walkGen(schema, ctx), walkGen);
 }

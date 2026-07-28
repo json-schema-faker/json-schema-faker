@@ -1,4 +1,5 @@
 import type { JsonSchemaObject, GenerateContext } from "./types.js";
+import { type Gen, isPromiseLike } from "./coroutine.js";
 
 export type ExtensionCallback = (
   this: ExtensionContext,
@@ -46,10 +47,10 @@ class ExtensionRegistry {
     return this.extensions.keys();
   }
 
-  async generate(
+  *generateGen(
     schema: JsonSchemaObject,
     ctx: GenerateContext
-  ): Promise<unknown> {
+  ): Gen<unknown> {
     const keys = Object.keys(schema);
 
     for (let i = keys.length - 1; i >= 0; i--) {
@@ -59,7 +60,16 @@ class ExtensionRegistry {
 
       if (entry) {
         const value = schema[key];
-        const result = await entry.callback.call(entry.context, value, schema, ctx);
+        const raw = entry.callback.call(entry.context, value, schema, ctx);
+
+        if (ctx.__sync && isPromiseLike(raw)) {
+          // Swallow the rejection so it doesn't surface as an unhandled promise
+          // rejection after we throw synchronously below.
+          Promise.resolve(raw).catch(() => {});
+          throw new Error(`Cannot use async extension '${extName}' in generateSync()`);
+        }
+
+        const result = yield raw;
 
         if (result !== undefined) {
           return result;
@@ -92,11 +102,11 @@ export function resetExtension(name?: string): void {
   globalExtensions.reset(name);
 }
 
-export function generateFromExtensions(
+export function* generateFromExtensionsGen(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): Promise<unknown> {
-  return globalExtensions.generate(schema, ctx);
+): Gen<unknown> {
+  return yield* globalExtensions.generateGen(schema, ctx);
 }
 
 export function getExtensionContext(name: string): ExtensionContext | undefined {

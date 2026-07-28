@@ -68,6 +68,31 @@ const a = await gen.generate(schema); // seed 42
 const b = await gen.generate(schema); // seed 43
 ```
 
+### `generateSync(schema, options?)`
+
+Synchronous variant of `generate()` for in-memory schemas. Returns the value directly (no `Promise`).
+
+```typescript
+const value = generateSync({ type: "string", format: "email" });
+```
+
+Sync mode only supports schemas that are fully resolvable without I/O:
+
+- A remote `$ref` that isn't already registered and has no `refResolver` throws.
+- `refResolver`, custom extensions (`define()`), and `outputTransform` must be synchronous — if one returns a `Promise`, `generateSync()` throws immediately (`Cannot use async refResolver in generateSync()` / `Cannot use async extension '<name>' in generateSync()` / `Cannot use async outputTransform in generateSync()`) instead of silently returning a `Promise`. A `refResolver` that returns plain values (e.g. reading from an in-memory map) works fine in sync mode.
+
+All other options behave the same as `generate()`.
+
+### `createGeneratorSync(options?)`
+
+Synchronous variant of `createGenerator()`.
+
+```typescript
+const gen = createGeneratorSync({ seed: 42 });
+const a = gen.generate(schema); // seed 42
+const b = gen.generate(schema); // seed 43
+```
+
 ### `registerFormat(name, generator)`
 
 Register a custom format generator globally.

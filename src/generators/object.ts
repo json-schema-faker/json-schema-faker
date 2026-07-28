@@ -1,5 +1,5 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
-import { walk } from "../schema-walker.js";
+import { type Gen, walkCall } from "../coroutine.js";
 import { mergeSchemas } from "../merge.js";
 import {
   createOptionalPropertySelector,
@@ -45,10 +45,10 @@ function isImpossibleSchema(schema: JsonSchema): boolean {
   return false;
 }
 
-export async function generateObject(
+export function* generateObjectGen(
   schema: JsonSchemaObject,
   ctx: GenerateContext
-): Promise<Record<string, unknown>> {
+): Gen<Record<string, unknown>> {
   // Get inferred properties if no explicit properties
   const inferredProperties = getInferredProperties(schema);
   const inferredRequired = getInferredRequired(schema, inferredProperties);
@@ -149,12 +149,12 @@ export async function generateObject(
       }
       
       if (isRequired) {
-        const value = await walk(mergedPropSchema, propCtx);
+        const value = yield walkCall(mergedPropSchema, propCtx);
         if (value !== undefined) {
           result[key] = value;
         }
       } else if (shouldGenerateOptional(key)) {
-        const value = await walk(mergedPropSchema, propCtx);
+        const value = yield walkCall(mergedPropSchema, propCtx);
         if (value !== undefined) {
           result[key] = value;
         }
@@ -166,7 +166,7 @@ export async function generateObject(
           for (const nestedKey of nestedRequired) {
             const nestedSchema = (propSchema.properties ?? {})[nestedKey] ?? {};
             const nestedCtx = createPropertyContext(propCtx, nestedKey);
-            const nestedValue = await walk(nestedSchema, nestedCtx);
+            const nestedValue = yield walkCall(nestedSchema, nestedCtx);
             if (nestedValue !== undefined) {
               nestedResult[nestedKey] = nestedValue;
             }
@@ -195,7 +195,7 @@ export async function generateObject(
           ? matchingSchemas[0] 
           : mergeSchemas(matchingSchemas);
         const propCtx = createPropertyContext(childCtx, key);
-        const value = await walk(mergedSchema, propCtx);
+        const value = yield walkCall(mergedSchema, propCtx);
         if (value !== undefined) {
           result[key] = value;
         }
@@ -206,7 +206,7 @@ export async function generateObject(
       const addlSchema = schema.additionalProperties ?? true;
       if (addlSchema !== false) {
         const propCtx = createPropertyContext(childCtx, key);
-        const value = await walk(addlSchema === true ? {} : addlSchema, propCtx);
+        const value = yield walkCall(addlSchema === true ? {} : addlSchema, propCtx);
         if (value !== undefined) {
           result[key] = value;
         }
@@ -294,7 +294,7 @@ export async function generateObject(
             generatedByRequired.add(reqProp);
             const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? { type: "object" };
             const reqPropCtx = createPropertyContext(childCtx, reqProp);
-            const value = await walk(reqPropSchema, reqPropCtx);
+            const value = yield walkCall(reqPropSchema, reqPropCtx);
             if (value !== undefined) {
               result[reqProp] = value;
             }
@@ -310,7 +310,7 @@ export async function generateObject(
             if (generatedByRequired.has(depPropName)) continue;
             
             const depPropCtx = createPropertyContext(childCtx, depPropName);
-            const value = await walk(depPropSchema as JsonSchema, depPropCtx);
+            const value = yield walkCall(depPropSchema as JsonSchema, depPropCtx);
             if (value !== undefined) {
               result[depPropName] = value;
             }
@@ -342,7 +342,7 @@ export async function generateObject(
         
         if (key && !result[key]) {
           const propCtx = createPropertyContext(childCtx, key);
-          const value = await walk(patSchema, propCtx);
+          const value = yield walkCall(patSchema, propCtx);
           if (value !== undefined) {
             result[key] = value;
           }
@@ -364,7 +364,7 @@ export async function generateObject(
           const key = `prop${ctx.random.int(0, 99999)}`;
           if (!result[key]) {
             const propCtx = createPropertyContext(childCtx, key);
-            const value = await walk(genSchema, propCtx);
+            const value = yield walkCall(genSchema, propCtx);
             if (value !== undefined) {
               result[key] = value;
             }
