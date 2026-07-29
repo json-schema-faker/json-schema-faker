@@ -45,6 +45,119 @@ function isImpossibleSchema(schema: JsonSchema): boolean {
   return false;
 }
 
+/**
+ * Collect (trigger -> required deps) pairs from Draft-07 array-form `dependencies`
+ * and Draft 2019-09+ `dependentRequired`.
+ */
+function getDependentRequiredEntries(schema: JsonSchemaObject): Array<[string, string[]]> {
+  const entries: Array<[string, string[]]> = [];
+
+  if (schema.dependentRequired) {
+    for (const [trigger, deps] of Object.entries(schema.dependentRequired)) {
+      if (Array.isArray(deps)) {
+        entries.push([trigger, deps.filter((dep): dep is string => typeof dep === "string")]);
+      }
+    }
+  }
+
+  if (schema.dependencies) {
+    for (const [trigger, dependency] of Object.entries(schema.dependencies)) {
+      if (Array.isArray(dependency)) {
+        entries.push([trigger, dependency.filter((dep): dep is string => typeof dep === "string")]);
+      }
+    }
+  }
+
+  return entries;
+}
+
+/**
+ * Collect (trigger -> dependency schema) pairs from Draft-07 object-form
+ * `dependencies` and Draft 2019-09+ `dependentSchemas`, sharing the same
+ * branch-matching generation logic below. Boolean schemas are valid here
+ * too (JSON Schema allows `dependentSchemas: { a: false }`) and are kept
+ * as-is rather than silently dropped -- the caller decides how to handle
+ * `true`/`false`.
+ */
+function getSchemaDependencyEntries(schema: JsonSchemaObject): Array<[string, JsonSchema]> {
+  const entries: Array<[string, JsonSchema]> = [];
+
+  if (schema.dependencies) {
+    for (const [trigger, dependency] of Object.entries(schema.dependencies)) {
+      if (!Array.isArray(dependency)) {
+        entries.push([trigger, dependency as JsonSchema]);
+      }
+    }
+  }
+
+  if (schema.dependentSchemas) {
+    for (const [trigger, dependency] of Object.entries(schema.dependentSchemas)) {
+      entries.push([trigger, dependency]);
+    }
+  }
+
+  return entries;
+}
+
+/**
+ * Generate a value for `key` if it's still missing, falling back through
+ * patternProperties / additionalProperties the same way the main property
+ * loop does. Used to backfill dependentRequired/dependencies-array targets
+ * that weren't already produced as required or selected-optional properties.
+ */
+function* generateMissingProperty(
+  schema: JsonSchemaObject,
+  inferredProperties: Record<string, JsonSchema>,
+  result: Record<string, unknown>,
+  definedKeys: Set<string>,
+  childCtx: GenerateContext,
+  key: string,
+  fallback: JsonSchema = { type: "string" }
+): Gen<void> {
+  if (result[key] !== undefined) {
+    return;
+  }
+
+  let propSchema: JsonSchema | undefined = inferredProperties[key];
+
+  if (propSchema === undefined && schema.patternProperties) {
+    const matchingPatterns: JsonSchema[] = [];
+    for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
+      try {
+        if (new RegExp(pattern).test(key)) {
+          matchingPatterns.push(patSchema);
+        }
+      } catch {
+        // Invalid regex pattern, skip
+      }
+    }
+    if (matchingPatterns.length > 0) {
+      propSchema = matchingPatterns.length === 1 ? matchingPatterns[0] : mergeSchemas(matchingPatterns);
+    }
+  }
+
+  if (propSchema === undefined) {
+    if (schema.additionalProperties === false) {
+      return;
+    }
+    propSchema =
+      schema.additionalProperties !== undefined && schema.additionalProperties !== true
+        ? schema.additionalProperties
+        : fallback;
+  }
+
+  if (isImpossibleSchema(propSchema)) {
+    return;
+  }
+
+  const propCtx = createPropertyContext(childCtx, key);
+  const value = yield walkCall(propSchema, propCtx);
+  if (value !== undefined) {
+    result[key] = value;
+    definedKeys.add(key);
+  }
+}
+
 export function* generateObjectGen(
   schema: JsonSchemaObject,
   ctx: GenerateContext
@@ -56,12 +169,21 @@ export function* generateObjectGen(
   // When maxDepth is reached, still generate required properties with primitive defaults
   // to avoid producing invalid output that violates schema constraints
   if (ctx.depth >= ctx.maxDepth) {
-    if (inferredRequired.length === 0) {
+    const requiredAtBoundary = new Set(inferredRequired);
+    for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
+      if (requiredAtBoundary.has(trigger)) {
+        for (const dep of deps) {
+          requiredAtBoundary.add(dep);
+        }
+      }
+    }
+
+    if (requiredAtBoundary.size === 0) {
       return {};
     }
     // Generate stub values for required properties
     const result: Record<string, unknown> = {};
-    for (const key of inferredRequired) {
+    for (const key of requiredAtBoundary) {
       const propSchema = inferredProperties[key];
       if (propSchema && typeof propSchema === "object" && propSchema !== null) {
         const schemaObj = propSchema as JsonSchemaObject;
@@ -112,6 +234,17 @@ export function* generateObjectGen(
   const definedKeys = new Set<string>();
 
   const required = new Set(inferredRequired);
+
+  // dependentRequired / array-form dependencies: promote deps of an
+  // already-required trigger to required too, so they generate alongside it
+  for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
+    if (required.has(trigger)) {
+      for (const dep of deps) {
+        required.add(dep);
+      }
+    }
+  }
+
   const fillProperties = ctx.fillProperties ?? true;
   const optionalKeys = Object.keys(inferredProperties).filter((key) => !required.has(key));
   const shouldGenerateOptional = createOptionalPropertySelector(ctx, optionalKeys);
@@ -215,19 +348,50 @@ export function* generateObjectGen(
     }
   }
 
-  // Handle schema dependencies
-  // If a property is present, add properties from the dependency schema
-  if (schema.dependencies) {
-    for (const [propName, dependency] of Object.entries(schema.dependencies)) {
-      // Only handle schema dependencies (object), not property dependencies (array)
-      if (typeof dependency !== "object" || dependency === null || Array.isArray(dependency)) {
-        continue;
+  // dependentRequired / array-form dependencies: backfill deps of any trigger
+  // that ended up generated but wasn't required (e.g. via alwaysFakeOptionals)
+  let addedDependentProperty = true;
+  while (addedDependentProperty) {
+    addedDependentProperty = false;
+
+    for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
+      if (result[trigger] === undefined) continue;
+
+      for (const dep of deps) {
+        const before = result[dep];
+        yield* generateMissingProperty(schema, inferredProperties, result, definedKeys, childCtx, dep);
+        if (before === undefined && result[dep] !== undefined) {
+          addedDependentProperty = true;
+        }
+        // Protect the dependency from later maxProperties trimming -- it's
+        // present because `trigger` requires it (whether just backfilled or
+        // already generated as a regular optional property), not because it
+        // was picked as an optional extra that's safe to drop.
+        if (result[dep] !== undefined) {
+          required.add(dep);
+        }
       }
-      
+    }
+  }
+
+  // Handle schema dependencies (Draft-07 object-form `dependencies` and
+  // Draft 2019-09+ `dependentSchemas`). If a property is present, add
+  // properties from the matching branch of the dependency schema.
+  {
+    for (const [propName, dependency] of getSchemaDependencyEntries(schema)) {
       // Check if the property was generated
       if (result[propName] !== undefined && !definedKeys.has(propName + "_dep")) {
         definedKeys.add(propName + "_dep");
-        
+
+        if (typeof dependency === "boolean") {
+          // `true` is a no-op (always satisfied). `false` means the trigger's
+          // presence makes the object invalid under strict validation -- but
+          // propName is already generated by this point, so there's nothing
+          // left to retroactively undo here (same best-effort limitation as
+          // other post-hoc-unsatisfiable schemas elsewhere in this file).
+          continue;
+        }
+
         // Find the matching branch in oneOf/anyOf/allOf based on the generated property value
         const branches = dependency.oneOf ?? dependency.anyOf ?? dependency.allOf ?? [dependency];
         
@@ -292,7 +456,10 @@ export function* generateObjectGen(
             if (result[reqProp] !== undefined) continue;
             
             generatedByRequired.add(reqProp);
-            const reqPropSchema = (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ?? { type: "object" };
+            const reqPropSchema =
+              (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ??
+              inferredProperties[reqProp] ??
+              { type: "object" };
             const reqPropCtx = createPropertyContext(childCtx, reqProp);
             const value = yield walkCall(reqPropSchema, reqPropCtx);
             if (value !== undefined) {
