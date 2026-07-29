@@ -208,6 +208,92 @@ describe("object generator", () => {
     assertValid(schema, val);
   });
 
+  test("dependentSchemas: required-only branch falls back to the root property's own schema", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        a: { type: "string" as const },
+        b: { type: "string" as const },
+      },
+      required: ["a"],
+      dependentSchemas: {
+        a: {
+          required: ["b"],
+        },
+      },
+    };
+
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = (await generate(schema, { seed, optionalsProbability: 0 })) as Record<string, unknown>;
+      expect(typeof val.b).toBe("string");
+      assertValid(schema, val);
+    }
+  });
+
+  test("dependentRequired is enforced for required triggers at the maxDepth boundary", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        parent: {
+          type: "object" as const,
+          properties: {
+            a: { type: "string" as const },
+            b: { type: "string" as const },
+          },
+          required: ["a"],
+          dependentRequired: {
+            a: ["b"],
+          },
+        },
+      },
+      required: ["parent"],
+    };
+
+    const val = (await generate(schema, { maxDepth: 1 })) as { parent: Record<string, unknown> };
+    expect(val.parent).toHaveProperty("a");
+    expect(val.parent).toHaveProperty("b");
+  });
+
+  test("backfilled dependentRequired properties survive maxProperties trimming", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        a: { type: "string" as const },
+        b: { type: "string" as const },
+        c: { type: "string" as const },
+      },
+      dependentRequired: {
+        a: ["c"],
+      },
+      maxProperties: 2,
+    };
+
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = (await generate(schema, { seed, alwaysFakeOptionals: true })) as Record<string, unknown>;
+      if (val.a !== undefined) {
+        expect(val).toHaveProperty("c");
+      }
+      assertValid(schema, val);
+    }
+  });
+
+  test("boolean dependentSchemas values are not silently dropped", async () => {
+    const trueSchema = {
+      type: "object" as const,
+      properties: {
+        a: { type: "string" as const },
+      },
+      required: ["a"],
+      dependentSchemas: {
+        a: true,
+      },
+    };
+
+    const val = (await generate(trueSchema)) as Record<string, unknown>;
+    expect(val).toHaveProperty("a");
+    assertValid(trueSchema, val);
+  });
+
   describe("github issues", () => {
     test("issue #846: meta data used as properties", async () => {
       const schema = {
