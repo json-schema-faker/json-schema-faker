@@ -79,6 +79,135 @@ describe("object generator", () => {
     await assertValidMultipleSeeds(schema, 100, generate);
   });
 
+  test("supports dependentRequired for required trigger properties", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        credit_card: { type: "number" as const },
+        billing_address: { type: "string" as const },
+      },
+      required: ["credit_card"],
+      dependentRequired: {
+        credit_card: ["billing_address"],
+      },
+    };
+
+    const val = (await generate(schema)) as Record<string, unknown>;
+    expect(val).toHaveProperty("credit_card");
+    expect(val).toHaveProperty("billing_address");
+    assertValid(schema, val);
+  });
+
+  test("supports dependentRequired for optional trigger properties", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        credit_card: { type: "number" as const },
+        billing_address: { type: "string" as const },
+      },
+      dependentRequired: {
+        credit_card: ["billing_address"],
+      },
+    };
+
+    const val = (await generate(schema, { alwaysFakeOptionals: true })) as Record<string, unknown>;
+    expect(val).toHaveProperty("credit_card");
+    expect(val).toHaveProperty("billing_address");
+    assertValid(schema, val);
+  });
+
+  test("supports dependentSchemas", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        credit_card: { type: "number" as const },
+      },
+      required: ["credit_card"],
+      dependentSchemas: {
+        credit_card: {
+          properties: {
+            billing_address: { type: "string" as const },
+          },
+          required: ["billing_address"],
+        },
+      },
+    };
+
+    const val = (await generate(schema)) as Record<string, unknown>;
+    expect(val).toHaveProperty("credit_card");
+    expect(val).toHaveProperty("billing_address");
+    assertValid(schema, val);
+  });
+
+  test("supports dependencies array form", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        credit_card: { type: "number" as const },
+        billing_address: { type: "string" as const },
+      },
+      dependencies: {
+        credit_card: ["billing_address"],
+      },
+    };
+
+    const val = (await generate(schema, { alwaysFakeOptionals: true })) as Record<string, unknown>;
+    expect(val).toHaveProperty("credit_card");
+    expect(val).toHaveProperty("billing_address");
+    assertValid(schema, val);
+  });
+
+  test("preserves dependencies object form", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        credit_card: { type: "number" as const },
+      },
+      required: ["credit_card"],
+      dependencies: {
+        credit_card: {
+          properties: {
+            billing_address: { type: "string" as const },
+          },
+          required: ["billing_address"],
+        },
+      },
+    };
+
+    const val = (await generate(schema)) as Record<string, unknown>;
+    expect(val).toHaveProperty("credit_card");
+    expect(val).toHaveProperty("billing_address");
+    assertValid(schema, val);
+  });
+
+  test("combines dependentRequired and dependentSchemas", async () => {
+    const schema = {
+      type: "object" as const,
+      properties: {
+        credit_card: { type: "number" as const },
+        billing_address: { type: "string" as const },
+      },
+      required: ["credit_card"],
+      dependentRequired: {
+        credit_card: ["billing_address"],
+      },
+      dependentSchemas: {
+        credit_card: {
+          properties: {
+            country: { const: "US" },
+          },
+          required: ["country"],
+        },
+      },
+    };
+
+    const val = (await generate(schema)) as Record<string, unknown>;
+    expect(val).toHaveProperty("credit_card");
+    expect(val).toHaveProperty("billing_address");
+    expect(val.country).toBe("US");
+    assertValid(schema, val);
+  });
+
   describe("github issues", () => {
     test("issue #846: meta data used as properties", async () => {
       const schema = {

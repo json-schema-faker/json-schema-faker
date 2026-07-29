@@ -45,6 +45,118 @@ function isImpossibleSchema(schema: JsonSchema): boolean {
   return false;
 }
 
+/**
+ * Collect (trigger -> required deps) pairs from Draft-07 array-form `dependencies`
+ * and Draft 2019-09+ `dependentRequired`.
+ */
+function getDependentRequiredEntries(schema: JsonSchemaObject): Array<[string, string[]]> {
+  const entries: Array<[string, string[]]> = [];
+
+  if (schema.dependentRequired) {
+    for (const [trigger, deps] of Object.entries(schema.dependentRequired)) {
+      if (Array.isArray(deps)) {
+        entries.push([trigger, deps.filter((dep): dep is string => typeof dep === "string")]);
+      }
+    }
+  }
+
+  if (schema.dependencies) {
+    for (const [trigger, dependency] of Object.entries(schema.dependencies)) {
+      if (Array.isArray(dependency)) {
+        entries.push([trigger, dependency.filter((dep): dep is string => typeof dep === "string")]);
+      }
+    }
+  }
+
+  return entries;
+}
+
+/**
+ * Collect (trigger -> dependency schema) pairs from Draft-07 object-form
+ * `dependencies` and Draft 2019-09+ `dependentSchemas`, sharing the same
+ * branch-matching generation logic below.
+ */
+function getSchemaDependencyEntries(schema: JsonSchemaObject): Array<[string, JsonSchemaObject]> {
+  const entries: Array<[string, JsonSchemaObject]> = [];
+
+  if (schema.dependencies) {
+    for (const [trigger, dependency] of Object.entries(schema.dependencies)) {
+      if (typeof dependency === "object" && dependency !== null && !Array.isArray(dependency)) {
+        entries.push([trigger, dependency as JsonSchemaObject]);
+      }
+    }
+  }
+
+  if (schema.dependentSchemas) {
+    for (const [trigger, dependency] of Object.entries(schema.dependentSchemas)) {
+      if (typeof dependency === "object" && dependency !== null && !Array.isArray(dependency)) {
+        entries.push([trigger, dependency as JsonSchemaObject]);
+      }
+    }
+  }
+
+  return entries;
+}
+
+/**
+ * Generate a value for `key` if it's still missing, falling back through
+ * patternProperties / additionalProperties the same way the main property
+ * loop does. Used to backfill dependentRequired/dependencies-array targets
+ * that weren't already produced as required or selected-optional properties.
+ */
+function* generateMissingProperty(
+  schema: JsonSchemaObject,
+  inferredProperties: Record<string, JsonSchema>,
+  result: Record<string, unknown>,
+  definedKeys: Set<string>,
+  childCtx: GenerateContext,
+  key: string,
+  fallback: JsonSchema = { type: "string" }
+): Gen<void> {
+  if (result[key] !== undefined) {
+    return;
+  }
+
+  let propSchema: JsonSchema | undefined = inferredProperties[key];
+
+  if (propSchema === undefined && schema.patternProperties) {
+    const matchingPatterns: JsonSchema[] = [];
+    for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
+      try {
+        if (new RegExp(pattern).test(key)) {
+          matchingPatterns.push(patSchema);
+        }
+      } catch {
+        // Invalid regex pattern, skip
+      }
+    }
+    if (matchingPatterns.length > 0) {
+      propSchema = matchingPatterns.length === 1 ? matchingPatterns[0] : mergeSchemas(matchingPatterns);
+    }
+  }
+
+  if (propSchema === undefined) {
+    if (schema.additionalProperties === false) {
+      return;
+    }
+    propSchema =
+      schema.additionalProperties !== undefined && schema.additionalProperties !== true
+        ? schema.additionalProperties
+        : fallback;
+  }
+
+  if (isImpossibleSchema(propSchema)) {
+    return;
+  }
+
+  const propCtx = createPropertyContext(childCtx, key);
+  const value = yield walkCall(propSchema, propCtx);
+  if (value !== undefined) {
+    result[key] = value;
+    definedKeys.add(key);
+  }
+}
+
 export function* generateObjectGen(
   schema: JsonSchemaObject,
   ctx: GenerateContext
@@ -112,6 +224,17 @@ export function* generateObjectGen(
   const definedKeys = new Set<string>();
 
   const required = new Set(inferredRequired);
+
+  // dependentRequired / array-form dependencies: promote deps of an
+  // already-required trigger to required too, so they generate alongside it
+  for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
+    if (required.has(trigger)) {
+      for (const dep of deps) {
+        required.add(dep);
+      }
+    }
+  }
+
   const fillProperties = ctx.fillProperties ?? true;
   const optionalKeys = Object.keys(inferredProperties).filter((key) => !required.has(key));
   const shouldGenerateOptional = createOptionalPropertySelector(ctx, optionalKeys);
@@ -215,15 +338,30 @@ export function* generateObjectGen(
     }
   }
 
-  // Handle schema dependencies
-  // If a property is present, add properties from the dependency schema
-  if (schema.dependencies) {
-    for (const [propName, dependency] of Object.entries(schema.dependencies)) {
-      // Only handle schema dependencies (object), not property dependencies (array)
-      if (typeof dependency !== "object" || dependency === null || Array.isArray(dependency)) {
-        continue;
+  // dependentRequired / array-form dependencies: backfill deps of any trigger
+  // that ended up generated but wasn't required (e.g. via alwaysFakeOptionals)
+  let addedDependentProperty = true;
+  while (addedDependentProperty) {
+    addedDependentProperty = false;
+
+    for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
+      if (result[trigger] === undefined) continue;
+
+      for (const dep of deps) {
+        const before = result[dep];
+        yield* generateMissingProperty(schema, inferredProperties, result, definedKeys, childCtx, dep);
+        if (before === undefined && result[dep] !== undefined) {
+          addedDependentProperty = true;
+        }
       }
-      
+    }
+  }
+
+  // Handle schema dependencies (Draft-07 object-form `dependencies` and
+  // Draft 2019-09+ `dependentSchemas`). If a property is present, add
+  // properties from the matching branch of the dependency schema.
+  {
+    for (const [propName, dependency] of getSchemaDependencyEntries(schema)) {
       // Check if the property was generated
       if (result[propName] !== undefined && !definedKeys.has(propName + "_dep")) {
         definedKeys.add(propName + "_dep");

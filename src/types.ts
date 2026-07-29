@@ -49,6 +49,9 @@ export interface JsonSchemaObject {
   minProperties?: number;
   maxProperties?: number;
   propertyNames?: JsonSchema;
+  dependencies?: Record<string, JsonSchema | string[]>;
+  dependentRequired?: Record<string, string[]>;
+  dependentSchemas?: Record<string, JsonSchema>;
 
   // Composition
   allOf?: JsonSchema[];
