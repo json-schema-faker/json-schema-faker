@@ -805,6 +805,51 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
 <span class="text-purple-400">await</span> generate(schema, { refResolver: resolver });</code></pre>
                                         </div>
                                     </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">generateSync(schema, options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">Synchronous variant of <code class="code-inline">generate()</code> for in-memory schemas. Returns the value directly (no <code class="code-inline">Promise</code>).</p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">const</span> value = generateSync({ <span class="text-blue-300">type</span>: <span class="text-yellow-300">"string"</span>, <span class="text-blue-300">format</span>: <span class="text-yellow-300">"email"</span> });</code></pre>
+                                        </div>
+                                        <p class="text-gray-400 mt-3 text-sm">Sync mode only supports schemas that resolve without I/O. A <code class="code-inline">refResolver</code>, custom extension (<code class="code-inline">define()</code>), or <code class="code-inline">outputTransform</code> that returns a <code class="code-inline">Promise</code> throws immediately. Remote <code class="code-inline">$ref</code>s without a registered sync resolver throw as well.</p>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">createGeneratorSync(options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">Synchronous variant of <code class="code-inline">createGenerator()</code> with auto-incrementing seeds.</p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">const</span> gen = createGeneratorSync({ <span class="text-blue-300">seed</span>: <span class="text-yellow-300">42</span> });
+<span class="text-purple-400">const</span> a = gen.generate(schema); <span class="text-gray-500">// seed 42</span>
+<span class="text-purple-400">const</span> b = gen.generate(schema); <span class="text-gray-500">// seed 43</span></code></pre>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">generateJson(schema, options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">Generate a value and serialize it to a pretty-printed JSON string (<code class="code-inline">pretty: false</code> for compact output).</p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">const</span> json = <span class="text-purple-400">await</span> generateJson(schema, { <span class="text-blue-300">pretty</span>: <span class="text-yellow-300">false</span> });</code></pre>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <h4 class="example-title">
+                                            <code class="code-inline">generateYaml(schema, options?)</code>
+                                        </h4>
+                                        <p class="text-gray-400 mb-3">Generate a value and serialize it to a YAML string. Requires the <code class="code-inline">yaml</code> package via <code class="code-inline">extensions.yaml</code>.</p>
+                                        <div class="code-block !p-4">
+                                            <pre><code><span class="text-purple-400">import</span> { stringify } <span class="text-purple-400">from</span> <span class="text-yellow-300">'yaml'</span>;
+
+<span class="text-purple-400">const</span> yaml = <span class="text-purple-400">await</span> generateYaml(schema, { <span class="text-blue-300">extensions</span>: { <span class="text-blue-300">yaml</span>: { stringify } } });</code></pre>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -837,13 +882,15 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-blue-300">maxLength</span>?: number;                    <span class="text-gray-500">// Override maxLength</span>
     <span class="text-blue-300">useDefaultValue</span>?: boolean;             <span class="text-gray-500">// Use schema defaults</span>
     <span class="text-blue-300">useExamplesValue</span>?: boolean;            <span class="text-gray-500">// Use examples array</span>
+    <span class="text-blue-300">filterExampleDefaults</span>?: boolean;       <span class="text-gray-500">// Filter default/example values (default: false)</span>
     <span class="text-blue-300">formats</span>?: Record&lt;string, Function&gt;;    <span class="text-gray-500">// Custom formats</span>
     <span class="text-blue-300">refResolver</span>?: RefResolver;             <span class="text-gray-500">// Custom $ref resolver</span>
     <span class="text-blue-300">refDepth</span>?: number;                     <span class="text-gray-500">// Set both min/max</span>
     <span class="text-blue-300">refDepthMin</span>?: number;                  <span class="text-gray-500">// Minimum recursion</span>
     <span class="text-blue-300">refDepthMax</span>?: number;                  <span class="text-gray-500">// Maximum recursion</span>
     <span class="text-blue-300">resolveJsonPath</span>?: boolean;             <span class="text-gray-500">// Enable JSONPath</span>
-    <span class="text-blue-300">extensions</span>?: { faker?: any; chance?: any };
+    <span class="text-blue-300">extensions</span>?: { faker?: any; chance?: any; yaml?: any }; <span class="text-gray-500">// faker/chance/yaml</span>
+    <span class="text-blue-300">yaml</span>?: any;                            <span class="text-gray-500">// YAML lib for generateYaml</span>
     <span class="text-blue-300">minDateTime</span>?: string;                  <span class="text-gray-500">// ISO 8601 date</span>
     <span class="text-blue-300">maxDateTime</span>?: string;                  <span class="text-gray-500">// ISO 8601 date</span>
     <span class="text-blue-300">pruneProperties</span>?: string[];            <span class="text-gray-500">// Properties to remove</span>
@@ -853,6 +900,7 @@ jsf schema.json -o output.json -c 5 --seed 42</code></pre>
     <span class="text-blue-300">fixedProbabilities</span>?: boolean;          <span class="text-gray-500">// Deterministic</span>
     <span class="text-blue-300">propAliases</span>?: Record&lt;string, string&gt;;  <span class="text-gray-500">// Remap schema keys</span>
     <span class="text-blue-300">outputTransform</span>?: (value, schema, path) =&gt; unknown; <span class="text-gray-500">// Transform output</span>
+    <span class="text-blue-300">jsonStringifyOptions</span>?: { <span class="text-blue-300">space</span>?: number | string; <span class="text-blue-300">replacer</span>?: Function }; <span class="text-gray-500">// JSON.stringify opts</span>
 }</code></pre></div>
 
                                 <!-- Seeding -->
@@ -1518,6 +1566,29 @@ reset();</code></pre>
             <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span>,
             <span class="text-blue-300">template</span>: <span class="text-yellow-300">"#{firstName} #{lastName}"</span>
         }
+    }
+};</code></pre>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="option-card">
+                                            <div class="relative">
+                                                <div class="flex items-start justify-between mb-4">
+                                                    <h3 class="text-lg font-semibold text-cyan-400">dependentSchemas / dependentRequired</h3>
+                                                    <span class="option-type">record</span>
+                                                </div>
+                                                <p class="text-gray-400 mb-4">Standard JSON Schema 2019-09+ keywords. <code class="code-inline">dependentRequired</code> adds properties when a trigger property is present; <code class="code-inline">dependentSchemas</code> applies a subschema to the object when a trigger property is present.</p>
+                                                <div class="code-block !p-4 !text-sm">
+                                            <pre><code><span class="text-purple-400">const</span> schema = {
+    <span class="text-blue-300">type</span>: <span class="text-yellow-300">'object'</span>,
+    <span class="text-blue-300">properties</span>: {
+        <span class="text-blue-300">creditCard</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> },
+        <span class="text-blue-300">billingAddress</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> }
+    },
+    <span class="text-blue-300">dependentRequired</span>: { <span class="text-blue-300">creditCard</span>: [<span class="text-yellow-300">'billingAddress'</span>] },
+    <span class="text-blue-300">dependentSchemas</span>: {
+        <span class="text-blue-300">creditCard</span>: { <span class="text-blue-300">properties</span>: { <span class="text-blue-300">last4</span>: { <span class="text-blue-300">type</span>: <span class="text-yellow-300">'string'</span> } } }
     }
 };</code></pre>
                                                 </div>
