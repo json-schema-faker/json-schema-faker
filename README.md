@@ -31,6 +31,7 @@ const data = await generate({
 - Deterministic output via seeded PRNG (Mulberry32)
 - All standard types: null, boolean, integer, number, string, array, object
 - Composition keywords: `allOf`, `anyOf`, `oneOf`, `not`, `if`/`then`/`else` (JSON Schema 2020-12)
+- Conditional property generation via `dependentSchemas` / `dependentRequired`
 - `$ref` resolution with cycle detection and configurable recursion depth
 - Remote `$ref` resolution (HTTP/file) via `createRemoteResolver()`
 - Built-in format generators: date-time, email, uri, hostname, ipv4/ipv6, uuid, json-pointer
@@ -91,6 +92,46 @@ Synchronous variant of `createGenerator()`.
 const gen = createGeneratorSync({ seed: 42 });
 const a = gen.generate(schema); // seed 42
 const b = gen.generate(schema); // seed 43
+```
+
+### `generateJson(schema, options?)`
+
+Generate a value and serialize it to a JSON string. Pretty-printed by default (`pretty: false` for compact output).
+
+```typescript
+const json = await generateJson({ type: "object", properties: { name: { type: "string" } } });
+```
+
+Accepts the same options as `generate()`, plus:
+- `pretty?: boolean` — pretty-print with 2-space indent (default: `true`)
+- `jsonStringifyOptions?: { space?, replacer? }` — passthrough to `JSON.stringify()`
+
+### `createJsonGenerator(options?)`
+
+Reusable generator producing JSON strings, with auto-incrementing seeds.
+
+```typescript
+const gen = createJsonGenerator({ seed: 42 });
+const json = await gen.generate(schema);
+```
+
+### `generateYaml(schema, options?)`
+
+Generate a value and serialize it to a YAML string. Requires the `yaml` package via `extensions.yaml` or `options.yaml`.
+
+```typescript
+import { stringify } from "yaml";
+
+const yaml = await generateYaml(schema, { extensions: { yaml: { stringify } } });
+```
+
+### `createYamlGenerator(options?)`
+
+Reusable generator producing YAML strings, with auto-incrementing seeds.
+
+```typescript
+const gen = createYamlGenerator({ seed: 42, extensions: { yaml: { stringify } } });
+const yaml = await gen.generate(schema);
 ```
 
 ### `registerFormat(name, generator)`
@@ -202,11 +243,18 @@ await generate(schema, {
   maxItems: 10,                      // Override schema maxItems
   minLength: 5,                      // Override schema minLength
   maxLength: 20,                     // Override schema maxLength
+  propAliases: {                     // Remap schema keys before processing (e.g. for older drafts)
+    "x-faker": "faker",
+    "definitions": "$defs",
+  },
 
   // Value sources
   useDefaultValue: true,             // Use schema `default` values
   useExamplesValue: true,            // Use schema `examples` values
   filterExampleDefaults: false,      // Apply optionalsProbability/alwaysFakeOptionals filtering to default/example values (default: false)
+
+  // Output shaping
+  outputTransform: (value, schema, path) => value, // Transform generated output values (return undefined to omit)
 
   // $ref recursion
   refDepthMin: 1,                    // Minimum $ref recursion depth
@@ -228,10 +276,12 @@ await generate(schema, {
     custom: (random) => "value"
   },
   refResolver: myResolver,          // Custom $ref resolver
-  extensions: {                      // faker/chance instances
+  extensions: {                      // faker/chance/yaml instances
     faker: fakerInstance,
     chance: chanceInstance,
-  }
+    yaml: yamlInstance,              // Required for generateYaml()
+  },
+  yaml: yamlInstance,                // Alternative to extensions.yaml for generateYaml()
 });
 ```
 

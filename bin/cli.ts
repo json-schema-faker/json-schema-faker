@@ -29,7 +29,7 @@ interface OptionsFile {
   [key: string]: unknown;
 }
 
-const VERSION = "0.6.0";
+const VERSION = "0.6.3";
 
 function printHelp(): void {
   console.log(`
