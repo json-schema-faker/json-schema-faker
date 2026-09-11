@@ -221,6 +221,103 @@ describe("if/then/else", () => {
 });
 
 describe("github issues", () => {
+  test("issue #882: if/then inside allOf constrains generated properties", async () => {
+    const schema: JsonSchema = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      type: "array",
+      minItems: 1,
+      items: {
+        type: "object",
+        properties: {
+          hostnames: { enum: ["AB"] },
+          users: { type: "string" },
+        },
+        required: ["hostnames", "users"],
+        unevaluatedProperties: false,
+        allOf: [
+          {
+            if: {
+              properties: { hostnames: { const: "AB" } },
+              required: ["hostnames"],
+            },
+            then: {
+              properties: { users: { enum: ["abc"] } },
+            },
+          },
+        ],
+      },
+    };
+
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as Array<{ hostnames: string; users: string }>;
+      expect(Array.isArray(val)).toBe(true);
+      expect(val.length).toBeGreaterThan(0);
+      for (const entry of val) {
+        expect(entry).toEqual({ hostnames: "AB", users: "abc" });
+      }
+      assertValid(schema, val);
+    }
+  });
+
+  test("issue #882: multiple independent if/then blocks in allOf all apply", async () => {
+    const schema: JsonSchema = {
+      type: "object",
+      properties: {
+        a: { type: "integer" },
+        b: { type: "string" },
+        c: { type: "integer" },
+        d: { type: "string" },
+      },
+      required: ["a", "b", "c", "d"],
+      allOf: [
+        {
+          if: { properties: { a: { const: 1 } }, required: ["a"] },
+          then: { properties: { b: { const: "x" } } },
+        },
+        {
+          if: { properties: { c: { const: 2 } }, required: ["c"] },
+          then: { properties: { d: { const: "y" } } },
+        },
+      ],
+    };
+
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as {
+        a: number;
+        b: string;
+        c: number;
+        d: string;
+      };
+      expect(val).toEqual({ a: 1, b: "x", c: 2, d: "y" });
+      assertValid(schema, val);
+    }
+  });
+
+  test("issue #882: sibling if/then still applies when allOf is present", async () => {
+    const schema: JsonSchema = {
+      type: "object",
+      properties: {
+        hostnames: { enum: ["AB"] },
+        users: { type: "string" },
+      },
+      required: ["hostnames", "users"],
+      allOf: [{ minProperties: 2 }],
+      if: {
+        properties: { hostnames: { const: "AB" } },
+        required: ["hostnames"],
+      },
+      then: {
+        properties: { users: { enum: ["abc"] } },
+      },
+    };
+
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as { hostnames: string; users: string };
+      expect(val).toEqual({ hostnames: "AB", users: "abc" });
+      assertValid(schema, val);
+    }
+  });
+
   test("issue #727: allOf with contains should include all required items", async () => {
     const schema = {
       type: "array",

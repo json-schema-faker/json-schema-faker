@@ -1,0 +1,49 @@
+[
+  {
+    "description": "Issue #882 - if/then blocks are ignored within allOf",
+    "tests": [
+      {
+        "description": "should apply if/then inside allOf so users is constrained to abc",
+        "schema": {
+          "$schema": "https://json-schema.org/draft/2020-12/schema",
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "properties": {
+              "hostnames": {
+                "enum": ["AB"]
+              },
+              "users": {
+                "type": "string"
+              }
+            },
+            "required": ["hostnames", "users"],
+            "unevaluatedProperties": false,
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "hostnames": {
+                      "const": "AB"
+                    }
+                  },
+                  "required": ["hostnames"]
+                },
+                "then": {
+                  "properties": {
+                    "users": {
+                      "enum": ["abc"]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "seed": 42,
+        "valid": true
+      }
+    ]
+  }
+]

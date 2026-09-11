@@ -164,6 +164,9 @@ function mergePairInto(target: JsonSchemaObject, source: JsonSchemaObject): void
   }
   if (source.anyOf) target.anyOf = source.anyOf;
   if (source.oneOf) target.oneOf = source.oneOf;
+  if (source.if !== undefined) target.if = source.if;
+  if (source.then !== undefined) target.then = source.then;
+  if (source.else !== undefined) target.else = source.else;
 }
 
 function intersectTypes(
