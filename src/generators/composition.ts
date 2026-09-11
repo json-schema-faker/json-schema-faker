@@ -31,40 +31,16 @@ export function* generateCompositionGen(
 
   if (allOf) {
     const resolvedRefs = yield* resolveAllOfRefsGen(allOf, ctx);
-    const toMerge: JsonSchema[] = [base];
-    const conditionals: JsonSchemaObject[] = [];
-
+    const merged = mergeSchemas([base, ...resolvedRefs]);
+    // allOf is handled first, so restore sibling conditionals that were
+    // destructured off this schema; nested if/then/else survive via merge.
     if (ifSchema !== undefined) {
-      const sibling: JsonSchemaObject = { if: ifSchema };
-      if (thenSchema !== undefined) sibling.then = thenSchema;
-      if (elseSchema !== undefined) sibling.else = elseSchema;
-      conditionals.push(sibling);
+      merged.if = ifSchema;
+      if (thenSchema !== undefined) merged.then = thenSchema;
+      else delete merged.then;
+      if (elseSchema !== undefined) merged.else = elseSchema;
+      else delete merged.else;
     }
-
-    for (const item of resolvedRefs) {
-      if (item.if !== undefined) {
-        conditionals.push(item);
-        const rest = { ...item };
-        delete rest.if;
-        delete rest.then;
-        delete rest.else;
-        if (Object.keys(rest).length > 0) {
-          toMerge.push(rest);
-        }
-      } else {
-        toMerge.push(item);
-      }
-    }
-
-    let merged = mergeSchemas(toMerge);
-    for (const cond of conditionals) {
-      if (cond.then !== undefined) {
-        merged = mergeSchemas([merged, cond.if as JsonSchema, cond.then]);
-      } else if (cond.else !== undefined) {
-        merged = mergeSchemas([merged, cond.else]);
-      }
-    }
-
     return yield walkCall(merged, ctx);
   }
 

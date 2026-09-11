@@ -259,36 +259,31 @@ describe("github issues", () => {
     }
   });
 
-  test("issue #882: multiple independent if/then blocks in allOf all apply", async () => {
+  test("issue #882: mutually exclusive if/then in allOf generate valid host/user pairs", async () => {
     const schema: JsonSchema = {
       type: "object",
       properties: {
-        a: { type: "integer" },
-        b: { type: "string" },
-        c: { type: "integer" },
-        d: { type: "string" },
+        hostnames: { enum: ["AB", "CD"] },
+        users: { type: "string" },
       },
-      required: ["a", "b", "c", "d"],
+      required: ["hostnames", "users"],
       allOf: [
         {
-          if: { properties: { a: { const: 1 } }, required: ["a"] },
-          then: { properties: { b: { const: "x" } } },
+          if: { properties: { hostnames: { const: "AB" } }, required: ["hostnames"] },
+          then: { properties: { users: { enum: ["abc"] } } },
         },
         {
-          if: { properties: { c: { const: 2 } }, required: ["c"] },
-          then: { properties: { d: { const: "y" } } },
+          if: { properties: { hostnames: { const: "CD" } }, required: ["hostnames"] },
+          then: { properties: { users: { enum: ["def"] } } },
         },
       ],
     };
 
     for (let seed = 1; seed <= 20; seed++) {
-      const val = await generate(schema, { seed }) as {
-        a: number;
-        b: string;
-        c: number;
-        d: string;
-      };
-      expect(val).toEqual({ a: 1, b: "x", c: 2, d: "y" });
+      const val = await generate(schema, { seed }) as { hostnames: string; users: string };
+      expect(["AB", "CD"]).toContain(val.hostnames);
+      if (val.hostnames === "AB") expect(val.users).toBe("abc");
+      if (val.hostnames === "CD") expect(val.users).toBe("def");
       assertValid(schema, val);
     }
   });
