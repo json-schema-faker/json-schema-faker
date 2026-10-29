@@ -239,3 +239,105 @@ describe("github issues", () => {
     }
   });
 });
+
+describe("issue #882: if/then/else", () => {
+  const hostCondition = (host: string, user: string) => ({
+    if: { properties: { hostnames: { const: host } }, required: ["hostnames"] },
+    then: { properties: { users: { enum: [user] } } },
+  });
+  const hostItem = (hosts: string[], allOf: JsonSchema[]) => ({
+    type: "object",
+    properties: { hostnames: { enum: hosts }, users: { type: "string" } },
+    required: ["hostnames", "users"],
+    unevaluatedProperties: false,
+    allOf,
+  });
+
+  test("applies if/then inside allOf", async () => {
+    const schema = {
+      $schema: "https://json-schema.org/draft/2020-12/schema",
+      type: "array",
+      items: hostItem(["AB"], [hostCondition("AB", "abc")]),
+    } as JsonSchema;
+    const val = await generate(schema, { seed: 42 }) as Array<{ hostnames: string; users: string }>;
+    for (const item of val) {
+      expect(item).toEqual({ hostnames: "AB", users: "abc" });
+    }
+    await assertValidMultipleSeeds(schema, 20, generate);
+  });
+
+  test("applies every if/then inside allOf", async () => {
+    const schema = {
+      type: "array",
+      minItems: 3,
+      items: hostItem(["AB", "CD"], [hostCondition("AB", "abc"), hostCondition("CD", "xyz")]),
+    } as JsonSchema;
+    const hosts = new Set<string>();
+    for (let seed = 1; seed <= 20; seed++) {
+      const val = await generate(schema, { seed }) as Array<{ hostnames: string }>;
+      assertValid(schema, val);
+      for (const item of val) hosts.add(item.hostnames);
+    }
+    expect([...hosts].sort()).toEqual(["AB", "CD"]);
+  });
+
+  test("applies if/then next to allOf", async () => {
+    const schema = {
+      ...hostItem(["AB"], [{ properties: { users: { minLength: 1 } } }]),
+      ...hostCondition("AB", "abc"),
+    } as JsonSchema;
+    await assertValidMultipleSeeds(schema, 20, generate);
+  });
+
+  test("reaches the else branch without satisfying if", async () => {
+    const schema = {
+      type: "object",
+      properties: {
+        kind: { enum: ["a", "b", "c"] },
+        value: { type: "number" },
+      },
+      required: ["kind", "value"],
+      if: { properties: { kind: { const: "a" } } },
+      then: { properties: { value: { minimum: 100 } } },
+      else: { properties: { value: { maximum: 0 } } },
+    } as JsonSchema;
+    const kinds = new Set<string>();
+    for (let seed = 1; seed <= 30; seed++) {
+      const val = await generate(schema, { seed }) as { kind: string };
+      assertValid(schema, val);
+      kinds.add(val.kind);
+    }
+    expect(kinds.has("a")).toBe(true);
+    expect(kinds.size).toBeGreaterThan(1);
+  });
+
+  test("reaches the else branch for unlisted values", async () => {
+    const schema = {
+      type: "object",
+      properties: { kind: { type: "string" }, value: { type: "number" } },
+      required: ["kind", "value"],
+      if: { properties: { kind: { const: "a" } } },
+      then: { properties: { value: { minimum: 100 } } },
+      else: { properties: { value: { maximum: 0 } } },
+    } as JsonSchema;
+    await assertValidMultipleSeeds(schema, 30, generate);
+  });
+
+  test("reaches the else branch by omitting an optional property", async () => {
+    const schema = {
+      type: "object",
+      properties: { flag: { const: true }, value: { type: "number" } },
+      required: ["value"],
+      if: { required: ["flag"] },
+      then: { properties: { value: { minimum: 100 } } },
+      else: { properties: { value: { maximum: 0 } } },
+    } as JsonSchema;
+    const flags = new Set<boolean>();
+    for (let seed = 1; seed <= 30; seed++) {
+      const val = await generate(schema, { seed }) as { flag?: boolean };
+      assertValid(schema, val);
+      flags.add("flag" in val);
+    }
+    expect([...flags].sort()).toEqual([false, true]);
+  });
+});
