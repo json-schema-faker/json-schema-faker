@@ -340,4 +340,41 @@ describe("issue #882: if/then/else", () => {
     }
     expect([...flags].sort()).toEqual([false, true]);
   });
+
+  test("discards an else branch that would make if hold", async () => {
+    const schema = {
+      type: "object",
+      properties: { flag: { type: "boolean" }, value: { type: "integer" } },
+      required: ["value"],
+      if: { required: ["flag"] },
+      then: { properties: { value: { const: 1 } } },
+      else: { required: ["flag"], properties: { flag: { const: true }, value: { const: 2 } } },
+    } as JsonSchema;
+    await assertValidMultipleSeeds(schema, 20, generate);
+  });
+
+  test("discards a then branch that would make if fail", async () => {
+    const schema = {
+      type: "object",
+      properties: { kind: { enum: ["a", "b"] } },
+      required: ["kind"],
+      if: { properties: { kind: { const: "a" } } },
+      then: { properties: { kind: { const: "b" } } },
+    } as JsonSchema;
+    await assertValidMultipleSeeds(schema, 20, generate);
+  });
+
+  test("ignores an unresolvable $ref in a branch that cannot apply", async () => {
+    const schema = { if: true, then: { const: "ok" }, else: { $ref: "https://example.invalid/unused" } } as JsonSchema;
+    expect(await generate(schema, { seed: 1 })).toBe("ok");
+  });
+
+  test("applies else when the if $ref cannot be resolved", async () => {
+    const schema = {
+      if: { $ref: "https://example.invalid/unused" },
+      then: { const: "then" },
+      else: { const: "else" },
+    } as JsonSchema;
+    expect(await generate(schema, { seed: 1 })).toBe("else");
+  });
 });

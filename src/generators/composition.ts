@@ -189,12 +189,19 @@ function* generateConditionalGen(
   return yield walkCall(base, ctx);
 }
 
+// A branch whose $ref cannot be resolved is marked unusable (false) instead of
+// failing generation, so the other branch can still apply. An unresolvable
+// `if` can never be satisfied, so only `else` applies.
 function* resolveConditionalRefsGen(cond: Conditional, ctx: GenerateContext): Gen<Conditional> {
   const resolved: Conditional = { ...cond };
   for (const key of ["if", "then", "else"] as const) {
     const schema = cond[key];
     if (typeof schema === "object" && schema !== null) {
-      resolved[key] = yield* resolveSchemaRefGen(schema, ctx);
+      try {
+        resolved[key] = yield* resolveSchemaRefGen(schema, ctx);
+      } catch {
+        resolved[key] = false;
+      }
     }
   }
   return resolved;

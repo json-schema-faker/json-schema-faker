@@ -56,14 +56,25 @@ function thenBranch(schema: JsonSchemaObject, cond: Conditional): JsonSchemaObje
     if (schema.properties?.[key] === false) return undefined;
   }
 
-  return mergeSchemas([schema, { ...ifObj, properties: narrowed }, cond.then ?? true]);
+  // `then` must not undo what made `if` hold
+  const merged = mergeSchemas([schema, { ...ifObj, properties: narrowed }, cond.then ?? true]);
+  for (const [key, ifProp] of Object.entries(ifObj.properties ?? {})) {
+    const wanted = listedValues(ifProp);
+    const values = listedValues(merged.properties?.[key]);
+    if (wanted && values && !values.every((v) => includesValue(wanted, v))) return undefined;
+  }
+  for (const key of ifObj.required ?? []) {
+    if (merged.properties?.[key] === false) return undefined;
+  }
+  return merged;
 }
 
 /**
  * Builds a branch where `if` fails, then merges `else` into it. `if` is a
  * conjunction of its keywords, so it is enough to falsify one of them: a listed
  * property value is excluded, or an optional `required` property is omitted.
- * Returns undefined when no conjunct can be falsified.
+ * Negations that `else` would undo are discarded. Returns undefined when no
+ * conjunct can be falsified.
  */
 function elseBranch(schema: JsonSchemaObject, cond: Conditional, random: Random): JsonSchemaObject | undefined {
   if (cond.if === true || cond.else === false) return undefined;
@@ -72,7 +83,7 @@ function elseBranch(schema: JsonSchemaObject, cond: Conditional, random: Random)
   if (!ifObj) return mergeSchemas([schema, cond.else ?? true]);
 
   const required = new Set(schema.required ?? []);
-  const negations: Array<() => JsonSchemaObject> = [];
+  const negations: Array<{ schema: JsonSchemaObject; holds: (merged: JsonSchemaObject) => boolean }> = [];
 
   for (const [key, ifProp] of Object.entries(ifObj.properties ?? {})) {
     const excluded = listedValues(ifProp);
@@ -80,33 +91,48 @@ function elseBranch(schema: JsonSchemaObject, cond: Conditional, random: Random)
     if (!excluded || current === false) continue;
 
     const allowed = listedValues(current);
+    const excludes = (merged: JsonSchemaObject) => {
+      const values = listedValues(merged.properties?.[key]);
+      return values === undefined || !values.some((v) => includesValue(excluded, v));
+    };
     if (allowed) {
       const remaining = allowed.filter((v) => !includesValue(excluded, v));
       if (remaining.length === 0) continue;
-      negations.push(() => ({
-        ...schema,
-        properties: { ...schema.properties, [key]: withValues(current, remaining) },
-        required: [...required, key],
-      }));
+      negations.push({
+        schema: {
+          ...schema,
+          properties: { ...schema.properties, [key]: withValues(current, remaining) },
+          required: [...required, key],
+        },
+        holds: excludes,
+      });
     } else if (asObject(current)?.not === undefined) {
-      negations.push(() => ({
-        ...schema,
-        properties: { ...schema.properties, [key]: { ...asObject(current), not: { enum: excluded } } },
-        required: [...required, key],
-      }));
+      negations.push({
+        schema: {
+          ...schema,
+          properties: { ...schema.properties, [key]: { ...asObject(current), not: { enum: excluded } } },
+          required: [...required, key],
+        },
+        holds: (merged) => listedValues(merged.properties?.[key]) === undefined
+          ? asObject(merged.properties?.[key])?.not !== undefined
+          : excludes(merged),
+      });
     }
   }
 
   for (const key of ifObj.required ?? []) {
     if (required.has(key)) continue;
-    negations.push(() => ({
-      ...schema,
-      properties: { ...schema.properties, [key]: false },
-    }));
+    negations.push({
+      schema: { ...schema, properties: { ...schema.properties, [key]: false } },
+      holds: (merged) => merged.properties?.[key] === false && !merged.required?.includes(key),
+    });
   }
 
-  if (negations.length === 0) return undefined;
-  return mergeSchemas([random.pick(negations)(), cond.else ?? true]);
+  for (const negation of random.shuffle(negations)) {
+    const merged = mergeSchemas([negation.schema, cond.else ?? true]);
+    if (negation.holds(merged)) return merged;
+  }
+  return undefined;
 }
 
 /**
