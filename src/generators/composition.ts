@@ -2,6 +2,7 @@ import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js"
 import { type Gen, walkCall } from "../coroutine.js";
 import { mergeSchemas } from "../merge.js";
 import { resolveRefGen } from "../ref-resolver.js";
+import { type Conditional, conditionalBranches } from "./conditional.js";
 
 function* resolveSchemaRefGen(schema: JsonSchemaObject, ctx: GenerateContext): Gen<JsonSchemaObject> {
   if (!schema.$ref) return schema;
@@ -31,7 +32,45 @@ export function* generateCompositionGen(
 
   if (allOf) {
     const resolvedRefs = yield* resolveAllOfRefsGen(allOf, ctx);
-    const merged = mergeSchemas([base, ...resolvedRefs]);
+
+    // mergeSchemas has no way to combine several if/then/else, so set them
+    // aside and apply each one to the merged schema in turn
+    const conditionals: Conditional[] = [];
+    if (ifSchema !== undefined) {
+      conditionals.push({ if: ifSchema, then: thenSchema, else: elseSchema });
+    }
+    const members = resolvedRefs.map((member) => {
+      if (member.if === undefined) return member;
+      const { if: memberIf, then: memberThen, else: memberElse, ...rest } = member;
+      conditionals.push({ if: memberIf, then: memberThen, else: memberElse });
+      return rest;
+    });
+
+    const merged = mergeSchemas([base, ...members]);
+    if (conditionals.length === 0) {
+      return yield walkCall(merged, ctx);
+    }
+
+    const resolvedConditionals: Conditional[] = [];
+    for (const cond of conditionals) {
+      resolvedConditionals.push(yield* resolveConditionalRefsGen(cond, ctx));
+    }
+
+    // Try the seeded picks first, then each conditional's other branch, as
+    // generateConditionalGen does for a single conditional
+    for (const choice of [0, 1]) {
+      let candidate = merged;
+      for (const cond of resolvedConditionals) {
+        const branches = conditionalBranches(candidate, cond, ctx.random);
+        const branch = branches[choice] ?? branches[0];
+        if (branch) candidate = branch;
+      }
+      try {
+        return yield walkCall(candidate, ctx);
+      } catch {
+        // Try the other branches
+      }
+    }
     return yield walkCall(merged, ctx);
   }
 
@@ -137,28 +176,35 @@ function* generateConditionalGen(
   elseSchema: JsonSchema | undefined,
   ctx: GenerateContext
 ): Gen<unknown> {
-  // Try the "if + then" branch first (preferred per JSON Schema semantics)
-  if (thenSchema !== undefined) {
-    const mergedIfThen = mergeSchemas([base, ifSchema, thenSchema]);
+  const cond = yield* resolveConditionalRefsGen({ if: ifSchema, then: thenSchema, else: elseSchema }, ctx);
+  for (const branch of conditionalBranches(base, cond, ctx.random)) {
     try {
-      return yield walkCall(mergedIfThen, ctx);
+      return yield walkCall(branch, ctx);
     } catch {
-      // If then branch fails, fall through to try else
-    }
-  }
-
-  // If then failed or wasn't defined, try else branch
-  if (elseSchema !== undefined) {
-    const mergedElse = mergeSchemas([base, elseSchema]);
-    try {
-      return yield walkCall(mergedElse, ctx);
-    } catch {
-      // If else also fails, fall through
+      // Try the other branch
     }
   }
 
   // Fallback: just try base schema
   return yield walkCall(base, ctx);
+}
+
+// A branch whose $ref cannot be resolved is marked unusable (false) instead of
+// failing generation, so the other branch can still apply. An unresolvable
+// `if` can never be satisfied, so only `else` applies.
+function* resolveConditionalRefsGen(cond: Conditional, ctx: GenerateContext): Gen<Conditional> {
+  const resolved: Conditional = { ...cond };
+  for (const key of ["if", "then", "else"] as const) {
+    const schema = cond[key];
+    if (typeof schema === "object" && schema !== null) {
+      try {
+        resolved[key] = yield* resolveSchemaRefGen(schema, ctx);
+      } catch {
+        resolved[key] = false;
+      }
+    }
+  }
+  return resolved;
 }
 
 function* generateNotGen(
