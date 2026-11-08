@@ -264,3 +264,29 @@ describe("Issue #885 - minProperties with additionalProperties: false", () => {
     }
   });
 });
+
+describe("Issue #886 - contains items ignore the items schema", () => {
+  test("contains items satisfy items", async () => {
+    const schema = { type: "array", items: { type: "integer" }, contains: { minimum: 100 } };
+    await expectValidAcrossSeeds(schema);
+  });
+
+  test("contains items satisfy items given as a $ref", async () => {
+    const schema = {
+      type: "array",
+      $defs: { int: { type: "integer" } },
+      items: { $ref: "#/$defs/int" },
+      contains: { minimum: 100 },
+    };
+    await expectValidAcrossSeeds(schema);
+  });
+
+  test("every contains from allOf satisfies items", async () => {
+    const schema = {
+      type: "array",
+      items: { type: "integer" },
+      allOf: [{ contains: { minimum: 100 } }, { contains: { maximum: -100 } }],
+    };
+    await expectValidAcrossSeeds(schema);
+  });
+});
