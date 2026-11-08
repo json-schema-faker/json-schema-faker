@@ -184,12 +184,15 @@ function* generateNotGen(
     const candidates = base.type === undefined ? allTypes : Array.isArray(base.type) ? base.type : [base.type];
     const allowed = candidates.filter((t) => !excludedTypes.includes(t));
 
-    if (allowed.length === 0) {
+    if (allowed.length > 0) {
+      const type = ctx.random.pick(allowed);
+      const merged = mergeSchemas([base, { type }]);
+      return yield walkCall(merged, ctx);
+    }
+    // With other keywords in `not`, a value of an excluded type can still fail them
+    if (Object.keys(not).every((key) => key === "type")) {
       throw new Error(`Cannot generate value for 'not: { type: ${JSON.stringify(not.type)} }' with type ${JSON.stringify(base.type)} at ${ctx.path}`);
     }
-    const type = ctx.random.pick(allowed);
-    const merged = mergeSchemas([base, { type }]);
-    return yield walkCall(merged, ctx);
   }
 
   // Enum exclusion: if not has enum, generate base and hope it doesn't match

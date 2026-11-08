@@ -231,10 +231,10 @@ describe("Issue #866 - Unresolved $ref with arbitrary JSON pointer paths", () =>
   });
 });
 
-async function expectValidAcrossSeeds(schema: any, seeds = 30): Promise<unknown[]> {
+async function expectValidAcrossSeeds(schema: any, options: Record<string, unknown> = {}, seeds = 30): Promise<unknown[]> {
   const values: unknown[] = [];
   for (let seed = 1; seed <= seeds; seed++) {
-    for (const value of [await generate(schema, { seed }), generateSync(schema, { seed })]) {
+    for (const value of [await generate(schema, { ...options, seed }), generateSync(schema, { ...options, seed })]) {
       assertValid(schema, value);
       values.push(value);
     }
@@ -263,6 +263,30 @@ describe("Issue #885 - minProperties with additionalProperties: false", () => {
       expect(Object.keys(value as object).sort()).toEqual(["a", "b"]);
     }
   });
+
+  test("applies dependencies of backfilled properties", async () => {
+    const schema = {
+      type: "object",
+      properties: { a: { type: "string" }, b: { type: "string" }, c: { type: "string" } },
+      dependentRequired: { a: ["b"], b: ["a"] },
+      dependentSchemas: { c: { required: ["a"] } },
+      minProperties: 1,
+    };
+    await expectValidAcrossSeeds(schema, { optionalsProbability: 0 });
+  });
+
+  test("never backfills a property a dependency forbids", async () => {
+    const schema = {
+      type: "object",
+      properties: { a: { type: "string" }, b: { type: "string" } },
+      required: ["a"],
+      dependentSchemas: { a: { not: { required: ["b"] } } },
+      minProperties: 2,
+    };
+    for (const value of await expectValidAcrossSeeds(schema)) {
+      expect(value).not.toHaveProperty("b");
+    }
+  });
 });
 
 describe("Issue #886 - contains items ignore the items schema", () => {
@@ -289,6 +313,15 @@ describe("Issue #886 - contains items ignore the items schema", () => {
     };
     await expectValidAcrossSeeds(schema);
   });
+
+  test("contains keeps keywords that merging would drop", async () => {
+    const schema = {
+      type: "array",
+      items: { type: "integer" },
+      contains: { type: "integer", minimum: 0, maximum: 1, not: { const: 0 } },
+    };
+    await expectValidAcrossSeeds(schema, { optionalsProbability: 0 });
+  });
 });
 
 describe("Issue #887 - not.type with an array type", () => {
@@ -304,6 +337,11 @@ describe("Issue #887 - not.type with an array type", () => {
     for (const value of await expectValidAcrossSeeds(schema)) {
       expect(typeof value).toBe("boolean");
     }
+  });
+
+  test("generates when not has keywords besides type", async () => {
+    const schema = { type: "string", maxLength: 2, not: { type: "string", minLength: 3 } };
+    await expectValidAcrossSeeds(schema);
   });
 
   test("throws when every type is excluded", async () => {
@@ -352,5 +390,22 @@ describe("Issue #888 - generated keys that match other keywords", () => {
     for (const value of await expectValidAcrossSeeds(schema)) {
       expect(value).not.toHaveProperty("banned");
     }
+  });
+
+  test("a generated key never matches a false patternProperties entry", async () => {
+    const schema = {
+      type: "object",
+      propertyNames: { enum: ["xa", "xb", "y", "z"] },
+      patternProperties: { "^x": false },
+      minProperties: 2,
+    };
+    for (const value of await expectValidAcrossSeeds(schema)) {
+      expect(Object.keys(value as object).some((key) => key.startsWith("x"))).toBe(false);
+    }
+  });
+
+  test("names propertyNames when it allows too few keys", async () => {
+    const schema = { type: "object", propertyNames: { enum: ["x"] }, minProperties: 2 };
+    await expect(generate(schema as any, { seed: 1 })).rejects.toThrow("propertyNames allows too few keys");
   });
 });
