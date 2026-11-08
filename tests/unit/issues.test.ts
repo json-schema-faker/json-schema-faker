@@ -1,5 +1,6 @@
 import { describe, test, expect } from "bun:test";
-import { generate } from "../../src/index.js";
+import { generate, generateSync } from "../../src/index.js";
+import { assertValid } from "../helpers/validate.js";
 
 /**
  * Bun tests for issues that cannot be easily expressed as JSON schema fixtures.
@@ -227,5 +228,39 @@ describe("Issue #866 - Unresolved $ref with arbitrary JSON pointer paths", () =>
       },
     };
     await expect(generate(schema as any, { seed: 1 })).rejects.toThrow("Unresolved $ref: #/");
+  });
+});
+
+async function expectValidAcrossSeeds(schema: any, seeds = 30): Promise<unknown[]> {
+  const values: unknown[] = [];
+  for (let seed = 1; seed <= seeds; seed++) {
+    for (const value of [await generate(schema, { seed }), generateSync(schema, { seed })]) {
+      assertValid(schema, value);
+      values.push(value);
+    }
+  }
+  return values;
+}
+
+describe("Issue #885 - minProperties with additionalProperties: false", () => {
+  test("backfills from unselected optional properties", async () => {
+    const schema = {
+      type: "object",
+      properties: { a: { type: "string" } },
+      additionalProperties: false,
+      minProperties: 1,
+    };
+    await expectValidAcrossSeeds(schema);
+  });
+
+  test("prefers defined properties over invented keys when additionalProperties is allowed", async () => {
+    const schema = {
+      type: "object",
+      properties: { a: { type: "string" }, b: { type: "integer" } },
+      minProperties: 2,
+    };
+    for (const value of await expectValidAcrossSeeds(schema)) {
+      expect(Object.keys(value as object).sort()).toEqual(["a", "b"]);
+    }
   });
 });

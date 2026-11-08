@@ -31,6 +31,24 @@ function matchesConstraint(value: unknown, constraint: JsonSchema): boolean {
   return false;
 }
 
+// Merge a defined property's schema with the patternProperties its key matches
+function mergeMatchingPatterns(key: string, propSchema: JsonSchema, schema: JsonSchemaObject): JsonSchema {
+  if (!schema.patternProperties || typeof propSchema !== "object" || propSchema === null) {
+    return propSchema;
+  }
+  const matchingPatterns: JsonSchema[] = [];
+  for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
+    try {
+      if (new RegExp(pattern).test(key)) {
+        matchingPatterns.push(patSchema);
+      }
+    } catch {
+      // Invalid regex pattern, skip
+    }
+  }
+  return matchingPatterns.length > 0 ? mergeSchemas([propSchema, ...matchingPatterns]) : propSchema;
+}
+
 function isImpossibleSchema(schema: JsonSchema): boolean {
   if (typeof schema === "boolean") {
     return !schema; // false schema = impossible
@@ -263,24 +281,8 @@ export function* generateObjectGen(
       const isRequired = required.has(key);
       const isObjectType = typeof propSchema === "object" && propSchema !== null && propSchema.type === "object";
       
-      // Merge with matching patternProperties constraints
-      let mergedPropSchema = propSchema;
-      if (schema.patternProperties && typeof propSchema === "object" && propSchema !== null) {
-        const matchingPatterns: JsonSchema[] = [];
-        for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
-          try {
-            if (new RegExp(pattern).test(key)) {
-              matchingPatterns.push(patSchema);
-            }
-          } catch {
-            // Invalid regex pattern, skip
-          }
-        }
-        if (matchingPatterns.length > 0) {
-          mergedPropSchema = mergeSchemas([propSchema, ...matchingPatterns]) as JsonSchemaObject;
-        }
-      }
-      
+      const mergedPropSchema = mergeMatchingPatterns(key, propSchema, schema);
+
       if (isRequired) {
         const value = yield walkCall(mergedPropSchema, propCtx);
         if (value !== undefined) {
@@ -492,7 +494,20 @@ export function* generateObjectGen(
   const maxProps = schema.maxProperties;
 
   if (Object.keys(result).length < minProps) {
-    // Try to generate properties matching patternProperties first
+    // Use defined optional properties that were not selected first
+    const unselected = ctx.random.shuffle(
+      Object.keys(inferredProperties).filter((key) => !(key in result) && !isImpossibleSchema(inferredProperties[key]))
+    );
+    for (const key of unselected) {
+      if (Object.keys(result).length >= minProps) break;
+      const propCtx = createPropertyContext(childCtx, key);
+      const value = yield walkCall(mergeMatchingPatterns(key, inferredProperties[key], schema), propCtx);
+      if (value !== undefined) {
+        result[key] = value;
+      }
+    }
+
+    // Then try to generate properties matching patternProperties
     if (schema.patternProperties && Object.keys(schema.patternProperties).length > 0) {
       const patterns = Object.entries(schema.patternProperties);
       let attempts = 0;
