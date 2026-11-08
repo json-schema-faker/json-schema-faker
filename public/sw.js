@@ -1,4 +1,4 @@
-const CACHE = 'jsf-v0.6.3';
+const CACHE = 'jsf-v0.6.4';
 
 const PRECACHE = [
   '/',
