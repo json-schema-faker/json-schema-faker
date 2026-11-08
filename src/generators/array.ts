@@ -1,5 +1,7 @@
 import type { JsonSchema, JsonSchemaObject, GenerateContext } from "../types.js";
 import { type Gen, walkCall } from "../coroutine.js";
+import { mergeSchemas } from "../merge.js";
+import { resolveRefGen } from "../ref-resolver.js";
 
 export function* generateArrayGen(
   schema: JsonSchemaObject,
@@ -174,14 +176,33 @@ export function* generateArrayGen(
     }
   }
 
+  // Items generated for contains must also satisfy the schema of additional items
+  function* withItemSchema(containsSchema: JsonSchema): Gen<JsonSchema> {
+    if (typeof additionalItemSchema !== "object" || additionalItemSchema === null) return containsSchema;
+    if (typeof containsSchema !== "object" || containsSchema === null) return containsSchema;
+    const item = yield* resolveRefGen(additionalItemSchema, ctx);
+    const own = yield* resolveRefGen(containsSchema, ctx);
+    // Past refDepthMax a ref resolves to a {} stub, keep the original schemas
+    if (item.ctx.refDepthReached || own.ctx.refDepthReached) return containsSchema;
+    const itemSchema = item.schema;
+    const ownSchema = own.schema as JsonSchemaObject;
+    const merged: Record<string, unknown> = mergeSchemas([itemSchema, ownSchema]);
+    // mergeSchemas drops keywords it does not know (not, if/then/else, extensions), keep the contains ones
+    for (const [key, value] of Object.entries(ownSchema)) {
+      if (!(key in merged)) merged[key] = value;
+    }
+    return merged as JsonSchemaObject;
+  }
+
   // Handle contains
   if (schema.contains) {
+    const containsSchema = yield* withItemSchema(schema.contains);
     const minContains = schema.minContains ?? 1;
     const maxContains = schema.maxContains ?? Math.max(minContains, 1);
     const containsCount = ctx.random.int(minContains, maxContains);
 
     for (let i = 0; i < containsCount; i++) {
-      let item = yield walkCall(schema.contains, createItemContext(childCtx, result.length));
+      let item = yield walkCall(containsSchema, createItemContext(childCtx, result.length));
       if (item === undefined) {
         continue;
       }
@@ -193,7 +214,7 @@ export function* generateArrayGen(
           // Try to generate unique item
           let uniqueFound = false;
           for (let attempts = 0; attempts < 50; attempts++) {
-            item = yield walkCall(schema.contains, createItemContext(childCtx, result.length));
+            item = yield walkCall(containsSchema, createItemContext(childCtx, result.length));
             if (item === undefined) {
               continue;
             }
@@ -230,7 +251,8 @@ export function* generateArrayGen(
     // Track positions already claimed by a containsAll item so they won't be overwritten
     const claimedPositions = new Set<number>();
 
-    for (const containsSchema of schema.containsAll) {
+    for (const containsAllSchema of schema.containsAll) {
+      const containsSchema = yield* withItemSchema(containsAllSchema);
       let item = yield walkCall(containsSchema, createItemContext(childCtx, result.length));
       if (item === undefined) {
         continue;

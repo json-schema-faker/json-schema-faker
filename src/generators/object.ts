@@ -31,6 +31,29 @@ function matchesConstraint(value: unknown, constraint: JsonSchema): boolean {
   return false;
 }
 
+function matchingPatternSchemas(key: string, schema: JsonSchemaObject): JsonSchema[] {
+  const matchingPatterns: JsonSchema[] = [];
+  for (const [pattern, patSchema] of Object.entries(schema.patternProperties ?? {})) {
+    try {
+      if (new RegExp(pattern).test(key)) {
+        matchingPatterns.push(patSchema);
+      }
+    } catch {
+      // Invalid regex pattern, skip
+    }
+  }
+  return matchingPatterns;
+}
+
+// Merge a defined property's schema with the patternProperties its key matches
+function mergeMatchingPatterns(key: string, propSchema: JsonSchema, schema: JsonSchemaObject): JsonSchema {
+  if (typeof propSchema !== "object" || propSchema === null) {
+    return propSchema;
+  }
+  const matchingPatterns = matchingPatternSchemas(key, schema);
+  return matchingPatterns.length > 0 ? mergeSchemas([propSchema, ...matchingPatterns]) : propSchema;
+}
+
 function isImpossibleSchema(schema: JsonSchema): boolean {
   if (typeof schema === "boolean") {
     return !schema; // false schema = impossible
@@ -232,6 +255,8 @@ export function* generateObjectGen(
   const childCtx: GenerateContext = { ...ctx, depth: ctx.depth + 1, path: childCtxPath };
   const result: Record<string, unknown> = {};
   const definedKeys = new Set<string>();
+  // Properties a matched schema dependency forbids, never backfilled
+  const forbiddenKeys = new Set<string>();
 
   const required = new Set(inferredRequired);
 
@@ -263,24 +288,8 @@ export function* generateObjectGen(
       const isRequired = required.has(key);
       const isObjectType = typeof propSchema === "object" && propSchema !== null && propSchema.type === "object";
       
-      // Merge with matching patternProperties constraints
-      let mergedPropSchema = propSchema;
-      if (schema.patternProperties && typeof propSchema === "object" && propSchema !== null) {
-        const matchingPatterns: JsonSchema[] = [];
-        for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
-          try {
-            if (new RegExp(pattern).test(key)) {
-              matchingPatterns.push(patSchema);
-            }
-          } catch {
-            // Invalid regex pattern, skip
-          }
-        }
-        if (matchingPatterns.length > 0) {
-          mergedPropSchema = mergeSchemas([propSchema, ...matchingPatterns]) as JsonSchemaObject;
-        }
-      }
-      
+      const mergedPropSchema = mergeMatchingPatterns(key, propSchema, schema);
+
       if (isRequired) {
         const value = yield walkCall(mergedPropSchema, propCtx);
         if (value !== undefined) {
@@ -348,182 +357,232 @@ export function* generateObjectGen(
     }
   }
 
-  // dependentRequired / array-form dependencies: backfill deps of any trigger
-  // that ended up generated but wasn't required (e.g. via alwaysFakeOptionals)
-  let addedDependentProperty = true;
-  while (addedDependentProperty) {
-    addedDependentProperty = false;
+  // Run again after the minProperties backfill, which can add new triggers
+  function* applyDependencies(): Gen<void> {
+    const sizeBefore = Object.keys(result).length;
 
-    for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
-      if (result[trigger] === undefined) continue;
+    // dependentRequired / array-form dependencies: backfill deps of any trigger
+    // that ended up generated but wasn't required (e.g. via alwaysFakeOptionals)
+    let addedDependentProperty = true;
+    while (addedDependentProperty) {
+      addedDependentProperty = false;
 
-      for (const dep of deps) {
-        const before = result[dep];
-        yield* generateMissingProperty(schema, inferredProperties, result, definedKeys, childCtx, dep);
-        if (before === undefined && result[dep] !== undefined) {
-          addedDependentProperty = true;
-        }
-        // Protect the dependency from later maxProperties trimming -- it's
-        // present because `trigger` requires it (whether just backfilled or
-        // already generated as a regular optional property), not because it
-        // was picked as an optional extra that's safe to drop.
-        if (result[dep] !== undefined) {
-          required.add(dep);
+      for (const [trigger, deps] of getDependentRequiredEntries(schema)) {
+        if (result[trigger] === undefined) continue;
+
+        for (const dep of deps) {
+          const before = result[dep];
+          yield* generateMissingProperty(schema, inferredProperties, result, definedKeys, childCtx, dep);
+          if (before === undefined && result[dep] !== undefined) {
+            addedDependentProperty = true;
+          }
+          // Protect the dependency from later maxProperties trimming -- it's
+          // present because `trigger` requires it (whether just backfilled or
+          // already generated as a regular optional property), not because it
+          // was picked as an optional extra that's safe to drop.
+          if (result[dep] !== undefined) {
+            required.add(dep);
+          }
         }
       }
     }
-  }
 
-  // Handle schema dependencies (Draft-07 object-form `dependencies` and
-  // Draft 2019-09+ `dependentSchemas`). If a property is present, add
-  // properties from the matching branch of the dependency schema.
-  {
-    for (const [propName, dependency] of getSchemaDependencyEntries(schema)) {
-      // Check if the property was generated
-      if (result[propName] !== undefined && !definedKeys.has(propName + "_dep")) {
-        definedKeys.add(propName + "_dep");
+    // Handle schema dependencies (Draft-07 object-form `dependencies` and
+    // Draft 2019-09+ `dependentSchemas`). If a property is present, add
+    // properties from the matching branch of the dependency schema.
+    {
+      for (const [propName, dependency] of getSchemaDependencyEntries(schema)) {
+        // Check if the property was generated
+        if (result[propName] !== undefined && !definedKeys.has(propName + "_dep")) {
+          definedKeys.add(propName + "_dep");
 
-        if (typeof dependency === "boolean") {
-          // `true` is a no-op (always satisfied). `false` means the trigger's
-          // presence makes the object invalid under strict validation -- but
-          // propName is already generated by this point, so there's nothing
-          // left to retroactively undo here (same best-effort limitation as
-          // other post-hoc-unsatisfiable schemas elsewhere in this file).
-          continue;
-        }
-
-        // Find the matching branch in oneOf/anyOf/allOf based on the generated property value
-        const branches = dependency.oneOf ?? dependency.anyOf ?? dependency.allOf ?? [dependency];
-        
-        let matchingBranch: JsonSchemaObject | null = null;
-        
-        for (const branch of branches) {
-          if (typeof branch !== "object" || branch === null) continue;
-          
-          // Check if this branch's constraints match the generated property value
-          const branchProps = branch.properties;
-          const branchNot = branch.not as JsonSchemaObject | undefined;
-          
-          // Check positive constraint first
-          if (branchProps && branchProps[propName]) {
-            const constraint = branchProps[propName];
-            const generatedValue = result[propName];
-            
-            // Check if the constraint matches the generated value
-            if (matchesConstraint(generatedValue, constraint)) {
-              matchingBranch = branch;
-              break;
-            }
+          if (typeof dependency === "boolean") {
+            // `true` is a no-op (always satisfied). `false` means the trigger's
+            // presence makes the object invalid under strict validation -- but
+            // propName is already generated by this point, so there's nothing
+            // left to retroactively undo here (same best-effort limitation as
+            // other post-hoc-unsatisfiable schemas elsewhere in this file).
+            continue;
           }
+
+          // Find the matching branch in oneOf/anyOf/allOf based on the generated property value
+          const branches = dependency.oneOf ?? dependency.anyOf ?? dependency.allOf ?? [dependency];
+        
+          let matchingBranch: JsonSchemaObject | null = null;
+        
+          for (const branch of branches) {
+            if (typeof branch !== "object" || branch === null) continue;
           
-          // Check "not" constraint - if the property value doesn't match the "not" properties, this branch may apply
-          if (branchNot?.properties) {
-            const notPropConstraints = branchNot.properties[propName];
-            if (notPropConstraints) {
+            // Check if this branch's constraints match the generated property value
+            const branchProps = branch.properties;
+            const branchNot = branch.not as JsonSchemaObject | undefined;
+          
+            // Check positive constraint first
+            if (branchProps && branchProps[propName]) {
+              const constraint = branchProps[propName];
               const generatedValue = result[propName];
-              // If generated value does NOT match the "not" constraint, this branch applies
-              if (!matchesConstraint(generatedValue, notPropConstraints)) {
+            
+              // Check if the constraint matches the generated value
+              if (matchesConstraint(generatedValue, constraint)) {
                 matchingBranch = branch;
                 break;
               }
             }
-          }
-        }
-        
-        // If no matching branch found, use the first one or the dependency itself
-        if (!matchingBranch && branches.length > 0 && typeof branches[0] === "object") {
-          matchingBranch = branches[0] as JsonSchemaObject;
-        }
-        
-        // Handle not constraints - remove properties that should not be present
-        if (matchingBranch?.not) {
-          const notSchema = matchingBranch.not as JsonSchemaObject;
-          if (notSchema.required && Array.isArray(notSchema.required)) {
-            for (const forbiddenProp of notSchema.required) {
-              delete result[forbiddenProp];
+          
+            // Check "not" constraint - if the property value doesn't match the "not" properties, this branch may apply
+            if (branchNot?.properties) {
+              const notPropConstraints = branchNot.properties[propName];
+              if (notPropConstraints) {
+                const generatedValue = result[propName];
+                // If generated value does NOT match the "not" constraint, this branch applies
+                if (!matchesConstraint(generatedValue, notPropConstraints)) {
+                  matchingBranch = branch;
+                  break;
+                }
+              }
             }
           }
-        }
         
-        // Handle required properties from the matching branch (even without properties)
-        const generatedByRequired = new Set<string>();
-        if (matchingBranch?.required) {
-          for (const reqProp of matchingBranch.required) {
-            // Skip the dependency property itself
-            if (reqProp === propName) continue;
-            
-            // Skip if already generated
-            if (result[reqProp] !== undefined) continue;
-            
-            generatedByRequired.add(reqProp);
-            const reqPropSchema =
-              (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ??
-              inferredProperties[reqProp] ??
-              { type: "object" };
-            const reqPropCtx = createPropertyContext(childCtx, reqProp);
-            const value = yield walkCall(reqPropSchema, reqPropCtx);
-            if (value !== undefined) {
-              result[reqProp] = value;
+          // If no matching branch found, use the first one or the dependency itself
+          if (!matchingBranch && branches.length > 0 && typeof branches[0] === "object") {
+            matchingBranch = branches[0] as JsonSchemaObject;
+          }
+        
+          // Handle not constraints - remove properties that should not be present
+          if (matchingBranch?.not) {
+            const notSchema = matchingBranch.not as JsonSchemaObject;
+            if (notSchema.required && Array.isArray(notSchema.required)) {
+              for (const forbiddenProp of notSchema.required) {
+                delete result[forbiddenProp];
+                forbiddenKeys.add(forbiddenProp);
+              }
             }
           }
-        }
         
-        if (matchingBranch && matchingBranch.properties) {
-          // Generate dependent properties from the matching branch
-          for (const [depPropName, depPropSchema] of Object.entries(matchingBranch.properties)) {
-            // Skip the dependency property itself (foo)
-            if (depPropName === propName) continue;
-            // Skip properties already generated from the required pass
-            if (generatedByRequired.has(depPropName)) continue;
+          // Handle required properties from the matching branch (even without properties)
+          const generatedByRequired = new Set<string>();
+          if (matchingBranch?.required) {
+            for (const reqProp of matchingBranch.required) {
+              // Skip the dependency property itself
+              if (reqProp === propName) continue;
             
-            const depPropCtx = createPropertyContext(childCtx, depPropName);
-            const value = yield walkCall(depPropSchema as JsonSchema, depPropCtx);
-            if (value !== undefined) {
-              result[depPropName] = value;
+              // Skip if already generated
+              if (result[reqProp] !== undefined) continue;
+            
+              generatedByRequired.add(reqProp);
+              const reqPropSchema =
+                (matchingBranch.properties as Record<string, JsonSchema>)?.[reqProp] ??
+                inferredProperties[reqProp] ??
+                { type: "object" };
+              const reqPropCtx = createPropertyContext(childCtx, reqProp);
+              const value = yield walkCall(reqPropSchema, reqPropCtx);
+              if (value !== undefined) {
+                result[reqProp] = value;
+              }
+            }
+          }
+        
+          if (matchingBranch && matchingBranch.properties) {
+            // Generate dependent properties from the matching branch
+            for (const [depPropName, depPropSchema] of Object.entries(matchingBranch.properties)) {
+              // Skip the dependency property itself (foo)
+              if (depPropName === propName) continue;
+              // Skip properties already generated from the required pass
+              if (generatedByRequired.has(depPropName)) continue;
+            
+              const depPropCtx = createPropertyContext(childCtx, depPropName);
+              const value = yield walkCall(depPropSchema as JsonSchema, depPropCtx);
+              if (value !== undefined) {
+                result[depPropName] = value;
+              }
             }
           }
         }
       }
     }
+
+    // A schema dependency can add a trigger of another dependency
+    if (Object.keys(result).length > sizeBefore) {
+      yield* applyDependencies();
+    }
   }
+
+  yield* applyDependencies();
 
   // Respect minProperties
   const minProps = schema.minProperties ?? 0;
   const maxProps = schema.maxProperties;
 
   if (Object.keys(result).length < minProps) {
-    // Try to generate properties matching patternProperties first
-    if (schema.patternProperties && Object.keys(schema.patternProperties).length > 0) {
-      const patterns = Object.entries(schema.patternProperties);
-      let attempts = 0;
-      const maxAttempts = 1000;
-      
-      while (Object.keys(result).length < minProps && attempts < maxAttempts) {
-        attempts++;
-        
-        // Pick a random pattern
-        const [pattern, patSchema] = ctx.random.pick(patterns);
-        
-        // Generate a key that matches this pattern
-        const key = generateKeyMatchingPattern(pattern, ctx);
-        
-        if (key && !result[key]) {
-          const propCtx = createPropertyContext(childCtx, key);
-          const value = yield walkCall(patSchema, propCtx);
-          if (value !== undefined) {
-            result[key] = value;
-          }
-          definedKeys.add(key);
-        }
+    // Use defined optional properties that were not selected first
+    const unselected = ctx.random.shuffle(
+      Object.keys(inferredProperties).filter((key) => !(key in result) && !forbiddenKeys.has(key) && !isImpossibleSchema(inferredProperties[key]))
+    );
+    for (const key of unselected) {
+      if (Object.keys(result).length >= minProps) break;
+      const propCtx = createPropertyContext(childCtx, key);
+      const value = yield walkCall(mergeMatchingPatterns(key, inferredProperties[key], schema), propCtx);
+      if (value !== undefined) {
+        result[key] = value;
       }
     }
-    
-    // Fall back to additionalProperties if still need more
-    if (Object.keys(result).length < minProps) {
-      const addlSchema = schema.additionalProperties;
-      const genSchema: JsonSchema =
-        addlSchema === undefined || addlSchema === true ? { type: "string" } : addlSchema;
-      if (genSchema !== false) {
+
+    const addlSchema = schema.additionalProperties;
+    const genSchema: JsonSchema =
+      addlSchema === undefined || addlSchema === true ? { type: "string" } : addlSchema;
+    const keySchema = schema.propertyNames;
+
+    // With propertyNames, every new key is generated from it, and its value
+    // follows the patternProperties it matches or else additionalProperties
+    if (typeof keySchema === "object" && keySchema !== null) {
+      let attempts = 0;
+      const maxAttempts = 1000;
+      while (Object.keys(result).length < minProps && attempts < maxAttempts) {
+        attempts++;
+        const key = String(yield walkCall({ allOf: [{ type: "string" }, keySchema] }, childCtx));
+        // Defined properties were already backfilled above, or are impossible
+        if (key in result || key in inferredProperties || forbiddenKeys.has(key)) continue;
+        const matchingPatterns = matchingPatternSchemas(key, schema);
+        const valueSchema = matchingPatterns.length > 0 ? mergeSchemas(matchingPatterns) : genSchema;
+        if (isImpossibleSchema(valueSchema)) continue;
+        const propCtx = createPropertyContext(childCtx, key);
+        const value = yield walkCall(valueSchema, propCtx);
+        if (value !== undefined) {
+          result[key] = value;
+        }
+        definedKeys.add(key);
+      }
+    }
+
+    // Then try to generate properties matching patternProperties
+    if (keySchema === undefined || keySchema === true) {
+      if (schema.patternProperties && Object.keys(schema.patternProperties).length > 0) {
+        const patterns = Object.entries(schema.patternProperties);
+        let attempts = 0;
+        const maxAttempts = 1000;
+      
+        while (Object.keys(result).length < minProps && attempts < maxAttempts) {
+          attempts++;
+        
+          // Pick a random pattern
+          const [pattern, patSchema] = ctx.random.pick(patterns);
+        
+          // Generate a key that matches this pattern
+          const key = generateKeyMatchingPattern(pattern, ctx);
+        
+          if (key && !result[key]) {
+            const propCtx = createPropertyContext(childCtx, key);
+            const value = yield walkCall(patSchema, propCtx);
+            if (value !== undefined) {
+              result[key] = value;
+            }
+            definedKeys.add(key);
+          }
+        }
+      }
+
+      // Fall back to additionalProperties if still need more
+      if (Object.keys(result).length < minProps && genSchema !== false) {
         let attempts = 0;
         const maxAttempts = 1000;
         while (Object.keys(result).length < minProps && attempts < maxAttempts) {
@@ -541,12 +600,13 @@ export function* generateObjectGen(
       }
     }
 
+    yield* applyDependencies();
+
     // Check if we still can't meet minProperties
     if (Object.keys(result).length < minProps) {
       const definedPropsList = Object.keys(inferredProperties).join(", ");
-      throw new Error(
-        `properties '${definedPropsList}' were not found while additionalProperties is false in ${ctx.path}`
-      );
+      const reason = keySchema !== undefined && keySchema !== true ? "propertyNames allows too few keys" : "additionalProperties is false";
+      throw new Error(`properties '${definedPropsList}' were not found while ${reason} in ${ctx.path}`);
     }
   }
 

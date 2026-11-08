@@ -177,14 +177,21 @@ function* generateNotGen(
 
   // Simple type avoidance
   if (not.type && !not.enum && !not.const) {
-    const excludedTypes = Array.isArray(not.type) ? not.type : [not.type];
+    const excludedTypes = Array.isArray(not.type) ? [...not.type] : [not.type];
+    // Every integer is also a number
+    if (excludedTypes.includes("number")) excludedTypes.push("integer");
     const allTypes = ["string", "number", "integer", "boolean", "null", "object", "array"];
-    const allowed = allTypes.filter((t) => !excludedTypes.includes(t));
+    const candidates = base.type === undefined ? allTypes : Array.isArray(base.type) ? base.type : [base.type];
+    const allowed = candidates.filter((t) => !excludedTypes.includes(t));
 
     if (allowed.length > 0) {
       const type = ctx.random.pick(allowed);
       const merged = mergeSchemas([base, { type }]);
       return yield walkCall(merged, ctx);
+    }
+    // With other keywords in `not`, a value of an excluded type can still fail them
+    if (Object.keys(not).every((key) => key === "type")) {
+      throw new Error(`Cannot generate value for 'not: { type: ${JSON.stringify(not.type)} }' with type ${JSON.stringify(base.type)} at ${ctx.path}`);
     }
   }
 
