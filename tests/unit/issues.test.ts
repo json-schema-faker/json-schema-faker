@@ -290,3 +290,25 @@ describe("Issue #886 - contains items ignore the items schema", () => {
     await expectValidAcrossSeeds(schema);
   });
 });
+
+describe("Issue #887 - not.type with an array type", () => {
+  test("excludes the forbidden type from the schema's own types", async () => {
+    const schema = { type: ["string", "number"], not: { type: "string" } };
+    for (const value of await expectValidAcrossSeeds(schema)) {
+      expect(typeof value).toBe("number");
+    }
+  });
+
+  test("excluding number also excludes integer", async () => {
+    const schema = { type: ["integer", "boolean"], not: { type: "number" } };
+    for (const value of await expectValidAcrossSeeds(schema)) {
+      expect(typeof value).toBe("boolean");
+    }
+  });
+
+  test("throws when every type is excluded", async () => {
+    const schema = { type: "string", not: { type: "string" } };
+    await expect(generate(schema as any, { seed: 1 })).rejects.toThrow("Cannot generate value for 'not");
+    expect(() => generateSync(schema as any, { seed: 1 })).toThrow("Cannot generate value for 'not");
+  });
+});
