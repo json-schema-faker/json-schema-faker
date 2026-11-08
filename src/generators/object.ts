@@ -31,13 +31,9 @@ function matchesConstraint(value: unknown, constraint: JsonSchema): boolean {
   return false;
 }
 
-// Merge a defined property's schema with the patternProperties its key matches
-function mergeMatchingPatterns(key: string, propSchema: JsonSchema, schema: JsonSchemaObject): JsonSchema {
-  if (!schema.patternProperties || typeof propSchema !== "object" || propSchema === null) {
-    return propSchema;
-  }
+function matchingPatternSchemas(key: string, schema: JsonSchemaObject): JsonSchema[] {
   const matchingPatterns: JsonSchema[] = [];
-  for (const [pattern, patSchema] of Object.entries(schema.patternProperties)) {
+  for (const [pattern, patSchema] of Object.entries(schema.patternProperties ?? {})) {
     try {
       if (new RegExp(pattern).test(key)) {
         matchingPatterns.push(patSchema);
@@ -46,6 +42,15 @@ function mergeMatchingPatterns(key: string, propSchema: JsonSchema, schema: Json
       // Invalid regex pattern, skip
     }
   }
+  return matchingPatterns;
+}
+
+// Merge a defined property's schema with the patternProperties its key matches
+function mergeMatchingPatterns(key: string, propSchema: JsonSchema, schema: JsonSchemaObject): JsonSchema {
+  if (typeof propSchema !== "object" || propSchema === null) {
+    return propSchema;
+  }
+  const matchingPatterns = matchingPatternSchemas(key, schema);
   return matchingPatterns.length > 0 ? mergeSchemas([propSchema, ...matchingPatterns]) : propSchema;
 }
 
@@ -507,38 +512,62 @@ export function* generateObjectGen(
       }
     }
 
-    // Then try to generate properties matching patternProperties
-    if (schema.patternProperties && Object.keys(schema.patternProperties).length > 0) {
-      const patterns = Object.entries(schema.patternProperties);
+    const addlSchema = schema.additionalProperties;
+    const genSchema: JsonSchema =
+      addlSchema === undefined || addlSchema === true ? { type: "string" } : addlSchema;
+    const keySchema = schema.propertyNames;
+
+    // With propertyNames, every new key is generated from it, and its value
+    // follows the patternProperties it matches or else additionalProperties
+    if (typeof keySchema === "object" && keySchema !== null) {
       let attempts = 0;
       const maxAttempts = 1000;
-      
       while (Object.keys(result).length < minProps && attempts < maxAttempts) {
         attempts++;
-        
-        // Pick a random pattern
-        const [pattern, patSchema] = ctx.random.pick(patterns);
-        
-        // Generate a key that matches this pattern
-        const key = generateKeyMatchingPattern(pattern, ctx);
-        
-        if (key && !result[key]) {
-          const propCtx = createPropertyContext(childCtx, key);
-          const value = yield walkCall(patSchema, propCtx);
-          if (value !== undefined) {
-            result[key] = value;
-          }
-          definedKeys.add(key);
+        const key = String(yield walkCall({ allOf: [{ type: "string" }, keySchema] }, childCtx));
+        // Defined properties were already backfilled above, or are impossible
+        if (key in result || key in inferredProperties) continue;
+        const matchingPatterns = matchingPatternSchemas(key, schema);
+        const valueSchema = matchingPatterns.length > 0 ? mergeSchemas(matchingPatterns) : genSchema;
+        if (valueSchema === false) continue;
+        const propCtx = createPropertyContext(childCtx, key);
+        const value = yield walkCall(valueSchema, propCtx);
+        if (value !== undefined) {
+          result[key] = value;
         }
+        definedKeys.add(key);
       }
     }
-    
-    // Fall back to additionalProperties if still need more
-    if (Object.keys(result).length < minProps) {
-      const addlSchema = schema.additionalProperties;
-      const genSchema: JsonSchema =
-        addlSchema === undefined || addlSchema === true ? { type: "string" } : addlSchema;
-      if (genSchema !== false) {
+
+    // Then try to generate properties matching patternProperties
+    if (keySchema === undefined || keySchema === true) {
+      if (schema.patternProperties && Object.keys(schema.patternProperties).length > 0) {
+        const patterns = Object.entries(schema.patternProperties);
+        let attempts = 0;
+        const maxAttempts = 1000;
+      
+        while (Object.keys(result).length < minProps && attempts < maxAttempts) {
+          attempts++;
+        
+          // Pick a random pattern
+          const [pattern, patSchema] = ctx.random.pick(patterns);
+        
+          // Generate a key that matches this pattern
+          const key = generateKeyMatchingPattern(pattern, ctx);
+        
+          if (key && !result[key]) {
+            const propCtx = createPropertyContext(childCtx, key);
+            const value = yield walkCall(patSchema, propCtx);
+            if (value !== undefined) {
+              result[key] = value;
+            }
+            definedKeys.add(key);
+          }
+        }
+      }
+
+      // Fall back to additionalProperties if still need more
+      if (Object.keys(result).length < minProps && genSchema !== false) {
         let attempts = 0;
         const maxAttempts = 1000;
         while (Object.keys(result).length < minProps && attempts < maxAttempts) {

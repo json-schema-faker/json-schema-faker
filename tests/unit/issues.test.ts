@@ -312,3 +312,45 @@ describe("Issue #887 - not.type with an array type", () => {
     expect(() => generateSync(schema as any, { seed: 1 })).toThrow("Cannot generate value for 'not");
   });
 });
+
+describe("Issue #888 - propertyNames for generated keys", () => {
+  test("generated keys match propertyNames.pattern", async () => {
+    const schema = { type: "object", propertyNames: { pattern: "^[a-z]+$" }, minProperties: 1 };
+    await expectValidAcrossSeeds(schema);
+  });
+
+  test("generated keys come from propertyNames.enum", async () => {
+    const schema = { type: "object", propertyNames: { enum: ["x", "y", "z"] }, minProperties: 2 };
+    await expectValidAcrossSeeds(schema);
+  });
+
+  test("propertyNames: false never invents keys", async () => {
+    const schema = { type: "object", propertyNames: false, minProperties: 1 };
+    await expect(generate(schema as any, { seed: 1 })).rejects.toThrow();
+  });
+});
+
+describe("Issue #888 - generated keys that match other keywords", () => {
+  test("a generated key matching patternProperties gets a value for that pattern", async () => {
+    const schema = {
+      type: "object",
+      propertyNames: { enum: ["n1", "n2", "s1"] },
+      patternProperties: { "^n": { type: "integer" } },
+      additionalProperties: { type: "string" },
+      minProperties: 3,
+    };
+    await expectValidAcrossSeeds(schema);
+  });
+
+  test("a generated key never revives an impossible defined property", async () => {
+    const schema = {
+      type: "object",
+      properties: { banned: false },
+      propertyNames: { enum: ["banned", "ok1", "ok2"] },
+      minProperties: 2,
+    };
+    for (const value of await expectValidAcrossSeeds(schema)) {
+      expect(value).not.toHaveProperty("banned");
+    }
+  });
+});
